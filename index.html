@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nova Igreja Batista Casa de Deus</title>
+<meta name="description" content="Um lar de fé e acolhimento. Uma igreja que busca a santidade e o profundo relacionamento com Cristo. Nós somos a NIB Casa de Deus.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- VERSÃO TESTE — fonte SORA (mesma linha da Pulse) em toda a tipografia -->
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#05070d;--bg-2:#0a0f1c;--panel:#0e1526;
+  --blue:#1d7fff;--blue-bright:#3aa0ff;--cyan:#31d7f2;
+  --ink:#eaf1ff;--muted:#8b9ac0;--line:rgba(255,255,255,.10);--gold:#f2c14e;
+  /* VERSÃO TESTE — Sora em tudo (display, editorial e corpo) */
+  --display:"Sora",system-ui,sans-serif;
+  --editorial:"Sora",system-ui,sans-serif;
+  --body:"Sora",system-ui,sans-serif;
+  --wrap:1240px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--body);background:var(--bg);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:var(--wrap);margin:0 auto;padding:0 26px}
+section{position:relative}
+.display{font-family:var(--display);font-weight:800;line-height:1.0;letter-spacing:-.03em}
+.editorial{font-family:var(--editorial);font-weight:400;font-style:italic;letter-spacing:-.02em;color:var(--cyan)}
+.eyebrow{font-size:.72rem;font-weight:700;letter-spacing:.32em;text-transform:uppercase;color:var(--blue-bright)}
+.lead{color:var(--muted);font-size:1.08rem;max-width:62ch}
+.h-sec{font-size:clamp(2rem,5vw,3.8rem)}
+.btn{display:inline-flex;align-items:center;gap:.5em;font-weight:700;font-size:.9rem;letter-spacing:.04em;text-transform:uppercase;padding:1em 1.9em;border-radius:4px;transition:.25s;cursor:pointer;border:1.5px solid transparent}
+.btn-blue{background:var(--blue);color:#fff;box-shadow:0 8px 30px -8px rgba(29,127,255,.7)}
+.btn-blue:hover{background:var(--blue-bright);transform:translateY(-2px)}
+.btn-ghost{border-color:var(--line);color:var(--ink)}
+.btn-ghost:hover{border-color:var(--blue);background:var(--blue);color:#fff}
+header{position:fixed;inset:16px 0 auto 0;z-index:100;transition:.35s;padding:0}
+header .wrap{padding:0 26px}
+.nav{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.brand{display:flex;align-items:center;gap:12px}
+.logo-mark{width:42px;height:42px;flex:0 0 auto}
+.brand .txt{font-family:var(--display);font-size:1.35rem;letter-spacing:.02em;line-height:.9;color:#fff}
+.brand .txt small{display:block;font-family:var(--body);font-size:.55rem;font-weight:700;letter-spacing:.26em;color:var(--blue-bright);margin-top:3px}
+.nav-links{display:flex;gap:26px;align-items:center;margin:0 auto;
+  background:rgba(14,20,38,.55);backdrop-filter:blur(18px) saturate(1.3);-webkit-backdrop-filter:blur(18px) saturate(1.3);
+  border:1px solid rgba(255,255,255,.10);border-radius:999px;
+  padding:14px 30px;box-shadow:0 12px 40px -12px rgba(0,0,0,.6);transition:.35s}
+header.scrolled{inset:8px 0 auto 0}
+header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -14px rgba(0,0,0,.75)}
+.nav-links a{font-size:.82rem;font-weight:600;letter-spacing:.02em;text-transform:none;color:#cdd6ea;transition:.2s}
+.nav-links a:hover{color:#fff}
+.nav-cta{background:var(--blue);color:#fff!important;padding:.75em 1.5em;border-radius:999px;font-weight:700}
+.nav-cta:hover{background:var(--blue-bright)}
+.burger{display:none;background:none;border:0;cursor:pointer;flex-direction:column;gap:5px}
+.burger span{width:26px;height:2px;background:#fff;transition:.3s}
+.hero{min-height:100vh;display:flex;align-items:flex-end;padding:120px 0 70px;overflow:hidden}
+.hero .photo{position:absolute;inset:0;z-index:-2;background:#0a1330 center/cover no-repeat;background-image:linear-gradient(120deg,rgba(5,7,13,.2),rgba(5,7,13,.6)),radial-gradient(80% 90% at 70% 20%,rgba(49,215,242,.18),transparent 60%),linear-gradient(160deg,#12224d,#060a16)}
+.hero::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(to top,var(--bg) 4%,rgba(5,7,13,.65) 40%,rgba(5,7,13,.25) 100%)}
+.hero-inner{max-width:900px}
+.hero .eyebrow{margin-bottom:18px;display:block}
+.hero h1{font-size:clamp(2rem,4.6vw,3.6rem);font-weight:800;line-height:1.08;max-width:16ch}
+.hero h1 .editorial{font-size:1em;display:inline;font-weight:400;color:var(--cyan)}
+.hero p{margin:26px 0 34px;font-size:1.2rem;color:#cdd8f2;max-width:52ch}
+.hero-cta{display:flex;gap:14px;flex-wrap:wrap}
+.hero-hours{display:grid;grid-template-columns:repeat(3,1fr);margin-top:46px;border:1px solid var(--line);border-radius:12px;overflow:hidden;max-width:680px;backdrop-filter:blur(6px);background:rgba(10,15,28,.5)}
+.hero-hours div{padding:20px 22px;display:flex;flex-direction:column;position:relative}
+.hero-hours > div + div::before{content:"";position:absolute;left:0;top:50%;transform:translateY(-50%);width:1px;height:56%;background:var(--line)}
+.hero-hours .d{font-size:.72rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--cyan)}
+.hero-hours .hr{font-family:var(--display);font-weight:800;font-size:1.7rem;color:#fff;line-height:1;margin:8px 0 6px}
+.hero-hours .nm{font-size:.82rem;color:var(--muted);font-weight:500;line-height:1.3}
+.strip{background:var(--blue);padding:22px 0;overflow:hidden}
+.strip .marquee{display:flex;gap:60px;white-space:nowrap;animation:scroll 26s linear infinite;font-family:var(--display);font-size:1.5rem;color:#fff;text-transform:uppercase;letter-spacing:.04em}
+.strip .marquee b{color:#bfe0ff}
+@keyframes scroll{to{transform:translateX(-50%)}}
+@media(prefers-reduced-motion:reduce){.strip .marquee{animation:none}}
+.pad{padding:120px 0}
+.center{text-align:center}
+.center .lead{margin-inline:auto}
+.sec-head .eyebrow{margin-bottom:16px;display:block}
+.sec-head h2{margin-bottom:18px}
+.pillars{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:60px}
+.pillar{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:34px 30px;transition:.3s;position:relative;overflow:hidden}
+.pillar::before{content:"";position:absolute;top:0;left:0;height:3px;width:0;background:var(--blue);transition:.4s}
+.pillar:hover::before{width:100%}
+.pillar:hover{transform:translateY(-4px);border-color:rgba(29,127,255,.4)}
+.pillar .k{font-family:var(--editorial);font-style:italic;font-weight:400;font-size:1.5rem;color:var(--cyan)}
+.pillar h3{font-family:var(--display);font-size:1.5rem;margin:8px 0 12px;color:#fff}
+.pillar p{color:var(--muted);font-size:.96rem}
+.cultos{background:var(--bg-2)}
+.cultos-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:56px}
+.culto{position:relative;border-radius:14px;overflow:hidden;min-height:300px;display:flex;align-items:flex-end;padding:30px;border:1px solid var(--line);background:linear-gradient(to top,rgba(5,7,13,.92),rgba(5,7,13,.35)),linear-gradient(135deg,#153a7a,#0a1428);background-size:cover;background-position:center;transition:.35s}
+.culto:hover{transform:translateY(-5px);box-shadow:0 30px 60px -30px rgba(29,127,255,.5)}
+.culto .d{font-family:var(--display);font-size:2.4rem;color:#fff;line-height:.9}
+.culto .t{font-family:var(--display);font-size:1.8rem;color:var(--cyan);margin:6px 0 4px}
+.culto .n{color:var(--muted);font-weight:600;font-size:.95rem}
+.culto .badge{position:absolute;top:20px;left:20px;font-family:var(--editorial);font-style:italic;font-weight:400;font-size:1.3rem;color:var(--gold)}
+.cel-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+.cel-copy h2 .editorial{display:block;font-size:.52em;margin-bottom:-.05em;font-weight:400;color:var(--cyan)}
+.cel-list{list-style:none;margin:28px 0 34px}
+.cel-list li{display:flex;gap:14px;align-items:flex-start;margin-bottom:16px;font-size:1.02rem;color:#cdd8f2}
+.cel-list li .dot{color:var(--blue-bright);font-family:var(--display);font-size:1.1rem}
+.cel-photo{aspect-ratio:4/5;border-radius:16px;overflow:hidden;position:relative;border:1px solid var(--line);background:linear-gradient(160deg,#1b4a9e,#0a1530);background-size:cover;background-position:center}
+.cel-photo .float{position:absolute;left:20px;bottom:20px;right:20px;background:rgba(10,15,28,.85);backdrop-filter:blur(8px);border:1px solid var(--line);border-radius:12px;padding:18px}
+.cel-photo .float b{font-family:var(--display);font-size:1.2rem;color:#fff;}
+.cel-photo .float p{color:var(--muted);font-size:.85rem;margin-top:4px}
+.mensagens{background:var(--bg-2)}
+.msg-head{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:46px}
+.videos{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.video{border-radius:12px;overflow:hidden;background:var(--panel);border:1px solid var(--line);transition:.3s;display:block;color:inherit}
+.video:hover{transform:translateY(-5px);border-color:rgba(29,127,255,.4)}
+.video .thumb{aspect-ratio:16/9;background:linear-gradient(135deg,#12224d,#0a1428);position:relative;overflow:hidden}
+.video .thumb img{width:100%;height:100%;object-fit:cover;display:block;transition:.4s}
+.video:hover .thumb img{transform:scale(1.05)}
+.video .thumb::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at center,transparent 60%,rgba(5,7,13,.35))}
+.video .play{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:54px;height:54px;
+  border-radius:50%;background:rgba(29,127,255,.92);display:grid;place-items:center;z-index:2;transition:.3s;box-shadow:0 8px 24px -6px rgba(29,127,255,.8)}
+.video:hover .play{transform:translate(-50%,-50%) scale(1.08);background:var(--blue-bright)}
+.video .play svg{width:20px;height:20px;fill:#fff;margin-left:2px}
+.video .thumb.skeleton{background:linear-gradient(100deg,#0e1526 30%,#182338 50%,#0e1526 70%);background-size:200% 100%;animation:sk 1.3s linear infinite}
+@keyframes sk{to{background-position:-200% 0}}
+.video .meta{padding:18px 20px}
+.video .meta b{font-family:var(--display);font-size:1.02rem;color:#fff;display:block;line-height:1.15;letter-spacing:.01em;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.video .meta span{font-size:.8rem;color:var(--muted);letter-spacing:.04em;margin-top:6px;display:block}
+.lid-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:26px;margin-top:56px}
+.lid{position:relative;border-radius:16px;overflow:hidden;min-height:420px;display:flex;align-items:flex-end;border:1px solid var(--line);background:linear-gradient(to top,rgba(5,7,13,.95),rgba(5,7,13,.1) 70%),linear-gradient(135deg,#14356e,#0a1428);background-size:cover;background-position:center top;transition:.35s}
+.lid:hover{transform:translateY(-5px);box-shadow:0 30px 60px -30px rgba(29,127,255,.5)}
+.lid .info{padding:32px}
+.lid .role{font-family:var(--editorial);font-style:italic;font-weight:400;font-size:1.4rem;color:var(--cyan)}
+.lid h3{font-family:var(--display);font-size:2rem;color:#fff;margin:2px 0 10px}
+.lid p{color:var(--muted);font-size:.95rem;max-width:42ch}
+.eventos{background:var(--bg-2)}
+.ev-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:24px;margin-top:56px}
+.evento{position:relative;border-radius:14px;overflow:hidden;min-height:280px;display:flex;align-items:flex-end;border:1px solid var(--line);background:linear-gradient(to top,rgba(5,7,13,.95),rgba(5,7,13,.2)),linear-gradient(135deg,#16407f,#0a1428);background-size:cover;background-position:center;transition:.35s}
+.evento:hover{transform:translateY(-4px);box-shadow:0 30px 60px -30px rgba(29,127,255,.45)}
+.evento .cont{padding:30px}
+.evento .tag{display:inline-block;font-size:.7rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#05070d;background:var(--gold);padding:4px 10px;border-radius:3px;margin-bottom:12px}
+.evento .date{font-family:var(--editorial);font-style:italic;font-weight:400;font-size:1.4rem;color:var(--cyan);margin-bottom:2px}
+.evento h3{font-family:var(--display);font-size:1.7rem;color:#fff;line-height:.95}
+.evento p{color:var(--muted);font-size:.9rem;margin-top:8px;max-width:44ch}
+.contrib-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+.pix-card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:38px}
+.pix-row{display:flex;justify-content:space-between;align-items:center;padding:16px 0;border-bottom:1px solid var(--line)}
+.pix-row:last-of-type{border:0}
+.pix-row .k{font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.pix-row .v{font-family:var(--display);font-size:1.1rem;color:#fff;letter-spacing:.02em}
+.qr{width:160px;height:160px;border-radius:12px;background:var(--bg);border:1px solid var(--line);margin:26px auto 0;display:grid;place-items:center;color:var(--muted);font-size:.72rem;text-align:center;padding:16px}
+.visite{background:var(--bg-2)}
+.vis-grid{display:grid;grid-template-columns:1fr 1.15fr;gap:52px;align-items:center}
+.vis-info .addr{font-family:var(--display);font-size:1.9rem;color:#fff;margin:18px 0 8px;line-height:1}
+.vis-info p{color:var(--muted)}
+.vis-info .hours-mini{margin-top:18px;color:#cdd8f2;font-weight:600}
+.map{aspect-ratio:16/11;border-radius:16px;overflow:hidden;border:1px solid var(--line)}
+.map iframe{width:100%;height:100%;border:0;filter:grayscale(.3) invert(.9) hue-rotate(180deg) contrast(.9)}
+.socials{display:flex;gap:12px;margin-top:26px}
+.socials a{width:46px;height:46px;border-radius:10px;border:1px solid var(--line);display:grid;place-items:center;color:#fff;transition:.25s;font-weight:700;font-size:.82rem}
+.socials a:hover{background:var(--blue);border-color:var(--blue);transform:translateY(-3px)}
+footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
+.foot{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap}
+.foot .brand .txt{font-size:1.1rem}
+.foot small{color:var(--muted);font-size:.8rem}
+.reveal{opacity:0;transform:translateY(28px);transition:.7s cubic-bezier(.2,.7,.2,1)}
+.reveal.in{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}html{scroll-behavior:auto}}
+@media(max-width:920px){
+  .cel-grid,.contrib-grid,.vis-grid{grid-template-columns:1fr;gap:44px}
+  .pillars,.cultos-grid,.videos,.lid-grid,.ev-grid{grid-template-columns:1fr}
+  .nav-links{position:fixed;inset:0 0 0 auto;width:min(320px,84vw);background:var(--bg-2);flex-direction:column;justify-content:center;align-items:flex-start;padding:44px;gap:24px;transform:translateX(100%);transition:.35s;box-shadow:-12px 0 50px rgba(0,0,0,.5);border-left:1px solid var(--line);border-radius:0;backdrop-filter:none;-webkit-backdrop-filter:none;margin:0}
+  .nav-links.open{transform:none}
+  .nav-links a{font-size:1rem}
+  .burger{display:flex;z-index:2}
+  header .nav > .nav-cta{display:none}
+}
+@media(max-width:560px){
+  .hero-hours{grid-template-columns:1fr}
+  .hero-hours div{border-right:0;border-bottom:1px solid var(--line)}
+  .hero-hours > div:last-child{border-bottom:0}
+  .hero-hours > div + div::before{display:none}
+  .strip .marquee{font-size:1.2rem}
+}
+</style>
+</head>
+<body>
+
+<header id="header">
+  <div class="wrap nav">
+    <a class="brand" href="#top" aria-label="NIB Casa de Deus">
+      <svg class="logo-mark" viewBox="0 0 100 100" aria-hidden="true">
+        <circle cx="50" cy="50" r="48" fill="#1d7fff"/>
+        <circle cx="50" cy="50" r="40" fill="none" stroke="#fff" stroke-width="5"/>
+        <path d="M24 58 C36 48 44 50 56 40 C62 46 68 47 76 44" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="txt">NIB<small>Casa de Deus</small></span>
+    </a>
+    <nav class="nav-links" id="navLinks">
+      <a href="#sobre">Sobre</a>
+      <a href="#cultos">Cultos</a>
+      <a href="#celulas">Células</a>
+      <a href="#mensagens">Mensagens</a>
+      <a href="#lideranca">Liderança</a>
+      <a href="#eventos">Eventos</a>
+    </nav>
+    <a href="#visite" class="nav-cta">Venha nos visitar</a>
+    <button class="burger" id="burger" aria-label="Abrir menu"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<section class="hero" id="top">
+  <div class="photo"></div>
+  <div class="wrap hero-inner reveal">
+    <span class="eyebrow">Um lar de fé e acolhimento</span>
+    <h1 class="display">Não somos uma igreja perfeita. Somos uma igreja <span class="editorial">saudável.</span></h1>
+    <p>Uma igreja que busca a santidade e o profundo relacionamento com Cristo. Um povo que abençoa, inspira e manifesta a glória do Eterno.</p>
+    <div class="hero-cta">
+      <a href="#cultos" class="btn btn-blue">Horários de culto →</a>
+      <a href="#mensagens" class="btn btn-ghost">Assistir mensagens</a>
+    </div>
+    <div class="hero-hours">
+      <div><div class="d">Quinta</div><div class="hr">19h30</div><div class="nm">Culto da Fé</div></div>
+      <div><div class="d">Domingo</div><div class="hr">9h30</div><div class="nm">EBS · Escola Bíblica de Sabedoria</div></div>
+      <div><div class="d">Domingo</div><div class="hr">19h</div><div class="nm">Noite de Glória</div></div>
+    </div>
+  </div>
+</section>
+
+<div class="strip" aria-hidden="true">
+  <div class="marquee">
+    <span>Não somos uma igreja perfeita. Somos uma igreja saudável</span><b>✦</b>
+    <span>Uma casa para novos começos</span><b>✦</b>
+    <span>Domingo é dia de igreja</span><b>✦</b>
+    <span>Não somos uma igreja perfeita. Somos uma igreja saudável</span><b>✦</b>
+    <span>Uma casa para novos começos</span><b>✦</b>
+    <span>Domingo é dia de igreja</span><b>✦</b>
+  </div>
+</div>
+
+<section class="pad" id="sobre">
+  <div class="wrap">
+    <div class="sec-head center reveal">
+      <span class="eyebrow">Quem somos</span>
+      <h2 class="display h-sec">Somos a <span class="editorial">Casa de Deus</span></h2>
+      <p class="lead">Uma igreja que busca a santidade e o profundo relacionamento com Cristo. Um povo que abençoa, inspira e manifesta a glória do Eterno — e vive isso em família.</p>
+    </div>
+    <div class="pillars">
+      <div class="pillar reveal">
+        <div class="k">visão</div>
+        <h3>Santidade &amp; intimidade</h3>
+        <p>Buscar a santidade e um relacionamento profundo com Cristo, vivendo uma fé real e diária.</p>
+      </div>
+      <div class="pillar reveal">
+        <div class="k">missão</div>
+        <h3>Abençoar &amp; inspirar</h3>
+        <p>Ser um povo que abençoa, inspira e manifesta a glória do Eterno onde quer que esteja.</p>
+      </div>
+      <div class="pillar reveal">
+        <div class="k">dna</div>
+        <h3>Família &amp; discipulado</h3>
+        <p>Cada filho é sacerdote e cada família é uma extensão da igreja, através das células.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cultos pad" id="cultos">
+  <div class="wrap">
+    <div class="sec-head center reveal">
+      <span class="eyebrow">Programação</span>
+      <h2 class="display h-sec">Venha <span class="editorial">celebrar</span></h2>
+      <p class="lead">Toda semana tem lugar pra você e pra sua família. Chega mais.</p>
+    </div>
+    <div class="cultos-grid">
+      <div class="culto reveal">
+        <span class="badge">thursday</span>
+        <div><div class="d">Quinta</div><div class="t">19h30</div><div class="n">Culto da Fé</div></div>
+      </div>
+      <div class="culto reveal">
+        <span class="badge">sunday</span>
+        <div><div class="d">Domingo</div><div class="t">9h30</div><div class="n">EBS · Escola Bíblica de Sabedoria</div></div>
+      </div>
+      <div class="culto reveal">
+        <span class="badge">sunday</span>
+        <div><div class="d">Domingo</div><div class="t">19h</div><div class="n">Noite de Glória</div></div>
+      </div>
+      <div class="culto reveal">
+        <span class="badge">na semana</span>
+        <div><div class="d">Células</div><div class="t">Nos lares</div><div class="n">Comunhão &amp; discipulado</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="pad" id="celulas">
+  <div class="wrap cel-grid">
+    <div class="cel-copy reveal">
+      <span class="eyebrow">Vida em comunidade</span>
+      <h2 class="display h-sec"><span class="editorial">nossas</span>Células</h2>
+      <p class="lead">A célula é mais que uma reunião — é um estilo de vida. É onde ninguém caminha sozinho: somos família, crescemos juntos e somos preparados para impactar o mundo.</p>
+      <ul class="cel-list">
+        <li><span class="dot">›</span> Encontros semanais em lares, perto de você</li>
+        <li><span class="dot">›</span> Comunhão, oração e a Palavra de Deus</li>
+        <li><span class="dot">›</span> Um ambiente real para novos começos</li>
+      </ul>
+      <a href="https://wa.me/55DDDNUMERO?text=Ol%C3%A1!%20Quero%20participar%20de%20uma%20c%C3%A9lula." class="btn btn-blue">Quero fazer parte →</a>
+    </div>
+    <div class="cel-photo reveal">
+      <div class="float"><b>Domingo é dia de igreja</b><p>Mas a semana toda é dia de família.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="mensagens pad" id="mensagens">
+  <div class="wrap">
+    <div class="msg-head reveal">
+      <div>
+        <span class="eyebrow">NIB TV</span>
+        <h2 class="display h-sec" style="margin-top:12px">Últimas mensagens</h2>
+      </div>
+      <a href="https://www.youtube.com/@nibcasadedeus" class="btn btn-ghost">Ver canal completo →</a>
+    </div>
+    <!-- ================= NIB TV — VÍDEOS/LIVES EM DESTAQUE =================
+         COMO TROCAR (só 2 coisas por card):
+           1) data-id="ID_DO_VIDEO"  → o código depois de youtube.com/watch?v=
+              Ex.: em https://www.youtube.com/watch?v=abc123XYZ  o id é  abc123XYZ
+           2) o texto dentro de <b>…</b> → o título da live
+         A CAPA é gerada automaticamente a partir do id. Não precisa mexer em imagem.
+         Para trocar por outra live, basta atualizar o data-id e o título.
+    ==================================================================== -->
+    <div class="videos" id="ytVideos">
+      <a class="video reveal" data-id="COLE_O_ID_1" href="#" target="_blank" rel="noopener">
+        <div class="thumb"><div class="play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
+        <div class="meta"><b>Título da 1ª transmissão ao vivo</b><span>Pr. Alex Nogueira · NIB TV</span></div>
+      </a>
+      <a class="video reveal" data-id="COLE_O_ID_2" href="#" target="_blank" rel="noopener">
+        <div class="thumb"><div class="play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
+        <div class="meta"><b>Título da 2ª transmissão ao vivo</b><span>Pr. Alex Nogueira · NIB TV</span></div>
+      </a>
+      <a class="video reveal" data-id="COLE_O_ID_3" href="#" target="_blank" rel="noopener">
+        <div class="thumb"><div class="play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
+        <div class="meta"><b>Título da 3ª transmissão ao vivo</b><span>Pr. Alex Nogueira · NIB TV</span></div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="pad" id="lideranca">
+  <div class="wrap">
+    <div class="sec-head center reveal">
+      <span class="eyebrow">Quem conduz</span>
+      <h2 class="display h-sec">Nossa liderança</h2>
+      <p class="lead">Pastores dedicados a servir, ensinar e cuidar da igreja com amor e fidelidade à Palavra.</p>
+    </div>
+    <div class="lid-grid">
+      <div class="lid reveal">
+        <div class="info">
+          <div class="role">pastor</div>
+          <h3>Alex Nogueira</h3>
+          <p>Liderança apaixonada por conduzir vidas a Cristo e edificar uma família de fé firme na Palavra.</p>
+        </div>
+      </div>
+      <div class="lid reveal">
+        <div class="info">
+          <div class="role">pastora</div>
+          <h3>Nome da Pastora</h3>
+          <p>Dedicada ao cuidado, ao ensino e a inspirar famílias a viverem o propósito de Deus. (TROCAR nome)</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="eventos pad" id="eventos">
+  <div class="wrap">
+    <div class="sec-head center reveal">
+      <span class="eyebrow">Próximos acontecimentos</span>
+      <h2 class="display h-sec">O que vem por aí</h2>
+      <p class="lead">Fique por dentro do que Deus está fazendo na nossa casa. (TROCAR pelos eventos reais.)</p>
+    </div>
+    <div class="ev-grid">
+      <div class="evento reveal">
+        <div class="cont">
+          <span class="tag">Conferência</span>
+          <div class="date">Conf. DNA 2026</div>
+          <h3>Embaixadores de Cristo</h3>
+          <p>Dias intensos de presença, palavra e propósito para toda a igreja.</p>
+        </div>
+      </div>
+      <div class="evento reveal">
+        <div class="cont">
+          <span class="tag">Batismo</span>
+          <div class="date">em breve</div>
+          <h3>Culto de Batismo</h3>
+          <p>Celebre conosco novas vidas dando o passo público de fé em Cristo.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="pad" id="contribuicoes">
+  <div class="wrap contrib-grid">
+    <div class="reveal">
+      <span class="eyebrow">Generosidade</span>
+      <h2 class="display h-sec" style="margin:16px 0 20px">Sua parte na<br>obra de Deus</h2>
+      <p class="lead">Honre o Senhor com generosidade e seja parte do que Deus está construindo. Contribua com alegria, no seu tempo e coração.</p>
+    </div>
+    <div class="pix-card reveal">
+      <div class="pix-row"><span class="k">PIX (CNPJ)</span><span class="v">00.000.000/0001-00</span></div>
+      <div class="pix-row"><span class="k">Banco</span><span class="v">Nome do banco</span></div>
+      <div class="pix-row"><span class="k">Agência / Conta</span><span class="v">0000 / 00000-0</span></div>
+      <div class="qr">QR Code PIX<br>(troque pela imagem)</div>
+    </div>
+  </div>
+</section>
+
+<section class="visite pad" id="visite">
+  <div class="wrap vis-grid">
+    <div class="vis-info reveal">
+      <span class="eyebrow">Venha nos visitar</span>
+      <div class="addr">Estamos te<br>esperando</div>
+      <p>Rua Exemplo, 123 — Bairro · Cidade — UF</p>
+      <p class="hours-mini">Quinta 19h30 · Domingo 9h30 e 19h</p>
+      <div class="socials">
+        <a href="https://www.instagram.com/nibcasadedeus/" aria-label="Instagram">IG</a>
+        <a href="https://www.youtube.com/@nibcasadedeus" aria-label="YouTube">YT</a>
+        <a href="#" aria-label="Facebook">f</a>
+        <a href="https://wa.me/55DDDNUMERO" aria-label="WhatsApp">WA</a>
+      </div>
+    </div>
+    <div class="map reveal">
+      <iframe src="https://www.google.com/maps?q=igreja+batista&output=embed" title="Localização" loading="lazy"></iframe>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot">
+    <a class="brand" href="#top">
+      <svg class="logo-mark" viewBox="0 0 100 100" aria-hidden="true">
+        <circle cx="50" cy="50" r="48" fill="#1d7fff"/>
+        <circle cx="50" cy="50" r="40" fill="none" stroke="#fff" stroke-width="5"/>
+        <path d="M24 58 C36 48 44 50 56 40 C62 46 68 47 76 44" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="txt">NIB<small>Casa de Deus</small></span>
+    </a>
+    <small>© 2026 Nova Igreja Batista Casa de Deus · Uma casa para novos começos.</small>
+  </div>
+</footer>
+
+<script>
+const header=document.getElementById('header');
+addEventListener('scroll',()=>header.classList.toggle('scrolled',scrollY>20));
+const burger=document.getElementById('burger'),links=document.getElementById('navLinks');
+burger.addEventListener('click',()=>links.classList.toggle('open'));
+links.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>links.classList.remove('open')));
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+/* NIB TV — monta link + capa de cada vídeo a partir do data-id (conteúdo fixo, editável) */
+document.querySelectorAll('#ytVideos .video').forEach(card=>{
+  const id = card.getAttribute('data-id');
+  if(!id || id.startsWith('COLE_O_ID')) return;          // ainda é placeholder → ignora
+  card.href = 'https://www.youtube.com/watch?v=' + id;
+  const thumb = card.querySelector('.thumb');
+  const img = document.createElement('img');
+  img.loading = 'lazy';
+  img.alt = (card.querySelector('.meta b')||{}).textContent || 'NIB TV';
+  img.src = 'https://i.ytimg.com/vi/'+id+'/maxresdefault.jpg';
+  img.onerror = function(){ this.onerror=null; this.src='https://i.ytimg.com/vi/'+id+'/hqdefault.jpg'; };
+  thumb.insertBefore(img, thumb.firstChild);
+});
+</script>
+</body>
+</html>
