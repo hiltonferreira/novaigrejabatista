@@ -320,26 +320,19 @@ footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
       </div>
       <a href="https://www.youtube.com/@nibcasadedeus" class="btn btn-ghost">Ver canal completo →</a>
     </div>
-    <!-- ================= NIB TV — VÍDEOS/LIVES EM DESTAQUE =================
-         COMO TROCAR (só 2 coisas por card):
-           1) data-id="ID_DO_VIDEO"  → o código depois de youtube.com/watch?v=
-              Ex.: em https://www.youtube.com/watch?v=abc123XYZ  o id é  abc123XYZ
-           2) o texto dentro de <b>…</b> → o título da live
-         A CAPA é gerada automaticamente a partir do id. Não precisa mexer em imagem.
-         Para trocar por outra live, basta atualizar o data-id e o título.
-    ==================================================================== -->
+    <!-- NIB TV — puxa automaticamente os 3 últimos vídeos do canal (feed público, sem chave). -->
     <div class="videos" id="ytVideos">
-      <a class="video reveal" data-id="COLE_O_ID_1" href="#" target="_blank" rel="noopener">
-        <div class="thumb"><div class="play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
-        <div class="meta"><b>Título da 1ª transmissão ao vivo</b><span>Pr. Alex Nogueira · NIB TV</span></div>
+      <a class="video reveal in" href="https://www.youtube.com/@nibcasadedeus" target="_blank" rel="noopener">
+        <div class="thumb skeleton"><div class="play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
+        <div class="meta"><b>Carregando…</b><span>NIB TV</span></div>
       </a>
-      <a class="video reveal" data-id="COLE_O_ID_2" href="#" target="_blank" rel="noopener">
-        <div class="thumb"><div class="play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
-        <div class="meta"><b>Título da 2ª transmissão ao vivo</b><span>Pr. Alex Nogueira · NIB TV</span></div>
+      <a class="video reveal in" href="https://www.youtube.com/@nibcasadedeus" target="_blank" rel="noopener">
+        <div class="thumb skeleton"><div class="play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
+        <div class="meta"><b>Carregando…</b><span>NIB TV</span></div>
       </a>
-      <a class="video reveal" data-id="COLE_O_ID_3" href="#" target="_blank" rel="noopener">
-        <div class="thumb"><div class="play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
-        <div class="meta"><b>Título da 3ª transmissão ao vivo</b><span>Pr. Alex Nogueira · NIB TV</span></div>
+      <a class="video reveal in" href="https://www.youtube.com/@nibcasadedeus" target="_blank" rel="noopener">
+        <div class="thumb skeleton"><div class="play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
+        <div class="meta"><b>Carregando…</b><span>NIB TV</span></div>
       </a>
     </div>
   </div>
@@ -458,19 +451,55 @@ links.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>links.clas
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.12});
 document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 
-/* NIB TV — monta link + capa de cada vídeo a partir do data-id (conteúdo fixo, editável) */
-document.querySelectorAll('#ytVideos .video').forEach(card=>{
-  const id = card.getAttribute('data-id');
-  if(!id || id.startsWith('COLE_O_ID')) return;          // ainda é placeholder → ignora
-  card.href = 'https://www.youtube.com/watch?v=' + id;
-  const thumb = card.querySelector('.thumb');
-  const img = document.createElement('img');
-  img.loading = 'lazy';
-  img.alt = (card.querySelector('.meta b')||{}).textContent || 'NIB TV';
-  img.src = 'https://i.ytimg.com/vi/'+id+'/maxresdefault.jpg';
-  img.onerror = function(){ this.onerror=null; this.src='https://i.ytimg.com/vi/'+id+'/hqdefault.jpg'; };
-  thumb.insertBefore(img, thumb.firstChild);
-});
+/* ===== NIB TV — 3 últimos vídeos do canal, automático (feed RSS público, sem chave) ===== */
+(function(){
+  var CHANNEL_ID="UCpo-O8Bw0Z2Dr7cTTyHkT9w";
+  var FEED="https://www.youtube.com/feeds/videos.xml?channel_id="+CHANNEL_ID;
+  var box=document.getElementById("ytVideos");
+  if(!box) return;
+
+  // Vários proxies de CORS — tenta em ordem até um funcionar
+  var proxies=[
+    function(u){return "https://api.allorigins.win/raw?url="+encodeURIComponent(u);},
+    function(u){return "https://corsproxy.io/?url="+encodeURIComponent(u);},
+    function(u){return "https://api.codetabs.com/v1/proxy/?quest="+u;},
+    function(u){return "https://thingproxy.freeboard.io/fetch/"+u;}
+  ];
+
+  function esc(s){return (s||"").replace(/[&<>"]/g,function(c){return({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"})[c];});}
+
+  function tryFetch(i){
+    if(i>=proxies.length){ return Promise.reject("todos os proxies falharam"); }
+    return fetch(proxies[i](FEED),{cache:"no-store"})
+      .then(function(r){ if(!r.ok) throw 0; return r.text(); })
+      .then(function(t){ if(t && t.indexOf("<entry")>-1) return t; throw 0; })
+      .catch(function(){ return tryFetch(i+1); });
+  }
+
+  function render(xmlText){
+    var xml=new DOMParser().parseFromString(xmlText,"text/xml");
+    var entries=[].slice.call(xml.getElementsByTagName("entry")).slice(0,3);
+    if(!entries.length) throw 0;
+    var play='<div class="play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>';
+    box.innerHTML=entries.map(function(en){
+      var vid=(en.getElementsByTagName("yt:videoId")[0]||{}).textContent||"";
+      var title=(en.getElementsByTagName("title")[0]||{}).textContent||"Mensagem";
+      var link="https://www.youtube.com/watch?v="+vid;
+      var hi="https://i.ytimg.com/vi/"+vid+"/maxresdefault.jpg";
+      var fb="https://i.ytimg.com/vi/"+vid+"/hqdefault.jpg";
+      return '<a class="video reveal in" href="'+link+'" target="_blank" rel="noopener">'+
+        '<div class="thumb"><img src="'+hi+'" alt="'+esc(title)+'" loading="lazy" '+
+        'onerror="this.onerror=null;this.src=\''+fb+'\'">'+play+'</div>'+
+        '<div class="meta"><b>'+esc(title)+'</b><span>Pr. Alex Nogueira · NIB TV</span></div></a>';
+    }).join("");
+  }
+
+  tryFetch(0).then(render).catch(function(){
+    // Fallback: mantém 3 cards levando ao canal
+    box.querySelectorAll(".thumb").forEach(function(t){t.classList.remove("skeleton");});
+    box.querySelectorAll(".meta b").forEach(function(b){b.textContent="Ver últimos vídeos no YouTube";});
+  });
+})();
 </script>
 </body>
 </html>
