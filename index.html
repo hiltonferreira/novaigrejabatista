@@ -324,15 +324,15 @@ footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
     <div class="videos" id="ytVideos">
       <a class="video reveal in" href="https://www.youtube.com/@nibcasadedeus" target="_blank" rel="noopener">
         <div class="thumb skeleton"><div class="play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
-        <div class="meta"><b>Carregando…</b><span>Nova Igreja Batista - Youtube</span></div>
+        <div class="meta"><b>Carregando…</b><span>Nova Igreja Batista · Youtube</span></div>
       </a>
       <a class="video reveal in" href="https://www.youtube.com/@nibcasadedeus" target="_blank" rel="noopener">
         <div class="thumb skeleton"><div class="play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
-        <div class="meta"><b>Carregando…</b><span>Nova Igreja Batista - Youtube</span></div>
+        <div class="meta"><b>Carregando…</b><span>Nova Igreja Batista · Youtube</span></div>
       </a>
       <a class="video reveal in" href="https://www.youtube.com/@nibcasadedeus" target="_blank" rel="noopener">
         <div class="thumb skeleton"><div class="play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
-        <div class="meta"><b>Carregando…</b><span>Nova Igreja Batista - Youtube</span></div>
+        <div class="meta"><b>Carregando…</b><span>Nova Igreja Batista · Youtube</span></div>
       </a>
     </div>
   </div>
@@ -479,12 +479,14 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
   function render(xmlText){
     var xml=new DOMParser().parseFromString(xmlText,"text/xml");
     var all=[].slice.call(xml.getElementsByTagName("entry"));
-    // deduplica por videoId e pega os 3 primeiros distintos
-    var seen={}, entries=[];
+    // deduplica por videoId E por título normalizado (pega 3 distintos)
+    var seenId={}, seenTitle={}, entries=[];
     for(var k=0;k<all.length;k++){
       var vidk=(all[k].getElementsByTagName("yt:videoId")[0]||{}).textContent||"";
-      if(!vidk||seen[vidk]) continue;
-      seen[vidk]=1; entries.push(all[k]);
+      var titk=((all[k].getElementsByTagName("title")[0]||{}).textContent||"")
+                 .toLowerCase().replace(/\s+/g," ").trim();
+      if(!vidk||seenId[vidk]||seenTitle[titk]) continue;
+      seenId[vidk]=1; seenTitle[titk]=1; entries.push(all[k]);
       if(entries.length===3) break;
     }
     if(!entries.length) throw 0;
@@ -498,7 +500,7 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
       return '<a class="video reveal in" href="'+link+'" target="_blank" rel="noopener">'+
         '<div class="thumb"><img src="'+hi+'" alt="'+esc(title)+'" loading="lazy" '+
         'onerror="this.onerror=null;this.src=\''+fb+'\'">'+play+'</div>'+
-        '<div class="meta"><b>'+esc(title)+'</b><span>Nova Igreja Batista - Youtube</span></div></a>';
+        '<div class="meta"><b>'+esc(title)+'</b><span>Nova Igreja Batista · Youtube</span></div></a>';
     }).join("");
   }
 
