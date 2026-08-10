@@ -115,10 +115,17 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
 .video .thumb img{width:100%;height:100%;object-fit:cover;display:block;transition:.4s}
 .video:hover .thumb img{transform:scale(1.05)}
 .video .thumb::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at center,transparent 60%,rgba(5,7,13,.35))}
-.video .play{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:54px;height:54px;
-  border-radius:50%;background:rgba(29,127,255,.92);display:grid;place-items:center;z-index:2;transition:.3s;box-shadow:0 8px 24px -6px rgba(29,127,255,.8)}
-.video:hover .play{transform:translate(-50%,-50%) scale(1.08);background:var(--blue-bright)}
-.video .play svg{width:20px;height:20px;fill:#fff;margin-left:2px}
+.video .play{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:60px;height:60px;
+  border-radius:50%;background:rgba(255,255,255,.14);backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,.25);
+  display:grid;place-items:center;z-index:2;transition:.3s}
+.video:hover .play{transform:translate(-50%,-50%) scale(1.08);background:var(--cyan);border-color:var(--cyan);
+  box-shadow:0 8px 30px -6px rgba(49,215,242,.7)}
+.video .play svg{width:22px;height:22px;fill:#fff;margin-left:2px;transition:.3s}
+.video:hover .play svg{fill:#05070d}
+.video .tag-watch{position:absolute;top:14px;right:14px;z-index:3;font-size:.66rem;font-weight:700;
+  letter-spacing:.14em;text-transform:uppercase;color:#fff;background:rgba(5,7,13,.7);backdrop-filter:blur(6px);
+  border:1px solid rgba(255,255,255,.16);padding:6px 12px;border-radius:999px;transition:.3s}
+.video:hover .tag-watch{background:var(--cyan);color:#05070d;border-color:var(--cyan)}
 .video .thumb.skeleton{background:linear-gradient(100deg,#0e1526 30%,#182338 50%,#0e1526 70%);background-size:200% 100%;animation:sk 1.3s linear infinite}
 @keyframes sk{to{background-position:-200% 0}}
 .video .meta{padding:18px 20px}
@@ -318,21 +325,21 @@ footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
         <span class="eyebrow">NIB TV</span>
         <h2 class="display h-sec" style="margin-top:12px">Transmissões <span class="editorial">Ao Vivo</span></h2>
       </div>
-      <a href="https://www.youtube.com/@nibcasadedeus" class="btn btn-ghost">Ver canal completo →</a>
+      <a href="https://www.youtube.com/@nibcasadedeus" class="btn btn-ghost"><svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:currentColor"><path d="M8 5v14l11-7z"/></svg>Ver canal completo</a>
     </div>
     <!-- NIB TV — puxa automaticamente os 3 últimos vídeos do canal (feed público, sem chave). -->
     <div class="videos" id="ytVideos">
       <a class="video reveal in" href="https://www.youtube.com/@nibcasadedeus" target="_blank" rel="noopener">
-        <div class="thumb skeleton"><div class="play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
-        <div class="meta"><b>Carregando…</b><span>Nova Igreja Batista · Youtube</span></div>
+        <div class="thumb skeleton"><span class="tag-watch">Assista</span><div class="play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
+        <div class="meta"><b>Carregando…</b><span>Youtube · Nova Igreja Batista</span></div>
       </a>
       <a class="video reveal in" href="https://www.youtube.com/@nibcasadedeus" target="_blank" rel="noopener">
-        <div class="thumb skeleton"><div class="play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
-        <div class="meta"><b>Carregando…</b><span>Nova Igreja Batista · Youtube</span></div>
+        <div class="thumb skeleton"><span class="tag-watch">Assista</span><div class="play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
+        <div class="meta"><b>Carregando…</b><span>Youtube · Nova Igreja Batista</span></div>
       </a>
       <a class="video reveal in" href="https://www.youtube.com/@nibcasadedeus" target="_blank" rel="noopener">
-        <div class="thumb skeleton"><div class="play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
-        <div class="meta"><b>Carregando…</b><span>Nova Igreja Batista · Youtube</span></div>
+        <div class="thumb skeleton"><span class="tag-watch">Assista</span><div class="play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
+        <div class="meta"><b>Carregando…</b><span>Youtube · Nova Igreja Batista</span></div>
       </a>
     </div>
   </div>
@@ -491,16 +498,16 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
     }
     if(!entries.length) throw 0;
     var play='<div class="play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>';
-    box.innerHTML=entries.map(function(en){
+    box.innerHTML=entries.map(function(en,idx){
       var vid=(en.getElementsByTagName("yt:videoId")[0]||{}).textContent||"";
       var title=(en.getElementsByTagName("title")[0]||{}).textContent||"Mensagem";
       var link="https://www.youtube.com/watch?v="+vid;
       var hi="https://i.ytimg.com/vi/"+vid+"/maxresdefault.jpg";
       var fb="https://i.ytimg.com/vi/"+vid+"/hqdefault.jpg";
-      return '<a class="video reveal in" href="'+link+'" target="_blank" rel="noopener">'+
-        '<div class="thumb"><img src="'+hi+'" alt="'+esc(title)+'" loading="lazy" '+
+      return '<a class="video reveal in" style="transition-delay:'+(idx*.1)+'s" href="'+link+'" target="_blank" rel="noopener">'+
+        '<div class="thumb"><span class="tag-watch">Assista</span><img src="'+hi+'" alt="'+esc(title)+'" loading="lazy" '+
         'onerror="this.onerror=null;this.src=\''+fb+'\'">'+play+'</div>'+
-        '<div class="meta"><b>'+esc(title)+'</b><span>Nova Igreja Batista · Youtube</span></div></a>';
+        '<div class="meta"><b>'+esc(title)+'</b><span>Youtube · Nova Igreja Batista</span></div></a>';
     }).join("");
   }
 
