@@ -126,8 +126,11 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
 /* Seção da galeria com fundo claro */
 .gallery-section{background:#f4f6fb;padding:80px 0 100px;position:relative}
 /* transição suave entre seção escura e branca: o branco emerge de baixo */
-.gallery-section::before{content:"";position:absolute;top:-70px;left:0;right:0;height:70px;z-index:2;pointer-events:none;
-  background:linear-gradient(to top,#f4f6fb 0%,rgba(244,246,251,.7) 40%,rgba(244,246,251,0) 100%)}
+.gallery-section::before{content:"";position:absolute;top:-90px;left:0;right:0;height:90px;z-index:2;pointer-events:none;
+  background:linear-gradient(to top,#f4f6fb 0%,rgba(244,246,251,.6) 45%,rgba(244,246,251,0) 100%);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  -webkit-mask-image:linear-gradient(to top,#000 0%,#000 55%,transparent 100%);
+  mask-image:linear-gradient(to top,#000 0%,#000 55%,transparent 100%)}
 .gallery-section .gal-eyebrow{color:var(--blue)}
 .gallery-section .gal-title{color:#0a1428}
 .gallery-section .gal-title .editorial{color:var(--blue)}
@@ -162,8 +165,11 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
 }
 .cultos{background:var(--bg-2);position:relative}
 /* transição suave da seção branca (galeria) para a escura (cultos) */
-.cultos::before{content:"";position:absolute;top:-70px;left:0;right:0;height:70px;z-index:2;pointer-events:none;
-  background:linear-gradient(to top,var(--bg-2) 0%,rgba(10,15,28,.7) 40%,rgba(10,15,28,0) 100%)}
+.cultos::before{content:"";position:absolute;top:-90px;left:0;right:0;height:90px;z-index:2;pointer-events:none;
+  background:linear-gradient(to top,var(--bg-2) 0%,rgba(10,15,28,.6) 45%,rgba(10,15,28,0) 100%);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  -webkit-mask-image:linear-gradient(to top,#000 0%,#000 55%,transparent 100%);
+  mask-image:linear-gradient(to top,#000 0%,#000 55%,transparent 100%)}
 .cultos-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:56px}
 .culto{position:relative;border-radius:14px;overflow:hidden;min-height:300px;display:flex;align-items:flex-end;padding:30px;border:1px solid var(--line);background:linear-gradient(to top,rgba(5,7,13,.92),rgba(5,7,13,.35)),linear-gradient(135deg,#153a7a,#0a1428);background-size:cover;background-position:center;transition:.35s}
 .culto:hover{transform:translateY(-5px);box-shadow:0 30px 60px -30px rgba(29,127,255,.5)}
