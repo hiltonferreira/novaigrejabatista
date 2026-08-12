@@ -71,7 +71,7 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
     linear-gradient(to top,var(--bg) 2%,rgba(5,7,13,.5) 30%,transparent 70%)}
 .hero-inner{max-width:620px;margin-right:auto;margin-left:0;text-align:left}
 .hero .eyebrow{margin-bottom:14px;display:block}
-.hero h1{font-size:clamp(2rem,4.6vw,3.6rem);font-weight:800;line-height:1.08;max-width:16ch}
+.hero h1{font-size:clamp(1.8rem,3.9vw,3.1rem);font-weight:800;line-height:1.12;white-space:nowrap}
 .hero h1 .h1-light{font-weight:300}
 .hero h1 .editorial{font-size:1em;display:inline;font-weight:400;color:var(--cyan)}
 .hero p{margin:20px 0 26px;font-size:1.12rem;color:#cdd8f2;max-width:52ch}
@@ -194,6 +194,8 @@ footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
 .reveal.in{opacity:1;transform:none}
 @media(prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}html{scroll-behavior:auto}}
 @media(max-width:920px){
+  .hero h1{white-space:normal;font-size:clamp(2rem,7vw,2.6rem)}
+  .hero h1 br{display:none}
   .hero::after{background:linear-gradient(to top,var(--bg) 3%,rgba(5,7,13,.72) 45%,rgba(5,7,13,.55) 100%)}
   .hero .photo::before{-webkit-mask-image:none;mask-image:none;filter:none;content:none}
   .cel-grid,.contrib-grid,.vis-grid{grid-template-columns:1fr;gap:44px}
@@ -243,11 +245,10 @@ footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
   <div class="photo"></div>
   <div class="wrap hero-inner reveal">
     <span class="eyebrow">Um lar de fé e acolhimento</span>
-    <h1 class="display"><span class="h1-light">Não somos uma igreja perfeita.</span> Somos uma igreja <span class="editorial">saudável.</span></h1>
+    <h1 class="display"><span class="h1-light">Não somos uma <br>igreja perfeita,</span> somos <br>uma igreja <span class="editorial">saudável.</span></h1>
     <p>Uma igreja que busca a santidade e o profundo relacionamento com Cristo. Um povo que abençoa, inspira e manifesta a glória do Eterno.</p>
     <div class="hero-cta">
-      <a href="#cultos" class="btn btn-blue">Horários de culto →</a>
-      <a href="#mensagens" class="btn btn-ghost">Assistir mensagens</a>
+      <a href="#sobre" class="btn btn-ghost">Conhecer a igreja</a>
     </div>
     <div class="hero-hours">
       <div class="hh-head"><span class="eyebrow">Venha celebrar</span></div>
