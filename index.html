@@ -124,12 +124,10 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
 
 /* ===== Galeria coverflow ===== */
 /* Seção da galeria com fundo claro */
-.gallery-section{background:#f4f6fb;padding:80px 0 90px;position:relative;overflow:hidden}
-/* junção suave: degradê do escuro (seção 2) para o branco (seção 3) */
-.gallery-section::before{content:"";position:absolute;top:-1px;left:0;right:0;height:140px;z-index:0;pointer-events:none;
-  background:linear-gradient(to bottom,var(--bg) 0%,rgba(20,30,55,.6) 30%,rgba(180,195,225,.5) 65%,#f4f6fb 100%);
-  filter:blur(6px)}
-.gallery-section .wrap{position:relative;z-index:1}
+.gallery-section{background:#f4f6fb;padding:80px 0 90px;position:relative}
+/* transição suave entre seção escura e branca: o branco emerge de baixo */
+.gallery-section::before{content:"";position:absolute;top:-120px;left:0;right:0;height:120px;z-index:2;pointer-events:none;
+  background:linear-gradient(to top,#f4f6fb 0%,rgba(244,246,251,.85) 20%,rgba(244,246,251,.4) 55%,rgba(244,246,251,0) 100%)}
 .gallery-section .gal-eyebrow{color:var(--blue)}
 .gallery-section .gal-title{color:#0a1428}
 .gallery-section .gal-title .editorial{color:var(--blue)}
