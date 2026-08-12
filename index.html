@@ -57,11 +57,11 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
 .burger{display:none;background:none;border:0;cursor:pointer;flex-direction:column;gap:5px}
 .burger span{width:26px;height:2px;background:#fff;transition:.3s}
 .hero{min-height:100vh;display:flex;align-items:flex-end;padding:120px 0 70px;overflow:hidden}
-.hero .photo{position:absolute;inset:0;z-index:-2;background:#0a1330 center/cover no-repeat;
+.hero .photo{position:absolute;inset:0;z-index:-2;background:#0a1330 right center/cover no-repeat;
   background-image:url('img/hero-bg.jpg')}
 /* desfoque só na faixa esquerda, onde ficam os textos */
 .hero .photo::before{content:"";position:absolute;inset:0;
-  background:inherit;background-image:url('img/hero-bg.jpg');
+  background:#0a1330 right center/cover no-repeat;background-image:url('img/hero-bg.jpg');
   -webkit-mask-image:linear-gradient(to right,#000 0%,#000 32%,transparent 55%);
   mask-image:linear-gradient(to right,#000 0%,#000 32%,transparent 55%);
   filter:blur(9px);transform:scale(1.04)}
