@@ -124,7 +124,10 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
 
 /* ===== Galeria coverflow ===== */
 /* Seção da galeria com fundo claro */
-.gallery-section{background:#f4f6fb;padding:80px 0 150px;position:relative}
+.gallery-section{background:#f4f6fb;padding:80px 0 150px;position:relative;isolation:isolate}
+.gallery-section::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background:url('img/comunidade-bg.jpg') center top/cover no-repeat;opacity:.22}
+.gallery-section .wrap{position:relative;z-index:1}
 /* transição suave entre seção escura e branca: o branco emerge de baixo */
 .gallery-section::before{content:"";position:absolute;top:-200px;left:0;right:0;height:200px;z-index:2;pointer-events:none;
   background:linear-gradient(to top,
@@ -137,6 +140,7 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
     rgba(244,246,251,0) 100%)}
 .gallery-section .gal-eyebrow{color:var(--blue)}
 .gallery-section .gal-title{color:#0a1428}
+.gallery-section .gal-title .editorial{color:var(--blue)}
 .gallery-section .gal-title .editorial{color:var(--blue)}
 .gallery{margin-top:44px;position:relative;display:flex;align-items:center;justify-content:center;gap:10px;overflow-x:clip;padding:30px 0}
 .gal-stage{position:relative;width:100%;max-width:1000px;height:420px;perspective:1600px}
