@@ -124,7 +124,13 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
 
 /* ===== Galeria coverflow ===== */
 /* Seção da galeria com fundo claro */
-.gallery-section{background:#ffffff url('img/comunidade-bg.jpg') center top/100% auto no-repeat;padding:80px 0 150px;position:relative;isolation:isolate}
+.gallery-section{background:#ffffff;padding:80px 0 150px;position:relative;isolation:isolate;overflow:hidden}
+.gallery-section .gal-bg{position:absolute;inset:0;z-index:0;pointer-events:none;
+  background:url('img/comunidade-bg.jpg') center center/cover no-repeat}
+.gallery-section .gal-bg::after{content:"";position:absolute;inset:0;
+  background:
+    linear-gradient(to right,transparent 0%,#fff 30%,#fff 70%,transparent 100%),
+    linear-gradient(to bottom,#fff 0%,transparent 30%,transparent 70%,#fff 100%)}
 .gallery-section .wrap{position:relative;z-index:1}
 /* transição suave entre seção escura e branca: o branco emerge de baixo */
 .gallery-section::before{content:"";position:absolute;top:-200px;left:0;right:0;height:200px;z-index:2;pointer-events:none;
@@ -371,6 +377,7 @@ footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
 
 <!-- Seção da galeria (fundo claro) -->
 <section class="gallery-section" id="galeria">
+  <div class="gal-bg"></div>
   <div class="wrap">
     <div class="sec-head center reveal">
       <span class="eyebrow gal-eyebrow">Nossa comunidade</span>
