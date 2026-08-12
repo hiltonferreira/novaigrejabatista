@@ -112,7 +112,7 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
 .sobre-bg{position:relative;isolation:isolate}
 .sobre-bg::before{content:"";position:absolute;inset:0;z-index:-2;
   background:#05070d url('img/sobre-bg.jpg') center center/cover no-repeat;
-  opacity:var(--bg-op,0);transform:scale(var(--bg-scale,1.08));transition:opacity .15s linear,transform .15s linear}
+  opacity:var(--bg-op,0);transform:scale(var(--bg-scale,1.06));transition:opacity .4s ease-out,transform .4s ease-out}
 .sobre-bg::after{content:"";position:absolute;inset:0;z-index:-1;
   background:linear-gradient(to bottom,var(--bg) 0%,rgba(5,7,13,.82) 12%,rgba(5,7,13,.82) 88%,var(--bg) 100%)}
 .pillar::before{content:"";position:absolute;top:0;left:0;height:3px;width:0;background:var(--blue);transition:.4s}
@@ -123,7 +123,12 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
 .pillar p{color:var(--muted);font-size:.96rem}
 
 /* ===== Galeria coverflow ===== */
-.gallery{margin-top:52px;position:relative;display:flex;align-items:center;justify-content:center;gap:10px;overflow-x:clip;padding:30px 0}
+/* Seção da galeria com fundo claro */
+.gallery-section{background:#f4f6fb;padding:80px 0 90px;position:relative;overflow:hidden}
+.gallery-section .gal-eyebrow{color:var(--blue)}
+.gallery-section .gal-title{color:#0a1428}
+.gallery-section .gal-title .editorial{color:var(--blue)}
+.gallery{margin-top:44px;position:relative;display:flex;align-items:center;justify-content:center;gap:10px;overflow-x:clip;padding:30px 0}
 .gal-stage{position:relative;width:100%;max-width:1000px;height:420px;perspective:1600px}
 .gal-card{position:absolute;top:50%;left:50%;width:300px;height:390px;border-radius:18px;overflow:hidden;
   transform:translate(-50%,-50%);transition:transform .6s cubic-bezier(.25,.8,.25,1),opacity .6s,filter .6s;
@@ -131,19 +136,19 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
 .gal-card img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s cubic-bezier(.25,.8,.25,1)}
 /* posições: center, left, right, far (escondidos) */
 .gal-card.pos-center{opacity:1;pointer-events:auto;z-index:3;transform:translate(-50%,-50%) scale(1);filter:none;
-  box-shadow:0 0 60px 6px rgba(255,255,255,.18),0 20px 60px -15px rgba(0,0,0,.85)}
-.gal-card.pos-left{opacity:.7;z-index:2;transform:translate(-92%,-50%) scale(.84) rotateY(15deg);filter:blur(1.5px) brightness(.75)}
-.gal-card.pos-right{opacity:.7;z-index:2;transform:translate(-8%,-50%) scale(.84) rotateY(-15deg);filter:blur(1.5px) brightness(.75)}
-.gal-card.pos-far-left{opacity:.25;z-index:1;transform:translate(-135%,-50%) scale(.68) rotateY(20deg);filter:blur(3px) brightness(.5)}
-.gal-card.pos-far-right{opacity:.25;z-index:1;transform:translate(35%,-50%) scale(.68) rotateY(-20deg);filter:blur(3px) brightness(.5)}
+  box-shadow:0 30px 70px -20px rgba(10,20,40,.55),0 0 0 1px rgba(10,20,40,.08)}
+.gal-card.pos-left{opacity:.85;z-index:2;transform:translate(-92%,-50%) scale(.84) rotateY(15deg);filter:blur(1.5px) brightness(.9)}
+.gal-card.pos-right{opacity:.85;z-index:2;transform:translate(-8%,-50%) scale(.84) rotateY(-15deg);filter:blur(1.5px) brightness(.9)}
+.gal-card.pos-far-left{opacity:.4;z-index:1;transform:translate(-135%,-50%) scale(.68) rotateY(20deg);filter:blur(3px) brightness(.8)}
+.gal-card.pos-far-right{opacity:.4;z-index:1;transform:translate(35%,-50%) scale(.68) rotateY(-20deg);filter:blur(3px) brightness(.8)}
 .gal-card.pos-center:hover{transform:translate(-50%,-50%) scale(1.04)}
 .gal-card.pos-center:hover img{transform:scale(1.08)}
 .gal-card.pos-center::after{content:"";position:absolute;inset:0;border-radius:18px;
   box-shadow:inset 0 0 0 2px rgba(49,215,242,.5);opacity:0;transition:.4s}
 .gal-card.pos-center:hover::after{opacity:1}
-.gal-arrow{width:52px;height:52px;flex:0 0 auto;border-radius:50%;border:1px solid rgba(255,255,255,.35);
-  background:rgba(255,255,255,.06);backdrop-filter:blur(8px);color:rgba(255,255,255,.75);font-size:1.8rem;line-height:1;
-  display:grid;place-items:center;cursor:pointer;transition:.25s;z-index:5}
+.gal-arrow{width:52px;height:52px;flex:0 0 auto;border-radius:50%;border:1px solid rgba(10,20,40,.2);
+  background:rgba(255,255,255,.7);backdrop-filter:blur(8px);color:rgba(10,20,40,.65);font-size:1.8rem;line-height:1;
+  display:grid;place-items:center;cursor:pointer;transition:.25s;z-index:5;box-shadow:0 4px 14px -4px rgba(10,20,40,.25)}
 .gal-arrow:hover{background:var(--blue);border-color:var(--blue);color:#fff;transform:scale(1.08)}
 @media(max-width:768px){
   .gal-stage{height:400px}
@@ -337,8 +342,16 @@ footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
         <p>Cada filho é sacerdote e cada família é uma extensão da igreja, através das células.</p>
       </div>
     </div>
+  </div>
+</section>
 
-    <!-- Galeria coverflow -->
+<!-- Seção da galeria (fundo claro) -->
+<section class="gallery-section" id="galeria">
+  <div class="wrap">
+    <div class="sec-head center reveal">
+      <span class="eyebrow gal-eyebrow">Nossa comunidade</span>
+      <h2 class="display h-sec gal-title">Momentos que <span class="editorial">vivemos</span></h2>
+    </div>
     <div class="gallery reveal" id="gallery">
       <button class="gal-arrow gal-prev" id="galPrev" aria-label="Anterior">‹</button>
       <div class="gal-stage" id="galStage">
@@ -558,24 +571,18 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
   function update(){
     const r=sec.getBoundingClientRect();
     const vh=window.innerHeight;
-    // progresso: 0 quando a seção está totalmente abaixo/acima, 1 quando enquadrada
-    // fade-in: do topo entrando (r.top=vh) até o topo atingir 25% da tela
-    const start=vh;               // começa a aparecer quando o topo entra por baixo
-    const full=vh*0.25;           // totalmente visível quando o topo passa de 25%
-    let p;
-    if(r.top>=start) p=0;
-    else if(r.top<=full && r.bottom>=vh*0.6) p=1;   // enquadrada
-    else if(r.top<full){
-      // saindo por cima: o bottom subindo reduz a opacidade
-      if(r.bottom < vh*0.6){
-        p=Math.max(0, r.bottom/(vh*0.6));
-      } else {
-        p=Math.min(1,(start-r.top)/(start-full));
-      }
-    } else p=0;
+    // fade suave: baseado em quanto a seção está visível/centralizada
+    const secCenter=r.top+r.height/2;
+    const screenCenter=vh/2;
+    const dist=Math.abs(secCenter-screenCenter);
+    // fade acontece ao longo de uma faixa ampla (mais suave)
+    const range=vh*0.9+r.height/2;
+    let p=1-(dist/range);
+    // suavização com easing (mais gradual nas pontas)
     p=Math.max(0,Math.min(1,p));
+    p=p*p*(3-2*p); // smoothstep
     sec.style.setProperty('--bg-op', p.toFixed(3));
-    sec.style.setProperty('--bg-scale', (1.08 - 0.08*p).toFixed(3));
+    sec.style.setProperty('--bg-scale', (1.06 - 0.06*p).toFixed(3));
   }
   addEventListener('scroll',update,{passive:true});
   addEventListener('resize',update);
