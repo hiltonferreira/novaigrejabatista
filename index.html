@@ -75,11 +75,14 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
 .hero-hours .d{font-size:.7rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--cyan)}
 .hero-hours .hr{font-family:var(--display);font-weight:800;font-size:1.5rem;color:#fff;line-height:1;margin:6px 0 5px}
 .hero-hours .nm{font-size:.72rem;color:var(--muted);font-weight:500;line-height:1.3;white-space:nowrap}
-.strip{background:var(--blue);padding:22px 0;overflow:hidden}
-.strip .marquee{display:flex;gap:60px;white-space:nowrap;animation:scroll 26s linear infinite;font-family:var(--display);font-size:1.5rem;color:#fff;text-transform:uppercase;letter-spacing:.04em}
-.strip .marquee b{color:#bfe0ff}
-@keyframes scroll{to{transform:translateX(-50%)}}
-@media(prefers-reduced-motion:reduce){.strip .marquee{animation:none}}
+.strip{background:var(--blue);padding:10px 0;overflow:hidden;white-space:nowrap}
+.strip-track{display:inline-flex;align-items:center;animation:strip-scroll 40s linear infinite;will-change:transform}
+.strip:hover .strip-track{animation-play-state:paused}
+.strip-item{display:inline-flex;align-items:center;font-family:var(--display);font-size:.95rem;
+  color:#fff;text-transform:uppercase;letter-spacing:.06em}
+.strip-sep{color:#bfe0ff;margin:0 34px;font-size:.85em}
+@keyframes strip-scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@media(prefers-reduced-motion:reduce){.strip-track{animation:none}}
 .pad{padding:120px 0}
 .center{text-align:center}
 .center .lead{margin-inline:auto}
@@ -194,7 +197,8 @@ footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
   .hero-hours .hh-grid > div{border-bottom:1px solid var(--line)}
   .hero-hours .hh-grid > div:last-child{border-bottom:0}
   .hero-hours .hh-grid > div + div::before{display:none}
-  .strip .marquee{font-size:1.2rem}
+  .strip-item{font-size:1rem}
+  .strip-sep{margin:0 22px}
 }
 </style>
 </head>
@@ -245,13 +249,13 @@ footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
 </section>
 
 <div class="strip" aria-hidden="true">
-  <div class="marquee">
-    <span>Não somos uma igreja perfeita. Somos uma igreja saudável</span><b>✦</b>
-    <span>Uma casa para novos começos</span><b>✦</b>
-    <span>Domingo é dia de igreja</span><b>✦</b>
-    <span>Não somos uma igreja perfeita. Somos uma igreja saudável</span><b>✦</b>
-    <span>Uma casa para novos começos</span><b>✦</b>
-    <span>Domingo é dia de igreja</span><b>✦</b>
+  <div class="strip-track">
+    <span class="strip-item">Não somos uma igreja perfeita. Somos uma igreja saudável<span class="strip-sep">✦</span></span>
+    <span class="strip-item">Uma casa para novos começos<span class="strip-sep">✦</span></span>
+    <span class="strip-item">Domingo é dia de igreja<span class="strip-sep">✦</span></span>
+    <span class="strip-item" aria-hidden="true">Não somos uma igreja perfeita. Somos uma igreja saudável<span class="strip-sep">✦</span></span>
+    <span class="strip-item" aria-hidden="true">Uma casa para novos começos<span class="strip-sep">✦</span></span>
+    <span class="strip-item" aria-hidden="true">Domingo é dia de igreja<span class="strip-sep">✦</span></span>
   </div>
 </div>
 
