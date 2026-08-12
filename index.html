@@ -57,9 +57,19 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
 .burger{display:none;background:none;border:0;cursor:pointer;flex-direction:column;gap:5px}
 .burger span{width:26px;height:2px;background:#fff;transition:.3s}
 .hero{min-height:100vh;display:flex;align-items:flex-end;padding:120px 0 70px;overflow:hidden}
-.hero .photo{position:absolute;inset:0;z-index:-2;background:#0a1330 center/cover no-repeat;background-image:linear-gradient(120deg,rgba(5,7,13,.2),rgba(5,7,13,.6)),radial-gradient(80% 90% at 70% 20%,rgba(49,215,242,.18),transparent 60%),linear-gradient(160deg,#12224d,#060a16)}
-.hero::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(to top,var(--bg) 4%,rgba(5,7,13,.65) 40%,rgba(5,7,13,.25) 100%)}
-.hero-inner{max-width:900px}
+.hero .photo{position:absolute;inset:0;z-index:-2;background:#0a1330 center/cover no-repeat;
+  background-image:url('img/hero-bg.jpg')}
+/* desfoque só na faixa esquerda, onde ficam os textos */
+.hero .photo::before{content:"";position:absolute;inset:0;
+  background:inherit;background-image:url('img/hero-bg.jpg');
+  -webkit-mask-image:linear-gradient(to right,#000 0%,#000 32%,transparent 55%);
+  mask-image:linear-gradient(to right,#000 0%,#000 32%,transparent 55%);
+  filter:blur(9px);transform:scale(1.04)}
+.hero::after{content:"";position:absolute;inset:0;z-index:-1;
+  background:
+    linear-gradient(to right,rgba(5,7,13,.9) 0%,rgba(5,7,13,.75) 30%,rgba(5,7,13,.35) 55%,rgba(5,7,13,.15) 100%),
+    linear-gradient(to top,var(--bg) 2%,rgba(5,7,13,.5) 30%,transparent 70%)}
+.hero-inner{max-width:620px;margin-right:auto;margin-left:0;text-align:left}
 .hero .eyebrow{margin-bottom:18px;display:block}
 .hero h1{font-size:clamp(2rem,4.6vw,3.6rem);font-weight:800;line-height:1.08;max-width:16ch}
 .hero h1 .h1-light{font-weight:300}
@@ -184,6 +194,8 @@ footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
 .reveal.in{opacity:1;transform:none}
 @media(prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}html{scroll-behavior:auto}}
 @media(max-width:920px){
+  .hero::after{background:linear-gradient(to top,var(--bg) 3%,rgba(5,7,13,.72) 45%,rgba(5,7,13,.55) 100%)}
+  .hero .photo::before{-webkit-mask-image:none;mask-image:none;filter:none;content:none}
   .cel-grid,.contrib-grid,.vis-grid{grid-template-columns:1fr;gap:44px}
   .pillars,.cultos-grid,.videos,.lid-grid,.ev-grid{grid-template-columns:1fr}
   .nav-links{position:fixed;inset:0 0 0 auto;width:min(320px,84vw);background:var(--bg-2);flex-direction:column;justify-content:center;align-items:flex-start;padding:44px;gap:24px;transform:translateX(100%);transition:.35s;box-shadow:-12px 0 50px rgba(0,0,0,.5);border-left:1px solid var(--line);border-radius:0;backdrop-filter:none;-webkit-backdrop-filter:none;margin:0}
