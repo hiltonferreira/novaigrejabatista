@@ -65,6 +65,7 @@ header .wrap{padding:0 26px}
 .nav{display:flex;align-items:center;justify-content:space-between;gap:16px}
 .brand{display:flex;align-items:center;gap:12px}
 .logo-mark{height:38px;width:auto;flex:0 0 auto;display:block}
+.logo-compact{display:none}
 .brand .txt{font-family:var(--body);font-weight:600;font-size:1.05rem;letter-spacing:.01em;line-height:1.1;color:#fff}
 .brand .txt small{display:block;font-family:var(--body);font-size:.6rem;font-weight:400;letter-spacing:.14em;color:#fff;opacity:.85;margin-top:3px;text-transform:none}
 .nav-links{display:flex;gap:26px;align-items:center;margin:0 auto;
@@ -90,8 +91,8 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
   filter:blur(9px);transform:scale(1.04)}
 .hero::after{content:"";position:absolute;inset:0;z-index:-1;
   background:
-    linear-gradient(to right,rgba(6,7,73,.92) 0%,rgba(6,7,73,.78) 30%,rgba(6,7,73,.4) 55%,rgba(6,7,73,.15) 100%),
-    linear-gradient(to top,var(--bg) 2%,rgba(6,7,73,.55) 30%,transparent 70%)}
+    linear-gradient(to right,rgba(3,4,26,.95) 0%,rgba(4,5,35,.82) 30%,rgba(6,7,50,.42) 55%,rgba(6,7,60,.15) 100%),
+    linear-gradient(to top,var(--bg) 2%,rgba(4,5,30,.6) 30%,transparent 70%)}
 .hero-inner{max-width:620px;margin-right:auto;margin-left:0;text-align:left}
 .hero .eyebrow{margin-bottom:14px;display:block;font-family:var(--acumin);color:var(--laranja)}
 .hero h1{font-family:var(--acumin);font-size:clamp(1.9rem,4vw,3.3rem);font-weight:700;line-height:1.1;white-space:nowrap;letter-spacing:-.01em}
@@ -296,6 +297,8 @@ footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
 @media(prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}html{scroll-behavior:auto}}
 @media(max-width:920px){
   .hero h1{white-space:normal;font-size:clamp(2rem,7vw,2.6rem)}
+  .logo-full{display:none}
+  .logo-compact{display:block;height:34px}
   .hero h1 br{display:none}
   .hero::after{background:linear-gradient(to top,var(--bg) 3%,rgba(5,7,13,.72) 45%,rgba(5,7,13,.55) 100%)}
   .hero .photo::before{-webkit-mask-image:none;mask-image:none;filter:none;content:none}
@@ -323,7 +326,8 @@ footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
 <header id="header">
   <div class="wrap nav">
     <a class="brand" href="#top" aria-label="Nib - Nova Igreja Batista - A Casa de Deus">
-      <img class="logo-mark" src="img/logo/logo3-marfim.svg" alt="Nib - Nova Igreja Batista">
+      <img class="logo-mark logo-full" src="img/logo/logo2-branco.svg" alt="Nib - Nova Igreja Batista - A Casa de Deus">
+      <img class="logo-mark logo-compact" src="img/logo/logo3-branco.svg" alt="Nib - Nova Igreja Batista">
     </a>
     <nav class="nav-links" id="navLinks">
       <a href="#sobre">Sobre</a>
