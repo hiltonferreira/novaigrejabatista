@@ -75,10 +75,10 @@ header .wrap{padding:0 26px}
   padding:14px 30px;box-shadow:0 12px 40px -12px rgba(0,0,0,.6);transition:.35s}
 header.scrolled{inset:8px 0 auto 0}
 header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -14px rgba(0,0,0,.75)}
-.nav-links a{font-size:.82rem;font-weight:600;letter-spacing:.02em;text-transform:none;color:#cdd6ea;transition:.2s}
+.nav-links a{font-family:var(--acumin);font-size:.85rem;font-weight:500;letter-spacing:.01em;text-transform:none;color:#cdd6ea;transition:.2s}
 .nav-links a:hover{color:#fff}
-.nav-cta{background:var(--blue);color:#fff!important;padding:.75em 1.5em;border-radius:999px;font-weight:700}
-.nav-cta:hover{background:var(--blue-bright)}
+.nav-cta{font-family:var(--acumin);background:var(--laranja);color:var(--navy)!important;padding:.75em 1.5em;border-radius:999px;font-weight:600}
+.nav-cta:hover{background:var(--laranja-soft)}
 .burger{display:none;background:none;border:0;cursor:pointer;flex-direction:column;gap:5px}
 .burger span{width:26px;height:2px;background:#fff;transition:.3s}
 .hero{min-height:auto;display:flex;align-items:flex-end;padding:100px 0 44px;overflow:hidden}
@@ -98,7 +98,12 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
 .hero .eyebrow{margin-bottom:14px;display:block;font-family:var(--acumin);color:var(--laranja)}
 .hero h1{font-family:var(--acumin);font-size:clamp(1.9rem,4vw,3.3rem);font-weight:700;line-height:1.1;white-space:nowrap;letter-spacing:-.01em}
 .hero h1 .h1-light{font-weight:300}
-.hero h1 .editorial{font-size:1em;display:inline;font-weight:500;font-style:italic;color:var(--navy);background:var(--azul-gray);padding:0 .12em;border-radius:.08em;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.hero h1 .editorial{font-size:1em;display:inline;font-weight:500;font-style:italic;color:var(--marfim);
+  padding:0 .12em;border-radius:.08em;box-decoration-break:clone;-webkit-box-decoration-break:clone;
+  background-image:linear-gradient(#fff,#fff);
+  background-repeat:no-repeat;background-position:left center;background-size:0% 100%}
+.hero.reveal-fill h1 .editorial{background-size:100% 100%;color:var(--navy);
+  transition:background-size 1s cubic-bezier(.6,.1,.2,1) .3s,color .5s ease .7s}
 .hero p{margin:20px 0 26px;font-family:var(--acumin);font-size:1.15rem;font-weight:400;color:#e4e4d8;max-width:52ch}
 .hero-cta{display:flex;gap:14px;flex-wrap:wrap}
 .hero-hours{margin-top:30px;border:1px solid var(--line);border-radius:12px;overflow:hidden;max-width:740px;backdrop-filter:blur(6px);background:rgba(10,15,28,.5)}
@@ -620,6 +625,18 @@ burger.addEventListener('click',()=>links.classList.toggle('open'));
 links.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>links.classList.remove('open')));
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.12});
 document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+/* animação de preenchimento da palavra "saudável" quando a hero fica ativa */
+(function(){
+  const hero=document.querySelector('.hero');
+  if(!hero) return;
+  const obs=new IntersectionObserver(es=>es.forEach(e=>{
+    if(e.isIntersecting){ hero.classList.add('reveal-fill'); }
+    else{ hero.classList.remove('reveal-fill'); }  // reativa ao voltar
+  }),{threshold:.4});
+  obs.observe(hero);
+})();
+
 
 /* fundo da seção "Quem somos" aparece/desaparece conforme o scroll */
 (function(){
