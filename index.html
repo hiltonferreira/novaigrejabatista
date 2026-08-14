@@ -160,8 +160,12 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
 #sobre .h-sec{font-family:var(--acumin);font-weight:700;letter-spacing:-.01em;color:var(--marfim)}
 #sobre .h-sec .editorial{font-family:var(--acumin);font-style:italic;font-weight:600;color:var(--azul-luz)}
 #sobre .lead{font-family:var(--acumin);color:#c9cdd8}
+
+/* ===== Logo animada (vídeo) ===== */
+.logo-anim{display:flex;align-items:center;justify-content:center;margin:0 auto 8px;max-width:560px}
+.logo-anim .la-video{width:100%;height:auto;display:block;border-radius:10px}
 #sobre .pillar{background:rgba(6,7,50,.5);border:1px solid rgba(235,235,223,.14)}
-#sobre .pillar .k{font-family:var(--acumin);font-style:italic;font-weight:500;color:var(--azul-luz)}
+#sobre .pillar .k{font-family:var(--acumin);font-style:italic;font-weight:500;color:var(--laranja)}
 #sobre .pillar h3{font-family:var(--acumin);font-weight:700;color:var(--marfim)}
 #sobre .pillar p{font-family:var(--acumin);color:#aab0c0}
 #sobre .pillar::before{background:var(--laranja)}
@@ -412,7 +416,12 @@ footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
   <div class="wrap">
     <div class="sec-head center reveal">
       <span class="eyebrow">Quem somos</span>
-      <h2 class="display h-sec">Somos a <span class="editorial">Nova Igreja Batista</span></h2>
+      <div class="logo-anim" id="logoAnim" aria-label="Nib - Nova Igreja Batista - A Casa de Deus">
+        <video class="la-video" id="logoVideo" muted playsinline preload="auto" poster="">
+          <source src="video/logo-anim.webm" type="video/webm">
+          <source src="video/logo-anim.mp4" type="video/mp4">
+        </video>
+      </div>
       <p class="lead">Uma igreja que busca a santidade e o profundo relacionamento com Cristo. Um povo que abençoa, inspira e manifesta a glória do Eterno — e vive isso em família.</p>
     </div>
     <div class="pillars">
@@ -654,6 +663,18 @@ burger.addEventListener('click',()=>links.classList.toggle('open'));
 links.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>links.classList.remove('open')));
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.12});
 document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+/* toca o vídeo da logo quando a seção "Quem somos" fica visível */
+(function(){
+  const vid=document.getElementById('logoVideo');
+  if(!vid) return;
+  const obs=new IntersectionObserver(es=>es.forEach(e=>{
+    if(e.isIntersecting){ vid.currentTime=0; vid.play().catch(()=>{}); }
+    else{ vid.pause(); }
+  }),{threshold:.5});
+  obs.observe(vid);
+})();
+
 
 /* animação de preenchimento da palavra "saudável" quando a hero fica ativa */
 (function(){
