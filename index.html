@@ -125,13 +125,14 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
 .hero-hours .hr{font-family:var(--acumin);font-weight:700;font-size:1.6rem;color:var(--marfim);line-height:1;margin:6px 0 5px}
 .hero-hours .nm{font-family:var(--acumin);font-size:.75rem;color:var(--azul-gray);font-weight:400;line-height:1.3;white-space:nowrap}
 .strip{background:var(--marfim);padding:12px 0;overflow:hidden;white-space:nowrap;position:relative;z-index:3}
-.strip-track{display:inline-flex;align-items:center;animation:strip-scroll 40s linear infinite;will-change:transform}
+.strip-track{display:flex;align-items:center;width:max-content;animation:strip-scroll 35s linear infinite;will-change:transform}
 .strip:hover .strip-track{animation-play-state:paused}
-.strip-item{display:inline;font-family:var(--acumin);font-size:.9rem;font-weight:500;
-  color:var(--navy);text-transform:uppercase;letter-spacing:.08em}
+.strip-group{display:flex;align-items:center;flex:0 0 auto}
+.strip-item{display:inline-flex;align-items:center;font-family:var(--acumin);font-size:.9rem;font-weight:500;
+  color:var(--navy);text-transform:uppercase;letter-spacing:.08em;line-height:1;white-space:nowrap}
 .strip-item b{font-weight:700}
-.strip-sep{height:1.7em;width:auto;margin:0 28px;display:inline-block;vertical-align:middle}
-@keyframes strip-scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.strip-sep{height:1.7em;width:auto;margin:0 28px;flex:0 0 auto}
+@keyframes strip-scroll{from{transform:translateX(0)}to{transform:translateX(-33.333%)}}
 @media(prefers-reduced-motion:reduce){.strip-track{animation:none}}
 .pad{padding:120px 0}
 .center{text-align:center}
@@ -157,10 +158,10 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
 /* ===== Seção "Quem somos" — nova identidade ===== */
 #sobre .eyebrow{font-family:var(--acumin);color:var(--laranja);font-weight:600}
 #sobre .h-sec{font-family:var(--acumin);font-weight:700;letter-spacing:-.01em;color:var(--marfim)}
-#sobre .h-sec .editorial{font-family:var(--acumin);font-style:italic;font-weight:600;color:var(--laranja)}
+#sobre .h-sec .editorial{font-family:var(--acumin);font-style:italic;font-weight:600;color:var(--azul-luz)}
 #sobre .lead{font-family:var(--acumin);color:#c9cdd8}
 #sobre .pillar{background:rgba(6,7,50,.5);border:1px solid rgba(235,235,223,.14)}
-#sobre .pillar .k{font-family:var(--acumin);font-style:italic;font-weight:500;color:var(--laranja)}
+#sobre .pillar .k{font-family:var(--acumin);font-style:italic;font-weight:500;color:var(--azul-luz)}
 #sobre .pillar h3{font-family:var(--acumin);font-weight:700;color:var(--marfim)}
 #sobre .pillar p{font-family:var(--acumin);color:#aab0c0}
 #sobre .pillar::before{background:var(--laranja)}
@@ -389,12 +390,21 @@ footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
 
 <div class="strip" aria-hidden="true">
   <div class="strip-track">
-    <span class="strip-item">Não somos uma igreja perfeita, <b>somos uma igreja saudável</b><img class="strip-sep" src="img/logo/simbolo-laranja.png" alt=""></span>
-    <span class="strip-item">Uma casa para novos começos<img class="strip-sep" src="img/logo/simbolo-laranja.png" alt=""></span>
-    <span class="strip-item"><b>Domingo é dia de igreja</b><img class="strip-sep" src="img/logo/simbolo-laranja.png" alt=""></span>
-    <span class="strip-item" aria-hidden="true">Não somos uma igreja perfeita, <b>somos uma igreja saudável</b><img class="strip-sep" src="img/logo/simbolo-laranja.png" alt=""></span>
-    <span class="strip-item" aria-hidden="true">Uma casa para novos começos<img class="strip-sep" src="img/logo/simbolo-laranja.png" alt=""></span>
-    <span class="strip-item" aria-hidden="true"><b>Domingo é dia de igreja</b><img class="strip-sep" src="img/logo/simbolo-laranja.png" alt=""></span>
+    <div class="strip-group">
+      <span class="strip-item">Não somos uma igreja perfeita,&nbsp;<b>somos uma igreja saudável</b><img class="strip-sep" src="img/logo/simbolo-laranja.png" alt=""></span>
+      <span class="strip-item">Uma casa para novos começos<img class="strip-sep" src="img/logo/simbolo-laranja.png" alt=""></span>
+      <span class="strip-item"><b>Domingo é dia de igreja</b><img class="strip-sep" src="img/logo/simbolo-laranja.png" alt=""></span>
+    </div>
+    <div class="strip-group" aria-hidden="true">
+      <span class="strip-item">Não somos uma igreja perfeita,&nbsp;<b>somos uma igreja saudável</b><img class="strip-sep" src="img/logo/simbolo-laranja.png" alt=""></span>
+      <span class="strip-item">Uma casa para novos começos<img class="strip-sep" src="img/logo/simbolo-laranja.png" alt=""></span>
+      <span class="strip-item"><b>Domingo é dia de igreja</b><img class="strip-sep" src="img/logo/simbolo-laranja.png" alt=""></span>
+    </div>
+    <div class="strip-group" aria-hidden="true">
+      <span class="strip-item">Não somos uma igreja perfeita,&nbsp;<b>somos uma igreja saudável</b><img class="strip-sep" src="img/logo/simbolo-laranja.png" alt=""></span>
+      <span class="strip-item">Uma casa para novos começos<img class="strip-sep" src="img/logo/simbolo-laranja.png" alt=""></span>
+      <span class="strip-item"><b>Domingo é dia de igreja</b><img class="strip-sep" src="img/logo/simbolo-laranja.png" alt=""></span>
+    </div>
   </div>
 </div>
 
