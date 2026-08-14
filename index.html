@@ -124,12 +124,13 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
 .hero-hours .d{font-family:var(--acumin);font-size:.7rem;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--laranja)}
 .hero-hours .hr{font-family:var(--acumin);font-weight:700;font-size:1.6rem;color:var(--marfim);line-height:1;margin:6px 0 5px}
 .hero-hours .nm{font-family:var(--acumin);font-size:.75rem;color:var(--azul-gray);font-weight:400;line-height:1.3;white-space:nowrap}
-.strip{background:var(--blue);padding:10px 0;overflow:hidden;white-space:nowrap}
+.strip{background:var(--marfim);padding:12px 0;overflow:hidden;white-space:nowrap}
 .strip-track{display:inline-flex;align-items:center;animation:strip-scroll 40s linear infinite;will-change:transform}
 .strip:hover .strip-track{animation-play-state:paused}
-.strip-item{display:inline-flex;align-items:center;font-family:var(--display);font-size:.95rem;
-  color:#fff;text-transform:uppercase;letter-spacing:.06em}
-.strip-sep{color:#bfe0ff;margin:0 34px;font-size:.85em}
+.strip-item{display:inline;font-family:var(--acumin);font-size:.9rem;font-weight:500;
+  color:var(--navy);text-transform:uppercase;letter-spacing:.08em}
+.strip-item b{font-weight:700}
+.strip-sep{height:1.15em;width:auto;margin:0 30px;display:inline-block;vertical-align:middle}
 @keyframes strip-scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 @media(prefers-reduced-motion:reduce){.strip-track{animation:none}}
 .pad{padding:120px 0}
@@ -376,12 +377,12 @@ footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
 
 <div class="strip" aria-hidden="true">
   <div class="strip-track">
-    <span class="strip-item">Não somos uma igreja perfeita. Somos uma igreja saudável<span class="strip-sep">✦</span></span>
-    <span class="strip-item">Uma casa para novos começos<span class="strip-sep">✦</span></span>
-    <span class="strip-item">Domingo é dia de igreja<span class="strip-sep">✦</span></span>
-    <span class="strip-item" aria-hidden="true">Não somos uma igreja perfeita. Somos uma igreja saudável<span class="strip-sep">✦</span></span>
-    <span class="strip-item" aria-hidden="true">Uma casa para novos começos<span class="strip-sep">✦</span></span>
-    <span class="strip-item" aria-hidden="true">Domingo é dia de igreja<span class="strip-sep">✦</span></span>
+    <span class="strip-item">Não somos uma igreja perfeita, <b>somos uma igreja saudável</b><img class="strip-sep" src="img/logo/simbolo-laranja.svg" alt=""></span>
+    <span class="strip-item">Uma casa para novos começos<img class="strip-sep" src="img/logo/simbolo-laranja.svg" alt=""></span>
+    <span class="strip-item"><b>Domingo é dia de igreja</b><img class="strip-sep" src="img/logo/simbolo-laranja.svg" alt=""></span>
+    <span class="strip-item" aria-hidden="true">Não somos uma igreja perfeita, <b>somos uma igreja saudável</b><img class="strip-sep" src="img/logo/simbolo-laranja.svg" alt=""></span>
+    <span class="strip-item" aria-hidden="true">Uma casa para novos começos<img class="strip-sep" src="img/logo/simbolo-laranja.svg" alt=""></span>
+    <span class="strip-item" aria-hidden="true"><b>Domingo é dia de igreja</b><img class="strip-sep" src="img/logo/simbolo-laranja.svg" alt=""></span>
   </div>
 </div>
 
