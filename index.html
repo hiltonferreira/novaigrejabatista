@@ -162,11 +162,11 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
 #sobre .lead{font-family:var(--acumin);color:#c9cdd8}
 
 /* ===== "Somos a" + logo com brasão animado ===== */
-#sobre .somos-a{font-family:var(--acumin);font-weight:700;color:var(--marfim);margin-bottom:8px}
-.logo-anim{display:flex;align-items:center;justify-content:center;gap:.4rem;margin:0 auto 10px}
-.la-brasao-wrap{height:clamp(58px,7vw,92px);flex:0 0 auto;display:flex;align-items:center}
+#sobre .somos-a{font-family:var(--acumin);font-weight:700;color:#fff;font-size:clamp(1.6rem,3.2vw,2.6rem);flex:0 0 auto;margin-right:.3rem}
+.logo-anim{display:flex;align-items:center;justify-content:center;gap:.4rem;margin:0 auto 10px;flex-wrap:wrap}
+.la-brasao-wrap{height:clamp(62px,8vw,102px);flex:0 0 auto;display:flex;align-items:center}
 .la-brasao{height:100%;width:auto;display:block}
-.la-resto{height:clamp(38px,4.6vw,62px);width:auto;display:block}
+.la-resto{height:clamp(38px,4.7vw,62px);width:auto;display:block;margin-left:-2.5%}
 #sobre .pillar{background:rgba(6,7,50,.5);border:1px solid rgba(235,235,223,.14)}
 #sobre .pillar .k{font-family:var(--acumin);font-style:italic;font-weight:500;color:var(--laranja)}
 #sobre .pillar h3{font-family:var(--acumin);font-weight:700;color:var(--marfim)}
@@ -329,6 +329,10 @@ footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
 .reveal.in{opacity:1;transform:none}
 @media(prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}html{scroll-behavior:auto}}
 @media(max-width:920px){
+  #sobre .somos-a{width:100%;text-align:center;margin-right:0;margin-bottom:2px}
+  .logo-anim{gap:.3rem}
+  .la-brasao-wrap{height:clamp(52px,13vw,72px)}
+  .la-resto{height:clamp(30px,7.5vw,44px)}
   .hero h1{white-space:normal;font-size:clamp(2rem,7vw,2.6rem)}
   .logo-full{display:none}
   .logo-compact{display:block;height:34px}
@@ -419,15 +423,15 @@ footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
   <div class="wrap">
     <div class="sec-head center reveal">
       <span class="eyebrow">Quem somos</span>
-      <h2 class="display h-sec somos-a">Somos a</h2>
-      <div class="logo-anim" id="logoAnim" aria-label="Nib - Nova Igreja Batista - A Casa de Deus">
+      <div class="logo-anim" id="logoAnim" aria-label="Somos a Nib - Nova Igreja Batista - A Casa de Deus">
+        <span class="somos-a">Somos a</span>
         <div class="la-brasao-wrap">
           <video class="la-brasao" id="logoVideo" muted playsinline preload="auto">
-            <source src="video/brasao-alpha.webm" type="video/webm">
+            <source src="video/brasao-nib-alpha.webm" type="video/webm">
             <source src="video/brasao-anim.mp4" type="video/mp4">
           </video>
         </div>
-        <img class="la-resto" src="img/logo/anim/nib-textos.png" alt="Nib - Nova Igreja Batista - A Casa de Deus">
+        <img class="la-resto" src="img/logo/anim/so-textos.png" alt="Nova Igreja Batista - A Casa de Deus">
       </div>
       <p class="lead">Uma igreja que busca a santidade e o profundo relacionamento com Cristo. Um povo que abençoa, inspira e manifesta a glória do Eterno — e vive isso em família.</p>
     </div>
