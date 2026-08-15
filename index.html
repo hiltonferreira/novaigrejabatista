@@ -401,15 +401,23 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
 .pix-row .v{font-family:var(--acumin);font-weight:600;font-size:1.1rem;color:var(--marfim);letter-spacing:.02em}
 .qr{width:160px;height:160px;border-radius:12px;background:var(--bg);border:1px solid var(--line);margin:26px auto 0;display:grid;place-items:center;color:var(--muted);font-size:.72rem;text-align:center;padding:16px}
 /* degradês alternados para contraste entre seções escuras */
-/* Células - navy azulado (mais claro/presente) */
+/* Células - CLARA com degradê */
 #celulas{position:relative;isolation:isolate;
-  background:radial-gradient(90% 75% at 25% 12%,rgba(31,72,140,.4) 0%,transparent 58%),linear-gradient(165deg,#0a1230 0%,#101a42 55%,#0a1638 100%)}
+  background:radial-gradient(90% 75% at 25% 12%,rgba(255,127,64,.08) 0%,transparent 58%),linear-gradient(165deg,#EBEBDF 0%,#f2f2ea 55%,#e6e6d8 100%)}
 /* Mensagens - navy profundo (mais escuro) */
 .mensagens{position:relative;isolation:isolate;
   background:radial-gradient(85% 65% at 80% 8%,rgba(21,58,122,.22) 0%,transparent 55%),linear-gradient(200deg,#05061c 0%,#080c26 55%,#04051a 100%)}
-/* Liderança - navy azulado (mais claro) */
+/* Liderança - CLARA com degradê */
 #lideranca{position:relative;isolation:isolate;
-  background:radial-gradient(85% 70% at 75% 10%,rgba(31,72,140,.35) 0%,transparent 58%),linear-gradient(190deg,#0a1436 0%,#111c46 52%,#0a1230 100%)}
+  background:radial-gradient(85% 70% at 75% 10%,rgba(31,72,140,.1) 0%,transparent 58%),linear-gradient(190deg,#EBEBDF 0%,#f2f2ea 52%,#e6e6d8 100%)}
+/* textos escuros nas seções claras (células e liderança) */
+#celulas .eyebrow,#lideranca .eyebrow{color:var(--laranja)}
+#celulas .h-sec,#lideranca .h-sec{color:var(--navy)}
+#celulas .cel-copy h2 .editorial{color:var(--laranja)}
+#celulas .lead,#lideranca .lead{color:#4a5268}
+#celulas .cel-list li{color:#2a3245}
+#lideranca .h-sec{color:var(--navy)}
+#lideranca .lead{color:#4a5268}
 /* Eventos - navy profundo com toque laranja */
 .eventos{position:relative;isolation:isolate;
   background:radial-gradient(80% 65% at 20% 12%,rgba(255,127,64,.1) 0%,transparent 55%),linear-gradient(160deg,#04051a 0%,#080c24 55%,#05061c 100%)}
