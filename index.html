@@ -244,11 +244,17 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
   .gal-arrow{background:rgba(255,255,255,.85);color:rgba(10,20,40,.7);box-shadow:0 4px 14px -4px rgba(10,20,40,.3)}
   .gal-arrow:hover{background:#fff;color:var(--laranja);transform:scale(1.06)}
 }
-.cultos{position:relative;
+.cultos{position:relative;isolation:isolate;
   background:
     radial-gradient(120% 80% at 50% 0%,rgba(21,58,122,.35) 0%,transparent 55%),
     radial-gradient(100% 90% at 50% 100%,rgba(6,7,73,.5) 0%,transparent 60%),
     linear-gradient(180deg,#0a1020 0%,#0c1428 45%,#0a1220 100%)}
+.cultos .cultos-bg{position:absolute;inset:0;z-index:-2;
+  background:url('img/cultos-bg.jpg') center center/cover no-repeat;
+  opacity:var(--bg-op,0);transform:scale(var(--bg-scale,1.06));transition:opacity .4s ease-out,transform .4s ease-out}
+.cultos::after{content:"";position:absolute;inset:0;z-index:-1;
+  background:linear-gradient(to bottom,var(--bg) 0%,rgba(5,7,13,.85) 14%,rgba(5,7,13,.82) 86%,var(--bg) 100%)}
+.cultos .wrap{position:relative;z-index:1}
 /* transição suave da seção branca (galeria) para a escura (cultos) */
 .cultos::before{content:"";position:absolute;top:-200px;left:0;right:0;height:200px;z-index:2;pointer-events:none;
   background:linear-gradient(to top,
@@ -515,6 +521,7 @@ footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
 </section>
 
 <section class="cultos pad" id="cultos">
+  <div class="cultos-bg"></div>
   <div class="wrap">
     <div class="sec-head center reveal">
       <span class="eyebrow">Programação</span>
@@ -742,25 +749,23 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 })();
 
 
-/* fundo da seção "Quem somos" aparece/desaparece conforme o scroll */
+/* fundo com parallax (aparece/desaparece no scroll) — seções "Quem somos" e "Cultos" */
 (function(){
-  const sec=document.querySelector('.sobre-bg');
-  if(!sec) return;
+  const secs=[document.querySelector('.sobre-bg'),document.querySelector('.cultos')].filter(Boolean);
+  if(!secs.length) return;
   function update(){
-    const r=sec.getBoundingClientRect();
     const vh=window.innerHeight;
-    // fade suave: baseado em quanto a seção está visível/centralizada
-    const secCenter=r.top+r.height/2;
-    const screenCenter=vh/2;
-    const dist=Math.abs(secCenter-screenCenter);
-    // fade acontece ao longo de uma faixa ampla (mais suave)
-    const range=vh*0.9+r.height/2;
-    let p=1-(dist/range);
-    // suavização com easing (mais gradual nas pontas)
-    p=Math.max(0,Math.min(1,p));
-    p=p*p*(3-2*p); // smoothstep
-    sec.style.setProperty('--bg-op', p.toFixed(3));
-    sec.style.setProperty('--bg-scale', (1.06 - 0.06*p).toFixed(3));
+    secs.forEach(sec=>{
+      const r=sec.getBoundingClientRect();
+      const secCenter=r.top+r.height/2;
+      const dist=Math.abs(secCenter-vh/2);
+      const range=vh*0.9+r.height/2;
+      let p=1-(dist/range);
+      p=Math.max(0,Math.min(1,p));
+      p=p*p*(3-2*p); // smoothstep
+      sec.style.setProperty('--bg-op', p.toFixed(3));
+      sec.style.setProperty('--bg-scale', (1.06 - 0.06*p).toFixed(3));
+    });
   }
   addEventListener('scroll',update,{passive:true});
   addEventListener('resize',update);
