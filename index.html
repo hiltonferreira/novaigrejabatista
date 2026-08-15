@@ -349,7 +349,10 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
 .cel-photo .float{position:absolute;left:20px;bottom:20px;right:20px;background:rgba(10,15,28,.85);backdrop-filter:blur(8px);border:1px solid var(--line);border-radius:12px;padding:18px}
 .cel-photo .float b{font-family:var(--display);font-size:1.2rem;color:#fff;}
 .cel-photo .float p{color:var(--muted);font-size:.85rem;margin-top:4px}
-.mensagens{background:var(--bg-2)}
+.mensagens{position:relative;isolation:isolate;
+  background:
+    radial-gradient(90% 70% at 80% 10%,rgba(21,58,122,.28) 0%,transparent 55%),
+    linear-gradient(200deg,#060828 0%,#0a1130 55%,#060818 100%)}
 .msg-head{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:46px}
 .videos{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
 .video{border-radius:12px;overflow:hidden;background:var(--panel);border:1px solid var(--line);transition:.3s;display:block;color:inherit}
@@ -386,7 +389,10 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
 .lid .role{font-family:var(--acumin);font-style:italic;font-weight:500;font-size:1.4rem;color:var(--laranja)}
 .lid h3{font-family:var(--display);font-size:2rem;color:#fff;margin:2px 0 10px}
 .lid p{color:var(--muted);font-size:.95rem;max-width:42ch}
-.eventos{background:var(--bg-2)}
+.eventos{position:relative;isolation:isolate;
+  background:
+    radial-gradient(80% 70% at 20% 15%,rgba(255,127,64,.1) 0%,transparent 55%),
+    linear-gradient(160deg,#060818 0%,#0a1130 50%,#060828 100%)}
 .ev-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:24px;margin-top:56px}
 .evento{position:relative;border-radius:14px;overflow:hidden;min-height:280px;display:flex;align-items:flex-end;border:1px solid var(--line);background:linear-gradient(to top,rgba(5,7,13,.95),rgba(5,7,13,.2)),linear-gradient(135deg,#16407f,#0a1428);background-size:cover;background-position:center;transition:.35s}
 .evento:hover{transform:translateY(-4px);border-color:rgba(255,127,64,.4);box-shadow:0 30px 60px -30px rgba(255,127,64,.4)}
@@ -402,7 +408,17 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
 .pix-row .k{font-family:var(--acumin);font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--azul-gray)}
 .pix-row .v{font-family:var(--acumin);font-weight:600;font-size:1.1rem;color:var(--marfim);letter-spacing:.02em}
 .qr{width:160px;height:160px;border-radius:12px;background:var(--bg);border:1px solid var(--line);margin:26px auto 0;display:grid;place-items:center;color:var(--muted);font-size:.72rem;text-align:center;padding:16px}
-.visite{background:var(--bg-2)}
+.visite{position:relative;isolation:isolate;
+  background:
+    radial-gradient(90% 80% at 75% 90%,rgba(21,58,122,.25) 0%,transparent 55%),
+    linear-gradient(180deg,#060828 0%,#0a1130 55%,#060818 100%)}
+/* degradês nas demais seções escuras (antes cor chapada) */
+#celulas{position:relative;isolation:isolate;
+  background:radial-gradient(85% 70% at 25% 15%,rgba(21,58,122,.26) 0%,transparent 55%),linear-gradient(165deg,#060818 0%,#0a1130 55%,#060828 100%)}
+#lideranca{position:relative;isolation:isolate;
+  background:radial-gradient(80% 70% at 75% 10%,rgba(255,127,64,.09) 0%,transparent 55%),linear-gradient(195deg,#060828 0%,#0a1130 50%,#060818 100%)}
+#contribuicoes{position:relative;isolation:isolate;
+  background:radial-gradient(85% 75% at 30% 85%,rgba(21,58,122,.24) 0%,transparent 55%),linear-gradient(175deg,#060818 0%,#0a1130 55%,#060828 100%)}
 .vis-grid{display:grid;grid-template-columns:1fr 1.15fr;gap:52px;align-items:center}
 .vis-info .addr{font-family:var(--display);font-size:1.9rem;color:#fff;margin:18px 0 8px;line-height:1}
 .vis-info p{color:var(--muted)}
@@ -505,19 +521,19 @@ footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
       <span class="strip-item">Não somos uma igreja perfeita,&nbsp;<b>somos uma igreja saudável</b><img class="strip-sep" src="img/logo/simbolo-laranja.png" alt=""></span>
       <span class="strip-item">Uma casa para novos começos<img class="strip-sep" src="img/logo/simbolo-laranja.png" alt=""></span>
       <span class="strip-item"><b>Domingo é dia de igreja</b><img class="strip-sep" src="img/logo/simbolo-laranja.png" alt=""></span>
-      <span class="strip-item">Ariquemes · Rondônia<img class="strip-sep" src="img/logo/simbolo-laranja.png" alt=""></span>
+      <span class="strip-item"><b>Ariquemes · Rondônia</b><img class="strip-sep" src="img/logo/simbolo-laranja.png" alt=""></span>
     </div>
     <div class="strip-group" aria-hidden="true">
       <span class="strip-item">Não somos uma igreja perfeita,&nbsp;<b>somos uma igreja saudável</b><img class="strip-sep" src="img/logo/simbolo-laranja.png" alt=""></span>
       <span class="strip-item">Uma casa para novos começos<img class="strip-sep" src="img/logo/simbolo-laranja.png" alt=""></span>
       <span class="strip-item"><b>Domingo é dia de igreja</b><img class="strip-sep" src="img/logo/simbolo-laranja.png" alt=""></span>
-      <span class="strip-item">Ariquemes · Rondônia<img class="strip-sep" src="img/logo/simbolo-laranja.png" alt=""></span>
+      <span class="strip-item"><b>Ariquemes · Rondônia</b><img class="strip-sep" src="img/logo/simbolo-laranja.png" alt=""></span>
     </div>
     <div class="strip-group" aria-hidden="true">
       <span class="strip-item">Não somos uma igreja perfeita,&nbsp;<b>somos uma igreja saudável</b><img class="strip-sep" src="img/logo/simbolo-laranja.png" alt=""></span>
       <span class="strip-item">Uma casa para novos começos<img class="strip-sep" src="img/logo/simbolo-laranja.png" alt=""></span>
       <span class="strip-item"><b>Domingo é dia de igreja</b><img class="strip-sep" src="img/logo/simbolo-laranja.png" alt=""></span>
-      <span class="strip-item">Ariquemes · Rondônia<img class="strip-sep" src="img/logo/simbolo-laranja.png" alt=""></span>
+      <span class="strip-item"><b>Ariquemes · Rondônia</b><img class="strip-sep" src="img/logo/simbolo-laranja.png" alt=""></span>
     </div>
   </div>
 </div>
