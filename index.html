@@ -244,7 +244,11 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
   .gal-arrow{background:rgba(255,255,255,.85);color:rgba(10,20,40,.7);box-shadow:0 4px 14px -4px rgba(10,20,40,.3)}
   .gal-arrow:hover{background:#fff;color:var(--laranja);transform:scale(1.06)}
 }
-.cultos{background:var(--bg-2);position:relative}
+.cultos{position:relative;
+  background:
+    radial-gradient(120% 80% at 50% 0%,rgba(21,58,122,.35) 0%,transparent 55%),
+    radial-gradient(100% 90% at 50% 100%,rgba(6,7,73,.5) 0%,transparent 60%),
+    linear-gradient(180deg,#0a1020 0%,#0c1428 45%,#0a1220 100%)}
 /* transição suave da seção branca (galeria) para a escura (cultos) */
 .cultos::before{content:"";position:absolute;top:-200px;left:0;right:0;height:200px;z-index:2;pointer-events:none;
   background:linear-gradient(to top,
