@@ -268,8 +268,10 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
 #cultos .h-sec{font-family:var(--acumin);font-weight:700;letter-spacing:-.01em;color:var(--marfim)}
 #cultos .h-sec .editorial{font-family:var(--acumin);font-style:italic;font-weight:500;color:var(--laranja)}
 #cultos .lead{font-family:var(--acumin);color:#c9cdd8}
-#cultos .culto{background:linear-gradient(to top,rgba(3,4,26,.92),rgba(6,7,50,.4)),linear-gradient(135deg,#0a1a52,#060828)}
-#cultos .culto:hover{transform:translateY(-5px);border-color:rgba(255,127,64,.4);box-shadow:0 30px 60px -30px rgba(255,127,64,.4)}
+#cultos .culto{background:linear-gradient(to top,rgba(5,7,13,.92),rgba(5,7,13,.35)),linear-gradient(135deg,#153a7a,#0a1428);transition:.4s cubic-bezier(.2,.7,.2,1)}
+#cultos .culto::before{content:"";position:absolute;top:0;left:0;height:3px;width:0;background:var(--laranja);transition:.4s;z-index:2}
+#cultos .culto:hover::before{width:100%}
+#cultos .culto:hover{transform:translateY(-8px) scale(1.015);border-color:rgba(255,127,64,.5);box-shadow:0 24px 50px -20px rgba(255,127,64,.4)}
 #cultos .culto .badge{font-family:var(--editorial);font-style:italic;font-weight:400;font-size:1.35rem;color:var(--gold)}
 #cultos .culto .d{font-family:var(--acumin);font-weight:700;font-size:2.6rem;color:var(--marfim);line-height:.95}
 #cultos .culto .t{font-family:var(--acumin);font-weight:700;font-size:2rem;color:var(--laranja);margin:8px 0 6px}
