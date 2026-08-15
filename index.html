@@ -86,6 +86,8 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
 .nav-links a:hover{color:#fff}
 .nav-cta{font-family:var(--acumin);background:var(--laranja);color:var(--navy)!important;padding:.75em 1.5em;border-radius:999px;font-weight:600;transition:.25s}
 .nav-cta:hover{background:#fff;color:var(--navy)!important}
+.nav-cta-alt{background:rgba(235,235,223,.1);color:#fff!important;border:1px solid rgba(235,235,223,.35);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);margin-right:10px}
+.nav-cta-alt:hover{background:var(--marfim);color:var(--navy)!important;border-color:var(--marfim)}
 .burger{display:none;background:none;border:0;cursor:pointer;flex-direction:column;gap:5px}
 .burger span{width:26px;height:2px;background:#fff;transition:.3s}
 .hero{min-height:auto;display:flex;align-items:flex-end;padding:100px 0 44px;overflow:hidden}
@@ -258,9 +260,54 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
     linear-gradient(180deg,#0a1020 0%,#0c1428 45%,#0a1220 100%)}
 .cultos .cultos-bg{position:absolute;inset:0;z-index:-2;
   background:url('img/cultos-bg.jpg') center center/cover no-repeat;
-  opacity:var(--bg-op,0);transform:scale(var(--bg-scale,1.06));transition:opacity .4s ease-out,transform .4s ease-out}
+  opacity:var(--bg-op,0);transform:scale(var(--bg-scale,1.06));transition:opacity .4s ease-out,transform .4s ease-out;
+  -webkit-mask-image:linear-gradient(to bottom,transparent 0%,#000 15%,#000 70%,transparent 92%);
+  mask-image:linear-gradient(to bottom,transparent 0%,#000 15%,#000 70%,transparent 92%)}
 .cultos::after{content:"";position:absolute;inset:0;z-index:-1;
-  background:linear-gradient(to bottom,var(--bg) 0%,rgba(5,7,13,.85) 14%,rgba(5,7,13,.82) 86%,var(--bg) 100%)}
+  background:linear-gradient(to bottom,var(--bg) 0%,rgba(5,7,13,.85) 12%,rgba(5,7,13,.82) 62%,rgba(5,7,13,.92) 80%,var(--bg) 94%)}
+
+/* ===== Seção Construção do Templo ===== */
+.construcao{background:linear-gradient(160deg,#060828 0%,#0a1130 55%,#060818 100%);position:relative;overflow:hidden}
+.construcao::before{content:"";position:absolute;top:0;right:0;width:50%;height:100%;pointer-events:none;
+  background:radial-gradient(circle at 80% 40%,rgba(255,127,64,.12) 0%,transparent 60%)}
+.constr-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:60px;align-items:center;position:relative;z-index:1}
+.constr-info .eyebrow{font-family:var(--acumin);color:var(--laranja);font-weight:600}
+.constr-info .h-sec{font-family:var(--acumin);font-weight:700;letter-spacing:-.01em;color:var(--marfim)}
+.constr-info .h-sec .editorial{font-family:var(--acumin);font-style:italic;font-weight:500;color:var(--laranja)}
+.constr-info .lead{font-family:var(--acumin);color:#c9cdd8;margin:18px 0 30px}
+/* barra de progresso */
+.constr-progress{margin-bottom:32px}
+.cp-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
+.cp-label{font-family:var(--acumin);font-size:.85rem;letter-spacing:.1em;text-transform:uppercase;color:var(--azul-gray)}
+.cp-pct{font-family:var(--acumin);font-weight:700;font-size:1.4rem;color:var(--laranja)}
+.cp-bar{height:10px;border-radius:999px;background:rgba(235,235,223,.12);overflow:hidden}
+.cp-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--laranja),var(--laranja-soft));
+  box-shadow:0 0 16px -2px rgba(255,127,64,.6);width:0;transition:width 1.4s cubic-bezier(.4,0,.2,1)}
+/* stats */
+.constr-stats{display:flex;gap:36px;margin-bottom:32px}
+.cs-num{font-family:var(--acumin);font-weight:700;font-size:2rem;color:var(--marfim);line-height:1}
+.cs-txt{font-family:var(--acumin);font-size:.85rem;color:var(--azul-gray);margin-top:4px}
+/* botões */
+.constr-cta{display:flex;gap:14px;flex-wrap:wrap}
+.btn-orange{font-family:var(--acumin);background:var(--laranja);color:var(--navy);border-radius:999px;font-weight:600}
+.btn-orange:hover{background:var(--marfim)}
+.btn-ghost-dark{font-family:var(--acumin);border-radius:999px;border:1px solid rgba(235,235,223,.3);color:var(--marfim);
+  background:rgba(235,235,223,.06);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.btn-ghost-dark:hover{background:var(--marfim);color:var(--navy);border-color:var(--marfim)}
+/* mídia */
+.constr-media{position:relative}
+.constr-img-main{position:relative;border-radius:18px;overflow:hidden;aspect-ratio:4/3;
+  box-shadow:0 40px 80px -30px rgba(0,0,0,.7);border:1px solid rgba(235,235,223,.1)}
+.constr-img-main img{width:100%;height:100%;object-fit:cover;display:block}
+.constr-img-main.placeholder{background:linear-gradient(135deg,#0e1a44,#1a2a5e);display:flex;align-items:center;justify-content:center}
+.constr-img-main.placeholder img{display:none}
+.constr-img-main.placeholder::after{content:"Foto da obra";font-family:var(--acumin);color:var(--azul-gray);font-size:1rem}
+.constr-badge{position:absolute;top:18px;left:18px;font-family:var(--acumin);font-weight:600;font-size:.8rem;
+  padding:.5em 1em;border-radius:999px;background:var(--laranja);color:var(--navy);z-index:2}
+@media(max-width:920px){
+  .constr-grid{grid-template-columns:1fr;gap:36px}
+  .constr-stats{gap:24px}
+}
 .cultos .wrap{position:relative;z-index:1}
 /* transição suave da seção branca (galeria) para a escura (cultos) */
 .cultos::before{content:"";position:absolute;top:-200px;left:0;right:0;height:200px;z-index:2;pointer-events:none;
@@ -423,6 +470,7 @@ footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
       <a href="#lideranca">Liderança</a>
       <a href="#eventos">Eventos</a>
     </nav>
+    <a href="#construcao" class="nav-cta nav-cta-alt">Construção do templo</a>
     <a href="#visite" class="nav-cta">Venha nos visitar</a>
     <button class="burger" id="burger" aria-label="Abrir menu"><span></span><span></span><span></span></button>
   </div>
@@ -455,16 +503,19 @@ footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
       <span class="strip-item">Não somos uma igreja perfeita,&nbsp;<b>somos uma igreja saudável</b><img class="strip-sep" src="img/logo/simbolo-laranja.png" alt=""></span>
       <span class="strip-item">Uma casa para novos começos<img class="strip-sep" src="img/logo/simbolo-laranja.png" alt=""></span>
       <span class="strip-item"><b>Domingo é dia de igreja</b><img class="strip-sep" src="img/logo/simbolo-laranja.png" alt=""></span>
+      <span class="strip-item">Ariquemes · Rondônia<img class="strip-sep" src="img/logo/simbolo-laranja.png" alt=""></span>
     </div>
     <div class="strip-group" aria-hidden="true">
       <span class="strip-item">Não somos uma igreja perfeita,&nbsp;<b>somos uma igreja saudável</b><img class="strip-sep" src="img/logo/simbolo-laranja.png" alt=""></span>
       <span class="strip-item">Uma casa para novos começos<img class="strip-sep" src="img/logo/simbolo-laranja.png" alt=""></span>
       <span class="strip-item"><b>Domingo é dia de igreja</b><img class="strip-sep" src="img/logo/simbolo-laranja.png" alt=""></span>
+      <span class="strip-item">Ariquemes · Rondônia<img class="strip-sep" src="img/logo/simbolo-laranja.png" alt=""></span>
     </div>
     <div class="strip-group" aria-hidden="true">
       <span class="strip-item">Não somos uma igreja perfeita,&nbsp;<b>somos uma igreja saudável</b><img class="strip-sep" src="img/logo/simbolo-laranja.png" alt=""></span>
       <span class="strip-item">Uma casa para novos começos<img class="strip-sep" src="img/logo/simbolo-laranja.png" alt=""></span>
       <span class="strip-item"><b>Domingo é dia de igreja</b><img class="strip-sep" src="img/logo/simbolo-laranja.png" alt=""></span>
+      <span class="strip-item">Ariquemes · Rondônia<img class="strip-sep" src="img/logo/simbolo-laranja.png" alt=""></span>
     </div>
   </div>
 </div>
@@ -526,6 +577,41 @@ footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
         <div class="gal-card"><img src="img/galeria/recepcao-foto01.jpg" alt="Recepção e acolhimento" loading="lazy"></div>
       </div>
       <button class="gal-arrow gal-next" id="galNext" aria-label="Próximo">›</button>
+    </div>
+  </div>
+</section>
+
+<!-- Seção Construção do Templo -->
+<section class="construcao pad" id="construcao">
+  <div class="wrap">
+    <div class="constr-grid">
+      <div class="constr-info reveal">
+        <span class="eyebrow">O futuro da nossa casa</span>
+        <h2 class="display h-sec">Construção do <span class="editorial">novo templo</span></h2>
+        <p class="lead">Estamos edificando um novo lar para a família Nib — um espaço preparado para receber ainda mais pessoas, gerações e histórias que Deus vai transformar. Cada tijolo é um passo de fé, e cada contribuição faz parte dessa conquista.</p>
+        <div class="constr-progress">
+          <div class="cp-head">
+            <span class="cp-label">Andamento da obra</span>
+            <span class="cp-pct">45%</span>
+          </div>
+          <div class="cp-bar"><div class="cp-fill" data-width="45%"></div></div>
+        </div>
+        <div class="constr-stats">
+          <div class="cs-item"><div class="cs-num">2.000</div><div class="cs-txt">lugares planejados</div></div>
+          <div class="cs-item"><div class="cs-num">45%</div><div class="cs-txt">concluído</div></div>
+          <div class="cs-item"><div class="cs-num">2026</div><div class="cs-txt">previsão de entrega</div></div>
+        </div>
+        <div class="constr-cta">
+          <a href="#contribuicoes" class="btn btn-orange">Faça parte dessa obra</a>
+          <a href="#visite" class="btn btn-ghost-dark">Acompanhar de perto</a>
+        </div>
+      </div>
+      <div class="constr-media reveal">
+        <div class="constr-img-main">
+          <img src="img/construcao/obra-01.jpg" alt="Construção do novo templo" loading="lazy" onerror="this.parentElement.classList.add('placeholder')">
+          <span class="constr-badge">Obra em andamento</span>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -725,6 +811,18 @@ burger.addEventListener('click',()=>links.classList.toggle('open'));
 links.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>links.classList.remove('open')));
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.12});
 document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+/* anima a barra de progresso da construção quando aparece */
+(function(){
+  const fill=document.querySelector('.cp-fill');
+  if(!fill) return;
+  const obs=new IntersectionObserver(es=>es.forEach(e=>{
+    if(e.isIntersecting){ fill.style.width=fill.dataset.width; }
+    else{ fill.style.width='0'; }
+  }),{threshold:.4});
+  obs.observe(fill);
+})();
+
 
 /* orquestra a animação da logo: 1) Somos a  2) brasão+Nib (vídeo)  3) textos */
 (function(){
