@@ -116,8 +116,9 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
 .hero-hours .hh-head{padding:12px 22px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.02)}
 .hero-hours .hh-head .eyebrow{margin:0;color:var(--marfim);font-family:var(--acumin)}
 .hero .btn{font-family:var(--acumin);font-weight:600}
-.hero .btn-ghost{border-color:rgba(235,235,223,.35);color:var(--marfim)}
-.hero .btn-ghost:hover{border-color:var(--laranja);background:var(--laranja);color:var(--navy)}
+.hero .btn-ghost{border-radius:999px;border:1px solid rgba(235,235,223,.3);color:var(--marfim);
+  background:rgba(235,235,223,.08);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.hero .btn-ghost:hover{border-color:rgba(235,235,223,.6);background:rgba(235,235,223,.18)}
 .hero-hours .hh-grid{display:grid;grid-template-columns:repeat(3,1fr)}
 .hero-hours .hh-grid > div{padding:16px 22px;display:flex;flex-direction:column;position:relative}
 .hero-hours .hh-grid > div + div::before{content:"";position:absolute;left:0;top:50%;transform:translateY(-50%);width:1px;height:56%;background:var(--line)}
@@ -162,11 +163,21 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
 #sobre .lead{font-family:var(--acumin);color:#c9cdd8}
 
 /* ===== "Somos a" + logo com brasão animado ===== */
-#sobre .somos-a{font-family:var(--acumin);font-weight:700;color:#fff;font-size:clamp(1.6rem,3.2vw,2.6rem);flex:0 0 auto;margin-right:.3rem}
-.logo-anim{display:flex;align-items:center;justify-content:center;gap:.4rem;margin:0 auto 10px;flex-wrap:wrap}
-.la-brasao-wrap{height:clamp(62px,8vw,102px);flex:0 0 auto;display:flex;align-items:center}
+.logo-anim{display:flex;align-items:center;justify-content:center;gap:.5rem;margin:0 auto 10px;flex-wrap:wrap}
+#sobre .somos-a{font-family:var(--acumin);font-weight:700;color:#fff;font-size:clamp(1.6rem,3.2vw,2.6rem);flex:0 0 auto;
+  opacity:0;transform:translateY(8px)}
+.la-brasao-wrap{height:clamp(62px,8vw,102px);flex:0 0 auto;display:flex;align-items:center;
+  opacity:0}
 .la-brasao{height:100%;width:auto;display:block}
-.la-resto{height:clamp(38px,4.7vw,62px);width:auto;display:block;margin-left:-2.5%}
+.la-resto{height:clamp(38px,4.7vw,62px);width:auto;display:block;
+  opacity:0;transform:translateX(-16px)}
+/* sequência de animação: 1) Somos a  2) brasão+Nib  3) textos */
+.logo-anim.play .somos-a{animation:la-fadeup .6s ease-out forwards}
+.logo-anim.play .la-brasao-wrap{animation:la-fade .4s ease-out .6s forwards}
+.logo-anim.play .la-resto{animation:la-slidein .7s ease-out 8.5s forwards}
+@keyframes la-fadeup{to{opacity:1;transform:translateY(0)}}
+@keyframes la-fade{to{opacity:1}}
+@keyframes la-slidein{to{opacity:1;transform:translateX(0)}}
 #sobre .pillar{background:rgba(6,7,50,.5);border:1px solid rgba(235,235,223,.14)}
 #sobre .pillar .k{font-family:var(--acumin);font-style:italic;font-weight:500;color:var(--laranja)}
 #sobre .pillar h3{font-family:var(--acumin);font-weight:700;color:var(--marfim)}
@@ -675,15 +686,24 @@ links.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>links.clas
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.12});
 document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 
-/* toca o vídeo da logo quando a seção "Quem somos" fica visível */
+/* orquestra a animação da logo: 1) Somos a  2) brasão+Nib (vídeo)  3) textos */
 (function(){
+  const la=document.getElementById('logoAnim');
   const vid=document.getElementById('logoVideo');
-  if(!vid) return;
+  if(!la||!vid) return;
+  let timer=null;
   const obs=new IntersectionObserver(es=>es.forEach(e=>{
-    if(e.isIntersecting){ vid.currentTime=0; vid.play().catch(()=>{}); }
-    else{ vid.pause(); }
+    if(e.isIntersecting){
+      la.classList.remove('play'); void la.offsetWidth; la.classList.add('play');
+      vid.pause(); vid.currentTime=0;
+      clearTimeout(timer);
+      timer=setTimeout(()=>{ vid.play().catch(()=>{}); }, 600); // vídeo começa após "Somos a"
+    } else {
+      la.classList.remove('play');
+      vid.pause(); clearTimeout(timer);
+    }
   }),{threshold:.5});
-  obs.observe(vid);
+  obs.observe(la);
 })();
 
 
