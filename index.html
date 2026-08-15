@@ -197,7 +197,7 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
 
 /* ===== Galeria coverflow ===== */
 /* Seção da galeria com fundo claro */
-.gallery-section{background:#ffffff;padding:80px 0 150px;position:relative;isolation:isolate;overflow:hidden}
+.gallery-section{background:var(--marfim);padding:80px 0 150px;position:relative;isolation:isolate;overflow:hidden}
 .gallery-section .gal-bg{position:absolute;inset:0;z-index:0;pointer-events:none;
   background:url('img/comunidade-bg.jpg') center 60%/auto 100% no-repeat;
   -webkit-mask-image:
@@ -212,13 +212,13 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
 /* transição suave entre seção escura e branca: o branco emerge de baixo */
 .gallery-section::before{content:"";position:absolute;top:-200px;left:0;right:0;height:200px;z-index:2;pointer-events:none;
   background:linear-gradient(to top,
-    #f4f6fb 0%,
-    rgba(244,246,251,.92) 15%,
-    rgba(244,246,251,.75) 30%,
-    rgba(244,246,251,.5) 50%,
-    rgba(244,246,251,.28) 68%,
-    rgba(244,246,251,.12) 84%,
-    rgba(244,246,251,0) 100%)}
+    #EBEBDF 0%,
+    rgba(235,235,223,.92) 15%,
+    rgba(235,235,223,.75) 30%,
+    rgba(235,235,223,.5) 50%,
+    rgba(235,235,223,.28) 68%,
+    rgba(235,235,223,.12) 84%,
+    rgba(235,235,223,0) 100%)}
 .gallery-section .gal-eyebrow{font-family:var(--acumin);color:var(--laranja);font-weight:600}
 .gallery-section .gal-title{font-family:var(--acumin);font-weight:700;letter-spacing:-.01em;color:var(--navy)}
 .gallery-section .gal-title .editorial{font-family:var(--acumin);font-style:italic;font-weight:500;color:var(--laranja)}
