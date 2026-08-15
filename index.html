@@ -67,6 +67,13 @@ header .wrap{padding:0 26px}
 .brand{display:flex;align-items:center;gap:12px}
 .logo-mark{height:38px;width:auto;flex:0 0 auto;display:block}
 .logo-compact{display:none}
+/* logo desktop em peças: brasão+Nib fixo + textos que somem no scroll */
+.logo-full{display:inline-flex;align-items:center;gap:10px}
+.logo-full .lf-mark{height:38px;width:auto;display:block;flex:0 0 auto}
+.logo-full .lf-text{height:30px;width:auto;display:block;flex:0 0 auto;
+  opacity:1;max-width:200px;transition:opacity .4s ease,max-width .5s cubic-bezier(.4,0,.2,1),transform .4s ease,margin .4s ease}
+/* ao rolar: textos somem (fade + colapsam a largura) */
+header.scrolled .logo-full .lf-text{opacity:0;max-width:0;transform:translateX(-12px);margin-left:-10px}
 .brand .txt{font-family:var(--body);font-weight:600;font-size:1.05rem;letter-spacing:.01em;line-height:1.1;color:#fff}
 .brand .txt small{display:block;font-family:var(--body);font-size:.6rem;font-weight:400;letter-spacing:.14em;color:#fff;opacity:.85;margin-top:3px;text-transform:none}
 .nav-links{display:flex;gap:26px;align-items:center;margin:0 auto;
@@ -402,7 +409,10 @@ footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
 <header id="header">
   <div class="wrap nav">
     <a class="brand" href="#top" aria-label="Nib - Nova Igreja Batista - A Casa de Deus">
-      <img class="logo-mark logo-full" src="img/logo/logo2-branco.svg" alt="Nib - Nova Igreja Batista - A Casa de Deus">
+      <span class="logo-full">
+        <img class="lf-mark" src="img/logo/nav-brasao-nib.png" alt="Nib">
+        <img class="lf-text" src="img/logo/anim/so-textos.png" alt="Nova Igreja Batista - A Casa de Deus">
+      </span>
       <img class="logo-mark logo-compact" src="img/logo/logo3-branco.svg" alt="Nib - Nova Igreja Batista">
     </a>
     <nav class="nav-links" id="navLinks">
