@@ -118,7 +118,10 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
 .hero .btn{font-family:var(--acumin);font-weight:600}
 .hero .btn-ghost{border-radius:999px;border:1px solid rgba(235,235,223,.3);color:var(--marfim);
   background:rgba(235,235,223,.08);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
-.hero .btn-ghost:hover{border-color:rgba(235,235,223,.6);background:rgba(235,235,223,.18)}
+.hero .btn-ghost:hover{border-color:var(--marfim);background:var(--marfim);color:var(--navy)}
+.hero .btn-cell{font-family:var(--acumin);font-weight:600;border-radius:999px;border:1px solid var(--laranja);
+  color:var(--laranja);background:rgba(255,127,64,.1);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.hero .btn-cell:hover{background:var(--laranja);color:var(--navy);border-color:var(--laranja)}
 .hero-hours .hh-grid{display:grid;grid-template-columns:repeat(3,1fr)}
 .hero-hours .hh-grid > div{padding:16px 22px;display:flex;flex-direction:column;position:relative}
 .hero-hours .hh-grid > div + div::before{content:"";position:absolute;left:0;top:50%;transform:translateY(-50%);width:1px;height:56%;background:var(--line)}
@@ -340,6 +343,8 @@ footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
 .reveal.in{opacity:1;transform:none}
 @media(prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}html{scroll-behavior:auto}}
 @media(max-width:920px){
+  .hero-cta{width:100%}
+  .hero-cta .btn{flex:1 1 auto;justify-content:center}
   #sobre .somos-a{width:100%;text-align:center;margin-right:0;margin-bottom:2px}
   .logo-anim{gap:.3rem}
   .la-brasao-wrap{height:clamp(52px,13vw,72px)}
@@ -398,6 +403,7 @@ footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
     <p>Uma igreja que busca a santidade e o profundo relacionamento com Cristo. Um povo que abençoa, inspira e manifesta a glória do Eterno.</p>
     <div class="hero-cta">
       <a href="#sobre" class="btn btn-ghost">Conhecer a igreja</a>
+      <a href="#celulas" class="btn btn-cell">Encontre uma célula</a>
     </div>
     <div class="hero-hours">
       <div class="hh-head"><span class="eyebrow">Venha celebrar</span></div>
