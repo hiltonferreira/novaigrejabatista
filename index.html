@@ -300,6 +300,19 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
   box-shadow:0 40px 80px -30px rgba(0,0,0,.7);border:1px solid rgba(235,235,223,.1)}
 .constr-img-main img{width:100%;height:100%;object-fit:cover;display:block}
 .constr-img-main .constr-video{width:100%;height:100%;object-fit:cover;display:block}
+/* controles do vídeo da construção */
+.constr-controls{position:absolute;bottom:16px;left:16px;display:flex;gap:8px;z-index:3;opacity:0;transform:translateY(6px);transition:.3s}
+.constr-img-main:hover .constr-controls{opacity:1;transform:translateY(0)}
+.cc-btn{width:42px;height:42px;border-radius:50%;border:none;cursor:pointer;display:grid;place-items:center;
+  background:rgba(6,7,50,.65);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:#fff;transition:.2s}
+.cc-btn:hover{background:var(--laranja);color:var(--navy)}
+.cc-btn svg{fill:currentColor}
+.constr-unmute{position:absolute;bottom:16px;right:16px;z-index:3;display:inline-flex;align-items:center;gap:7px;cursor:pointer;
+  padding:.55em 1em;border-radius:999px;border:none;font-family:var(--acumin);font-weight:600;font-size:.82rem;
+  background:var(--laranja);color:var(--navy);transition:.25s;box-shadow:0 6px 20px -6px rgba(255,127,64,.6)}
+.constr-unmute svg{fill:currentColor}
+.constr-unmute:hover{background:var(--marfim)}
+.constr-unmute.hidden{display:none}
 .constr-img-main.placeholder{background:linear-gradient(135deg,#0e1a44,#1a2a5e);display:flex;align-items:center;justify-content:center}
 .constr-img-main.placeholder img{display:none}
 .constr-img-main.placeholder::after{content:"Foto da obra";font-family:var(--acumin);color:var(--azul-gray);font-size:1rem}
@@ -635,11 +648,25 @@ footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
         </div>
       </div>
       <div class="constr-media reveal">
-        <div class="constr-img-main">
+        <div class="constr-img-main" id="constrWrap">
           <video class="constr-video" id="constrVideo" muted playsinline loop preload="auto" poster="img/construcao/obra-poster.jpg" autoplay>
             <source src="video/construcao.mp4" type="video/mp4">
           </video>
           <span class="constr-badge">Obra em andamento</span>
+          <div class="constr-controls">
+            <button class="cc-btn" id="ccPlay" aria-label="Reproduzir ou pausar">
+              <svg class="cc-ic-pause" viewBox="0 0 24 24" width="20" height="20"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>
+              <svg class="cc-ic-play" viewBox="0 0 24 24" width="20" height="20" style="display:none"><path d="M8 5v14l11-7z"/></svg>
+            </button>
+            <button class="cc-btn" id="ccSound" aria-label="Ativar ou desativar som">
+              <svg class="cc-ic-muted" viewBox="0 0 24 24" width="20" height="20"><path d="M4 9v6h4l5 5V4L8 9H4z"/><path d="M16 8l5 8M21 8l-5 8" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+              <svg class="cc-ic-sound" viewBox="0 0 24 24" width="20" height="20" style="display:none"><path d="M4 9v6h4l5 5V4L8 9H4z"/><path d="M16 8a5 5 0 010 8" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+            </button>
+          </div>
+          <button class="constr-unmute" id="ccUnmute" aria-label="Ativar som">
+            <svg viewBox="0 0 24 24" width="18" height="18"><path d="M4 9v6h4l5 5V4L8 9H4z"/><path d="M16 8l5 8M21 8l-5 8" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+            <span>Ativar som</span>
+          </button>
         </div>
       </div>
     </div>
@@ -852,15 +879,57 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
   obs.observe(fill);
 })();
 
-/* autoplay do vídeo da construção quando a seção fica visível */
+/* vídeo da construção: autoplay ao aparecer + controles play/pause e som */
 (function(){
   const vid=document.getElementById('constrVideo');
   if(!vid) return;
+  const btnPlay=document.getElementById('ccPlay');
+  const btnSound=document.getElementById('ccSound');
+  const unmute=document.getElementById('ccUnmute');
+  const icPause=btnPlay.querySelector('.cc-ic-pause');
+  const icPlay=btnPlay.querySelector('.cc-ic-play');
+  const icMuted=btnSound.querySelector('.cc-ic-muted');
+  const icSound=btnSound.querySelector('.cc-ic-sound');
+  let userPaused=false;
+
+  function syncPlayIcon(){
+    const playing=!vid.paused;
+    icPause.style.display=playing?'':'none';
+    icPlay.style.display=playing?'none':'';
+  }
+  function syncSoundIcon(){
+    icMuted.style.display=vid.muted?'':'none';
+    icSound.style.display=vid.muted?'none':'';
+    unmute.classList.toggle('hidden',!vid.muted);
+  }
+
+  // autoplay quando a seção fica visível (só se o usuário não pausou manualmente)
   const obs=new IntersectionObserver(es=>es.forEach(e=>{
-    if(e.isIntersecting){ vid.play().catch(()=>{}); }
+    if(e.isIntersecting){ if(!userPaused) vid.play().catch(()=>{}); }
     else{ vid.pause(); }
   }),{threshold:.35});
   obs.observe(vid);
+
+  // play/pause
+  btnPlay.addEventListener('click',()=>{
+    if(vid.paused){ userPaused=false; vid.play().catch(()=>{}); }
+    else{ userPaused=true; vid.pause(); }
+  });
+  // liga/desliga som
+  function toggleSound(){
+    vid.muted=!vid.muted;
+    if(!vid.muted && vid.paused){ vid.play().catch(()=>{}); }
+    syncSoundIcon();
+  }
+  btnSound.addEventListener('click',toggleSound);
+  unmute.addEventListener('click',toggleSound);
+  // clicar no vídeo também libera o som (primeira interação)
+  vid.addEventListener('click',()=>{ if(vid.muted) toggleSound(); });
+
+  vid.addEventListener('play',syncPlayIcon);
+  vid.addEventListener('pause',syncPlayIcon);
+  vid.addEventListener('volumechange',syncSoundIcon);
+  syncPlayIcon(); syncSoundIcon();
 })();
 
 
