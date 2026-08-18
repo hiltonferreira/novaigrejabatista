@@ -357,48 +357,44 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
 .cel-head{text-align:center;max-width:760px;margin:0 auto}
 .cel-head h2 .editorial{display:block;font-size:.52em;margin-bottom:-.05em;font-weight:500;color:var(--laranja)}
 .cel-head .lead{margin-inline:auto}
-/* ===== Stack de cards por dia (empilhamento sticky) ===== */
-.stack{margin-top:56px;display:flex;flex-direction:column;gap:40px}
-.stack-card{position:sticky;top:100px;border-radius:20px;overflow:hidden;
-  border:1px solid rgba(255,255,255,.12);background:rgba(10,15,28,.72);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
-  box-shadow:0 30px 60px -30px rgba(0,0,0,.6);min-height:340px;display:flex;flex-direction:column;
-  transition:transform .3s}
-/* cabeçalho estilo tabela de horários da hero */
-.sc-head{padding:22px 30px;border-bottom:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03);display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
-.sc-count{font-family:var(--acumin);font-size:.72rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
-  padding:5px 13px;border-radius:999px;background:var(--laranja);color:var(--navy)}
-.sc-dia{font-family:var(--acumin);font-weight:700;font-size:1.9rem;color:var(--marfim);line-height:1}
-/* esteira interna de mini-cards */
-.sc-track-wrap{flex:1;overflow:hidden;padding:22px 0;position:relative;
-  -webkit-mask-image:linear-gradient(to right,transparent 0,#000 6%,#000 94%,transparent 100%);
-  mask-image:linear-gradient(to right,transparent 0,#000 6%,#000 94%,transparent 100%)}
-.sc-track{display:flex;gap:16px;padding:0 30px;width:max-content}
-.sc-track.sc-anim{animation:sc-scroll 55s linear infinite}
-.stack-card:hover .sc-track.sc-anim{animation-play-state:paused}
-@keyframes sc-scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-/* mini-cards das células */
-.mc{flex:0 0 280px;width:280px;display:flex;align-items:center;gap:12px;
-  background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:18px 18px;transition:.25s}
-.mc:hover{background:rgba(255,255,255,.1);border-color:rgba(255,127,64,.4);transform:translateY(-3px)}
-.mc-body{flex:1;display:flex;flex-direction:column;gap:3px;min-width:0}
-.mc-nome{font-family:var(--acumin);font-weight:700;font-size:1.05rem;color:var(--marfim);line-height:1.15}
-.mc-lider{font-family:var(--acumin);font-size:.82rem;color:var(--laranja)}
-.mc-loc{font-family:var(--acumin);font-size:.8rem;color:var(--azul-gray);line-height:1.3;margin-top:3px}
-.mc-hora{font-family:var(--acumin);font-size:.82rem;color:#cdd8f2;font-weight:600}
-.mc-wpp{flex:0 0 auto;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.1);transition:.25s}
-.mc-wpp svg{width:19px;height:19px;fill:#fff}
-.mc-wpp:hover{background:var(--laranja)}.mc-wpp:hover svg{fill:var(--navy)}
-/* faixa de cor por dia (borda superior) */
-.stack-card::before{content:"";position:absolute;top:0;left:0;right:0;height:4px;z-index:2}
-.sc-segunda::before{background:#7d9bd4}
-.sc-terca::before{background:var(--laranja)}
-.sc-quarta::before{background:#ffb877}
-.sc-sabado::before{background:#6ec9a0}
-@media(max-width:560px){
-  .mc{flex-basis:240px;width:240px}
-  .stack-card{top:80px;min-height:300px}
-  .sc-dia{font-size:1.5rem}
-}
+/* ===== Cards dos dias (claro, com stacking e setas) ===== */
+.days-stack{margin-top:56px;display:flex;flex-direction:column;gap:36px}
+.day-card{position:sticky;top:100px;border-radius:20px;overflow:hidden;
+  background:rgba(255,255,255,.7);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  border:1px solid rgba(6,7,73,.1);box-shadow:0 24px 50px -30px rgba(6,7,73,.35);
+  padding:30px 30px 32px;transition:.4s cubic-bezier(.2,.7,.2,1)}
+/* animação igual aos cards da seção anterior: barra laranja no topo + hover */
+.day-card::before{content:"";position:absolute;top:0;left:0;height:4px;width:0;background:var(--laranja);transition:.4s;z-index:2}
+.day-card:hover::before{width:100%}
+.day-card:hover{border-color:rgba(255,127,64,.45);box-shadow:0 30px 60px -28px rgba(255,127,64,.3)}
+.dc-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:24px;flex-wrap:wrap}
+.dc-count{display:inline-block;font-family:var(--acumin);font-size:.7rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--laranja);background:rgba(255,127,64,.14);padding:5px 13px;border-radius:999px;margin-bottom:10px}
+.dc-dia{font-family:var(--acumin);font-weight:700;font-size:2rem;color:var(--navy);line-height:1}
+.dc-nav{display:flex;gap:10px}
+.dc-arrow{width:46px;height:46px;border-radius:50%;border:none;cursor:pointer;background:var(--navy);color:#fff;
+  font-size:1.5rem;line-height:1;display:grid;place-items:center;transition:.25s}
+.dc-arrow:hover{background:var(--laranja);color:var(--navy)}
+.dc-arrow:disabled{opacity:.25;cursor:default}
+/* viewport + track das células */
+.dc-viewport{overflow:hidden}
+.dc-track{display:flex;gap:18px;transition:transform .5s cubic-bezier(.4,0,.2,1)}
+/* mini-cards */
+.mc{flex:0 0 calc((100% - 3*18px)/4);min-width:0;display:flex;flex-direction:column;
+  background:#fff;border:1px solid rgba(6,7,73,.08);border-radius:15px;padding:22px 20px;transition:.25s}
+.mc:hover{border-color:rgba(255,127,64,.4);box-shadow:0 16px 34px -20px rgba(6,7,73,.4);transform:translateY(-4px)}
+.mc-nome{font-family:var(--acumin);font-weight:700;font-size:1.12rem;color:var(--navy);line-height:1.15}
+.mc-lider{font-family:var(--acumin);font-size:.85rem;color:var(--laranja);margin-top:3px}
+.mc-rows{margin:15px 0 18px;display:flex;flex-direction:column;gap:9px;flex:1}
+.mc-row{display:flex;gap:9px;align-items:flex-start;font-family:var(--acumin);font-size:.83rem;color:#4a5268;line-height:1.35}
+.mc-ic{width:15px;height:15px;flex:0 0 auto;fill:var(--laranja);margin-top:2px}
+.mc-wpp{display:flex;align-items:center;justify-content:center;gap:8px;font-family:var(--acumin);font-weight:600;font-size:.84rem;
+  padding:.7em 1em;border-radius:999px;background:var(--navy);color:#fff;transition:.25s;text-decoration:none;white-space:nowrap}
+.mc-wpp svg{width:16px;height:16px;flex:0 0 auto;fill:currentColor}
+.mc-wpp:hover{background:var(--laranja);color:var(--navy)}
+@media(max-width:1100px){.mc{flex-basis:calc((100% - 2*18px)/3)}}
+@media(max-width:820px){.mc{flex-basis:calc((100% - 18px)/2)};.day-card{top:80px}}
+@media(max-width:560px){.mc{flex-basis:100%}}
 .msg-head{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:46px}
 .videos{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
 .video{border-radius:12px;overflow:hidden;background:var(--panel);border:1px solid var(--line);transition:.3s;display:block;color:inherit}
@@ -455,7 +451,11 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
 /* degradês alternados para contraste entre seções escuras */
 /* Células - CLARA com degradê */
 #celulas{position:relative;isolation:isolate;
-  background:radial-gradient(90% 75% at 25% 12%,rgba(31,72,140,.3) 0%,transparent 58%),linear-gradient(165deg,#0a1230 0%,#101a42 55%,#0a1638 100%)}
+  background:linear-gradient(165deg,#EBEBDF 0%,#f2f2ea 55%,#e6e6d8 100%)}
+#celulas .cel-bg{position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background:url('img/celulas-bg.jpg') center center/cover no-repeat;opacity:.5;
+  -webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 12%,#000 80%,transparent 100%);
+  mask-image:linear-gradient(to bottom,transparent 0,#000 12%,#000 80%,transparent 100%)}
 /* Mensagens - navy profundo (mais escuro) */
 .mensagens{position:relative;isolation:isolate;
   background:radial-gradient(85% 65% at 80% 8%,rgba(21,58,122,.22) 0%,transparent 55%),linear-gradient(200deg,#05061c 0%,#080c26 55%,#04051a 100%)}
@@ -466,8 +466,9 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
 /* textos escuros nas seções claras (células e liderança) */
 #lideranca .eyebrow{color:var(--laranja)}
 #lideranca .h-sec{color:var(--navy)}
-#celulas .h-sec{color:var(--marfim)}
+#celulas .h-sec{color:var(--navy)}
 #celulas .cel-head h2 .editorial{color:var(--laranja)}
+#celulas .lead{color:#4a5268}
 #lideranca .lead{color:#4a5268}
 #lideranca .h-sec{color:var(--navy)}
 #lideranca .lead{color:#4a5268}
@@ -741,391 +742,286 @@ footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
 </section>
 
 <section class="pad" id="celulas">
+  <div class="cel-bg"></div>
   <div class="wrap">
     <div class="cel-head reveal">
       <span class="eyebrow">Vida em comunidade</span>
       <h2 class="display h-sec"><span class="editorial">nossas</span>Células</h2>
       <p class="lead">A célula é mais que uma reunião — é um estilo de vida. Encontre uma célula perto de você, no dia que funciona pra sua rotina.</p>
     </div>
-    <div class="stack">
-      <article class="stack-card sc-segunda" style="--i:0">
-        <div class="sc-head">
-          <span class="sc-count">3 células</span>
-          <h3 class="sc-dia">Segundas-feiras</h3>
+    <div class="days-stack">
+      <article class="day-card sticky-day" style="--i:0">
+        <div class="dc-head">
+          <div class="dc-head-left">
+            <span class="dc-count">3 células</span>
+            <h3 class="dc-dia">Segundas-feiras</h3>
+          </div>
+          <div class="dc-nav">
+            <button class="dc-arrow" data-dir="-1" aria-label="Anterior">‹</button>
+            <button class="dc-arrow" data-dir="1" aria-label="Próximo">›</button>
+          </div>
         </div>
-        <div class="sc-track-wrap">
-          <div class="sc-track "><div class="mc">
-  <div class="mc-body">
-    <span class="mc-nome">Casa de Semeador</span>
-    <span class="mc-lider">Lucas e Nayana</span>
-    <span class="mc-loc">Rua Rio Negro, Grandes Áreas</span>
-    <span class="mc-hora">19:30 às 21:30</span>
+        <div class="dc-viewport">
+          <div class="dc-track">
+<div class="mc">
+  <span class="mc-nome">Casa de Semeador</span>
+  <span class="mc-lider">Lucas e Nayana</span>
+  <div class="mc-rows">
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Rio Negro, Grandes Áreas</span></div>
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>19:30 às 21:30</span></div>
   </div>
-  <a href="https://wa.me/5569984190569?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Casa%20de%20Semeador." target="_blank" rel="noopener" class="mc-wpp" aria-label="WhatsApp Casa de Semeador"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg></a>
-</div><div class="mc">
-  <div class="mc-body">
-    <span class="mc-nome">Renascer</span>
-    <span class="mc-lider">Dieferson</span>
-    <span class="mc-loc">Rua Machado de Assis, Setor 06</span>
-    <span class="mc-hora">19:30 às 21:30</span>
+  <a href="https://wa.me/5569984190569?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Casa%20de%20Semeador." target="_blank" rel="noopener" class="mc-wpp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg>Falar no WhatsApp</a>
+</div>
+<div class="mc">
+  <span class="mc-nome">Renascer</span>
+  <span class="mc-lider">Dieferson</span>
+  <div class="mc-rows">
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Machado de Assis, Setor 06</span></div>
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>19:30 às 21:30</span></div>
   </div>
-  <a href="https://wa.me/556999266763?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Renascer." target="_blank" rel="noopener" class="mc-wpp" aria-label="WhatsApp Renascer"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg></a>
-</div><div class="mc">
-  <div class="mc-body">
-    <span class="mc-nome">2 ou +</span>
-    <span class="mc-lider">Nelson, Débora e Antony</span>
-    <span class="mc-loc">Rua Paraná, Setor 05, ao lado do Kumon</span>
-    <span class="mc-hora">19:40 às 21:40</span>
+  <a href="https://wa.me/556999266763?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Renascer." target="_blank" rel="noopener" class="mc-wpp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg>Falar no WhatsApp</a>
+</div>
+<div class="mc">
+  <span class="mc-nome">2 ou +</span>
+  <span class="mc-lider">Nelson, Débora e Antony</span>
+  <div class="mc-rows">
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Paraná, Setor 05, ao lado do Kumon</span></div>
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>19:40 às 21:40</span></div>
   </div>
-  <a href="https://wa.me/5569984637235?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%202%20ou%20+." target="_blank" rel="noopener" class="mc-wpp" aria-label="WhatsApp 2 ou +"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg></a>
-</div></div>
-        </div>
-      </article>
-      <article class="stack-card sc-terca" style="--i:1">
-        <div class="sc-head">
-          <span class="sc-count">19 células</span>
-          <h3 class="sc-dia">Terças-feiras</h3>
-        </div>
-        <div class="sc-track-wrap">
-          <div class="sc-track sc-anim"><div class="mc">
-  <div class="mc-body">
-    <span class="mc-nome">Ágape</span>
-    <span class="mc-lider">Sérgio e Val</span>
-    <span class="mc-loc">Alameda Piquia, Setor 01</span>
-    <span class="mc-hora">20:00 às 22:00</span>
-  </div>
-  <a href="https://wa.me/5569992910380?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Ágape." target="_blank" rel="noopener" class="mc-wpp" aria-label="WhatsApp Ágape"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg></a>
-</div><div class="mc">
-  <div class="mc-body">
-    <span class="mc-nome">Boa Semente</span>
-    <span class="mc-lider">Gilberto e Liliam</span>
-    <span class="mc-loc">AV. Capitão Silvio, Cond. Villagio Nipote</span>
-    <span class="mc-hora">19:30 às 21:30</span>
-  </div>
-  <a href="https://wa.me/5569984133298?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Boa%20Semente." target="_blank" rel="noopener" class="mc-wpp" aria-label="WhatsApp Boa Semente"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg></a>
-</div><div class="mc">
-  <div class="mc-body">
-    <span class="mc-nome">Casa de Elohim</span>
-    <span class="mc-lider">Jacque e Ribinho</span>
-    <span class="mc-loc">Rua Aracaju, Setor 03</span>
-    <span class="mc-hora">19:30 às 21:30</span>
-  </div>
-  <a href="https://wa.me/556992579289?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Casa%20de%20Elohim." target="_blank" rel="noopener" class="mc-wpp" aria-label="WhatsApp Casa de Elohim"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg></a>
-</div><div class="mc">
-  <div class="mc-body">
-    <span class="mc-nome">Casa de Jetro</span>
-    <span class="mc-lider">Rodrigo e Ticiana</span>
-    <span class="mc-loc">Rua Rio Negro, Jardim das Palmeiras</span>
-    <span class="mc-hora">19:30 às 21:30</span>
-  </div>
-  <a href="https://wa.me/556993228174?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Casa%20de%20Jetro." target="_blank" rel="noopener" class="mc-wpp" aria-label="WhatsApp Casa de Jetro"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg></a>
-</div><div class="mc">
-  <div class="mc-body">
-    <span class="mc-nome">Casa Emanuel</span>
-    <span class="mc-lider">Terezinha</span>
-    <span class="mc-loc">AV. JK, Fundo Refrigeração São Paulo</span>
-    <span class="mc-hora">19:30 às 21:30</span>
-  </div>
-  <a href="https://wa.me/5569999966690?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Casa%20Emanuel." target="_blank" rel="noopener" class="mc-wpp" aria-label="WhatsApp Casa Emanuel"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg></a>
-</div><div class="mc">
-  <div class="mc-body">
-    <span class="mc-nome">Casa Leão de Judá</span>
-    <span class="mc-lider">Maycon e Thais</span>
-    <span class="mc-loc">Rua Jânio Quadros, Setor 08</span>
-    <span class="mc-hora">20:00 às 22:00</span>
-  </div>
-  <a href="https://wa.me/556992322397?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Casa%20Leão%20de%20Judá." target="_blank" rel="noopener" class="mc-wpp" aria-label="WhatsApp Casa Leão de Judá"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg></a>
-</div><div class="mc">
-  <div class="mc-body">
-    <span class="mc-nome">Efatá</span>
-    <span class="mc-lider">Eduarda e Leandro</span>
-    <span class="mc-loc">Rua Monte Negro, Apoio Social</span>
-    <span class="mc-hora">20:00 às 22:00</span>
-  </div>
-  <a href="https://wa.me/5569992244783?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Efatá." target="_blank" rel="noopener" class="mc-wpp" aria-label="WhatsApp Efatá"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg></a>
-</div><div class="mc">
-  <div class="mc-body">
-    <span class="mc-nome">Filhos de Davi</span>
-    <span class="mc-lider">Fernando e Yasmin</span>
-    <span class="mc-loc">Rua Maceió, Setor 03</span>
-    <span class="mc-hora">20:30 às 22:30</span>
-  </div>
-  <a href="https://wa.me/5569984113315?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Filhos%20de%20Davi." target="_blank" rel="noopener" class="mc-wpp" aria-label="WhatsApp Filhos de Davi"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg></a>
-</div><div class="mc">
-  <div class="mc-body">
-    <span class="mc-nome">Gênesis</span>
-    <span class="mc-lider">Pr. Alex e Pra. Sheila</span>
-    <span class="mc-loc">Rua Marabá, Jardim Jorge Teixeira</span>
-    <span class="mc-hora">19:30 às 21:30</span>
-  </div>
-  <a href="https://wa.me/5569984813665?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Gênesis." target="_blank" rel="noopener" class="mc-wpp" aria-label="WhatsApp Gênesis"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg></a>
-</div><div class="mc">
-  <div class="mc-body">
-    <span class="mc-nome">Gileade</span>
-    <span class="mc-lider">Toni e Natália</span>
-    <span class="mc-loc">Rua Beija Flor, Setor 02</span>
-    <span class="mc-hora">19:30 às 21:30</span>
-  </div>
-  <a href="https://wa.me/5569984110701?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Gileade." target="_blank" rel="noopener" class="mc-wpp" aria-label="WhatsApp Gileade"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg></a>
-</div><div class="mc">
-  <div class="mc-body">
-    <span class="mc-nome">João 20</span>
-    <span class="mc-lider">Breno, Élica e Camila</span>
-    <span class="mc-loc">Rua Matão, Jardim Paulista</span>
-    <span class="mc-hora">19:30 às 21:30</span>
-  </div>
-  <a href="https://wa.me/5569984081528?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20João%2020." target="_blank" rel="noopener" class="mc-wpp" aria-label="WhatsApp João 20"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg></a>
-</div><div class="mc">
-  <div class="mc-body">
-    <span class="mc-nome">Kairos</span>
-    <span class="mc-lider">Andréia e Filipe</span>
-    <span class="mc-loc">Rua Natal, Setor 03</span>
-    <span class="mc-hora">19:30 às 21:30</span>
-  </div>
-  <a href="https://wa.me/5569992593087?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Kairos." target="_blank" rel="noopener" class="mc-wpp" aria-label="WhatsApp Kairos"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg></a>
-</div><div class="mc">
-  <div class="mc-body">
-    <span class="mc-nome">Sal da Terra</span>
-    <span class="mc-lider">Luiz e Juliana</span>
-    <span class="mc-loc">Rua Pimenta Bueno, Setor BNH</span>
-    <span class="mc-hora">19:30 às 21:30</span>
-  </div>
-  <a href="https://wa.me/5569984447302?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Sal%20da%20Terra." target="_blank" rel="noopener" class="mc-wpp" aria-label="WhatsApp Sal da Terra"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg></a>
-</div><div class="mc">
-  <div class="mc-body">
-    <span class="mc-nome">Fontes de Águas Vivas</span>
-    <span class="mc-lider">Aline, Taynara e Walter</span>
-    <span class="mc-loc">Rua Milão, Jardim Alvorada</span>
-    <span class="mc-hora">20:00 às 22:00</span>
-  </div>
-  <a href="https://wa.me/556984859950?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Fontes%20de%20Águas%20Vivas." target="_blank" rel="noopener" class="mc-wpp" aria-label="WhatsApp Fontes de Águas Vivas"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg></a>
-</div><div class="mc">
-  <div class="mc-body">
-    <span class="mc-nome">Jeová Jireh</span>
-    <span class="mc-lider">Marlon e Marcia</span>
-    <span class="mc-loc">Rua Moema, Jardim Jorge Teixeira</span>
-    <span class="mc-hora">19:30 às 21:30</span>
-  </div>
-  <a href="https://wa.me/5569984443809?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Jeová%20Jireh." target="_blank" rel="noopener" class="mc-wpp" aria-label="WhatsApp Jeová Jireh"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg></a>
-</div><div class="mc">
-  <div class="mc-body">
-    <span class="mc-nome">Monte Ararate</span>
-    <span class="mc-lider">Lindalva</span>
-    <span class="mc-loc">Rua Tabajara, BNH</span>
-    <span class="mc-hora">20:00 às 22:00</span>
-  </div>
-  <a href="https://wa.me/556993532978?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Monte%20Ararate." target="_blank" rel="noopener" class="mc-wpp" aria-label="WhatsApp Monte Ararate"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg></a>
-</div><div class="mc">
-  <div class="mc-body">
-    <span class="mc-nome">Casa de Israel</span>
-    <span class="mc-lider">Mariana e Gabriel</span>
-    <span class="mc-loc">Rua Moema, Jardim Jorge Teixeira</span>
-    <span class="mc-hora">19:30 às 21:30</span>
-  </div>
-  <a href="https://wa.me/5569993691157?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Casa%20de%20Israel." target="_blank" rel="noopener" class="mc-wpp" aria-label="WhatsApp Casa de Israel"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg></a>
-</div><div class="mc">
-  <div class="mc-body">
-    <span class="mc-nome">Moriah</span>
-    <span class="mc-lider">Izabel e Borba</span>
-    <span class="mc-loc">Rua Francisco Alves Pinto, Bom Jesus</span>
-    <span class="mc-hora">19:30 às 21:30</span>
-  </div>
-  <a href="https://wa.me/556999447006?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Moriah." target="_blank" rel="noopener" class="mc-wpp" aria-label="WhatsApp Moriah"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg></a>
-</div><div class="mc">
-  <div class="mc-body">
-    <span class="mc-nome">Filhos da Promessa</span>
-    <span class="mc-lider">Pr. Sidiel</span>
-    <span class="mc-loc">Rua Rio Grande do Norte, Setor 05</span>
-    <span class="mc-hora">19:30 às 21:30</span>
-  </div>
-  <a href="https://wa.me/5569992441207?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Filhos%20da%20Promessa." target="_blank" rel="noopener" class="mc-wpp" aria-label="WhatsApp Filhos da Promessa"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg></a>
-</div><div class="mc">
-  <div class="mc-body">
-    <span class="mc-nome">Ágape</span>
-    <span class="mc-lider">Sérgio e Val</span>
-    <span class="mc-loc">Alameda Piquia, Setor 01</span>
-    <span class="mc-hora">20:00 às 22:00</span>
-  </div>
-  <a href="https://wa.me/5569992910380?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Ágape." target="_blank" rel="noopener" class="mc-wpp" aria-label="WhatsApp Ágape"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg></a>
-</div><div class="mc">
-  <div class="mc-body">
-    <span class="mc-nome">Boa Semente</span>
-    <span class="mc-lider">Gilberto e Liliam</span>
-    <span class="mc-loc">AV. Capitão Silvio, Cond. Villagio Nipote</span>
-    <span class="mc-hora">19:30 às 21:30</span>
-  </div>
-  <a href="https://wa.me/5569984133298?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Boa%20Semente." target="_blank" rel="noopener" class="mc-wpp" aria-label="WhatsApp Boa Semente"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg></a>
-</div><div class="mc">
-  <div class="mc-body">
-    <span class="mc-nome">Casa de Elohim</span>
-    <span class="mc-lider">Jacque e Ribinho</span>
-    <span class="mc-loc">Rua Aracaju, Setor 03</span>
-    <span class="mc-hora">19:30 às 21:30</span>
-  </div>
-  <a href="https://wa.me/556992579289?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Casa%20de%20Elohim." target="_blank" rel="noopener" class="mc-wpp" aria-label="WhatsApp Casa de Elohim"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg></a>
-</div><div class="mc">
-  <div class="mc-body">
-    <span class="mc-nome">Casa de Jetro</span>
-    <span class="mc-lider">Rodrigo e Ticiana</span>
-    <span class="mc-loc">Rua Rio Negro, Jardim das Palmeiras</span>
-    <span class="mc-hora">19:30 às 21:30</span>
-  </div>
-  <a href="https://wa.me/556993228174?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Casa%20de%20Jetro." target="_blank" rel="noopener" class="mc-wpp" aria-label="WhatsApp Casa de Jetro"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg></a>
-</div><div class="mc">
-  <div class="mc-body">
-    <span class="mc-nome">Casa Emanuel</span>
-    <span class="mc-lider">Terezinha</span>
-    <span class="mc-loc">AV. JK, Fundo Refrigeração São Paulo</span>
-    <span class="mc-hora">19:30 às 21:30</span>
-  </div>
-  <a href="https://wa.me/5569999966690?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Casa%20Emanuel." target="_blank" rel="noopener" class="mc-wpp" aria-label="WhatsApp Casa Emanuel"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg></a>
-</div><div class="mc">
-  <div class="mc-body">
-    <span class="mc-nome">Casa Leão de Judá</span>
-    <span class="mc-lider">Maycon e Thais</span>
-    <span class="mc-loc">Rua Jânio Quadros, Setor 08</span>
-    <span class="mc-hora">20:00 às 22:00</span>
-  </div>
-  <a href="https://wa.me/556992322397?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Casa%20Leão%20de%20Judá." target="_blank" rel="noopener" class="mc-wpp" aria-label="WhatsApp Casa Leão de Judá"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg></a>
-</div><div class="mc">
-  <div class="mc-body">
-    <span class="mc-nome">Efatá</span>
-    <span class="mc-lider">Eduarda e Leandro</span>
-    <span class="mc-loc">Rua Monte Negro, Apoio Social</span>
-    <span class="mc-hora">20:00 às 22:00</span>
-  </div>
-  <a href="https://wa.me/5569992244783?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Efatá." target="_blank" rel="noopener" class="mc-wpp" aria-label="WhatsApp Efatá"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg></a>
-</div><div class="mc">
-  <div class="mc-body">
-    <span class="mc-nome">Filhos de Davi</span>
-    <span class="mc-lider">Fernando e Yasmin</span>
-    <span class="mc-loc">Rua Maceió, Setor 03</span>
-    <span class="mc-hora">20:30 às 22:30</span>
-  </div>
-  <a href="https://wa.me/5569984113315?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Filhos%20de%20Davi." target="_blank" rel="noopener" class="mc-wpp" aria-label="WhatsApp Filhos de Davi"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg></a>
-</div><div class="mc">
-  <div class="mc-body">
-    <span class="mc-nome">Gênesis</span>
-    <span class="mc-lider">Pr. Alex e Pra. Sheila</span>
-    <span class="mc-loc">Rua Marabá, Jardim Jorge Teixeira</span>
-    <span class="mc-hora">19:30 às 21:30</span>
-  </div>
-  <a href="https://wa.me/5569984813665?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Gênesis." target="_blank" rel="noopener" class="mc-wpp" aria-label="WhatsApp Gênesis"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg></a>
-</div><div class="mc">
-  <div class="mc-body">
-    <span class="mc-nome">Gileade</span>
-    <span class="mc-lider">Toni e Natália</span>
-    <span class="mc-loc">Rua Beija Flor, Setor 02</span>
-    <span class="mc-hora">19:30 às 21:30</span>
-  </div>
-  <a href="https://wa.me/5569984110701?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Gileade." target="_blank" rel="noopener" class="mc-wpp" aria-label="WhatsApp Gileade"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg></a>
-</div><div class="mc">
-  <div class="mc-body">
-    <span class="mc-nome">João 20</span>
-    <span class="mc-lider">Breno, Élica e Camila</span>
-    <span class="mc-loc">Rua Matão, Jardim Paulista</span>
-    <span class="mc-hora">19:30 às 21:30</span>
-  </div>
-  <a href="https://wa.me/5569984081528?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20João%2020." target="_blank" rel="noopener" class="mc-wpp" aria-label="WhatsApp João 20"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg></a>
-</div><div class="mc">
-  <div class="mc-body">
-    <span class="mc-nome">Kairos</span>
-    <span class="mc-lider">Andréia e Filipe</span>
-    <span class="mc-loc">Rua Natal, Setor 03</span>
-    <span class="mc-hora">19:30 às 21:30</span>
-  </div>
-  <a href="https://wa.me/5569992593087?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Kairos." target="_blank" rel="noopener" class="mc-wpp" aria-label="WhatsApp Kairos"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg></a>
-</div><div class="mc">
-  <div class="mc-body">
-    <span class="mc-nome">Sal da Terra</span>
-    <span class="mc-lider">Luiz e Juliana</span>
-    <span class="mc-loc">Rua Pimenta Bueno, Setor BNH</span>
-    <span class="mc-hora">19:30 às 21:30</span>
-  </div>
-  <a href="https://wa.me/5569984447302?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Sal%20da%20Terra." target="_blank" rel="noopener" class="mc-wpp" aria-label="WhatsApp Sal da Terra"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg></a>
-</div><div class="mc">
-  <div class="mc-body">
-    <span class="mc-nome">Fontes de Águas Vivas</span>
-    <span class="mc-lider">Aline, Taynara e Walter</span>
-    <span class="mc-loc">Rua Milão, Jardim Alvorada</span>
-    <span class="mc-hora">20:00 às 22:00</span>
-  </div>
-  <a href="https://wa.me/556984859950?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Fontes%20de%20Águas%20Vivas." target="_blank" rel="noopener" class="mc-wpp" aria-label="WhatsApp Fontes de Águas Vivas"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg></a>
-</div><div class="mc">
-  <div class="mc-body">
-    <span class="mc-nome">Jeová Jireh</span>
-    <span class="mc-lider">Marlon e Marcia</span>
-    <span class="mc-loc">Rua Moema, Jardim Jorge Teixeira</span>
-    <span class="mc-hora">19:30 às 21:30</span>
-  </div>
-  <a href="https://wa.me/5569984443809?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Jeová%20Jireh." target="_blank" rel="noopener" class="mc-wpp" aria-label="WhatsApp Jeová Jireh"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg></a>
-</div><div class="mc">
-  <div class="mc-body">
-    <span class="mc-nome">Monte Ararate</span>
-    <span class="mc-lider">Lindalva</span>
-    <span class="mc-loc">Rua Tabajara, BNH</span>
-    <span class="mc-hora">20:00 às 22:00</span>
-  </div>
-  <a href="https://wa.me/556993532978?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Monte%20Ararate." target="_blank" rel="noopener" class="mc-wpp" aria-label="WhatsApp Monte Ararate"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg></a>
-</div><div class="mc">
-  <div class="mc-body">
-    <span class="mc-nome">Casa de Israel</span>
-    <span class="mc-lider">Mariana e Gabriel</span>
-    <span class="mc-loc">Rua Moema, Jardim Jorge Teixeira</span>
-    <span class="mc-hora">19:30 às 21:30</span>
-  </div>
-  <a href="https://wa.me/5569993691157?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Casa%20de%20Israel." target="_blank" rel="noopener" class="mc-wpp" aria-label="WhatsApp Casa de Israel"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg></a>
-</div><div class="mc">
-  <div class="mc-body">
-    <span class="mc-nome">Moriah</span>
-    <span class="mc-lider">Izabel e Borba</span>
-    <span class="mc-loc">Rua Francisco Alves Pinto, Bom Jesus</span>
-    <span class="mc-hora">19:30 às 21:30</span>
-  </div>
-  <a href="https://wa.me/556999447006?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Moriah." target="_blank" rel="noopener" class="mc-wpp" aria-label="WhatsApp Moriah"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg></a>
-</div><div class="mc">
-  <div class="mc-body">
-    <span class="mc-nome">Filhos da Promessa</span>
-    <span class="mc-lider">Pr. Sidiel</span>
-    <span class="mc-loc">Rua Rio Grande do Norte, Setor 05</span>
-    <span class="mc-hora">19:30 às 21:30</span>
-  </div>
-  <a href="https://wa.me/5569992441207?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Filhos%20da%20Promessa." target="_blank" rel="noopener" class="mc-wpp" aria-label="WhatsApp Filhos da Promessa"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg></a>
-</div></div>
+  <a href="https://wa.me/5569984637235?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%202%20ou%20+." target="_blank" rel="noopener" class="mc-wpp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg>Falar no WhatsApp</a>
+</div>
+          </div>
         </div>
       </article>
-      <article class="stack-card sc-quarta" style="--i:2">
-        <div class="sc-head">
-          <span class="sc-count">1 célula</span>
-          <h3 class="sc-dia">Quartas-feiras</h3>
+      <article class="day-card sticky-day" style="--i:1">
+        <div class="dc-head">
+          <div class="dc-head-left">
+            <span class="dc-count">19 células</span>
+            <h3 class="dc-dia">Terças-feiras</h3>
+          </div>
+          <div class="dc-nav">
+            <button class="dc-arrow" data-dir="-1" aria-label="Anterior">‹</button>
+            <button class="dc-arrow" data-dir="1" aria-label="Próximo">›</button>
+          </div>
         </div>
-        <div class="sc-track-wrap">
-          <div class="sc-track "><div class="mc">
-  <div class="mc-body">
-    <span class="mc-nome">A Grande Comissão</span>
-    <span class="mc-lider">Netão</span>
-    <span class="mc-loc">AV. Hugo Fray, Cond. residencial São Paulo</span>
-    <span class="mc-hora">20:00 às 22:00</span>
+        <div class="dc-viewport">
+          <div class="dc-track">
+<div class="mc">
+  <span class="mc-nome">Ágape</span>
+  <span class="mc-lider">Sérgio e Val</span>
+  <div class="mc-rows">
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Alameda Piquia, Setor 01</span></div>
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>20:00 às 22:00</span></div>
   </div>
-  <a href="https://wa.me/5569999631363?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20A%20Grande%20Comissão." target="_blank" rel="noopener" class="mc-wpp" aria-label="WhatsApp A Grande Comissão"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg></a>
-</div></div>
+  <a href="https://wa.me/5569992910380?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Ágape." target="_blank" rel="noopener" class="mc-wpp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg>Falar no WhatsApp</a>
+</div>
+<div class="mc">
+  <span class="mc-nome">Boa Semente</span>
+  <span class="mc-lider">Gilberto e Liliam</span>
+  <div class="mc-rows">
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>AV. Capitão Silvio, Cond. Villagio Nipote</span></div>
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>19:30 às 21:30</span></div>
+  </div>
+  <a href="https://wa.me/5569984133298?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Boa%20Semente." target="_blank" rel="noopener" class="mc-wpp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg>Falar no WhatsApp</a>
+</div>
+<div class="mc">
+  <span class="mc-nome">Casa de Elohim</span>
+  <span class="mc-lider">Jacque e Ribinho</span>
+  <div class="mc-rows">
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Aracaju, Setor 03</span></div>
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>19:30 às 21:30</span></div>
+  </div>
+  <a href="https://wa.me/556992579289?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Casa%20de%20Elohim." target="_blank" rel="noopener" class="mc-wpp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg>Falar no WhatsApp</a>
+</div>
+<div class="mc">
+  <span class="mc-nome">Casa de Jetro</span>
+  <span class="mc-lider">Rodrigo e Ticiana</span>
+  <div class="mc-rows">
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Rio Negro, Jardim das Palmeiras</span></div>
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>19:30 às 21:30</span></div>
+  </div>
+  <a href="https://wa.me/556993228174?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Casa%20de%20Jetro." target="_blank" rel="noopener" class="mc-wpp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg>Falar no WhatsApp</a>
+</div>
+<div class="mc">
+  <span class="mc-nome">Casa Emanuel</span>
+  <span class="mc-lider">Terezinha</span>
+  <div class="mc-rows">
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>AV. JK, Fundo Refrigeração São Paulo</span></div>
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>19:30 às 21:30</span></div>
+  </div>
+  <a href="https://wa.me/5569999966690?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Casa%20Emanuel." target="_blank" rel="noopener" class="mc-wpp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg>Falar no WhatsApp</a>
+</div>
+<div class="mc">
+  <span class="mc-nome">Casa Leão de Judá</span>
+  <span class="mc-lider">Maycon e Thais</span>
+  <div class="mc-rows">
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Jânio Quadros, Setor 08</span></div>
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>20:00 às 22:00</span></div>
+  </div>
+  <a href="https://wa.me/556992322397?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Casa%20Leão%20de%20Judá." target="_blank" rel="noopener" class="mc-wpp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg>Falar no WhatsApp</a>
+</div>
+<div class="mc">
+  <span class="mc-nome">Efatá</span>
+  <span class="mc-lider">Eduarda e Leandro</span>
+  <div class="mc-rows">
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Monte Negro, Apoio Social</span></div>
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>20:00 às 22:00</span></div>
+  </div>
+  <a href="https://wa.me/5569992244783?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Efatá." target="_blank" rel="noopener" class="mc-wpp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg>Falar no WhatsApp</a>
+</div>
+<div class="mc">
+  <span class="mc-nome">Filhos de Davi</span>
+  <span class="mc-lider">Fernando e Yasmin</span>
+  <div class="mc-rows">
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Maceió, Setor 03</span></div>
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>20:30 às 22:30</span></div>
+  </div>
+  <a href="https://wa.me/5569984113315?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Filhos%20de%20Davi." target="_blank" rel="noopener" class="mc-wpp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg>Falar no WhatsApp</a>
+</div>
+<div class="mc">
+  <span class="mc-nome">Gênesis</span>
+  <span class="mc-lider">Pr. Alex e Pra. Sheila</span>
+  <div class="mc-rows">
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Marabá, Jardim Jorge Teixeira</span></div>
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>19:30 às 21:30</span></div>
+  </div>
+  <a href="https://wa.me/5569984813665?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Gênesis." target="_blank" rel="noopener" class="mc-wpp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg>Falar no WhatsApp</a>
+</div>
+<div class="mc">
+  <span class="mc-nome">Gileade</span>
+  <span class="mc-lider">Toni e Natália</span>
+  <div class="mc-rows">
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Beija Flor, Setor 02</span></div>
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>19:30 às 21:30</span></div>
+  </div>
+  <a href="https://wa.me/5569984110701?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Gileade." target="_blank" rel="noopener" class="mc-wpp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg>Falar no WhatsApp</a>
+</div>
+<div class="mc">
+  <span class="mc-nome">João 20</span>
+  <span class="mc-lider">Breno, Élica e Camila</span>
+  <div class="mc-rows">
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Matão, Jardim Paulista</span></div>
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>19:30 às 21:30</span></div>
+  </div>
+  <a href="https://wa.me/5569984081528?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20João%2020." target="_blank" rel="noopener" class="mc-wpp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg>Falar no WhatsApp</a>
+</div>
+<div class="mc">
+  <span class="mc-nome">Kairos</span>
+  <span class="mc-lider">Andréia e Filipe</span>
+  <div class="mc-rows">
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Natal, Setor 03</span></div>
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>19:30 às 21:30</span></div>
+  </div>
+  <a href="https://wa.me/5569992593087?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Kairos." target="_blank" rel="noopener" class="mc-wpp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg>Falar no WhatsApp</a>
+</div>
+<div class="mc">
+  <span class="mc-nome">Sal da Terra</span>
+  <span class="mc-lider">Luiz e Juliana</span>
+  <div class="mc-rows">
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Pimenta Bueno, Setor BNH</span></div>
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>19:30 às 21:30</span></div>
+  </div>
+  <a href="https://wa.me/5569984447302?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Sal%20da%20Terra." target="_blank" rel="noopener" class="mc-wpp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg>Falar no WhatsApp</a>
+</div>
+<div class="mc">
+  <span class="mc-nome">Fontes de Águas Vivas</span>
+  <span class="mc-lider">Aline, Taynara e Walter</span>
+  <div class="mc-rows">
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Milão, Jardim Alvorada</span></div>
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>20:00 às 22:00</span></div>
+  </div>
+  <a href="https://wa.me/556984859950?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Fontes%20de%20Águas%20Vivas." target="_blank" rel="noopener" class="mc-wpp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg>Falar no WhatsApp</a>
+</div>
+<div class="mc">
+  <span class="mc-nome">Jeová Jireh</span>
+  <span class="mc-lider">Marlon e Marcia</span>
+  <div class="mc-rows">
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Moema, Jardim Jorge Teixeira</span></div>
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>19:30 às 21:30</span></div>
+  </div>
+  <a href="https://wa.me/5569984443809?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Jeová%20Jireh." target="_blank" rel="noopener" class="mc-wpp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg>Falar no WhatsApp</a>
+</div>
+<div class="mc">
+  <span class="mc-nome">Monte Ararate</span>
+  <span class="mc-lider">Lindalva</span>
+  <div class="mc-rows">
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Tabajara, BNH</span></div>
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>20:00 às 22:00</span></div>
+  </div>
+  <a href="https://wa.me/556993532978?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Monte%20Ararate." target="_blank" rel="noopener" class="mc-wpp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg>Falar no WhatsApp</a>
+</div>
+<div class="mc">
+  <span class="mc-nome">Casa de Israel</span>
+  <span class="mc-lider">Mariana e Gabriel</span>
+  <div class="mc-rows">
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Moema, Jardim Jorge Teixeira</span></div>
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>19:30 às 21:30</span></div>
+  </div>
+  <a href="https://wa.me/5569993691157?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Casa%20de%20Israel." target="_blank" rel="noopener" class="mc-wpp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg>Falar no WhatsApp</a>
+</div>
+<div class="mc">
+  <span class="mc-nome">Moriah</span>
+  <span class="mc-lider">Izabel e Borba</span>
+  <div class="mc-rows">
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Francisco Alves Pinto, Bom Jesus</span></div>
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>19:30 às 21:30</span></div>
+  </div>
+  <a href="https://wa.me/556999447006?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Moriah." target="_blank" rel="noopener" class="mc-wpp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg>Falar no WhatsApp</a>
+</div>
+<div class="mc">
+  <span class="mc-nome">Filhos da Promessa</span>
+  <span class="mc-lider">Pr. Sidiel</span>
+  <div class="mc-rows">
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Rio Grande do Norte, Setor 05</span></div>
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>19:30 às 21:30</span></div>
+  </div>
+  <a href="https://wa.me/5569992441207?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Filhos%20da%20Promessa." target="_blank" rel="noopener" class="mc-wpp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg>Falar no WhatsApp</a>
+</div>
+          </div>
         </div>
       </article>
-      <article class="stack-card sc-sabado" style="--i:3">
-        <div class="sc-head">
-          <span class="sc-count">1 célula</span>
-          <h3 class="sc-dia">Sábados</h3>
+      <article class="day-card sticky-day" style="--i:2">
+        <div class="dc-head">
+          <div class="dc-head-left">
+            <span class="dc-count">1 célula</span>
+            <h3 class="dc-dia">Quartas-feiras</h3>
+          </div>
+          
         </div>
-        <div class="sc-track-wrap">
-          <div class="sc-track "><div class="mc">
-  <div class="mc-body">
-    <span class="mc-nome">Vida Plena</span>
-    <span class="mc-lider">Eriquis</span>
-    <span class="mc-loc">Rua Santa Catarina, Setor 05</span>
-    <span class="mc-hora">17:30 às 19:30</span>
+        <div class="dc-viewport">
+          <div class="dc-track">
+<div class="mc">
+  <span class="mc-nome">A Grande Comissão</span>
+  <span class="mc-lider">Netão</span>
+  <div class="mc-rows">
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>AV. Hugo Fray, Cond. residencial São Paulo</span></div>
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>20:00 às 22:00</span></div>
   </div>
-  <a href="https://wa.me/5569984082233?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Vida%20Plena." target="_blank" rel="noopener" class="mc-wpp" aria-label="WhatsApp Vida Plena"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg></a>
-</div></div>
+  <a href="https://wa.me/5569999631363?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20A%20Grande%20Comissão." target="_blank" rel="noopener" class="mc-wpp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg>Falar no WhatsApp</a>
+</div>
+          </div>
+        </div>
+      </article>
+      <article class="day-card sticky-day" style="--i:3">
+        <div class="dc-head">
+          <div class="dc-head-left">
+            <span class="dc-count">1 célula</span>
+            <h3 class="dc-dia">Sábados</h3>
+          </div>
+          
+        </div>
+        <div class="dc-viewport">
+          <div class="dc-track">
+<div class="mc">
+  <span class="mc-nome">Vida Plena</span>
+  <span class="mc-lider">Eriquis</span>
+  <div class="mc-rows">
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Santa Catarina, Setor 05</span></div>
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>17:30 às 19:30</span></div>
+  </div>
+  <a href="https://wa.me/5569984082233?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Vida%20Plena." target="_blank" rel="noopener" class="mc-wpp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg>Falar no WhatsApp</a>
+</div>
+          </div>
         </div>
       </article>
     </div>
@@ -1283,6 +1179,37 @@ burger.addEventListener('click',()=>links.classList.toggle('open'));
 links.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>links.classList.remove('open')));
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.12});
 document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+/* navegação por setas dentro de cada card de dia */
+(function(){
+  document.querySelectorAll('.day-card').forEach(card=>{
+    const track=card.querySelector('.dc-track');
+    const viewport=card.querySelector('.dc-viewport');
+    const btns=card.querySelectorAll('.dc-arrow');
+    if(!track||!btns.length) return;
+    const cards=[...track.children];
+    let idx=0;
+    function perView(){
+      const cw=cards[0].getBoundingClientRect().width;
+      const gap=parseFloat(getComputedStyle(track).gap)||18;
+      return Math.max(1,Math.round(viewport.clientWidth/(cw+gap)));
+    }
+    function maxIdx(){ return Math.max(0,cards.length-perView()); }
+    function apply(){
+      idx=Math.max(0,Math.min(idx,maxIdx()));
+      const cw=cards[0].getBoundingClientRect().width;
+      const gap=parseFloat(getComputedStyle(track).gap)||18;
+      track.style.transform=`translateX(${-idx*(cw+gap)}px)`;
+      btns.forEach(b=>{
+        const dir=parseInt(b.dataset.dir);
+        b.disabled=(dir<0&&idx<=0)||(dir>0&&idx>=maxIdx());
+      });
+    }
+    btns.forEach(b=>b.addEventListener('click',()=>{idx+=parseInt(b.dataset.dir)*perView();apply();}));
+    let rt;addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{idx=0;apply();},150)});
+    apply();
+  });
+})();
 
 /* anima a barra de progresso da construção quando aparece */
 (function(){
