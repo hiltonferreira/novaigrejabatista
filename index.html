@@ -357,32 +357,38 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
 .cel-head{text-align:center;max-width:760px;margin:0 auto}
 .cel-head h2 .editorial{display:block;font-size:.52em;margin-bottom:-.05em;font-weight:500;color:var(--laranja)}
 .cel-head .lead{margin-inline:auto}
+/* contador total de células */
+.cel-total{display:inline-flex;align-items:center;gap:16px;margin-top:28px;
+  padding:14px 26px 14px 20px;border-radius:999px;background:var(--navy);
+  box-shadow:0 18px 40px -20px rgba(6,7,73,.5)}
+.ct-num{font-family:var(--acumin);font-weight:700;font-size:2.6rem;line-height:1;color:var(--laranja)}
+.ct-txt{font-family:var(--acumin);font-size:.9rem;font-weight:500;color:var(--marfim);text-align:left;line-height:1.25}
 /* ===== Cards dos dias (claro, com stacking e setas) ===== */
 .days-stack{margin-top:56px;display:flex;flex-direction:column;gap:36px}
 .day-card{position:sticky;top:100px;border-radius:20px;overflow:hidden;
-  background:rgba(255,255,255,.7);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
-  border:1px solid rgba(6,7,73,.1);box-shadow:0 24px 50px -30px rgba(6,7,73,.35);
+  background:linear-gradient(155deg,#0057ff 0%,#0043cc 60%,#003099 100%);
+  border:1px solid rgba(255,255,255,.14);box-shadow:0 30px 60px -28px rgba(0,50,150,.6);
   padding:30px 30px 32px;transition:.4s cubic-bezier(.2,.7,.2,1)}
-/* animação igual aos cards da seção anterior: barra laranja no topo + hover */
+/* animação: barra laranja no topo + hover */
 .day-card::before{content:"";position:absolute;top:0;left:0;height:4px;width:0;background:var(--laranja);transition:.4s;z-index:2}
 .day-card:hover::before{width:100%}
-.day-card:hover{border-color:rgba(255,127,64,.45);box-shadow:0 30px 60px -28px rgba(255,127,64,.3)}
+.day-card:hover{box-shadow:0 36px 70px -26px rgba(0,50,150,.7)}
 .dc-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:24px;flex-wrap:wrap}
 .dc-count{display:inline-block;font-family:var(--acumin);font-size:.7rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
-  color:var(--laranja);background:rgba(255,127,64,.14);padding:5px 13px;border-radius:999px;margin-bottom:10px}
-.dc-dia{font-family:var(--acumin);font-weight:700;font-size:2rem;color:var(--navy);line-height:1}
+  color:var(--navy);background:var(--laranja);padding:5px 13px;border-radius:999px;margin-bottom:10px}
+.dc-dia{font-family:var(--acumin);font-weight:700;font-size:2rem;color:#fff;line-height:1}
 .dc-nav{display:flex;gap:10px}
-.dc-arrow{width:46px;height:46px;border-radius:50%;border:none;cursor:pointer;background:var(--navy);color:#fff;
-  font-size:1.5rem;line-height:1;display:grid;place-items:center;transition:.25s}
+.dc-arrow{width:46px;height:46px;border-radius:50%;border:none;cursor:pointer;background:rgba(255,255,255,.15);color:#fff;
+  font-size:1.5rem;line-height:1;display:grid;place-items:center;transition:.25s;backdrop-filter:blur(4px)}
 .dc-arrow:hover{background:var(--laranja);color:var(--navy)}
 .dc-arrow:disabled{opacity:.25;cursor:default}
 /* viewport + track das células */
 .dc-viewport{overflow:hidden}
 .dc-track{display:flex;gap:18px;transition:transform .5s cubic-bezier(.4,0,.2,1)}
-/* mini-cards */
+/* mini-cards CLAROS */
 .mc{flex:0 0 calc((100% - 3*18px)/4);min-width:0;display:flex;flex-direction:column;
   background:#fff;border:1px solid rgba(6,7,73,.08);border-radius:15px;padding:22px 20px;transition:.25s}
-.mc:hover{border-color:rgba(255,127,64,.4);box-shadow:0 16px 34px -20px rgba(6,7,73,.4);transform:translateY(-4px)}
+.mc:hover{box-shadow:0 16px 34px -20px rgba(0,40,120,.5);transform:translateY(-4px)}
 .mc-nome{font-family:var(--acumin);font-weight:700;font-size:1.12rem;color:var(--navy);line-height:1.15}
 .mc-lider{font-family:var(--acumin);font-size:.85rem;color:var(--laranja);margin-top:3px}
 .mc-rows{margin:15px 0 18px;display:flex;flex-direction:column;gap:9px;flex:1}
@@ -450,12 +456,13 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
 .qr img{width:100%;height:100%;object-fit:contain;display:block}
 /* degradês alternados para contraste entre seções escuras */
 /* Células - CLARA com degradê */
-#celulas{position:relative;isolation:isolate;
+#celulas{position:relative;
   background:linear-gradient(165deg,#EBEBDF 0%,#f2f2ea 55%,#e6e6d8 100%)}
-#celulas .cel-bg{position:absolute;inset:0;z-index:-1;pointer-events:none;
-  background:url('img/celulas-bg.jpg') center center/cover no-repeat;opacity:.5;
-  -webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 12%,#000 80%,transparent 100%);
-  mask-image:linear-gradient(to bottom,transparent 0,#000 12%,#000 80%,transparent 100%)}
+#celulas .cel-bg{position:absolute;inset:0;z-index:0;pointer-events:none;
+  background:url('img/celulas-bg.jpg') right top/auto 620px no-repeat;opacity:.9;
+  -webkit-mask-image:linear-gradient(to bottom,#000 0,#000 50%,transparent 85%);
+  mask-image:linear-gradient(to bottom,#000 0,#000 50%,transparent 85%)}
+#celulas .wrap{position:relative;z-index:1}
 /* Mensagens - navy profundo (mais escuro) */
 .mensagens{position:relative;isolation:isolate;
   background:radial-gradient(85% 65% at 80% 8%,rgba(21,58,122,.22) 0%,transparent 55%),linear-gradient(200deg,#05061c 0%,#080c26 55%,#04051a 100%)}
@@ -748,6 +755,10 @@ footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
       <span class="eyebrow">Vida em comunidade</span>
       <h2 class="display h-sec"><span class="editorial">nossas</span>Células</h2>
       <p class="lead">A célula é mais que uma reunião — é um estilo de vida. Encontre uma célula perto de você, no dia que funciona pra sua rotina.</p>
+      <div class="cel-total">
+        <span class="ct-num">24</span>
+        <span class="ct-txt">células espalhadas<br>por Ariquemes</span>
+      </div>
     </div>
     <div class="days-stack">
       <article class="day-card sticky-day" style="--i:0">
