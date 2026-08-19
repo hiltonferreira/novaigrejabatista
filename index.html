@@ -382,6 +382,11 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
   background:linear-gradient(155deg,#0057ff 0%,#0043cc 60%,#003099 100%);
   border:1px solid rgba(255,255,255,.14);box-shadow:0 30px 60px -28px rgba(0,50,150,.6);
   padding:30px 30px 32px;transition:.4s cubic-bezier(.2,.7,.2,1)}
+/* progressão de cor: segunda (mais clara) -> sábado (mais escura) */
+.days-stack .day-card:nth-of-type(1){background:linear-gradient(155deg,#3d82ff 0%,#1f6bff 60%,#0057ff 100%)}
+.days-stack .day-card:nth-of-type(2){background:linear-gradient(155deg,#0f6bff 0%,#0057ff 60%,#0043cc 100%)}
+.days-stack .day-card:nth-of-type(3){background:linear-gradient(155deg,#0052ee 0%,#0043cc 60%,#0035a3 100%)}
+.days-stack .day-card:nth-of-type(4){background:linear-gradient(155deg,#0043cc 0%,#003099 60%,#00246e 100%)}
 /* animação: barra laranja no topo + hover */
 .day-card::before{content:"";position:absolute;top:0;left:0;height:4px;width:0;background:var(--laranja);transition:.4s;z-index:2}
 .day-card:hover::before{width:100%}
@@ -487,7 +492,7 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
 #lideranca .eyebrow{color:var(--laranja)}
 #lideranca .h-sec{color:var(--navy)}
 #celulas .h-sec{color:var(--navy)}
-#celulas .cel-head h2 .editorial{color:var(--laranja);font-style:italic;font-weight:500}
+#celulas .cel-head h2 .editorial{font-family:var(--acumin);font-style:italic;font-weight:500;color:var(--laranja)}
 #celulas .lead{color:#4a5268}
 #lideranca .lead{color:#4a5268}
 #lideranca .h-sec{color:var(--navy)}
@@ -767,7 +772,7 @@ footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
     <div class="cel-grid2">
     <div class="cel-head reveal">
       <span class="eyebrow">Vida em comunidade</span>
-      <h2 class="display h-sec">nossas <span class="editorial">Células</span></h2>
+      <h2 class="display h-sec">Nossas <span class="editorial">células</span></h2>
       <p class="lead">A célula é mais que uma reunião — é um estilo de vida. Encontre uma célula perto de você, no dia que funciona pra sua rotina.</p>
       <div class="cel-total">
         <div class="ct-badge">
