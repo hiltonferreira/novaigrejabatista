@@ -477,9 +477,10 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
 /* Células - CLARA com degradê */
 #celulas{position:relative;
   background:linear-gradient(165deg,#EBEBDF 0%,#f2f2ea 55%,#e6e6d8 100%)}
-#celulas .cel-bg{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden}
-#celulas .cel-bg::before{content:"";position:absolute;top:60px;left:-140px;width:440px;height:474px;
-  background:url('img/logo/simbolo-decor.png') center/contain no-repeat;opacity:.5}
+#celulas .cel-bg{position:absolute;inset:0;z-index:0;pointer-events:none;
+  background:url('img/celulas-bg.jpg') center top/100% auto no-repeat;
+  -webkit-mask-image:linear-gradient(to bottom,#000 0,#000 70%,transparent 100%);
+  mask-image:linear-gradient(to bottom,#000 0,#000 70%,transparent 100%)}
 #celulas .wrap{position:relative;z-index:1}
 /* Mensagens - navy profundo (mais escuro) */
 .mensagens{position:relative;isolation:isolate;
