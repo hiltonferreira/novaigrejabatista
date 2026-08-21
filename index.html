@@ -15,9 +15,8 @@
 @font-face{font-family:"Acumin Pro";src:url("fonts/AcuminPro-Semibold.woff2") format("woff2");font-weight:600;font-style:normal;font-display:swap}
 @font-face{font-family:"Acumin Pro";src:url("fonts/AcuminPro-Bold.woff2") format("woff2");font-weight:700;font-style:normal;font-display:swap}
 </style>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="preload" href="fonts/AcuminPro-Regular.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/AcuminPro-Bold.woff2" as="font" type="font/woff2" crossorigin>
 <style>
 :root{
   --bg:#05070d;--bg-2:#0a0f1c;--panel:#0e1526;
@@ -32,9 +31,9 @@
   --laranja-soft:#ff9560;
   --azul-luz:#7d9bd4;    /* azul claro derivado (destaques sobre fundo escuro) */
   /* Tipografia: Acumin (corpo/UI) — display herda por ora */
-  --display:"Sora",system-ui,sans-serif;
-  --editorial:"Sora",system-ui,sans-serif;
-  --body:"Sora",system-ui,sans-serif;
+  --display:"Acumin Pro",system-ui,sans-serif;
+  --editorial:"Acumin Pro",system-ui,sans-serif;
+  --body:"Acumin Pro",system-ui,sans-serif;
   --acumin:"Acumin Pro",system-ui,sans-serif;
   --wrap:1240px;
 }
@@ -93,11 +92,11 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
 .burger{display:none;background:none;border:0;cursor:pointer;flex-direction:column;gap:5px}
 .burger span{width:26px;height:2px;background:#fff;transition:.3s}
 .hero{min-height:auto;display:flex;align-items:flex-end;padding:100px 0 44px;overflow:hidden}
-.hero .photo{position:absolute;inset:0;z-index:-2;background:#0a1330 right center/cover no-repeat;
-  background-image:url('img/hero-bg.jpg')}
+.hero .photo{position:absolute;inset:0;z-index:-2;background:#0a1330 center center/cover no-repeat;
+  background-image:url('img/hero-bg-pastores.jpg')}
 /* desfoque só na faixa esquerda, onde ficam os textos */
 .hero .photo::before{content:"";position:absolute;inset:0;
-  background:#0a1330 right center/cover no-repeat;background-image:url('img/hero-bg.jpg');
+  background:#0a1330 center center/cover no-repeat;background-image:url('img/hero-bg-pastores.jpg');
   -webkit-mask-image:linear-gradient(to right,#000 0%,#000 32%,transparent 55%);
   mask-image:linear-gradient(to right,#000 0%,#000 32%,transparent 55%);
   filter:blur(9px);transform:scale(1.04)}
@@ -531,9 +530,8 @@ footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
 .reveal.in{opacity:1;transform:none}
 @media(prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}html{scroll-behavior:auto}}
 @media(max-width:920px){
-  .hero-cta{width:100%}
-  .hero-cta .btn{flex:1 1 auto;justify-content:center}
-  #sobre .somos-a{width:100%;text-align:center;margin-right:0;margin-bottom:2px}
+  .hero-cta{width:100%;justify-content:center;align-items:center;flex-direction:column}
+  .hero-cta .btn{width:100%;max-width:340px;justify-content:center;text-align:center}
   .logo-anim{gap:.3rem}
   .la-brasao-wrap{height:clamp(52px,13vw,72px)}
   .la-resto{height:clamp(30px,7.5vw,44px)}
@@ -541,7 +539,9 @@ footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
   .logo-full{display:none}
   .logo-compact{display:block;height:34px}
   .hero h1 br{display:none}
-  .hero::after{background:linear-gradient(to top,var(--bg) 3%,rgba(5,7,13,.72) 45%,rgba(5,7,13,.55) 100%)}
+  /* imagem mobile focada no pastor + pastora */
+  .hero .photo{background-image:url('img/hero-bg-mobile.jpg');background-position:center 20%}
+  .hero::after{background:linear-gradient(to top,var(--bg) 2%,rgba(0,18,90,.62) 40%,rgba(0,22,120,.35) 75%,rgba(0,22,120,.2) 100%)}
   .hero .photo::before{-webkit-mask-image:none;mask-image:none;filter:none;content:none}
   .cel-grid,.contrib-grid,.vis-grid{grid-template-columns:1fr;gap:44px}
   .pillars,.cultos-grid,.videos,.lid-grid,.ev-grid{grid-template-columns:1fr}
