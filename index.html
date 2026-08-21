@@ -1344,11 +1344,15 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
   const fallback=document.getElementById('logoFallback');
   if(!la||!vid) return;
 
-  // detecta se o navegador toca webm (Safari/iOS não suportam webm com alpha)
-  const canWebm = vid.canPlayType && vid.canPlayType('video/webm; codecs="vp9"') !== '';
+  // Safari/iOS não suportam webm com alpha -> usar PNG estático
+  const ua=navigator.userAgent;
+  const isSafari=/^((?!chrome|android|crios|fxios).)*safari/i.test(ua);
+  const isIOS=/iPad|iPhone|iPod/.test(ua) || (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
+  const canWebm = !isSafari && !isIOS && vid.canPlayType && vid.canPlayType('video/webm; codecs="vp9"') !== '';
+
   if(!canWebm){
-    // iOS/Safari: usa a imagem estática (transparente) no lugar do vídeo
-    vid.hidden=true; vid.style.display='none';
+    // esconde COMPLETAMENTE o vídeo e mostra só o PNG
+    vid.remove();
     if(fallback) fallback.hidden=false;
     la.classList.add('static-logo');
     return;
@@ -1361,8 +1365,7 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
       vid.pause(); vid.currentTime=0;
       clearTimeout(timer);
       timer=setTimeout(()=>{ vid.play().catch(()=>{
-        // se falhar ao tocar, mostra o fallback
-        vid.style.display='none'; if(fallback) fallback.hidden=false;
+        vid.style.display='none'; if(fallback) fallback.hidden=false; la.classList.add('static-logo');
       }); }, 100);
     } else {
       la.classList.remove('play');
