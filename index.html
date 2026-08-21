@@ -9,8 +9,6 @@
 /* ===== Fonte oficial da marca: Acumin Pro ===== */
 @font-face{font-family:"Acumin Pro";src:url("fonts/AcuminPro-Regular.woff2") format("woff2");font-weight:400;font-style:normal;font-display:swap}
 @font-face{font-family:"Acumin Pro";src:url("fonts/AcuminPro-Italic.woff2") format("woff2");font-weight:400;font-style:italic;font-display:swap}
-@font-face{font-family:"Acumin Pro";src:url("fonts/AcuminPro-Italic.woff2") format("woff2");font-weight:500;font-style:italic;font-display:swap}
-@font-face{font-family:"Acumin Pro";src:url("fonts/AcuminPro-Italic.woff2") format("woff2");font-weight:600;font-style:italic;font-display:swap}
 @font-face{font-family:"Acumin Pro";src:url("fonts/AcuminPro-Medium.woff2") format("woff2");font-weight:500;font-style:normal;font-display:swap}
 @font-face{font-family:"Acumin Pro";src:url("fonts/AcuminPro-Semibold.woff2") format("woff2");font-weight:600;font-style:normal;font-display:swap}
 @font-face{font-family:"Acumin Pro";src:url("fonts/AcuminPro-Bold.woff2") format("woff2");font-weight:700;font-style:normal;font-display:swap}
@@ -181,14 +179,11 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
 .la-brasao-wrap{height:clamp(62px,8vw,102px);flex:0 0 auto;display:flex;align-items:center;
   opacity:0}
 .la-brasao{height:100%;width:auto;display:block}
-.la-brasao-fallback{height:100%;width:auto;display:block}
 .la-resto{height:clamp(38px,4.7vw,62px);width:auto;display:block;
   opacity:0;transform:translateX(-16px)}
 /* sequência de animação: 1) brasão+Nib  2) textos */
 .logo-anim.play .la-brasao-wrap{animation:la-fade .4s ease-out forwards}
 .logo-anim.play .la-resto{animation:la-slidein .6s ease-out 4.5s forwards}
-/* fallback estático (iOS/Safari): mostra tudo sem animação */
-.logo-anim.static-logo .la-brasao-wrap,.logo-anim.static-logo .la-resto{opacity:1;transform:none;animation:none}
 @keyframes la-fade{to{opacity:1}}
 @keyframes la-slidein{to{opacity:1;transform:translateX(0)}}
 #sobre .pillar{background:rgba(6,7,50,.5);border:1px solid rgba(235,235,223,.14)}
@@ -636,8 +631,8 @@ footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
         <div class="la-brasao-wrap">
           <video class="la-brasao" id="logoVideo" muted playsinline preload="auto">
             <source src="video/brasao-nib-alpha.webm" type="video/webm">
+            <source src="video/brasao-anim.mp4" type="video/mp4">
           </video>
-          <img class="la-brasao-fallback" id="logoFallback" src="img/logo/nav-brasao-nib.png" alt="Nib" hidden>
         </div>
         <img class="la-resto" src="img/logo/anim/so-textos.png" alt="Nova Igreja Batista - A Casa de Deus">
       </div>
@@ -1341,32 +1336,14 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 (function(){
   const la=document.getElementById('logoAnim');
   const vid=document.getElementById('logoVideo');
-  const fallback=document.getElementById('logoFallback');
   if(!la||!vid) return;
-
-  // Safari/iOS não suportam webm com alpha -> usar PNG estático
-  const ua=navigator.userAgent;
-  const isSafari=/^((?!chrome|android|crios|fxios).)*safari/i.test(ua);
-  const isIOS=/iPad|iPhone|iPod/.test(ua) || (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
-  const canWebm = !isSafari && !isIOS && vid.canPlayType && vid.canPlayType('video/webm; codecs="vp9"') !== '';
-
-  if(!canWebm){
-    // esconde COMPLETAMENTE o vídeo e mostra só o PNG
-    vid.remove();
-    if(fallback) fallback.hidden=false;
-    la.classList.add('static-logo');
-    return;
-  }
-
   let timer=null;
   const obs=new IntersectionObserver(es=>es.forEach(e=>{
     if(e.isIntersecting){
       la.classList.remove('play'); void la.offsetWidth; la.classList.add('play');
       vid.pause(); vid.currentTime=0;
       clearTimeout(timer);
-      timer=setTimeout(()=>{ vid.play().catch(()=>{
-        vid.style.display='none'; if(fallback) fallback.hidden=false; la.classList.add('static-logo');
-      }); }, 100);
+      timer=setTimeout(()=>{ vid.play().catch(()=>{}); }, 100); // vídeo começa logo
     } else {
       la.classList.remove('play');
       vid.pause(); clearTimeout(timer);
