@@ -481,8 +481,7 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
 /* Células - CLARA com degradê */
 #celulas{position:relative;
   background:linear-gradient(165deg,#EBEBDF 0%,#f2f2ea 55%,#e6e6d8 100%)}
-#celulas .cel-bg{position:absolute;inset:0;z-index:0;pointer-events:none;
-  background:url('img/celulas-bg.png') center top/100% auto no-repeat}
+#celulas .cel-bg{display:none}
 #celulas .wrap{position:relative;z-index:1}
 /* Mensagens - navy profundo (mais escuro) */
 .mensagens{position:relative;isolation:isolate;
@@ -772,7 +771,6 @@ footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
 </section>
 
 <section class="pad" id="celulas">
-  <div class="cel-bg"></div>
   <div class="wrap">
     <div class="cel-grid2">
     <div class="cel-head reveal">
