@@ -469,6 +469,14 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
 .evento p{font-family:var(--acumin);color:var(--azul-gray);font-size:.9rem;margin-top:8px;max-width:44ch}
 .contrib-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
 .pix-card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:38px}
+.pix-copy{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;max-width:220px;margin:18px auto 0;
+  font-family:var(--acumin);font-weight:600;font-size:.9rem;cursor:pointer;
+  padding:.85em 1.3em;border-radius:999px;
+  border:1px solid var(--laranja);color:var(--laranja);background:rgba(255,127,64,.1);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);transition:.25s}
+.pix-copy svg{fill:currentColor;flex:0 0 auto}
+.pix-copy:hover{background:var(--laranja);color:var(--navy);border-color:var(--laranja)}
+.pix-copy.copied{background:#3ba55c;color:#fff;border-color:#3ba55c}
 .contrib-cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:30px}
 .pix-row{display:flex;justify-content:space-between;align-items:center;padding:16px 0;border-bottom:1px solid var(--line)}
 .pix-row:last-of-type{border:0}
@@ -1179,6 +1187,10 @@ footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
       <div class="pix-row"><span class="k">Banco</span><span class="v">Sicoob</span></div>
       <div class="pix-row"><span class="k">Agência / Conta</span><span class="v">3315 / 51.404-7</span></div>
       <div class="qr"><img src="img/pix-qrcode.png" alt="QR Code PIX - Nova Igreja Batista"></div>
+      <button class="pix-copy" id="pixCopy" data-code="00020126360014br.gov.bcb.pix0114405187580001305204000053039865802BR5919NOVA IGREJA BATISTA6009ARIQUEMES62070503***6304669F">
+        <svg viewBox="0 0 24 24" width="17" height="17"><path d="M16 1H4a2 2 0 00-2 2v12h2V3h12V1zm3 4H8a2 2 0 00-2 2v14a2 2 0 002 2h11a2 2 0 002-2V7a2 2 0 00-2-2zm0 16H8V7h11v14z"/></svg>
+        <span class="pix-copy-label">Copiar código PIX</span>
+      </button>
     </div>
   </div>
 </section>
@@ -1225,6 +1237,29 @@ burger.addEventListener('click',()=>links.classList.toggle('open'));
 links.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>links.classList.remove('open')));
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.12});
 document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+/* botão copiar código PIX */
+(function(){
+  const btn=document.getElementById('pixCopy');
+  if(!btn) return;
+  const label=btn.querySelector('.pix-copy-label');
+  const original=label.textContent;
+  btn.addEventListener('click',async()=>{
+    const code=btn.dataset.code;
+    try{
+      await navigator.clipboard.writeText(code);
+    }catch(e){
+      const ta=document.createElement('textarea');
+      ta.value=code; ta.style.position='fixed'; ta.style.opacity='0';
+      document.body.appendChild(ta); ta.select();
+      try{document.execCommand('copy');}catch(_){}
+      document.body.removeChild(ta);
+    }
+    btn.classList.add('copied');
+    label.textContent='Código copiado!';
+    setTimeout(()=>{ btn.classList.remove('copied'); label.textContent=original; },2200);
+  });
+})();
 
 /* animação crescente do contador de células */
 (function(){
