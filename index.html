@@ -460,9 +460,11 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
 .lid h3{font-family:var(--display);font-size:2rem;color:#fff;margin:2px 0 10px}
 .lid p{color:var(--muted);font-size:.95rem;max-width:42ch}
 .ev-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:24px;margin-top:56px}
-.evento{position:relative;border-radius:14px;overflow:hidden;min-height:280px;display:flex;align-items:flex-end;border:1px solid var(--line);background:linear-gradient(to top,rgba(5,7,13,.95),rgba(5,7,13,.2)),linear-gradient(135deg,#16407f,#0a1428);background-size:cover;background-position:center;transition:.35s}
-.evento:hover{transform:translateY(-4px);border-color:rgba(255,127,64,.4);box-shadow:0 30px 60px -30px rgba(255,127,64,.4)}
-.evento .cont{padding:30px}
+.evento{position:relative;border-radius:14px;overflow:hidden;min-height:280px;display:flex;align-items:flex-end;border:1px solid var(--line);background:linear-gradient(to top,rgba(5,7,13,.95),rgba(5,7,13,.2)),linear-gradient(135deg,#16407f,#0a1428);background-size:cover;background-position:center;transition:.4s cubic-bezier(.2,.7,.2,1)}
+.evento::before{content:"";position:absolute;top:0;left:0;height:3px;width:0;background:var(--laranja);transition:.4s;z-index:3}
+.evento:hover::before{width:100%}
+.evento:hover{transform:translateY(-8px) scale(1.015);border-color:rgba(255,127,64,.5);box-shadow:0 24px 50px -20px rgba(255,127,64,.4)}
+.evento .cont{padding:30px;position:relative;z-index:2}
 /* card de evento com foto de fundo */
 .evento-foto{background:
     linear-gradient(to top,rgba(3,4,20,.96) 0%,rgba(3,4,20,.82) 38%,rgba(3,4,20,.5) 70%,rgba(3,4,20,.35) 100%),
