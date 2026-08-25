@@ -463,6 +463,12 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
 .evento{position:relative;border-radius:14px;overflow:hidden;min-height:280px;display:flex;align-items:flex-end;border:1px solid var(--line);background:linear-gradient(to top,rgba(5,7,13,.95),rgba(5,7,13,.2)),linear-gradient(135deg,#16407f,#0a1428);background-size:cover;background-position:center;transition:.35s}
 .evento:hover{transform:translateY(-4px);border-color:rgba(255,127,64,.4);box-shadow:0 30px 60px -30px rgba(255,127,64,.4)}
 .evento .cont{padding:30px}
+/* card de evento com foto de fundo */
+.evento-foto{background:
+    linear-gradient(to top,rgba(3,4,20,.96) 0%,rgba(3,4,20,.82) 38%,rgba(3,4,20,.5) 70%,rgba(3,4,20,.35) 100%),
+    var(--ev-bg);
+  background-size:cover;background-position:center 30%}
+.evento-foto:hover{background-position:center 26%}
 .evento .tag{display:inline-block;font-family:var(--acumin);font-size:.7rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--navy);background:var(--laranja);padding:4px 10px;border-radius:999px;margin-bottom:12px}
 .evento .date{font-family:var(--acumin);font-style:italic;font-weight:500;font-size:1.4rem;color:var(--laranja);margin-bottom:2px}
 .evento h3{font-family:var(--acumin);font-weight:700;font-size:1.7rem;color:var(--marfim);line-height:.95}
@@ -1147,15 +1153,15 @@ footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
     <div class="sec-head center reveal">
       <span class="eyebrow">Próximos acontecimentos</span>
       <h2 class="display h-sec">O que vem por aí</h2>
-      <p class="lead">Fique por dentro do que Deus está fazendo na nossa casa. (TROCAR pelos eventos reais.)</p>
+      <p class="lead">Fique por dentro do que Deus está fazendo na nossa casa.</p>
     </div>
     <div class="ev-grid">
-      <div class="evento reveal">
+      <div class="evento evento-foto reveal" style="--ev-bg:url('img/eventos/multiplicacao-bg.jpg')">
         <div class="cont">
-          <span class="tag">Conferência</span>
-          <div class="date">Conf. DNA 2026</div>
-          <h3>Embaixadores de Cristo</h3>
-          <p>Dias intensos de presença, palavra e propósito para toda a igreja.</p>
+          <span class="tag">Celebração</span>
+          <div class="date">03 de outubro</div>
+          <h3>Festa da Multiplicação</h3>
+          <p>Celebração das células na Chácara Pizze. R$ 25 por integrante da família, em até 2x no cartão. Participe!</p>
         </div>
       </div>
       <div class="evento reveal">
