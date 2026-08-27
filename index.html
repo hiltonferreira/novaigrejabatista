@@ -561,9 +561,14 @@ footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
   /* imagem mobile: pastores no topo + igreja embaixo (composição vertical) */
   .hero{padding-top:330px}
   .hero .photo{background-image:url('img/hero-bg-mobile.jpg');background-position:center top;background-size:100% auto;background-repeat:no-repeat;background-color:#05070d}
-  /* overlay: topo transparente (rostos visíveis), escurece a partir do peito (área do texto) */
-  .hero::after{background:linear-gradient(to bottom,transparent 0%,transparent 24%,rgba(5,7,13,.45) 32%,rgba(5,7,13,.86) 42%,rgba(5,7,13,.92) 100%)}
-  .hero .photo::before{-webkit-mask-image:none;mask-image:none;filter:none;content:none}
+  /* overlay: topo transparente (rostos visíveis), leve escurecimento na área do texto */
+  .hero::after{background:linear-gradient(to bottom,transparent 0%,transparent 24%,rgba(5,7,13,.3) 32%,rgba(5,7,13,.55) 42%,rgba(5,7,13,.62) 100%)}
+  /* desfoque (vidro fosco) na parte de baixo, atrás do texto - igual desktop */
+  .hero .photo::before{content:"";position:absolute;inset:0;
+    background:#05070d url('img/hero-bg-mobile.jpg') center top/100% auto no-repeat;
+    -webkit-mask-image:linear-gradient(to bottom,transparent 0%,transparent 30%,#000 42%,#000 100%);
+    mask-image:linear-gradient(to bottom,transparent 0%,transparent 30%,#000 42%,#000 100%);
+    filter:blur(9px);transform:scale(1.04)}
   .cel-grid,.contrib-grid,.vis-grid{grid-template-columns:1fr;gap:44px}
   .pillars,.cultos-grid,.videos,.lid-grid,.ev-grid{grid-template-columns:1fr}
   .nav-links{position:fixed;inset:0 0 0 auto;width:min(320px,84vw);background:var(--bg-2);flex-direction:column;justify-content:center;align-items:flex-start;padding:44px;gap:24px;transform:translateX(100%);transition:.35s;box-shadow:-12px 0 50px rgba(0,0,0,.5);border-left:1px solid var(--line);border-radius:0;backdrop-filter:none;-webkit-backdrop-filter:none;margin:0}
