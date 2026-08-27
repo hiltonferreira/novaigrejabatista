@@ -558,9 +558,11 @@ footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
   .logo-full{display:none}
   .logo-compact{display:block;height:34px}
   .hero h1 br{display:none}
-  /* imagem mobile focada no pastor + pastora */
-  .hero .photo{background-image:url('img/hero-bg-mobile.jpg');background-position:70% 22%;background-size:cover}
-  .hero::after{background:linear-gradient(to top,var(--bg) 2%,rgba(4,30,66,.5) 42%,rgba(4,30,66,.25) 75%,rgba(4,30,66,.12) 100%)}
+  /* imagem mobile: pastores no topo + igreja embaixo (composição vertical) */
+  .hero{padding-top:330px}
+  .hero .photo{background-image:url('img/hero-bg-mobile.jpg');background-position:center top;background-size:100% auto;background-repeat:no-repeat;background-color:#05070d}
+  /* overlay: topo transparente (rostos visíveis), escurece a partir do peito (área do texto) */
+  .hero::after{background:linear-gradient(to bottom,transparent 0%,transparent 24%,rgba(5,7,13,.45) 32%,rgba(5,7,13,.86) 42%,rgba(5,7,13,.92) 100%)}
   .hero .photo::before{-webkit-mask-image:none;mask-image:none;filter:none;content:none}
   .cel-grid,.contrib-grid,.vis-grid{grid-template-columns:1fr;gap:44px}
   .pillars,.cultos-grid,.videos,.lid-grid,.ev-grid{grid-template-columns:1fr}
