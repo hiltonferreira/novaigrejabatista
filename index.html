@@ -237,6 +237,16 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
   transform:translate(-50%,-50%);transition:transform .6s cubic-bezier(.25,.8,.25,1),opacity .6s,filter .6s;
   box-shadow:0 30px 60px -25px rgba(0,0,0,.8);border:1px solid rgba(255,255,255,.1);cursor:pointer;opacity:0;pointer-events:none}
 .gal-card img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s cubic-bezier(.25,.8,.25,1)}
+/* card de vídeo na galeria */
+.gal-video{width:100%;height:100%;object-fit:cover;display:block}
+.gal-video-controls{position:absolute;left:0;right:0;bottom:0;z-index:4;display:flex;align-items:center;gap:8px;padding:12px;
+  background:linear-gradient(to top,rgba(5,7,13,.75),transparent);opacity:0;transition:.3s}
+.gal-card-video.pos-center .gal-video-controls{opacity:1}
+.gal-vc-btn{display:inline-flex;align-items:center;gap:7px;cursor:pointer;border:none;
+  background:rgba(255,127,64,.92);color:var(--navy);border-radius:999px;padding:8px 12px;font-family:var(--acumin);font-weight:600;font-size:.78rem;transition:.2s}
+.gal-vc-btn svg{fill:currentColor;flex:0 0 auto}
+.gal-vc-btn:hover{background:var(--laranja)}
+.gal-vc-btn.gal-vc-sound{padding:8px 13px}
 /* posições: center, left, right, far (escondidos) */
 .gal-card.pos-center{opacity:1;pointer-events:auto;z-index:3;transform:translate(-50%,-50%) scale(1);filter:none;
   box-shadow:0 30px 70px -20px rgba(10,20,40,.55),0 0 0 1px rgba(10,20,40,.08)}
@@ -713,6 +723,22 @@ footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
     <div class="gallery reveal" id="gallery">
       <button class="gal-arrow gal-prev" id="galPrev" aria-label="Anterior">‹</button>
       <div class="gal-stage" id="galStage">
+        <div class="gal-card gal-card-video" id="galVideoCard">
+          <video class="gal-video" id="galVideo" playsinline loop muted preload="metadata" poster="img/galeria/momentos-poster.jpg">
+            <source src="video/momentos.mp4" type="video/mp4">
+          </video>
+          <div class="gal-video-controls">
+            <button class="gal-vc-btn" id="galVidPlay" aria-label="Play/Pause">
+              <svg class="ic-pause" viewBox="0 0 24 24" width="18" height="18"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>
+              <svg class="ic-play" viewBox="0 0 24 24" width="18" height="18" style="display:none"><path d="M8 5v14l11-7z"/></svg>
+            </button>
+            <button class="gal-vc-btn gal-vc-sound" id="galVidSound" aria-label="Ativar som">
+              <svg class="ic-muted" viewBox="0 0 24 24" width="16" height="16"><path d="M16.5 12A4.5 4.5 0 0014 7.97v2.21l2.45 2.45c.03-.2.05-.42.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51A8.8 8.8 0 0021 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06a8.99 8.99 0 003.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
+              <svg class="ic-unmuted" viewBox="0 0 24 24" width="16" height="16" style="display:none"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0014 7.97v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+              <span class="gal-vc-label">Ativar som</span>
+            </button>
+          </div>
+        </div>
         <div class="gal-card"><img src="img/galeria/close-foto17.jpg" alt="Momento de adoração" loading="lazy"></div>
         <div class="gal-card"><img src="img/galeria/alex-foto04.jpg" alt="Pregação" loading="lazy"></div>
         <div class="gal-card"><img src="img/galeria/abraco-foto03.jpg" alt="Comunhão e celebração" loading="lazy"></div>
@@ -1485,6 +1511,9 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
   const total=cards.length;
   let current=0, timer=null;
 
+  const vid=document.getElementById('galVideo');
+  const vidCard=document.getElementById('galVideoCard');
+
   function layout(){
     cards.forEach((card,i)=>{
       card.classList.remove('pos-center','pos-left','pos-right','pos-far-left','pos-far-right');
@@ -1496,23 +1525,58 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
       else if(diff===total-2) card.classList.add('pos-far-left');
       else card.classList.add('pos-far-right');
     });
+    // vídeo: toca quando está no centro, pausa quando sai
+    if(vid){
+      if(vidCard.classList.contains('pos-center')){
+        vid.play().catch(()=>{});
+      } else {
+        vid.pause();
+      }
+    }
   }
   function next(){ current=(current+1)%total; layout(); }
   function prev(){ current=(current-1+total)%total; layout(); }
 
-  function startAuto(){ stopAuto(); timer=setInterval(next,3500); }
+  function startAuto(){ stopAuto();
+    // não roda o autoplay enquanto o vídeo está no centro (deixa o usuário assistir)
+    if(vidCard && vidCard.classList.contains('pos-center')) return;
+    timer=setInterval(next,3500);
+  }
   function stopAuto(){ if(timer){clearInterval(timer);timer=null;} }
 
   document.getElementById('galNext').addEventListener('click',()=>{next();startAuto();});
   document.getElementById('galPrev').addEventListener('click',()=>{prev();startAuto();});
   // clicar num card lateral traz ele para o centro
-  cards.forEach((card,i)=>card.addEventListener('click',()=>{
+  cards.forEach((card,i)=>card.addEventListener('click',(e)=>{
+    // não reposiciona se o clique foi num controle do vídeo
+    if(e.target.closest('.gal-video-controls')) return;
     if(!card.classList.contains('pos-center')){ current=i; layout(); startAuto(); }
   }));
   // pausa o autoplay ao passar o mouse na galeria
   const gallery=document.getElementById('gallery');
   gallery.addEventListener('mouseenter',stopAuto);
   gallery.addEventListener('mouseleave',startAuto);
+
+  // controles do vídeo
+  if(vid){
+    const playBtn=document.getElementById('galVidPlay');
+    const soundBtn=document.getElementById('galVidSound');
+    const icPause=playBtn.querySelector('.ic-pause');
+    const icPlay=playBtn.querySelector('.ic-play');
+    const icMuted=soundBtn.querySelector('.ic-muted');
+    const icUnmuted=soundBtn.querySelector('.ic-unmuted');
+    const label=soundBtn.querySelector('.gal-vc-label');
+    playBtn.addEventListener('click',()=>{
+      if(vid.paused){ vid.play().catch(()=>{}); } else { vid.pause(); }
+    });
+    vid.addEventListener('play',()=>{ icPause.style.display=''; icPlay.style.display='none'; });
+    vid.addEventListener('pause',()=>{ icPause.style.display='none'; icPlay.style.display=''; });
+    soundBtn.addEventListener('click',()=>{
+      vid.muted=!vid.muted;
+      if(vid.muted){ icMuted.style.display=''; icUnmuted.style.display='none'; label.textContent='Ativar som'; }
+      else { icMuted.style.display='none'; icUnmuted.style.display=''; label.textContent='Som ativado'; }
+    });
+  }
 
   layout();
   startAuto();
