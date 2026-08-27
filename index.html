@@ -162,10 +162,10 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
 .pillar{background:rgba(14,20,38,.45);backdrop-filter:blur(10px) saturate(1.2);-webkit-backdrop-filter:blur(10px) saturate(1.2);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:34px 30px;transition:.4s cubic-bezier(.2,.7,.2,1);position:relative;overflow:hidden}
 .sobre-bg{position:relative;isolation:isolate}
 .sobre-bg::before{content:"";position:absolute;inset:0;z-index:-2;
-  background:#05070d url('img/sobre-bg.jpg') center 38%/cover no-repeat;
+  background:#05070d url('img/sobre-bg.jpg') center 6%/145% no-repeat;
   opacity:var(--bg-op,0);transform:scale(var(--bg-scale,1.06));transition:opacity .4s ease-out,transform .4s ease-out}
 .sobre-bg::after{content:"";position:absolute;inset:0;z-index:-1;
-  background:linear-gradient(to bottom,var(--bg) 0%,rgba(5,7,13,.18) 12%,rgba(5,7,13,.18) 88%,var(--bg) 100%)}
+  background:linear-gradient(to bottom,var(--bg) 0%,rgba(5,7,13,.15) 12%,rgba(5,7,13,.15) 88%,var(--bg) 100%)}
 .pillar::before{content:"";position:absolute;top:0;left:0;height:3px;width:0;background:var(--blue);transition:.4s}
 .pillar:hover::before{width:100%}
 .pillar:hover{transform:translateY(-8px) scale(1.015);border-color:rgba(255,127,64,.4);background:rgba(4,30,66,.85);box-shadow:0 24px 50px -20px rgba(4,30,66,.5)}
@@ -177,7 +177,8 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
 #sobre .eyebrow{font-family:var(--acumin);color:var(--laranja);font-weight:600}
 #sobre .h-sec{font-family:var(--acumin);font-weight:700;letter-spacing:-.01em;color:var(--marfim)}
 #sobre .h-sec .editorial{font-family:var(--acumin);font-style:italic;font-weight:600;color:var(--azul-luz)}
-#sobre .lead{font-family:var(--acumin);color:#c9cdd8}
+#sobre .lead{font-family:var(--acumin);color:#0a0a0a;font-weight:500;text-shadow:0 1px 12px rgba(255,255,255,.35)}
+#sobre .lead b{color:#000}
 
 /* ===== "Somos a" + logo com brasão animado ===== */
 .logo-anim{display:flex;align-items:center;justify-content:center;gap:.5rem;margin:0 auto 10px;flex-wrap:wrap}
