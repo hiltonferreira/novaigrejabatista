@@ -139,13 +139,15 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
 .hero-hours .hr{font-family:var(--acumin);font-weight:700;font-size:1.6rem;color:var(--marfim);line-height:1;margin:6px 0 5px;order:2}
 .hero-hours .nm{font-family:var(--acumin);font-size:.75rem;color:var(--azul-gray);font-weight:400;line-height:1.3;white-space:nowrap;order:3}
 .strip{background:var(--marfim);padding:12px 0;overflow:hidden;white-space:nowrap;position:relative;z-index:3}
+.strip-track,.strip-group{align-items:center}
+.strip-item{height:1.7em}
 .strip-track{display:flex;align-items:center;width:max-content;animation:strip-scroll 35s linear infinite;will-change:transform}
 .strip:hover .strip-track{animation-play-state:paused}
 .strip-group{display:flex;align-items:center;flex:0 0 auto}
 .strip-item{display:inline-flex;align-items:center;font-family:var(--acumin);font-size:.9rem;font-weight:500;
-  color:var(--navy);text-transform:uppercase;letter-spacing:.08em;line-height:1;white-space:nowrap}
+  color:var(--navy);text-transform:uppercase;letter-spacing:.08em;line-height:1.7;white-space:nowrap;vertical-align:middle}
 .strip-item b{font-weight:700}
-.strip-sep{height:1.7em;width:auto;margin:0 28px;flex:0 0 auto}
+.strip-sep{height:1.7em;width:auto;margin:0 28px;flex:0 0 auto;vertical-align:middle;align-self:center}
 @keyframes strip-scroll{from{transform:translateX(0)}to{transform:translateX(-33.333%)}}
 @media(prefers-reduced-motion:reduce){.strip-track{animation:none}}
 .pad{padding:120px 0}
