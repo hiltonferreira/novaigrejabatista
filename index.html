@@ -100,8 +100,8 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
   filter:blur(9px);transform:scale(1.04)}
 .hero::after{content:"";position:absolute;inset:0;z-index:-1;
   background:
-    linear-gradient(to right,rgba(0,22,120,.9) 0%,rgba(0,33,175,.68) 30%,rgba(0,33,175,.28) 60%,rgba(0,33,175,.08) 100%),
-    linear-gradient(to top,var(--bg) 2%,rgba(0,16,80,.5) 30%,transparent 65%)}
+    linear-gradient(to right,rgba(5,7,13,.9) 0%,rgba(5,7,13,.68) 30%,rgba(5,7,13,.28) 60%,rgba(5,7,13,.08) 100%),
+    linear-gradient(to top,var(--bg) 2%,rgba(5,7,13,.5) 30%,transparent 65%)}
 .hero-inner{max-width:620px;margin-right:auto;margin-left:0;text-align:left}
 .hero .eyebrow{margin-bottom:14px;display:block;font-family:var(--acumin);color:var(--laranja)}
 .hero h1{font-family:var(--acumin);font-size:clamp(1.9rem,4vw,3.3rem);font-weight:700;line-height:1.1;white-space:nowrap;letter-spacing:-.01em}
@@ -374,7 +374,7 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
   background:rgba(255,255,255,.6);border:1px solid rgba(6,7,73,.1);backdrop-filter:blur(8px);
   box-shadow:0 20px 44px -22px rgba(6,7,73,.4)}
 .ct-badge{width:60px;height:60px;border-radius:50%;flex:0 0 auto;display:grid;place-items:center;
-  background:#002882;box-shadow:0 8px 20px -6px rgba(0,40,130,.6)}
+  background:#041e42;box-shadow:0 8px 20px -6px rgba(4,30,66,.6)}
 .ct-num{font-family:var(--acumin);font-weight:700;font-size:1.8rem;line-height:1;color:#fff}
 .ct-info{display:flex;flex-direction:column;text-align:left;gap:2px}
 .ct-label{font-family:var(--acumin);font-weight:700;font-size:1.02rem;color:var(--navy);line-height:1.1;text-transform:none;white-space:nowrap}
@@ -382,14 +382,14 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
 /* ===== Cards dos dias (claro, com stacking e setas) ===== */
 .days-stack{display:flex;flex-direction:column;gap:36px;min-width:0}
 .day-card{position:sticky;top:100px;border-radius:20px;overflow:hidden;
-  background:linear-gradient(155deg,#002882 0%,#001f66 60%,#00143f 100%);
-  border:1px solid rgba(255,255,255,.14);box-shadow:0 30px 60px -28px rgba(0,20,80,.6);
+  background:linear-gradient(155deg,#041e42 0%,#03152f 60%,#020c1e 100%);
+  border:1px solid rgba(255,255,255,.14);box-shadow:0 30px 60px -28px rgba(0,15,40,.6);
   padding:30px 30px 32px;transition:.4s cubic-bezier(.2,.7,.2,1)}
 /* progressão de cor: segunda (mais clara) -> sábado (mais escura) */
-.days-stack .day-card:nth-of-type(1){background:linear-gradient(155deg,#1a4bc0 0%,#0f3ba0 60%,#002882 100%)}
-.days-stack .day-card:nth-of-type(2){background:linear-gradient(155deg,#0f3ba0 0%,#002882 60%,#001f66 100%)}
-.days-stack .day-card:nth-of-type(3){background:linear-gradient(155deg,#0a337f 0%,#002171 60%,#001a55 100%)}
-.days-stack .day-card:nth-of-type(4){background:linear-gradient(155deg,#002882 0%,#001f66 60%,#00122e 100%)}
+.days-stack .day-card:nth-of-type(1){background:linear-gradient(155deg,#0d3a7a 0%,#083061 60%,#041e42 100%)}
+.days-stack .day-card:nth-of-type(2){background:linear-gradient(155deg,#083061 0%,#052a52 60%,#041e42 100%)}
+.days-stack .day-card:nth-of-type(3){background:linear-gradient(155deg,#052a52 0%,#041e42 60%,#03152f 100%)}
+.days-stack .day-card:nth-of-type(4){background:linear-gradient(155deg,#041e42 0%,#03152f 60%,#020c1e 100%)}
 /* animação: barra laranja no topo + hover */
 .day-card::before{content:"";position:absolute;top:0;left:0;height:4px;width:0;background:var(--laranja);transition:.4s;z-index:2}
 .day-card:hover::before{width:100%}
@@ -417,7 +417,7 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
 .mc-row{display:flex;gap:9px;align-items:flex-start;font-family:var(--acumin);font-size:.83rem;color:#4a5268;line-height:1.35}
 .mc-ic{width:15px;height:15px;flex:0 0 auto;fill:var(--laranja);margin-top:2px}
 .mc-wpp{display:flex;align-items:center;justify-content:center;gap:8px;font-family:var(--acumin);font-weight:600;font-size:.84rem;
-  padding:.7em 1em;border-radius:999px;background:#002882;color:#fff;transition:.25s;text-decoration:none;white-space:nowrap}
+  padding:.7em 1em;border-radius:999px;background:#041e42;color:#fff;transition:.25s;text-decoration:none;white-space:nowrap}
 .mc-wpp svg{width:16px;height:16px;flex:0 0 auto;fill:currentColor}
 .mc-wpp:hover{background:var(--laranja);color:var(--navy)}
 @media(max-width:1100px){.mc{flex-basis:calc((100% - 18px)/2)}}
@@ -520,8 +520,8 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
 /* Contribuições - navy azulado */
 #contribuicoes{position:relative;isolation:isolate;overflow:hidden;
   background:
-    radial-gradient(120% 90% at 15% 0%,#1a4bd6 0%,transparent 55%),
-    linear-gradient(160deg,#0229d1 0%,#021a8f 60%,#010f52 100%)}
+    radial-gradient(120% 90% at 15% 0%,#0d3a7a 0%,transparent 55%),
+    linear-gradient(160deg,#041e42 0%,#03152f 60%,#020c1e 100%)}
 /* Visite - navy profundo */
 .visite{position:relative;isolation:isolate;
   background:radial-gradient(75% 60% at 15% 5%,rgba(255,127,64,.18) 0%,transparent 55%),linear-gradient(160deg,#04051a 0%,#080c24 55%,#05061c 100%)}
@@ -555,7 +555,7 @@ footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
   .hero h1 br{display:none}
   /* imagem mobile focada no pastor + pastora */
   .hero .photo{background-image:url('img/hero-bg-mobile.jpg');background-position:70% 22%;background-size:cover}
-  .hero::after{background:linear-gradient(to top,var(--bg) 2%,rgba(0,18,90,.6) 42%,rgba(0,22,120,.32) 75%,rgba(0,22,120,.18) 100%)}
+  .hero::after{background:linear-gradient(to top,var(--bg) 2%,rgba(4,30,66,.6) 42%,rgba(4,30,66,.32) 75%,rgba(4,30,66,.18) 100%)}
   .hero .photo::before{-webkit-mask-image:none;mask-image:none;filter:none;content:none}
   .cel-grid,.contrib-grid,.vis-grid{grid-template-columns:1fr;gap:44px}
   .pillars,.cultos-grid,.videos,.lid-grid,.ev-grid{grid-template-columns:1fr}
