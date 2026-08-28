@@ -513,9 +513,6 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
 .evento::before{content:"";position:absolute;top:0;left:0;height:3px;width:0;background:var(--laranja);transition:.4s;z-index:3}
 .evento:hover::before{width:100%}
 .evento:hover{transform:translateY(-8px) scale(1.015);border-color:rgba(255,127,64,.5);box-shadow:0 24px 50px -20px rgba(255,127,64,.4)}
-.evento-multiplicacao{background-position:center 16%}
-@media(max-width:760px){.evento-multiplicacao{background-position:center 18%}}
-
 .evento .cont{padding:30px;position:relative;z-index:2}
 /* card de evento com foto de fundo */
 .evento-foto{background:
@@ -523,6 +520,15 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
     var(--ev-bg);
   background-size:cover;background-position:center 30%}
 .evento-foto:hover{background-position:center 26%}
+
+/* enquadramento específico — Festa da Multiplicação */
+.evento-foto.evento-multiplicacao{background-position:center 8%}
+.evento-foto.evento-multiplicacao:hover{background-position:center 6%}
+@media(max-width:760px){
+  .evento-foto.evento-multiplicacao{background-position:center 10%}
+  .evento-foto.evento-multiplicacao:hover{background-position:center 8%}
+}
+
 .evento .tag{display:inline-block;font-family:var(--acumin);font-size:.7rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--navy);background:var(--laranja);padding:4px 10px;border-radius:999px;margin-bottom:12px}
 .evento .date{font-family:var(--acumin);font-style:italic;font-weight:500;font-size:1.4rem;color:var(--laranja);margin-bottom:2px}
 .evento h3{font-family:var(--acumin);font-weight:700;font-size:1.7rem;color:var(--marfim);line-height:.95}
@@ -945,6 +951,7 @@ footer a[href*="instagram.com/hilton.cmferreira"]:hover{color:var(--laranja)}
   }
   .evento.tap-active::before{width:100%}
   .evento-foto.tap-active{background-position:center 26%}
+  .evento-foto.evento-multiplicacao.tap-active{background-position:center 8%}
 
   .video.tap-active{
     transform:translateY(-5px);
