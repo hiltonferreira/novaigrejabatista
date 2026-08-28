@@ -482,7 +482,7 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
 .lid:hover::after{width:100%}
 .lid .info{position:relative;z-index:2}
 .lid:hover{transform:translateY(-8px) scale(1.015);border-color:rgba(255,127,64,.5);box-shadow:0 24px 50px -20px rgba(255,127,64,.4)}
-.lid:hover{transform:translateY(-5px);box-shadow:0 30px 60px -30px rgba(0,40,130,.5)}
+
 .lid .info{padding:32px}
 .lid .role{font-family:var(--acumin);font-style:italic;font-weight:500;font-size:1.4rem;color:var(--laranja)}
 .lid h3{font-family:var(--display);font-size:2rem;color:#fff;margin:2px 0 10px}
@@ -666,6 +666,21 @@ footer a[href*="instagram.com/hilton.cmferreira"]:hover{color:var(--laranja)}
 @media(max-width:760px){
   #lideranca .lid-grid .lid{min-height:480px;height:480px}
 }
+
+
+/* correção final: hover da liderança com prioridade sobre a animação .reveal */
+#lideranca .lid.reveal.in{
+  transition:transform .4s cubic-bezier(.2,.7,.2,1),
+             border-color .4s cubic-bezier(.2,.7,.2,1),
+             box-shadow .4s cubic-bezier(.2,.7,.2,1);
+  will-change:transform;
+}
+#lideranca .lid.reveal.in:hover{
+  transform:translateY(-8px) scale(1.015);
+  border-color:rgba(255,127,64,.5);
+  box-shadow:0 24px 50px -20px rgba(255,127,64,.4);
+}
+#lideranca .lid.reveal.in:hover::after{width:100%}
 
 </style>
 </head>
