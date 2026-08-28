@@ -409,18 +409,14 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
   border:1px solid rgba(255,255,255,.14);box-shadow:0 30px 60px -28px rgba(0,15,40,.6);
   padding:30px 30px 32px;transition:.4s cubic-bezier(.2,.7,.2,1)}
 /* progressão de cor: segunda (mais clara) -> sábado (mais escura) */
-.days-stack .day-card:nth-of-type(1){background:linear-gradient(155deg,#0d3a7a 0%,#083061 60%,#041e42 100%)}
-.days-stack .day-card:nth-of-type(2){background:linear-gradient(155deg,#083061 0%,#052a52 60%,#041e42 100%)}
-.days-stack .day-card:nth-of-type(3){background:linear-gradient(155deg,#052a52 0%,#041e42 60%,#03152f 100%)}
-.days-stack .day-card:nth-of-type(4){background:linear-gradient(155deg,#041e42 0%,#03152f 60%,#020c1e 100%)}
+.days-stack .day-card:nth-of-type(1){background:radial-gradient(circle at 96% 4%,rgba(255,127,64,.12) 0%,rgba(255,127,64,.055) 17%,transparent 40%),linear-gradient(155deg,#0d3a7a 0%,#083061 60%,#041e42 100%)}
+.days-stack .day-card:nth-of-type(2){background:radial-gradient(circle at 96% 4%,rgba(255,127,64,.12) 0%,rgba(255,127,64,.055) 17%,transparent 40%),linear-gradient(155deg,#083061 0%,#052a52 60%,#041e42 100%)}
+.days-stack .day-card:nth-of-type(3){background:radial-gradient(circle at 96% 4%,rgba(255,127,64,.12) 0%,rgba(255,127,64,.055) 17%,transparent 40%),linear-gradient(155deg,#052a52 0%,#041e42 60%,#03152f 100%)}
+.days-stack .day-card:nth-of-type(4){background:radial-gradient(circle at 96% 4%,rgba(255,127,64,.12) 0%,rgba(255,127,64,.055) 17%,transparent 40%),linear-gradient(155deg,#041e42 0%,#03152f 60%,#020c1e 100%)}
 /* animação: barra laranja no topo + hover */
 .day-card::before{content:"";position:absolute;top:0;left:0;height:4px;width:0;background:var(--laranja);transition:.4s;z-index:2}
 .day-card:hover::before{width:100%}
-.day-card:hover{
-  box-shadow:
-    0 36px 70px -26px rgba(0,50,150,.7),
-    0 18px 48px -22px rgba(255,127,64,.62);
-}
+.day-card:hover{box-shadow:0 36px 70px -26px rgba(0,50,150,.7)}
 .dc-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:24px;flex-wrap:wrap}
 .dc-count{display:inline-block;font-family:var(--acumin);font-size:.7rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
   color:var(--navy);background:var(--laranja);padding:5px 13px;border-radius:999px;margin-bottom:10px}
@@ -930,9 +926,7 @@ footer a[href*="instagram.com/hilton.cmferreira"]:hover{color:var(--laranja)}
   #cultos .culto.tap-active::before{width:100%}
 
   .day-card.tap-active{
-    box-shadow:
-      0 36px 70px -26px rgba(0,50,150,.7),
-      0 18px 48px -22px rgba(255,127,64,.62)
+    box-shadow:0 36px 70px -26px rgba(0,50,150,.7)
   }
   .day-card.tap-active::before{width:100%}
 
