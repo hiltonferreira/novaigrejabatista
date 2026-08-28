@@ -956,6 +956,20 @@ footer a[href*="instagram.com/hilton.cmferreira"]:hover{color:var(--laranja)}
   }
 }
 
+
+/* Mobile: trava o arraste lateral da página sem interferir na seção Células */
+@media (pointer:coarse){
+  header,
+  body > section:not(#celulas),
+  body > footer{
+    touch-action:pan-y pinch-zoom;
+  }
+
+  #celulas{
+    touch-action:auto;
+  }
+}
+
 </style>
 </head>
 <body>
