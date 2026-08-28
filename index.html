@@ -101,6 +101,11 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
 .nav-cta-alt:hover{background:var(--marfim);color:var(--navy)!important;border-color:var(--marfim)}
 .burger{display:none;background:none;border:0;cursor:pointer;flex-direction:column;gap:5px}
 .burger span{width:26px;height:2px;background:#fff;transition:.3s}
+.mobile-menu-head,.mobile-menu-actions{display:none}
+.mobile-menu-links{display:contents}
+.mobile-menu-links>a>span{display:none}
+.mobile-menu-overlay{display:none}
+
 .hero{min-height:auto;display:flex;align-items:flex-end;padding:100px 0 44px;overflow:hidden}
 .hero .photo{position:absolute;inset:0;z-index:-2;background:#0a1330 center center/cover no-repeat;
   background-image:url('img/hero-bg-pastores.jpg')}
@@ -666,10 +671,188 @@ footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
     filter:blur(9px);transform:scale(1.04)}
   .cel-grid,.contrib-grid,.vis-grid{grid-template-columns:1fr;gap:44px}
   .pillars,.cultos-grid,.videos,.lid-grid,.ev-grid{grid-template-columns:1fr}
-  .nav-links{position:fixed;inset:0 0 0 auto;width:min(320px,84vw);background:var(--bg-2);flex-direction:column;justify-content:center;align-items:flex-start;padding:44px;gap:24px;transform:translateX(100%);transition:.35s;box-shadow:-12px 0 50px rgba(0,0,0,.5);border-left:1px solid var(--line);border-radius:0;backdrop-filter:none;-webkit-backdrop-filter:none;margin:0}
-  .nav-links.open{transform:none}
-  .nav-links a{font-size:1rem}
-  .burger{display:flex;z-index:2}
+  .nav-links{
+    position:fixed;
+    top:10px;
+    right:10px;
+    bottom:10px;
+    left:auto;
+    width:min(390px,calc(100vw - 20px));
+    height:auto;
+    display:flex;
+    flex-direction:column;
+    align-items:stretch;
+    justify-content:flex-start;
+    gap:0;
+    margin:0;
+    padding:0;
+    overflow-y:auto;
+    overscroll-behavior:contain;
+    background:
+      radial-gradient(80% 55% at 85% 0%,rgba(255,127,64,.14),transparent 62%),
+      linear-gradient(160deg,rgba(9,16,34,.985),rgba(4,8,21,.99));
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:24px;
+    box-shadow:0 28px 80px rgba(0,0,0,.58);
+    backdrop-filter:blur(24px) saturate(1.25);
+    -webkit-backdrop-filter:blur(24px) saturate(1.25);
+    transform:translateX(calc(100% + 24px));
+    opacity:.2;
+    visibility:hidden;
+    transition:transform .42s cubic-bezier(.2,.7,.2,1),opacity .3s ease,visibility .42s;
+    z-index:202
+  }
+  .nav-links.open{transform:translateX(0);opacity:1;visibility:visible}
+
+  .mobile-menu-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:18px;
+    padding:22px 20px 20px;
+    border-bottom:1px solid rgba(255,255,255,.09)
+  }
+  .mobile-menu-brand{display:flex;align-items:center;gap:12px;min-width:0}
+  .mobile-menu-brand img{width:38px;height:38px;object-fit:contain;flex:0 0 auto}
+  .mobile-menu-brand div{display:flex;flex-direction:column;min-width:0}
+  .mobile-menu-brand strong{
+    font-family:var(--acumin);
+    color:#fff;
+    font-size:.93rem;
+    line-height:1.1;
+    font-weight:700
+  }
+  .mobile-menu-brand span{
+    margin-top:4px;
+    font-family:var(--acumin);
+    color:rgba(255,255,255,.52);
+    font-size:.7rem;
+    letter-spacing:.08em;
+    text-transform:uppercase
+  }
+
+  .mobile-menu-close{
+    position:relative;
+    width:42px;
+    height:42px;
+    flex:0 0 auto;
+    border-radius:50%;
+    border:1px solid rgba(255,255,255,.13);
+    background:rgba(255,255,255,.055);
+    cursor:pointer
+  }
+  .mobile-menu-close span{
+    position:absolute;
+    top:50%;
+    left:50%;
+    width:18px;
+    height:1.5px;
+    background:#fff;
+    border-radius:999px
+  }
+  .mobile-menu-close span:first-child{transform:translate(-50%,-50%) rotate(45deg)}
+  .mobile-menu-close span:last-child{transform:translate(-50%,-50%) rotate(-45deg)}
+
+  .mobile-menu-links{
+    display:flex;
+    flex-direction:column;
+    padding:18px 20px 12px
+  }
+  .nav-links .mobile-menu-links>a{
+    display:flex;
+    align-items:center;
+    gap:15px;
+    min-height:53px;
+    padding:8px 4px;
+    color:#f4f5f8;
+    font-family:var(--acumin);
+    font-size:1.12rem;
+    font-weight:600;
+    border-bottom:1px solid rgba(255,255,255,.075)
+  }
+  .nav-links .mobile-menu-links>a:last-child{border-bottom:0}
+  .mobile-menu-links>a>span{
+    display:block;
+    width:24px;
+    color:var(--laranja);
+    font-size:.68rem;
+    font-weight:700;
+    letter-spacing:.08em;
+    opacity:.9
+  }
+
+  .mobile-menu-actions{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:10px;
+    margin-top:auto;
+    padding:16px 20px 22px;
+    border-top:1px solid rgba(255,255,255,.09)
+  }
+  .nav-links .mobile-menu-cta{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    min-height:48px;
+    padding:12px 18px;
+    border-radius:999px;
+    font-family:var(--acumin);
+    font-size:.86rem;
+    font-weight:700;
+    text-align:center
+  }
+  .nav-links .mobile-menu-cta-alt{
+    color:#fff;
+    background:rgba(255,255,255,.065);
+    border:1px solid rgba(255,255,255,.17)
+  }
+  .nav-links .mobile-menu-cta-main{
+    color:var(--navy);
+    background:var(--laranja);
+    border:1px solid var(--laranja)
+  }
+
+  .mobile-menu-overlay{
+    display:block;
+    position:fixed;
+    inset:0;
+    z-index:199;
+    background:rgba(1,4,12,.58);
+    backdrop-filter:blur(4px);
+    -webkit-backdrop-filter:blur(4px);
+    opacity:0;
+    visibility:hidden;
+    pointer-events:none;
+    transition:opacity .3s ease,visibility .3s
+  }
+  body.menu-open .mobile-menu-overlay{
+    opacity:1;
+    visibility:visible;
+    pointer-events:auto
+  }
+  body.menu-open{overflow:hidden}
+
+  .burger{
+    display:flex;
+    position:relative;
+    z-index:201;
+    width:46px;
+    height:46px;
+    padding:0;
+    align-items:center;
+    justify-content:center;
+    gap:5px;
+    border:1px solid rgba(255,255,255,.13);
+    border-radius:50%;
+    background:rgba(8,12,24,.62);
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px)
+  }
+  .burger span{position:absolute;width:20px;height:1.7px;border-radius:999px}
+  .burger span:nth-child(1){transform:translateY(-6px)}
+  .burger span:nth-child(2){transform:translateY(0)}
+  .burger span:nth-child(3){transform:translateY(6px)}
+  body.menu-open .burger{opacity:0;pointer-events:none}
   header .nav > .nav-cta{display:none}
 }
 @media(max-width:560px){
@@ -731,19 +914,40 @@ footer a[href*="instagram.com/hilton.cmferreira"]:hover{color:var(--laranja)}
       </span>
       <img class="logo-mark logo-compact" src="img/logo/logo3-branco.svg" alt="Nib - Nova Igreja Batista">
     </a>
-    <nav class="nav-links" id="navLinks">
-      <a href="#sobre">Sobre</a>
-      <a href="#cultos">Cultos</a>
-      <a href="#celulas">Células</a>
-      <a href="#mensagens">Mensagens</a>
-      <a href="#lideranca">Liderança</a>
-      <a href="#eventos">Eventos</a>
+    <nav class="nav-links" id="navLinks" aria-label="Menu principal">
+      <div class="mobile-menu-head">
+        <div class="mobile-menu-brand">
+          <img src="img/logo/nav-brasao-nib.png" alt="" aria-hidden="true">
+          <div>
+            <strong>Nova Igreja Batista</strong>
+            <span>A Casa de Deus</span>
+          </div>
+        </div>
+        <button class="mobile-menu-close" id="mobileMenuClose" type="button" aria-label="Fechar menu">
+          <span></span><span></span>
+        </button>
+      </div>
+
+      <div class="mobile-menu-links">
+        <a href="#sobre"><span>01</span>Sobre</a>
+        <a href="#cultos"><span>02</span>Cultos</a>
+        <a href="#celulas"><span>03</span>Células</a>
+        <a href="#mensagens"><span>04</span>Mensagens</a>
+        <a href="#lideranca"><span>05</span>Liderança</a>
+        <a href="#eventos"><span>06</span>Eventos</a>
+      </div>
+
+      <div class="mobile-menu-actions">
+        <a href="#construcao" class="mobile-menu-cta mobile-menu-cta-alt">Construção do templo</a>
+        <a href="#visite" class="mobile-menu-cta mobile-menu-cta-main">Venha nos visitar</a>
+      </div>
     </nav>
     <a href="#construcao" class="nav-cta nav-cta-alt">Construção do templo</a>
     <a href="#visite" class="nav-cta">Venha nos visitar</a>
     <button class="burger" id="burger" aria-label="Abrir menu"><span></span><span></span><span></span></button>
   </div>
 </header>
+<div class="mobile-menu-overlay" id="mobileMenuOverlay" aria-hidden="true"></div>
 
 <section class="hero" id="top">
   <div class="photo"></div>
@@ -1434,9 +1638,26 @@ addEventListener('scroll',()=>{
   header.classList.toggle('scrolled',s);
   topBlur.classList.toggle('show',s);
 });
-const burger=document.getElementById('burger'),links=document.getElementById('navLinks');
-burger.addEventListener('click',()=>links.classList.toggle('open'));
-links.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>links.classList.remove('open')));
+const burger=document.getElementById('burger');
+const links=document.getElementById('navLinks');
+const mobileMenuClose=document.getElementById('mobileMenuClose');
+const mobileMenuOverlay=document.getElementById('mobileMenuOverlay');
+
+function setMobileMenu(open){
+  links.classList.toggle('open',open);
+  document.body.classList.toggle('menu-open',open);
+  burger.setAttribute('aria-expanded',open?'true':'false');
+  burger.setAttribute('aria-label',open?'Fechar menu':'Abrir menu');
+  if(mobileMenuOverlay) mobileMenuOverlay.setAttribute('aria-hidden',open?'false':'true');
+}
+
+burger.setAttribute('aria-expanded','false');
+burger.addEventListener('click',()=>setMobileMenu(!links.classList.contains('open')));
+if(mobileMenuClose) mobileMenuClose.addEventListener('click',()=>setMobileMenu(false));
+if(mobileMenuOverlay) mobileMenuOverlay.addEventListener('click',()=>setMobileMenu(false));
+links.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>setMobileMenu(false)));
+document.addEventListener('keydown',e=>{if(e.key==='Escape') setMobileMenu(false);});
+addEventListener('resize',()=>{if(innerWidth>920) setMobileMenu(false);});
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.12});
 document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 
