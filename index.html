@@ -1268,7 +1268,7 @@ footer a[href*="instagram.com/hilton.cmferreira"]:hover{color:var(--laranja)}
       <p class="lead">A célula é parte da essência de quem somos como igreja. É nos lares que a fé encontra espaço para ser vivida de perto!<br><br>Tem uma célula perto de você. Venha viver igreja com a gente!</p>
       <div class="cel-total">
         <div class="ct-badge">
-          <span class="ct-num" data-target="24">0</span>
+          <span class="ct-num" data-target="26">1</span>
         </div>
         <div class="ct-info">
           <span class="ct-label">células ativas</span>
@@ -1795,25 +1795,61 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 
 /* animação crescente do contador de células */
 (function(){
+  const section=document.getElementById('celulas');
   const el=document.querySelector('.ct-num[data-target]');
-  if(!el) return;
-  const target=parseInt(el.dataset.target)||24;
-  let done=false;
-  const obs=new IntersectionObserver(es=>es.forEach(e=>{
-    if(e.isIntersecting && !done){
-      done=true;
-      const dur=1200; const start=performance.now();
-      function tick(now){
-        const p=Math.min(1,(now-start)/dur);
-        const eased=1-Math.pow(1-p,3); // ease-out
-        el.textContent=Math.round(eased*target);
-        if(p<1) requestAnimationFrame(tick);
-        else el.textContent=target;
+  if(!section || !el) return;
+
+  const target=parseInt(el.dataset.target,10)||26;
+  const dur=1200;
+  let raf=0;
+  let wasVisible=false;
+
+  function reset(){
+    cancelAnimationFrame(raf);
+    el.textContent='1';
+  }
+
+  function animate(){
+    cancelAnimationFrame(raf);
+    const start=performance.now();
+
+    function tick(now){
+      const p=Math.min(1,(now-start)/dur);
+      const eased=1-Math.pow(1-p,3);
+      const value=Math.max(1,Math.round(1+eased*(target-1)));
+      el.textContent=value;
+
+      if(p<1){
+        raf=requestAnimationFrame(tick);
+      }else{
+        el.textContent=target;
       }
-      requestAnimationFrame(tick);
     }
-  }),{threshold:.6});
-  obs.observe(el);
+
+    raf=requestAnimationFrame(tick);
+  }
+
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+    el.textContent=target;
+    return;
+  }
+
+  reset();
+
+  const obs=new IntersectionObserver(entries=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting && !wasVisible){
+        wasVisible=true;
+        reset();
+        animate();
+      }else if(!entry.isIntersecting && wasVisible){
+        wasVisible=false;
+        reset();
+      }
+    });
+  },{threshold:.25});
+
+  obs.observe(section);
 })();
 
 /* navegação por setas + paginação dentro de cada card de dia */
