@@ -561,7 +561,27 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
 .socials a{width:46px;height:46px;border-radius:10px;border:1px solid var(--line);display:grid;place-items:center;color:#fff;transition:.25s}.socials a svg{width:21px;height:21px;fill:currentColor;display:block}
 .socials a:hover{background:var(--laranja);border-color:var(--laranja);color:var(--navy);transform:translateY(-3px)}
 footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
-.foot{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap}
+.foot{
+  display:grid;
+  grid-template-columns:minmax(180px,1fr) minmax(280px,1.6fr) minmax(180px,1fr);
+  align-items:center;
+  gap:28px
+}
+.foot-col{min-width:0}
+.foot-brand{display:flex;justify-content:flex-start}
+.foot-copy{text-align:center}
+.foot-dev{text-align:right}
+@media(max-width:760px){
+  .foot{
+    grid-template-columns:1fr;
+    gap:18px;
+    justify-items:center;
+    text-align:center
+  }
+  .foot-brand{justify-content:center}
+  .foot-copy,.foot-dev{text-align:center}
+  .foot small{line-height:1.55}
+}
 .foot .brand .txt{font-size:1.1rem}
 .foot-logo{height:40px;width:auto;display:block}
 .foot small{font-family:var(--acumin)}
@@ -1297,10 +1317,17 @@ footer a[href*="instagram.com/hilton.cmferreira"]:hover{color:var(--laranja)}
 
 <footer>
   <div class="wrap foot">
-    <a class="brand" href="#top" aria-label="Nib - Nova Igreja Batista">
-      <img class="foot-logo" src="img/logo/logo2-branco.svg" alt="Nib - Nova Igreja Batista - A Casa de Deus">
-    </a>
-    <small>© 2026 Nova Igreja Batista · Um lar de fé e acolhimento. Desenvolvido por <a href="https://www.instagram.com/hilton.cmferreira" target="_blank" rel="noopener noreferrer">Hilton Ferreira</a></small>
+    <div class="foot-col foot-brand">
+      <a class="brand" href="#top" aria-label="Nib - Nova Igreja Batista">
+        <img class="foot-logo" src="img/logo/logo2-branco.svg" alt="Nib - Nova Igreja Batista - A Casa de Deus">
+      </a>
+    </div>
+    <div class="foot-col foot-copy">
+      <small>© 2026 Nova Igreja Batista · Um lar de fé e acolhimento.</small>
+    </div>
+    <div class="foot-col foot-dev">
+      <small>Desenvolvido por <a href="https://www.instagram.com/hilton.cmferreira" target="_blank" rel="noopener noreferrer">Hilton Ferreira</a></small>
+    </div>
   </div>
 </footer>
 
