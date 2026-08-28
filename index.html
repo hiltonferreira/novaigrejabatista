@@ -18,9 +18,6 @@ html,body{
 @supports (overflow:clip){
   html,body{overflow-x:clip}
 }
-@media (pointer:coarse){
-  body{touch-action:pan-y pinch-zoom}
-}
 
 /* ===== Fonte oficial da marca: Acumin Pro ===== */
 @font-face{font-family:"Acumin Pro";src:url("fonts/AcuminPro-Regular.woff2") format("woff2");font-weight:400;font-style:normal;font-display:swap}
@@ -1765,6 +1762,24 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
       }
     }
     btns.forEach(b=>b.addEventListener('click',()=>{ idx+=parseInt(b.dataset.dir)*perView(); apply(); }));
+
+    let touchStartX=0, touchStartY=0, touching=false;
+    viewport.addEventListener('touchstart',e=>{
+      if(!e.touches.length) return;
+      touchStartX=e.touches[0].clientX;
+      touchStartY=e.touches[0].clientY;
+      touching=true;
+    },{passive:true});
+    viewport.addEventListener('touchend',e=>{
+      if(!touching || !e.changedTouches.length) return;
+      const dx=e.changedTouches[0].clientX-touchStartX;
+      const dy=e.changedTouches[0].clientY-touchStartY;
+      touching=false;
+      if(Math.abs(dx)<45 || Math.abs(dx)<=Math.abs(dy)) return;
+      idx += (dx<0 ? 1 : -1) * perView();
+      apply();
+    },{passive:true});
+
     let rt;
     addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{idx=0;buildPagination();apply();},150)});
     buildPagination();
