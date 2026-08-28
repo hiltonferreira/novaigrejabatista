@@ -1802,64 +1802,76 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 })();
 
 
-/* ===== NIB TV — 3 últimos vídeos do canal, automático (feed RSS público, sem chave) ===== */
+/* ===== NIB TV — 3 últimos vídeos via Cloudflare Worker + RSS oficial do YouTube ===== */
 (function(){
-  var CHANNEL_ID="UCpo-O8Bw0Z2Dr7cTTyHkT9w";
-  var FEED="https://www.youtube.com/feeds/videos.xml?channel_id="+CHANNEL_ID;
+  var FEED="https://nib-youtube-feed.hiltoncrivelon.workers.dev/";
   var box=document.getElementById("ytVideos");
   if(!box) return;
 
-  // Vários proxies de CORS — tenta em ordem até um funcionar
-  var proxies=[
-    function(u){return "https://api.allorigins.win/raw?url="+encodeURIComponent(u);},
-    function(u){return "https://corsproxy.io/?url="+encodeURIComponent(u);},
-    function(u){return "https://api.codetabs.com/v1/proxy/?quest="+u;},
-    function(u){return "https://thingproxy.freeboard.io/fetch/"+u;}
-  ];
-
-  function esc(s){return (s||"").replace(/[&<>"]/g,function(c){return({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"})[c];});}
-
-  function tryFetch(i){
-    if(i>=proxies.length){ return Promise.reject("todos os proxies falharam"); }
-    return fetch(proxies[i](FEED),{cache:"no-store"})
-      .then(function(r){ if(!r.ok) throw 0; return r.text(); })
-      .then(function(t){ if(t && t.indexOf("<entry")>-1) return t; throw 0; })
-      .catch(function(){ return tryFetch(i+1); });
+  function esc(s){
+    return (s||"").replace(/[&<>"]/g,function(c){
+      return({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"})[c];
+    });
   }
 
   function render(xmlText){
     var xml=new DOMParser().parseFromString(xmlText,"text/xml");
     var all=[].slice.call(xml.getElementsByTagName("entry"));
-    // deduplica por videoId E por título normalizado (pega 3 distintos)
+
     var seenId={}, seenTitle={}, entries=[];
     for(var k=0;k<all.length;k++){
-      var vidk=(all[k].getElementsByTagName("yt:videoId")[0]||{}).textContent||"";
-      var titk=((all[k].getElementsByTagName("title")[0]||{}).textContent||"")
-                 .toLowerCase().replace(/\s+/g," ").trim();
-      if(!vidk||seenId[vidk]||seenTitle[titk]) continue;
-      seenId[vidk]=1; seenTitle[titk]=1; entries.push(all[k]);
+      var vidNode=all[k].getElementsByTagName("yt:videoId")[0];
+      var titleNode=all[k].getElementsByTagName("title")[0];
+      var vidk=vidNode ? vidNode.textContent : "";
+      var titk=(titleNode ? titleNode.textContent : "")
+        .toLowerCase().replace(/\s+/g," ").trim();
+
+      if(!vidk || seenId[vidk] || seenTitle[titk]) continue;
+
+      seenId[vidk]=1;
+      seenTitle[titk]=1;
+      entries.push(all[k]);
+
       if(entries.length===3) break;
     }
-    if(!entries.length) throw 0;
+
+    if(!entries.length) throw new Error("Feed sem vídeos");
+
     var play='<div class="play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>';
+
     box.innerHTML=entries.map(function(en,idx){
-      var vid=(en.getElementsByTagName("yt:videoId")[0]||{}).textContent||"";
-      var title=(en.getElementsByTagName("title")[0]||{}).textContent||"Mensagem";
+      var vidNode=en.getElementsByTagName("yt:videoId")[0];
+      var titleNode=en.getElementsByTagName("title")[0];
+      var vid=vidNode ? vidNode.textContent : "";
+      var title=titleNode ? titleNode.textContent : "Mensagem";
       var link="https://www.youtube.com/watch?v="+vid;
       var hi="https://i.ytimg.com/vi/"+vid+"/maxresdefault.jpg";
       var fb="https://i.ytimg.com/vi/"+vid+"/hqdefault.jpg";
+
       return '<a class="video reveal in" style="transition-delay:'+(idx*.1)+'s" href="'+link+'" target="_blank" rel="noopener">'+
         '<div class="thumb"><span class="tag-watch">Assista</span><img src="'+hi+'" alt="'+esc(title)+'" loading="lazy" '+
         'onerror="this.onerror=null;this.src=\''+fb+'\'">'+play+'</div>'+
-        '<div class="meta"><b>'+esc(title)+'</b><span>Youtube · Nova Igreja Batista</span></div></a>';
+        '<div class="meta"><b>'+esc(title)+'</b><span>YouTube · Nova Igreja Batista</span></div></a>';
     }).join("");
   }
 
-  tryFetch(0).then(render).catch(function(){
-    // Fallback: mantém 3 cards levando ao canal
-    box.querySelectorAll(".thumb").forEach(function(t){t.classList.remove("skeleton");});
-    box.querySelectorAll(".meta b").forEach(function(b){b.textContent="Ver últimos vídeos no YouTube";});
-  });
+  fetch(FEED,{cache:"no-store"})
+    .then(function(r){
+      if(!r.ok) throw new Error("Falha HTTP "+r.status);
+      return r.text();
+    })
+    .then(function(t){
+      if(!t || t.indexOf("<entry")===-1) throw new Error("Feed inválido");
+      render(t);
+    })
+    .catch(function(){
+      box.querySelectorAll(".thumb").forEach(function(t){
+        t.classList.remove("skeleton");
+      });
+      box.querySelectorAll(".meta b").forEach(function(b){
+        b.textContent="Ver últimos vídeos no YouTube";
+      });
+    });
 })();
 </script>
 </body>
