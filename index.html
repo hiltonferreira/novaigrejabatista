@@ -617,6 +617,13 @@ footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
   .strip-item{font-size:1rem}
   .strip-sep{margin:0 22px}
 }
+
+/* quebra controlada do texto da seção de liderança */
+#lideranca .lideranca-lead .lead-break{display:block}
+@media(max-width:560px){
+  #lideranca .lideranca-lead{max-width:32ch}
+  #lideranca .lideranca-lead .lead-break{display:inline}
+}
 </style>
 </head>
 <body>
@@ -1178,7 +1185,7 @@ footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
     <div class="sec-head center reveal">
       <span class="eyebrow">Quem conduz</span>
       <h2 class="display h-sec">Nossa liderança</h2>
-      <p class="lead">Pastores dedicados a servir, ensinar e cuidar da igreja com amor e fidelidade à Palavra.</p>
+      <p class="lead lideranca-lead">Pastores dedicados a servir, ensinar e cuidar da igreja<span class="lead-break"> com amor e fidelidade à Palavra.</span></p>
     </div>
     <div class="lid-grid">
       <div class="lid reveal" style="background-image:url('img/pastor-alex.jpg')">
