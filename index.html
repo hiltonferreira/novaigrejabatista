@@ -275,7 +275,7 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
     radial-gradient(100% 90% at 50% 100%,rgba(6,7,73,.5) 0%,transparent 60%),
     linear-gradient(180deg,#0a1020 0%,#0c1428 45%,#0a1220 100%)}
 .cultos .cultos-bg{position:absolute;inset:0;z-index:-2;
-  background:url('img/cultos-bg.jpg') center center/cover no-repeat;
+  background:url('img/cultos-bg-nova.webp') center center/cover no-repeat;
   opacity:var(--bg-op,0);transform:scale(var(--bg-scale,1.06));transition:opacity .4s ease-out,transform .4s ease-out;
   -webkit-mask-image:linear-gradient(to bottom,transparent 0%,#000 15%,#000 70%,transparent 92%);
   mask-image:linear-gradient(to bottom,transparent 0%,#000 15%,#000 70%,transparent 92%)}
@@ -647,6 +647,13 @@ footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
 
 footer a[href*="instagram.com/hilton.cmferreira"]{color:var(--laranja);text-decoration:none;transition:color .25s ease}
 footer a[href*="instagram.com/hilton.cmferreira"]:hover{color:var(--laranja)}
+
+/* enquadramento do novo fundo da seção Venha celebrar */
+#cultos .cultos-bg{background-position:center 42%}
+@media(max-width:760px){
+  #cultos .cultos-bg{background-position:58% center}
+}
+
 </style>
 </head>
 <body>
