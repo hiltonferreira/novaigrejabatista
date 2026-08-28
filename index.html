@@ -655,12 +655,18 @@ footer a[href*="instagram.com/hilton.cmferreira"]:hover{color:var(--laranja)}
 }
 
 
-/* enquadramento individual das novas fotos da liderança */
-#lideranca .lid-sheila{background-position:center 26%}
-#lideranca .lid-sidiel{background-position:center 24%}
+/* padronização visual dos três cards da liderança */
+#lideranca .lid-sheila,
+#lideranca .lid-sidiel{background-position:center 22%}
 @media(max-width:760px){
-  #lideranca .lid-sheila{background-position:center 24%}
+  #lideranca .lid-sheila,
   #lideranca .lid-sidiel{background-position:center 22%}
+}
+
+
+#lideranca .lid-grid .lid{min-height:480px;height:480px}
+@media(max-width:760px){
+  #lideranca .lid-grid .lid{min-height:480px;height:480px}
 }
 
 </style>
