@@ -970,6 +970,10 @@ footer a[href*="instagram.com/hilton.cmferreira"]:hover{color:var(--laranja)}
   }
 }
 
+
+/* Botões de contribuição temporariamente sem ação */
+.contrib-btn-disabled{cursor:default}
+
 </style>
 </head>
 <body>
@@ -1634,9 +1638,9 @@ footer a[href*="instagram.com/hilton.cmferreira"]:hover{color:var(--laranja)}
       <h2 class="display h-sec" style="margin:16px 0 20px">Faça parte<br>dessa história</h2>
       <p class="lead">Honre o Senhor com generosidade e seja parte do que Deus está construindo. Contribua com alegria, no seu tempo e coração.</p>
       <div class="contrib-cta">
-        <a href="#contribuicoes" class="btn btn-orange">Oferta</a>
-        <a href="#contribuicoes" class="btn btn-ghost-dark">Dízimo</a>
-        <a href="#construcao" class="btn btn-ghost-dark">Construção do templo</a>
+        <button type="button" class="btn btn-orange contrib-btn-disabled">Oferta</button>
+        <button type="button" class="btn btn-ghost-dark contrib-btn-disabled">Dízimo</button>
+        <button type="button" class="btn btn-ghost-dark contrib-btn-disabled">Construção do templo</button>
       </div>
     </div>
     <div class="pix-card reveal">
