@@ -422,6 +422,13 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
 /* viewport + track das células */
 .dc-viewport{overflow:hidden;padding:8px 4px 12px;margin:-8px -4px -12px}
 .dc-track{display:flex;gap:16px;transition:transform .5s cubic-bezier(.4,0,.2,1)}
+/* paginação das páginas de células */
+.dc-pagination{display:flex;justify-content:center;align-items:center;gap:8px;margin-top:20px;min-height:12px}
+.dc-page-dot{width:9px;height:9px;border:0;border-radius:50%;padding:0;background:rgba(235,235,223,.34);cursor:pointer;transition:.25s;box-shadow:0 0 0 1px rgba(235,235,223,.08)}
+.dc-page-dot:hover{transform:scale(1.2);background:rgba(255,127,64,.7)}
+.dc-page-dot.active{width:11px;height:11px;background:var(--laranja);box-shadow:0 0 0 3px rgba(255,127,64,.14)}
+.dc-page-dot:focus-visible{outline:2px solid var(--marfim);outline-offset:3px}
+.dc-pagination[hidden]{display:none}
 /* mini-cards CLAROS */
 .mc{flex:0 0 calc((100% - 16px)/2);min-width:0;display:flex;flex-direction:column;
   background:#fff;border:1px solid rgba(6,7,73,.08);border-radius:15px;padding:20px 18px;
@@ -857,7 +864,7 @@ footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
         <div class="dc-head">
           <div class="dc-head-left">
             <span class="dc-count">3 células</span>
-            <h3 class="dc-dia">Segundas-feiras</h3>
+            <h3 class="dc-dia">Segunda-feira</h3>
           </div>
           <div class="dc-nav">
             <button class="dc-arrow" data-dir="-1" aria-label="Anterior">‹</button>
@@ -868,7 +875,7 @@ footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
           <div class="dc-track">
 <div class="mc">
   <span class="mc-nome">Casa de Semeador</span>
-  <span class="mc-lider">Lucas e Nayana</span>
+  <span class="mc-lider">Líderes: Lucas e Nayana</span>
   <div class="mc-rows">
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Rio Negro, Grandes Áreas</span></div>
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>19:30 às 21:30</span></div>
@@ -877,7 +884,7 @@ footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
 </div>
 <div class="mc">
   <span class="mc-nome">Renascer</span>
-  <span class="mc-lider">Dieferson</span>
+  <span class="mc-lider">Líderes: Dieferson</span>
   <div class="mc-rows">
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Machado de Assis, Setor 06</span></div>
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>19:30 às 21:30</span></div>
@@ -886,7 +893,7 @@ footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
 </div>
 <div class="mc">
   <span class="mc-nome">2 ou +</span>
-  <span class="mc-lider">Nelson, Débora e Antony</span>
+  <span class="mc-lider">Líderes: Nelson, Débora e Antony</span>
   <div class="mc-rows">
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Paraná, Setor 05, ao lado do Kumon</span></div>
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>19:40 às 21:40</span></div>
@@ -895,12 +902,13 @@ footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
 </div>
           </div>
         </div>
+        <div class="dc-pagination" aria-label="Paginação das células"></div>
       </article>
       <article class="day-card sticky-day" style="--i:1">
         <div class="dc-head">
           <div class="dc-head-left">
             <span class="dc-count">19 células</span>
-            <h3 class="dc-dia">Terças-feiras</h3>
+            <h3 class="dc-dia">Terça-feira</h3>
           </div>
           <div class="dc-nav">
             <button class="dc-arrow" data-dir="-1" aria-label="Anterior">‹</button>
@@ -911,7 +919,7 @@ footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
           <div class="dc-track">
 <div class="mc">
   <span class="mc-nome">Ágape</span>
-  <span class="mc-lider">Sérgio e Val</span>
+  <span class="mc-lider">Líderes: Sérgio e Val</span>
   <div class="mc-rows">
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Alameda Piquia, Setor 01</span></div>
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>20:00 às 22:00</span></div>
@@ -920,7 +928,7 @@ footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
 </div>
 <div class="mc">
   <span class="mc-nome">Boa Semente</span>
-  <span class="mc-lider">Gilberto e Liliam</span>
+  <span class="mc-lider">Líderes: Gilberto e Liliam</span>
   <div class="mc-rows">
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>AV. Capitão Silvio, Cond. Villagio Nipote</span></div>
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>19:30 às 21:30</span></div>
@@ -929,7 +937,7 @@ footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
 </div>
 <div class="mc">
   <span class="mc-nome">Casa de Elohim</span>
-  <span class="mc-lider">Jacque e Ribinho</span>
+  <span class="mc-lider">Líderes: Jacque e Ribinho</span>
   <div class="mc-rows">
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Aracaju, Setor 03</span></div>
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>19:30 às 21:30</span></div>
@@ -938,7 +946,7 @@ footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
 </div>
 <div class="mc">
   <span class="mc-nome">Casa de Jetro</span>
-  <span class="mc-lider">Rodrigo e Ticiana</span>
+  <span class="mc-lider">Líderes: Rodrigo e Ticiana</span>
   <div class="mc-rows">
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Rio Negro, Jardim das Palmeiras</span></div>
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>19:30 às 21:30</span></div>
@@ -947,7 +955,7 @@ footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
 </div>
 <div class="mc">
   <span class="mc-nome">Casa Emanuel</span>
-  <span class="mc-lider">Terezinha</span>
+  <span class="mc-lider">Líderes: Terezinha</span>
   <div class="mc-rows">
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>AV. JK, Fundo Refrigeração São Paulo</span></div>
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>19:30 às 21:30</span></div>
@@ -956,7 +964,7 @@ footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
 </div>
 <div class="mc">
   <span class="mc-nome">Casa Leão de Judá</span>
-  <span class="mc-lider">Maycon e Thais</span>
+  <span class="mc-lider">Líderes: Maycon e Thais</span>
   <div class="mc-rows">
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Jânio Quadros, Setor 08</span></div>
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>20:00 às 22:00</span></div>
@@ -965,7 +973,7 @@ footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
 </div>
 <div class="mc">
   <span class="mc-nome">Efatá</span>
-  <span class="mc-lider">Eduarda e Leandro</span>
+  <span class="mc-lider">Líderes: Eduarda e Leandro</span>
   <div class="mc-rows">
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Monte Negro, Apoio Social</span></div>
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>20:00 às 22:00</span></div>
@@ -974,7 +982,7 @@ footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
 </div>
 <div class="mc">
   <span class="mc-nome">Filhos de Davi</span>
-  <span class="mc-lider">Fernando e Yasmin</span>
+  <span class="mc-lider">Líderes: Fernando e Yasmin</span>
   <div class="mc-rows">
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Maceió, Setor 03</span></div>
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>20:30 às 22:30</span></div>
@@ -983,7 +991,7 @@ footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
 </div>
 <div class="mc">
   <span class="mc-nome">Gênesis</span>
-  <span class="mc-lider">Pr. Alex e Pra. Sheila</span>
+  <span class="mc-lider">Líderes: Pr. Alex e Pra. Sheila</span>
   <div class="mc-rows">
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Marabá, Jardim Jorge Teixeira</span></div>
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>19:30 às 21:30</span></div>
@@ -992,7 +1000,7 @@ footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
 </div>
 <div class="mc">
   <span class="mc-nome">Gileade</span>
-  <span class="mc-lider">Toni e Natália</span>
+  <span class="mc-lider">Líderes: Toni e Natália</span>
   <div class="mc-rows">
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Beija Flor, Setor 02</span></div>
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>19:30 às 21:30</span></div>
@@ -1001,7 +1009,7 @@ footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
 </div>
 <div class="mc">
   <span class="mc-nome">João 20</span>
-  <span class="mc-lider">Breno, Élica e Camila</span>
+  <span class="mc-lider">Líderes: Breno, Élica e Camila</span>
   <div class="mc-rows">
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Matão, Jardim Paulista</span></div>
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>19:30 às 21:30</span></div>
@@ -1010,7 +1018,7 @@ footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
 </div>
 <div class="mc">
   <span class="mc-nome">Kairos</span>
-  <span class="mc-lider">Andréia e Filipe</span>
+  <span class="mc-lider">Líderes: Andréia e Filipe</span>
   <div class="mc-rows">
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Natal, Setor 03</span></div>
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>19:30 às 21:30</span></div>
@@ -1019,7 +1027,7 @@ footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
 </div>
 <div class="mc">
   <span class="mc-nome">Sal da Terra</span>
-  <span class="mc-lider">Luiz e Juliana</span>
+  <span class="mc-lider">Líderes: Luiz e Juliana</span>
   <div class="mc-rows">
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Pimenta Bueno, Setor BNH</span></div>
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>19:30 às 21:30</span></div>
@@ -1028,7 +1036,7 @@ footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
 </div>
 <div class="mc">
   <span class="mc-nome">Fontes de Águas Vivas</span>
-  <span class="mc-lider">Aline, Taynara e Walter</span>
+  <span class="mc-lider">Líderes: Aline, Taynara e Walter</span>
   <div class="mc-rows">
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Milão, Jardim Alvorada</span></div>
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>20:00 às 22:00</span></div>
@@ -1037,7 +1045,7 @@ footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
 </div>
 <div class="mc">
   <span class="mc-nome">Jeová Jireh</span>
-  <span class="mc-lider">Marlon e Marcia</span>
+  <span class="mc-lider">Líderes: Marlon e Marcia</span>
   <div class="mc-rows">
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Moema, Jardim Jorge Teixeira</span></div>
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>19:30 às 21:30</span></div>
@@ -1046,7 +1054,7 @@ footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
 </div>
 <div class="mc">
   <span class="mc-nome">Monte Ararate</span>
-  <span class="mc-lider">Lindalva</span>
+  <span class="mc-lider">Líderes: Lindalva</span>
   <div class="mc-rows">
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Tabajara, BNH</span></div>
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>20:00 às 22:00</span></div>
@@ -1055,7 +1063,7 @@ footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
 </div>
 <div class="mc">
   <span class="mc-nome">Casa de Israel</span>
-  <span class="mc-lider">Mariana e Gabriel</span>
+  <span class="mc-lider">Líderes: Mariana e Gabriel</span>
   <div class="mc-rows">
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Moema, Jardim Jorge Teixeira</span></div>
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>19:30 às 21:30</span></div>
@@ -1064,7 +1072,7 @@ footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
 </div>
 <div class="mc">
   <span class="mc-nome">Moriah</span>
-  <span class="mc-lider">Izabel e Borba</span>
+  <span class="mc-lider">Líderes: Izabel e Borba</span>
   <div class="mc-rows">
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Francisco Alves Pinto, Bom Jesus</span></div>
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>19:30 às 21:30</span></div>
@@ -1073,7 +1081,7 @@ footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
 </div>
 <div class="mc">
   <span class="mc-nome">Filhos da Promessa</span>
-  <span class="mc-lider">Pr. Sidiel</span>
+  <span class="mc-lider">Líderes: Pr. Sidiel</span>
   <div class="mc-rows">
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Rio Grande do Norte, Setor 05</span></div>
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>19:30 às 21:30</span></div>
@@ -1082,12 +1090,13 @@ footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
 </div>
           </div>
         </div>
+        <div class="dc-pagination" aria-label="Paginação das células"></div>
       </article>
       <article class="day-card sticky-day" style="--i:2">
         <div class="dc-head">
           <div class="dc-head-left">
             <span class="dc-count">1 célula</span>
-            <h3 class="dc-dia">Quartas-feiras</h3>
+            <h3 class="dc-dia">Quarta-feira</h3>
           </div>
           
         </div>
@@ -1095,7 +1104,7 @@ footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
           <div class="dc-track">
 <div class="mc">
   <span class="mc-nome">A Grande Comissão</span>
-  <span class="mc-lider">Netão</span>
+  <span class="mc-lider">Líderes: Netão</span>
   <div class="mc-rows">
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>AV. Hugo Fray, Cond. residencial São Paulo</span></div>
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>20:00 às 22:00</span></div>
@@ -1104,12 +1113,13 @@ footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
 </div>
           </div>
         </div>
+        <div class="dc-pagination" aria-label="Paginação das células"></div>
       </article>
       <article class="day-card sticky-day" style="--i:3">
         <div class="dc-head">
           <div class="dc-head-left">
             <span class="dc-count">1 célula</span>
-            <h3 class="dc-dia">Sábados</h3>
+            <h3 class="dc-dia">Sábado</h3>
           </div>
           
         </div>
@@ -1117,7 +1127,7 @@ footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
           <div class="dc-track">
 <div class="mc">
   <span class="mc-nome">Vida Plena</span>
-  <span class="mc-lider">Eriquis</span>
+  <span class="mc-lider">Líderes: Eriquis</span>
   <div class="mc-rows">
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Santa Catarina, Setor 05</span></div>
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>17:30 às 19:30</span></div>
@@ -1126,6 +1136,7 @@ footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
 </div>
           </div>
         </div>
+        <div class="dc-pagination" aria-label="Paginação das células"></div>
       </article>
     </div>
     </div>
@@ -1334,12 +1345,13 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
   obs.observe(el);
 })();
 
-/* navegação por setas dentro de cada card de dia */
+/* navegação por setas + paginação dentro de cada card de dia */
 (function(){
   document.querySelectorAll('.day-card').forEach(card=>{
     const track=card.querySelector('.dc-track');
     const viewport=card.querySelector('.dc-viewport');
     const btns=card.querySelectorAll('.dc-arrow');
+    const pagination=card.querySelector('.dc-pagination');
     if(!track||!btns.length) return;
     const cards=[...track.children];
     let idx=0;
@@ -1348,7 +1360,22 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
       const gap=parseFloat(getComputedStyle(track).gap)||18;
       return Math.max(1,Math.round(viewport.clientWidth/(cw+gap)));
     }
+    function pageCount(){ return Math.max(1,Math.ceil(cards.length/perView())); }
     function maxIdx(){ return Math.max(0,cards.length-perView()); }
+    function buildPagination(){
+      if(!pagination) return;
+      pagination.innerHTML='';
+      const totalPages=pageCount();
+      pagination.hidden=totalPages<=1;
+      for(let page=0;page<totalPages;page++){
+        const dot=document.createElement('button');
+        dot.type='button';
+        dot.className='dc-page-dot';
+        dot.setAttribute('aria-label',`Ir para a página ${page+1}`);
+        dot.addEventListener('click',()=>{ idx=Math.min(page*perView(),maxIdx()); apply(); });
+        pagination.appendChild(dot);
+      }
+    }
     function apply(){
       idx=Math.max(0,Math.min(idx,maxIdx()));
       const cw=cards[0].getBoundingClientRect().width;
@@ -1358,9 +1385,15 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
         const dir=parseInt(b.dataset.dir);
         b.disabled=(dir<0&&idx<=0)||(dir>0&&idx>=maxIdx());
       });
+      if(pagination){
+        const page=Math.floor(idx/perView());
+        [...pagination.children].forEach((dot,i)=>dot.classList.toggle('active',i===page));
+      }
     }
-    btns.forEach(b=>b.addEventListener('click',()=>{idx+=parseInt(b.dataset.dir)*perView();apply();}));
-    let rt;addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{idx=0;apply();},150)});
+    btns.forEach(b=>b.addEventListener('click',()=>{ idx+=parseInt(b.dataset.dir)*perView(); apply(); }));
+    let rt;
+    addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{idx=0;buildPagination();apply();},150)});
+    buildPagination();
     apply();
   });
 })();
