@@ -95,10 +95,10 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
 
 .hero{min-height:auto;display:flex;align-items:flex-end;padding:100px 0 44px;overflow:hidden}
 .hero .photo{position:absolute;inset:0;z-index:-2;background:#0a1330 center center/cover no-repeat;
-  background-image:url('img/hero-bg-pastores.jpg')}
+  background-image:url('img/hero-nib.webp')}
 /* desfoque só na faixa esquerda, onde ficam os textos */
 .hero .photo::before{content:"";position:absolute;inset:0;
-  background:#0a1330 center center/cover no-repeat;background-image:url('img/hero-bg-pastores.jpg');
+  background:#0a1330 center center/cover no-repeat;background-image:url('img/hero-nib.webp');
   -webkit-mask-image:linear-gradient(to right,#000 0%,#000 32%,transparent 55%);
   mask-image:linear-gradient(to right,#000 0%,#000 32%,transparent 55%);
   filter:blur(9px);transform:scale(1.04)}
@@ -653,12 +653,12 @@ footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
   .hero h1 br{display:none}
   /* imagem mobile: pastores no topo + igreja embaixo (composição vertical) */
   .hero{padding-top:330px}
-  .hero .photo{background-image:url('img/hero-bg-mobile.jpg');background-position:center top;background-size:100% auto;background-repeat:no-repeat;background-color:#05070d}
+  .hero .photo{background-image:url('img/hero-nib-mobile.webp');background-position:center top;background-size:cover;background-repeat:no-repeat;background-color:#05070d}
   /* overlay: topo transparente (rostos visíveis), leve escurecimento na área do texto */
   .hero::after{background:linear-gradient(to bottom,transparent 0%,transparent 24%,rgba(5,7,13,.3) 32%,rgba(5,7,13,.55) 42%,rgba(5,7,13,.62) 100%)}
   /* desfoque (vidro fosco) na parte de baixo, atrás do texto - igual desktop */
   .hero .photo::before{content:"";position:absolute;inset:0;
-    background:#05070d url('img/hero-bg-mobile.jpg') center top/100% auto no-repeat;
+    background:#05070d url('img/hero-nib-mobile.webp') center top/cover no-repeat;
     -webkit-mask-image:linear-gradient(to bottom,transparent 0%,transparent 30%,#000 42%,#000 100%);
     mask-image:linear-gradient(to bottom,transparent 0%,transparent 30%,#000 42%,#000 100%);
     filter:blur(9px);transform:scale(1.04)}
