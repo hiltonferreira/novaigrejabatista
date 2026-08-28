@@ -204,16 +204,1428 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
 #sobre .pillar:hover{border-color:rgba(255,127,64,.5);background:rgba(4,24,54,.78);box-shadow:0 24px 50px -20px rgba(4,30,66,.6)}
 
 /* ===== Galeria coverflow ===== */
+/* Seção da galeria com fundo claro */
+.gallery-section{background:var(--marfim);padding:80px 0 150px;position:relative;isolation:isolate;overflow:hidden}
+.gallery-section .gal-bg{position:absolute;inset:0;z-index:0;pointer-events:none;
+  background:url('img/comunidade-bg.jpg') center 60%/auto 100% no-repeat;
+  -webkit-mask-image:
+    linear-gradient(to right,#000 0%,transparent 32%,transparent 68%,#000 100%),
+    linear-gradient(to bottom,transparent 0%,#000 30%,#000 82%,transparent 100%);
+  -webkit-mask-composite:source-in;
+  mask-image:
+    linear-gradient(to right,#000 0%,transparent 32%,transparent 68%,#000 100%),
+    linear-gradient(to bottom,transparent 0%,#000 30%,#000 82%,transparent 100%);
+  mask-composite:intersect}
+.gallery-section .wrap{position:relative;z-index:1}
+/* transição suave entre seção escura e branca: o branco emerge de baixo */
+.gallery-section::before{content:"";position:absolute;top:-200px;left:0;right:0;height:200px;z-index:2;pointer-events:none;
+  background:linear-gradient(to top,
+    #EBEBDF 0%,
+    rgba(235,235,223,.92) 15%,
+    rgba(235,235,223,.75) 30%,
+    rgba(235,235,223,.5) 50%,
+    rgba(235,235,223,.28) 68%,
+    rgba(235,235,223,.12) 84%,
+    rgba(235,235,223,0) 100%)}
+.gallery-section .gal-eyebrow{font-family:var(--acumin);color:var(--laranja);font-weight:600}
+.gallery-section .gal-title{font-family:var(--acumin);font-weight:700;letter-spacing:-.01em;color:#0d3461}
+.gallery-section .gal-title .editorial{font-family:var(--acumin);font-style:italic;font-weight:500;color:var(--laranja)}
+.gallery{margin-top:44px;position:relative;display:flex;align-items:center;justify-content:center;gap:10px;overflow-x:clip;padding:30px 0}
+.gal-stage{position:relative;width:100%;max-width:1000px;height:420px;perspective:1600px}
+.gal-card{position:absolute;top:50%;left:50%;width:300px;height:390px;border-radius:18px;overflow:hidden;
+  transform:translate(-50%,-50%);transition:transform .6s cubic-bezier(.25,.8,.25,1),opacity .6s,filter .6s;
+  box-shadow:0 30px 60px -25px rgba(0,0,0,.8);border:1px solid rgba(255,255,255,.1);cursor:pointer;opacity:0;pointer-events:none}
+.gal-card img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s cubic-bezier(.25,.8,.25,1)}
+/* card de vídeo na galeria */
+.gal-video{width:100%;height:100%;object-fit:cover;display:block}
+.gal-video-controls{position:absolute;left:0;right:0;bottom:0;z-index:4;display:flex;align-items:center;gap:8px;padding:12px;
+  background:linear-gradient(to top,rgba(5,7,13,.75),transparent);opacity:0;transition:.3s}
+.gal-card-video.pos-center .gal-video-controls{opacity:1}
+.gal-vc-btn{display:inline-flex;align-items:center;gap:7px;cursor:pointer;border:none;
+  background:rgba(255,127,64,.92);color:var(--navy);border-radius:999px;padding:8px 12px;font-family:var(--acumin);font-weight:600;font-size:.78rem;transition:.2s}
+.gal-vc-btn svg{fill:currentColor;flex:0 0 auto}
+.gal-vc-btn:hover{background:var(--laranja)}
+.gal-vc-btn.gal-vc-sound{padding:8px 13px}
+/* posições: center, left, right, far (escondidos) */
+.gal-card.pos-center{opacity:1;pointer-events:auto;z-index:3;transform:translate(-50%,-50%) scale(1);filter:none;
+  box-shadow:0 30px 70px -20px rgba(10,20,40,.55),0 0 0 1px rgba(10,20,40,.08)}
+.gal-card.pos-left{opacity:.85;z-index:2;transform:translate(-92%,-50%) scale(.84) rotateY(15deg);filter:blur(1.5px) brightness(.9)}
+.gal-card.pos-right{opacity:.85;z-index:2;transform:translate(-8%,-50%) scale(.84) rotateY(-15deg);filter:blur(1.5px) brightness(.9)}
+.gal-card.pos-far-left{opacity:.4;z-index:1;transform:translate(-135%,-50%) scale(.68) rotateY(20deg);filter:blur(3px) brightness(.8)}
+.gal-card.pos-far-right{opacity:.4;z-index:1;transform:translate(35%,-50%) scale(.68) rotateY(-20deg);filter:blur(3px) brightness(.8)}
+.gal-card.pos-center:hover{transform:translate(-50%,-50%) scale(1.04)}
+.gal-card.pos-center:hover img{transform:scale(1.08)}
+.gal-card.pos-center::after{content:"";position:absolute;inset:0;border-radius:18px;
+  box-shadow:inset 0 0 0 2px rgba(255,127,64,.5);opacity:0;transition:.4s}
+.gal-card.pos-center:hover::after{opacity:1}
+.gal-arrow{width:54px;height:54px;flex:0 0 auto;border-radius:50%;border:none;
+  background:var(--navy);color:#fff;font-size:1.7rem;line-height:1;
+  display:grid;place-items:center;cursor:pointer;transition:.25s;z-index:5;box-shadow:0 8px 22px -6px rgba(6,7,73,.55)}
+.gal-arrow:hover{background:var(--laranja);color:var(--navy);transform:scale(1.1);box-shadow:0 10px 28px -6px rgba(255,127,64,.6)}
+@media(max-width:768px){
+  .gal-stage{height:400px}
+  .gal-card{width:230px;height:300px}
+  .gal-card.pos-left,.gal-card.pos-right{opacity:.35}
+  .gal-arrow{background:rgba(255,255,255,.85);color:rgba(10,20,40,.7);box-shadow:0 4px 14px -4px rgba(10,20,40,.3)}
+  .gal-arrow:hover{background:#fff;color:var(--laranja);transform:scale(1.06)}
+}
+.cultos{position:relative;isolation:isolate;
+  background:
+    radial-gradient(120% 80% at 50% 0%,rgba(21,58,122,.35) 0%,transparent 55%),
+    radial-gradient(100% 90% at 50% 100%,rgba(6,7,73,.5) 0%,transparent 60%),
+    linear-gradient(180deg,#0a1020 0%,#0c1428 45%,#0a1220 100%)}
+.cultos .cultos-bg{position:absolute;inset:0;z-index:-2;
+  background:url('img/cultos-bg.jpg') center center/cover no-repeat;
+  opacity:var(--bg-op,0);transform:scale(var(--bg-scale,1.06));transition:opacity .4s ease-out,transform .4s ease-out;
+  -webkit-mask-image:linear-gradient(to bottom,transparent 0%,#000 15%,#000 70%,transparent 92%);
+  mask-image:linear-gradient(to bottom,transparent 0%,#000 15%,#000 70%,transparent 92%)}
+.cultos::after{content:"";position:absolute;inset:0;z-index:-1;
+  background:linear-gradient(to bottom,var(--bg) 0%,rgba(5,7,13,.85) 12%,rgba(5,7,13,.82) 62%,rgba(5,7,13,.92) 80%,var(--bg) 94%)}
+
+/* ===== Seção Construção do Templo ===== */
+.construcao{position:relative;overflow:hidden;
+  background:
+    radial-gradient(120% 90% at 15% 0%,#0d3a7a 0%,transparent 55%),
+    linear-gradient(160deg,#041e42 0%,#03152f 60%,#020c1e 100%)}
+.construcao::before{content:"";position:absolute;top:0;right:0;width:50%;height:100%;pointer-events:none;
+  background:radial-gradient(circle at 80% 40%,rgba(255,127,64,.12) 0%,transparent 60%)}
+.constr-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:60px;align-items:center;position:relative;z-index:1}
+.constr-info .eyebrow{font-family:var(--acumin);color:var(--laranja);font-weight:600}
+.constr-info .h-sec{font-family:var(--acumin);font-weight:700;letter-spacing:-.01em;color:var(--marfim)}
+.constr-info .h-sec .editorial{font-family:var(--acumin);font-style:italic;font-weight:500;color:var(--laranja)}
+.constr-info .lead{font-family:var(--acumin);color:#fff;margin:18px 0 30px}
+/* barra de progresso */
+.constr-progress{margin-bottom:32px}
+.cp-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
+.cp-label{font-family:var(--acumin);font-size:.85rem;letter-spacing:.1em;text-transform:uppercase;color:var(--azul-gray)}
+.cp-pct{font-family:var(--acumin);font-weight:700;font-size:1.4rem;color:var(--laranja)}
+.cp-bar{height:10px;border-radius:999px;background:rgba(235,235,223,.12);overflow:hidden}
+.cp-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--laranja),var(--laranja-soft));
+  box-shadow:0 0 16px -2px rgba(255,127,64,.6);width:0;transition:width 1.4s cubic-bezier(.4,0,.2,1)}
+/* stats */
+.constr-stats{display:flex;gap:36px;margin-bottom:32px}
+.cs-num{font-family:var(--acumin);font-weight:700;font-size:2rem;color:var(--marfim);line-height:1}
+.cs-txt{font-family:var(--acumin);font-size:.85rem;color:#fff;margin-top:4px}
+/* botões */
+.constr-cta{display:flex;gap:14px;flex-wrap:wrap}
+.btn-orange{font-family:var(--acumin);background:var(--laranja);color:var(--navy);border-radius:999px;font-weight:600}
+.btn-orange:hover{background:var(--marfim)}
+.btn-ghost-dark{font-family:var(--acumin);border-radius:999px;border:1px solid rgba(235,235,223,.3);color:var(--marfim);
+  background:rgba(235,235,223,.06);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.btn-ghost-dark:hover{background:var(--marfim);color:var(--navy);border-color:var(--marfim)}
+/* mídia */
+.constr-media{position:relative}
+.constr-img-main{position:relative;border-radius:18px;overflow:hidden;aspect-ratio:4/3;
+  box-shadow:0 40px 80px -30px rgba(0,0,0,.7);border:1px solid rgba(235,235,223,.1)}
+.constr-img-main img{width:100%;height:100%;object-fit:cover;display:block}
+.constr-img-main .constr-video{width:100%;height:100%;object-fit:cover;display:block}
+/* controles do vídeo da construção */
+.constr-controls{position:absolute;bottom:16px;left:16px;display:flex;gap:8px;z-index:3;opacity:0;transform:translateY(6px);transition:.3s}
+.constr-img-main:hover .constr-controls{opacity:1;transform:translateY(0)}
+.cc-btn{width:42px;height:42px;border-radius:50%;border:none;cursor:pointer;display:grid;place-items:center;
+  background:rgba(6,7,50,.65);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:#fff;transition:.2s}
+.cc-btn:hover{background:var(--laranja);color:var(--navy)}
+.cc-btn svg{fill:currentColor}
+.constr-unmute{position:absolute;bottom:16px;right:16px;z-index:3;display:inline-flex;align-items:center;gap:7px;cursor:pointer;
+  padding:.55em 1em;border-radius:999px;border:none;font-family:var(--acumin);font-weight:600;font-size:.82rem;
+  background:var(--laranja);color:var(--navy);transition:.25s;box-shadow:0 6px 20px -6px rgba(255,127,64,.6)}
+.constr-unmute svg{fill:currentColor}
+.constr-unmute:hover{background:var(--marfim)}
+.constr-unmute.hidden{display:none}
+.constr-img-main.placeholder{background:linear-gradient(135deg,#0e1a44,#1a2a5e);display:flex;align-items:center;justify-content:center}
+.constr-img-main.placeholder img{display:none}
+.constr-img-main.placeholder::after{content:"Foto da obra";font-family:var(--acumin);color:var(--azul-gray);font-size:1rem}
+.constr-badge{position:absolute;top:18px;left:18px;font-family:var(--acumin);font-weight:600;font-size:.8rem;
+  padding:.5em 1em;border-radius:999px;background:var(--laranja);color:var(--navy);z-index:2}
+@media(max-width:920px){
+  .constr-grid{grid-template-columns:1fr;gap:36px}
+  .constr-stats{gap:24px}
+}
+.cultos .wrap{position:relative;z-index:1}
+/* transição suave da seção branca (galeria) para a escura (cultos) */
+.cultos::before{content:"";position:absolute;top:-200px;left:0;right:0;height:200px;z-index:2;pointer-events:none;
+  background:linear-gradient(to top,
+    var(--bg-2) 0%,
+    rgba(10,15,28,.92) 15%,
+    rgba(10,15,28,.75) 30%,
+    rgba(10,15,28,.5) 50%,
+    rgba(10,15,28,.28) 68%,
+    rgba(10,15,28,.12) 84%,
+    rgba(10,15,28,0) 100%)}
+.cultos-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:56px}
+.culto{position:relative;border-radius:14px;overflow:hidden;min-height:300px;display:flex;align-items:flex-end;padding:30px;border:1px solid var(--line);background:linear-gradient(to top,rgba(5,7,13,.92),rgba(5,7,13,.35)),linear-gradient(135deg,#153a7a,#0a1428);background-size:cover;background-position:center;transition:.35s}
+.culto:hover{transform:translateY(-5px);box-shadow:0 30px 60px -30px rgba(0,40,130,.5)}
+.culto .d{font-family:var(--display);font-size:2.4rem;color:#fff;line-height:.9}
+.culto .t{font-family:var(--display);font-size:1.8rem;color:var(--cyan);margin:6px 0 4px}
+.culto .n{color:var(--muted);font-weight:600;font-size:.8rem;white-space:nowrap}
+.culto .badge{position:absolute;top:20px;left:20px;font-family:var(--editorial);font-style:italic;font-weight:400;font-size:1.3rem;color:var(--gold)}
+
+/* ===== Seção Cultos — nova identidade ===== */
+#cultos .eyebrow{font-family:var(--acumin);color:var(--laranja);font-weight:600}
+#cultos .h-sec{font-family:var(--acumin);font-weight:700;letter-spacing:-.01em;color:var(--marfim)}
+#cultos .h-sec .editorial{font-family:var(--acumin);font-style:italic;font-weight:500;color:var(--laranja)}
+#cultos .lead{font-family:var(--acumin);color:#c9cdd8}
+#cultos .culto{background:rgba(4,30,66,.55);backdrop-filter:blur(12px) saturate(1.2);-webkit-backdrop-filter:blur(12px) saturate(1.2);border:1px solid rgba(235,235,223,.14);transition:.4s cubic-bezier(.2,.7,.2,1)}
+#cultos .culto::before{content:"";position:absolute;top:0;left:0;height:3px;width:0;background:var(--laranja);transition:.4s;z-index:2}
+#cultos .culto:hover::before{width:100%}
+#cultos .culto:hover{transform:translateY(-8px) scale(1.015);border-color:rgba(255,127,64,.5);background:rgba(4,24,54,.78);box-shadow:0 24px 50px -20px rgba(4,30,66,.6)}
+#cultos .culto .badge{font-family:var(--editorial);font-style:italic;font-weight:400;font-size:1.35rem;color:var(--gold)}
+#cultos .culto .d{font-family:var(--acumin);font-weight:700;font-size:2.6rem;color:var(--marfim);line-height:.95}
+#cultos .culto .t{font-family:var(--acumin);font-weight:700;font-size:2rem;color:var(--laranja);margin:8px 0 6px}
+#cultos .culto .n{font-family:var(--acumin);font-weight:500;font-size:.95rem;color:var(--azul-gray);white-space:nowrap}
+/* grid 2 colunas (estilo construção): textos esquerda, cards direita */
+.cel-grid2{display:grid;grid-template-columns:1fr 1.4fr;gap:48px;align-items:start}
+.cel-head{max-width:none;margin:0;text-align:left;position:sticky;top:110px}
+.cel-head .eyebrow{white-space:nowrap}
+.cel-head h2{font-size:clamp(2rem,3.5vw,2.8rem);margin:16px 0 20px}
+.cel-head h2 .editorial{font-size:1em;margin:0;font-weight:500;color:var(--laranja)}
+.cel-head .lead{margin:0}
+@media(max-width:960px){
+  .cel-grid2{grid-template-columns:1fr;gap:40px}
+  .cel-head{position:static}
+}
+/* contador total de células - redesenhado */
+.cel-total{display:inline-flex;align-items:center;gap:16px;margin-top:30px;
+  padding:12px 24px 12px 12px;border-radius:999px;
+  background:rgba(255,255,255,.6);border:1px solid rgba(6,7,73,.1);backdrop-filter:blur(8px);
+  box-shadow:0 20px 44px -22px rgba(6,7,73,.4)}
+.ct-badge{width:60px;height:60px;border-radius:50%;flex:0 0 auto;display:grid;place-items:center;
+  background:#041e42;box-shadow:0 8px 20px -6px rgba(4,30,66,.6)}
+.ct-num{font-family:var(--acumin);font-weight:700;font-size:1.8rem;line-height:1;color:#fff}
+.ct-info{display:flex;flex-direction:column;text-align:left;gap:2px}
+.ct-label{font-family:var(--acumin);font-weight:700;font-size:1.02rem;color:var(--navy);line-height:1.1;text-transform:none;white-space:nowrap}
+.ct-sub{font-family:var(--acumin);font-size:.82rem;color:#5a6478;line-height:1.2}
+/* ===== Cards dos dias (claro, com stacking e setas) ===== */
+.days-stack{display:flex;flex-direction:column;gap:36px;min-width:0}
+.day-card{position:sticky;top:100px;border-radius:20px;overflow:hidden;
+  background:linear-gradient(155deg,#041e42 0%,#03152f 60%,#020c1e 100%);
+  border:1px solid rgba(255,255,255,.14);box-shadow:0 30px 60px -28px rgba(0,15,40,.6);
+  padding:30px 30px 32px;transition:.4s cubic-bezier(.2,.7,.2,1)}
+/* progressão de cor: segunda (mais clara) -> sábado (mais escura) */
+.days-stack .day-card:nth-of-type(1){background:linear-gradient(155deg,#0d3a7a 0%,#083061 60%,#041e42 100%)}
+.days-stack .day-card:nth-of-type(2){background:linear-gradient(155deg,#083061 0%,#052a52 60%,#041e42 100%)}
+.days-stack .day-card:nth-of-type(3){background:linear-gradient(155deg,#052a52 0%,#041e42 60%,#03152f 100%)}
+.days-stack .day-card:nth-of-type(4){background:linear-gradient(155deg,#041e42 0%,#03152f 60%,#020c1e 100%)}
+/* animação: barra laranja no topo + hover */
+.day-card::before{content:"";position:absolute;top:0;left:0;height:4px;width:0;background:var(--laranja);transition:.4s;z-index:2}
+.day-card:hover::before{width:100%}
+.day-card:hover{box-shadow:0 36px 70px -26px rgba(0,50,150,.7)}
+.dc-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:24px;flex-wrap:wrap}
+.dc-count{display:inline-block;font-family:var(--acumin);font-size:.7rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--navy);background:var(--laranja);padding:5px 13px;border-radius:999px;margin-bottom:10px}
+.dc-dia{font-family:var(--acumin);font-weight:700;font-size:2rem;color:#fff;line-height:1}
+.dc-nav{display:flex;gap:10px}
+.dc-arrow{width:46px;height:46px;border-radius:50%;border:none;cursor:pointer;background:rgba(255,255,255,.15);color:#fff;
+  font-size:1.5rem;line-height:1;display:grid;place-items:center;transition:.25s;backdrop-filter:blur(4px)}
+.dc-arrow:hover{background:var(--laranja);color:var(--navy)}
+.dc-arrow:disabled{opacity:.25;cursor:default}
+/* viewport + track das células */
+.dc-viewport{overflow:hidden;padding:8px 4px 12px;margin:-8px -4px -12px}
+.dc-track{display:flex;gap:16px;transition:transform .5s cubic-bezier(.4,0,.2,1)}
+/* paginação das páginas de células */
+.dc-pagination{display:flex;justify-content:center;align-items:center;gap:8px;margin-top:20px;min-height:12px}
+.dc-page-dot{width:8px;height:8px;border:0;border-radius:50%;padding:0;background:rgba(235,235,223,.24);cursor:pointer;
+  transition:transform .25s ease,background .25s ease,box-shadow .25s ease,opacity .25s ease;
+  box-shadow:none;opacity:.8}
+.dc-page-dot:hover{transform:scale(1.12);background:rgba(255,127,64,.55);opacity:1}
+.dc-page-dot.active{width:9px;height:9px;background:var(--laranja);opacity:1;
+  box-shadow:0 0 8px rgba(255,127,64,.28)}
+.dc-page-dot:focus-visible{outline:2px solid var(--marfim);outline-offset:3px}
+.dc-pagination[hidden]{display:none}
+/* mini-cards CLAROS */
+.mc{flex:0 0 calc((100% - 16px)/2);min-width:0;display:flex;flex-direction:column;
+  background:#fff;border:1px solid rgba(6,7,73,.08);border-radius:15px;padding:20px 18px;
+  transition:transform .3s cubic-bezier(.2,.7,.2,1),box-shadow .3s,border-color .3s}
+.mc:hover{transform:translateY(-6px) scale(1.02);box-shadow:0 24px 44px -18px rgba(0,40,120,.55);border-color:rgba(255,127,64,.5)}
+.mc-nome{font-family:var(--acumin);font-weight:700;font-size:1.12rem;color:var(--navy);line-height:1.15}
+.mc-lider{font-family:var(--acumin);font-size:.85rem;color:var(--laranja);margin-top:3px}
+.mc-rows{margin:15px 0 18px;display:flex;flex-direction:column;gap:9px;flex:1}
+.mc-row{display:flex;gap:9px;align-items:flex-start;font-family:var(--acumin);font-size:.83rem;color:#4a5268;line-height:1.35}
+.mc-ic{width:15px;height:15px;flex:0 0 auto;fill:var(--laranja);margin-top:2px}
+.mc-wpp{display:flex;align-items:center;justify-content:center;gap:8px;font-family:var(--acumin);font-weight:600;font-size:.84rem;
+  padding:.7em 1em;border-radius:999px;background:#041e42;color:#fff;transition:.25s;text-decoration:none;white-space:nowrap}
+.mc-wpp svg{width:16px;height:16px;flex:0 0 auto;fill:currentColor}
+.mc-wpp:hover{background:var(--laranja);color:var(--navy)}
+@media(max-width:1100px){.mc{flex-basis:calc((100% - 18px)/2)}}
+@media(max-width:820px){.mc{flex-basis:calc((100% - 18px)/2)};.day-card{top:80px}}
+@media(max-width:560px){.mc{flex-basis:100%}}
+.msg-head{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:46px}
+.videos{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.video{border-radius:12px;overflow:hidden;background:var(--panel);border:1px solid var(--line);transition:.3s;display:block;color:inherit}
+.video:hover{transform:translateY(-5px);border-color:rgba(255,127,64,.4)}
+.video .thumb{aspect-ratio:16/9;background:linear-gradient(135deg,#12224d,#0a1428);position:relative;overflow:hidden}
+.video .thumb img{width:100%;height:100%;object-fit:cover;display:block;transition:.4s}
+.video:hover .thumb img{transform:scale(1.05)}
+.video .thumb::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at center,transparent 60%,rgba(5,7,13,.35))}
+.video .play{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:60px;height:60px;
+  border-radius:50%;background:rgba(255,255,255,.14);backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,.25);
+  display:grid;place-items:center;z-index:2;transition:.3s}
+.video:hover .play{transform:translate(-50%,-50%) scale(1.08);background:var(--laranja);border-color:var(--laranja);
+  box-shadow:0 8px 30px -6px rgba(255,127,64,.6)}
+.video .play svg{width:22px;height:22px;fill:#fff;margin-left:2px;transition:.3s}
+.video:hover .play svg{fill:var(--navy)}
+.video .tag-watch{position:absolute;top:14px;right:14px;z-index:3;font-family:var(--acumin);font-size:.66rem;font-weight:600;
+  letter-spacing:.14em;text-transform:uppercase;color:#fff;background:rgba(5,7,13,.7);backdrop-filter:blur(6px);
+  border:1px solid rgba(255,255,255,.16);padding:6px 12px;border-radius:999px;transition:.3s}
+.video:hover .tag-watch{background:var(--laranja);color:var(--navy);border-color:var(--laranja)}
+.video .thumb.skeleton{background:linear-gradient(100deg,#0e1526 30%,#182338 50%,#0e1526 70%);background-size:200% 100%;animation:sk 1.3s linear infinite}
+@keyframes sk{to{background-position:-200% 0}}
+.video .meta{padding:18px 20px}
+.video .meta b{font-family:var(--acumin);font-weight:700;font-size:1.02rem;color:var(--marfim);display:block;line-height:1.15;letter-spacing:.01em;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.video .meta span{font-family:var(--acumin);font-size:.8rem;color:var(--azul-gray);letter-spacing:.04em;margin-top:6px;display:block}
+.lid-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:56px}
+.lid{position:relative;border-radius:16px;overflow:hidden;min-height:480px;display:flex;align-items:flex-end;border:1px solid var(--line);background-color:#0a1428;background-size:cover;background-position:center 22%;background-repeat:no-repeat;transition:.35s}
+.lid::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:linear-gradient(to top,rgba(5,7,13,1) 0%,rgba(5,7,13,1) 15%,rgba(5,7,13,.96) 22%,rgba(5,7,13,.15) 65%)}
+.lid .info{position:relative;z-index:2}
+.lid:hover{background-position:center 20%}
+.lid:hover{transform:translateY(-5px);box-shadow:0 30px 60px -30px rgba(0,40,130,.5)}
+.lid .info{padding:32px}
+.lid .role{font-family:var(--acumin);font-style:italic;font-weight:500;font-size:1.4rem;color:var(--laranja)}
+.lid h3{font-family:var(--display);font-size:2rem;color:#fff;margin:2px 0 10px}
+.lid p{color:var(--muted);font-size:.95rem;max-width:42ch}
+.ev-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:24px;margin-top:56px}
+.evento{position:relative;border-radius:14px;overflow:hidden;min-height:280px;display:flex;align-items:flex-end;border:1px solid var(--line);background:linear-gradient(to top,rgba(5,7,13,.95),rgba(5,7,13,.2)),linear-gradient(135deg,#16407f,#0a1428);background-size:cover;background-position:center;transition:.4s cubic-bezier(.2,.7,.2,1)}
+.evento::before{content:"";position:absolute;top:0;left:0;height:3px;width:0;background:var(--laranja);transition:.4s;z-index:3}
+.evento:hover::before{width:100%}
+.evento:hover{transform:translateY(-8px) scale(1.015);border-color:rgba(255,127,64,.5);box-shadow:0 24px 50px -20px rgba(255,127,64,.4)}
+.evento .cont{padding:30px;position:relative;z-index:2}
+/* card de evento com foto de fundo */
+.evento-foto{background:
+    linear-gradient(to top,rgba(3,4,20,.96) 0%,rgba(3,4,20,.82) 38%,rgba(3,4,20,.5) 70%,rgba(3,4,20,.35) 100%),
+    var(--ev-bg);
+  background-size:cover;background-position:center 30%}
+.evento-foto:hover{background-position:center 26%}
+.evento .tag{display:inline-block;font-family:var(--acumin);font-size:.7rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--navy);background:var(--laranja);padding:4px 10px;border-radius:999px;margin-bottom:12px}
+.evento .date{font-family:var(--acumin);font-style:italic;font-weight:500;font-size:1.4rem;color:var(--laranja);margin-bottom:2px}
+.evento h3{font-family:var(--acumin);font-weight:700;font-size:1.7rem;color:var(--marfim);line-height:.95}
+.evento p{font-family:var(--acumin);color:var(--azul-gray);font-size:.9rem;margin-top:8px;max-width:44ch}
+.contrib-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+.pix-card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:38px}
+.pix-copy{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;max-width:220px;margin:18px auto 0;
+  font-family:var(--acumin);font-weight:600;font-size:.9rem;cursor:pointer;
+  padding:.85em 1.3em;border-radius:999px;
+  border:1px solid var(--laranja);color:var(--laranja);background:rgba(255,127,64,.1);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);transition:.25s}
+.pix-copy svg{fill:currentColor;flex:0 0 auto}
+.pix-copy:hover{background:var(--laranja);color:var(--navy);border-color:var(--laranja)}
+.pix-copy.copied{background:#3ba55c;color:#fff;border-color:#3ba55c}
+.contrib-cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:30px}
+.pix-row{display:flex;justify-content:space-between;align-items:center;padding:16px 0;border-bottom:1px solid var(--line)}
+.pix-row:last-of-type{border:0}
+.pix-row .k{font-family:var(--acumin);font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--azul-gray)}
+.pix-row .v{font-family:var(--acumin);font-weight:600;font-size:1.1rem;color:var(--marfim);letter-spacing:.02em}
+.qr{width:180px;height:180px;border-radius:12px;background:#fff;margin:26px auto 0;display:grid;place-items:center;padding:12px;overflow:hidden}
+.qr img{width:100%;height:100%;object-fit:contain;display:block}
+/* degradês alternados para contraste entre seções escuras */
+/* Células - CLARA com degradê */
+#celulas{position:relative;
+  background:linear-gradient(165deg,#EBEBDF 0%,#f2f2ea 55%,#e6e6d8 100%)}
+#celulas .cel-bg{display:none}
+#celulas .wrap{position:relative;z-index:1}
+/* Mensagens - navy profundo (mais escuro) */
+.mensagens{position:relative;isolation:isolate;
+  background:radial-gradient(75% 60% at 15% 5%,rgba(255,127,64,.18) 0%,transparent 55%),linear-gradient(160deg,#04051a 0%,#080c24 55%,#05061c 100%)}
+.mensagens .h-sec .editorial{color:var(--laranja)}
+/* Liderança - CLARA com degradê */
+#lideranca{position:relative;isolation:isolate;
+  background:radial-gradient(85% 70% at 75% 10%,rgba(31,72,140,.1) 0%,transparent 58%),linear-gradient(190deg,#EBEBDF 0%,#f2f2ea 52%,#e6e6d8 100%)}
+/* textos escuros nas seções claras (células e liderança) */
+#lideranca .eyebrow{color:var(--laranja)}
+#lideranca .h-sec{color:#0d3461}
+#celulas .h-sec{color:#0d3461}
+#celulas .cel-head h2 .editorial{font-family:var(--acumin);font-style:italic;font-weight:500;color:var(--laranja)}
+#celulas .lead{color:#4a5268}
+#lideranca .lead{color:#4a5268}
+#lideranca .h-sec{color:#0d3461}
+#lideranca .lead{color:#4a5268}
+/* Eventos - navy profundo com toque laranja */
+.eventos{position:relative;isolation:isolate;
+  background:radial-gradient(75% 60% at 15% 5%,rgba(255,127,64,.18) 0%,transparent 55%),linear-gradient(160deg,#04051a 0%,#080c24 55%,#05061c 100%)}
+/* Contribuições - navy azulado */
+#contribuicoes{position:relative;isolation:isolate;overflow:hidden;
+  background:
+    radial-gradient(120% 90% at 15% 0%,#0d3a7a 0%,transparent 55%),
+    linear-gradient(160deg,#041e42 0%,#03152f 60%,#020c1e 100%)}
+/* Visite - navy profundo */
+.visite{position:relative;isolation:isolate;
+  background:radial-gradient(75% 60% at 15% 5%,rgba(255,127,64,.18) 0%,transparent 55%),linear-gradient(160deg,#04051a 0%,#080c24 55%,#05061c 100%)}
+.vis-grid{display:grid;grid-template-columns:1fr 1.15fr;gap:52px;align-items:center}
+.vis-info .addr{font-family:var(--display);font-size:1.9rem;color:#fff;margin:18px 0 8px;line-height:1}
+.vis-info p{color:var(--muted)}
+.vis-info .hours-mini{margin-top:18px;color:#cdd8f2;font-weight:600}
+.map{aspect-ratio:16/11;border-radius:16px;overflow:hidden;border:1px solid var(--line)}
+.map iframe{width:100%;height:100%;border:0;filter:grayscale(.3) invert(.9) hue-rotate(180deg) contrast(.9)}
+.socials{display:flex;gap:12px;margin-top:26px}
+.socials a{width:46px;height:46px;border-radius:10px;border:1px solid var(--line);display:grid;place-items:center;color:#fff;transition:.25s}.socials a svg{width:21px;height:21px;fill:currentColor;display:block}
+.socials a:hover{background:var(--laranja);border-color:var(--laranja);color:var(--navy);transform:translateY(-3px)}
+footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
+.foot{
+  display:grid;
+  grid-template-columns:minmax(180px,1fr) minmax(280px,1.6fr) minmax(180px,1fr);
+  align-items:center;
+  gap:28px
+}
+.foot-col{min-width:0}
+.foot-brand{display:flex;justify-content:flex-start}
+.foot-copy{text-align:center}
+.foot-dev{text-align:right}
+@media(max-width:760px){
+  .foot{
+    grid-template-columns:1fr;
+    gap:18px;
+    justify-items:center;
+    text-align:center
+  }
+  .foot-brand{justify-content:center}
+  .foot-copy,.foot-dev{text-align:center}
+  .foot small{line-height:1.55}
+}
+.foot .brand .txt{font-size:1.1rem}
+.foot-logo{height:40px;width:auto;display:block}
+.foot small{font-family:var(--acumin)}
+.foot small{color:var(--muted);font-size:.8rem}
+.reveal{opacity:0;transform:translateY(28px);transition:.7s cubic-bezier(.2,.7,.2,1)}
+.reveal.in{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}html{scroll-behavior:auto}}
+@media(max-width:920px){
+  /* seção 2: texto branco no mobile (fundo escuro) */
+  #sobre .lead{color:#fff;text-shadow:0 1px 12px rgba(5,7,13,.6)}
+  #sobre .lead br{display:none}
+  .hero-cta{width:100%;justify-content:center;align-items:center;flex-direction:column}
+  .hero-cta .btn{width:100%;max-width:340px;justify-content:center;text-align:center}
+  .logo-anim{gap:.3rem}
+  .la-brasao-wrap{height:clamp(52px,13vw,72px)}
+  .la-resto{height:clamp(30px,7.5vw,44px)}
+  .hero h1{white-space:normal;font-size:clamp(2rem,7vw,2.6rem)}
+  .logo-full{display:none}
+  .logo-compact{display:block;height:34px}
+  .hero h1 br{display:none}
+  /* imagem mobile: pastores no topo + igreja embaixo (composição vertical) */
+  .hero{padding-top:330px}
+  .hero .photo{background-image:url('img/hero-bg-mobile.jpg');background-position:center top;background-size:100% auto;background-repeat:no-repeat;background-color:#05070d}
+  /* overlay: topo transparente (rostos visíveis), leve escurecimento na área do texto */
+  .hero::after{background:linear-gradient(to bottom,transparent 0%,transparent 24%,rgba(5,7,13,.3) 32%,rgba(5,7,13,.55) 42%,rgba(5,7,13,.62) 100%)}
+  /* desfoque (vidro fosco) na parte de baixo, atrás do texto - igual desktop */
+  .hero .photo::before{content:"";position:absolute;inset:0;
+    background:#05070d url('img/hero-bg-mobile.jpg') center top/100% auto no-repeat;
+    -webkit-mask-image:linear-gradient(to bottom,transparent 0%,transparent 30%,#000 42%,#000 100%);
+    mask-image:linear-gradient(to bottom,transparent 0%,transparent 30%,#000 42%,#000 100%);
+    filter:blur(9px);transform:scale(1.04)}
+  .cel-grid,.contrib-grid,.vis-grid{grid-template-columns:1fr;gap:44px}
+  .pillars,.cultos-grid,.videos,.lid-grid,.ev-grid{grid-template-columns:1fr}
+  .nav-links{position:fixed;inset:0 0 0 auto;width:min(320px,84vw);background:var(--bg-2);flex-direction:column;justify-content:center;align-items:flex-start;padding:44px;gap:24px;transform:translateX(100%);transition:.35s;box-shadow:-12px 0 50px rgba(0,0,0,.5);border-left:1px solid var(--line);border-radius:0;backdrop-filter:none;-webkit-backdrop-filter:none;margin:0}
+  .nav-links.open{transform:none}
+  .nav-links a{font-size:1rem}
+  .burger{display:flex;z-index:2}
+  header .nav > .nav-cta{display:none}
+}
+@media(max-width:560px){
+  /* tabela de horários: linha com dia+nome à esquerda, horário grande à direita */
+  .hero-hours .hh-grid{grid-template-columns:1fr}
+  .hero-hours .hh-grid > div{
+    flex-direction:row;align-items:center;justify-content:space-between;gap:14px;
+    padding:16px 20px;border-bottom:1px solid var(--line)}
+  .hero-hours .hh-grid > div:last-child{border-bottom:0}
+  .hero-hours .hh-grid > div + div::before{display:none}
+  .hero-hours .hh-left{display:flex;flex-direction:column;gap:4px;text-align:left;min-width:0}
+  .hero-hours .d{margin:0}
+  .hero-hours .nm{white-space:normal}
+  .hero-hours .hr{margin:0;font-size:2rem;flex:0 0 auto;text-align:right}
+  .hero-hours .hh-head{text-align:center}
+  .strip-item{font-size:1rem}
+  .strip-sep{margin:0 22px}
+}
+
+/* quebra controlada do texto da seção de liderança */
+#lideranca .lideranca-lead .lead-break{display:block}
+@media(max-width:560px){
+  #lideranca .lideranca-lead{max-width:32ch}
+  #lideranca .lideranca-lead .lead-break{display:inline}
+}
+
+footer a[href*="instagram.com/hilton.cmferreira"]{color:var(--laranja);text-decoration:none;transition:color .25s ease}
+footer a[href*="instagram.com/hilton.cmferreira"]:hover{color:var(--laranja)}
+</style>
+</head>
+<body>
+
+<div class="top-blur" id="topBlur"></div>
+<header id="header">
+  <div class="wrap nav">
+    <a class="brand" href="#top" aria-label="Nib - Nova Igreja Batista - A Casa de Deus">
+      <span class="logo-full">
+        <img class="lf-mark" src="img/logo/nav-brasao-nib.png" alt="Nib">
+        <img class="lf-text" src="img/logo/anim/so-textos.png" alt="Nova Igreja Batista - A Casa de Deus">
+      </span>
+      <img class="logo-mark logo-compact" src="img/logo/logo3-branco.svg" alt="Nib - Nova Igreja Batista">
+    </a>
+    <nav class="nav-links" id="navLinks">
+      <a href="#sobre">Sobre</a>
+      <a href="#cultos">Cultos</a>
+      <a href="#celulas">Células</a>
+      <a href="#mensagens">Mensagens</a>
+      <a href="#lideranca">Liderança</a>
+      <a href="#eventos">Eventos</a>
+    </nav>
+    <a href="#construcao" class="nav-cta nav-cta-alt">Construção do templo</a>
+    <a href="#visite" class="nav-cta">Venha nos visitar</a>
+    <button class="burger" id="burger" aria-label="Abrir menu"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<section class="hero" id="top">
+  <div class="photo"></div>
+  <div class="wrap hero-inner reveal">
+    <span class="eyebrow">Um lar de fé e acolhimento</span>
+    <h1 class="display"><span class="h1-light">Uma igreja que vive </span><br><span class="h1-bold">o amor de Cristo </span><br><span class="editorial">de casa em casa.</span></h1>
+    <p>Uma igreja que busca a santidade e o profundo relacionamento com Cristo. Um povo que abençoa, inspira e manifesta a glória do&nbsp;Eterno.</p>
+    <div class="hero-cta">
+      <a href="#sobre" class="btn btn-ghost">Conhecer a igreja</a>
+      <a href="#celulas" class="btn btn-cell">Encontre uma célula</a>
+    </div>
+    <div class="hero-hours">
+      <div class="hh-head"><span class="eyebrow">Venha celebrar</span></div>
+      <div class="hh-grid">
+        <div><div class="hh-left"><div class="d">Quinta</div><div class="nm">Culto da Fé</div></div><div class="hr">19h30</div></div>
+        <div><div class="hh-left"><div class="d">Domingo</div><div class="nm">EBS · Escola Bíblica de Sabedoria</div></div><div class="hr">9h30</div></div>
+        <div><div class="hh-left"><div class="d">Domingo</div><div class="nm">Noite de Glória</div></div><div class="hr">19h</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="strip" aria-hidden="true">
+  <div class="strip-track">
+    <div class="strip-group">
+      <span class="strip-item">Não somos uma igreja perfeita,&nbsp;somos uma igreja saudável<img class="strip-sep" src="img/logo/simbolo-laranja.png" alt=""></span>
+      <span class="strip-item">Um lar de fé e acolhimento<img class="strip-sep" src="img/logo/simbolo-laranja.png" alt=""></span>
+      <span class="strip-item">Domingo é dia de igreja<img class="strip-sep" src="img/logo/simbolo-laranja.png" alt=""></span>
+      <span class="strip-item">Ariquemes · Rondônia<img class="strip-sep" src="img/logo/simbolo-laranja.png" alt=""></span>
+    </div>
+    <div class="strip-group" aria-hidden="true">
+      <span class="strip-item">Não somos uma igreja perfeita,&nbsp;somos uma igreja saudável<img class="strip-sep" src="img/logo/simbolo-laranja.png" alt=""></span>
+      <span class="strip-item">Um lar de fé e acolhimento<img class="strip-sep" src="img/logo/simbolo-laranja.png" alt=""></span>
+      <span class="strip-item">Domingo é dia de igreja<img class="strip-sep" src="img/logo/simbolo-laranja.png" alt=""></span>
+      <span class="strip-item">Ariquemes · Rondônia<img class="strip-sep" src="img/logo/simbolo-laranja.png" alt=""></span>
+    </div>
+    <div class="strip-group" aria-hidden="true">
+      <span class="strip-item">Não somos uma igreja perfeita,&nbsp;somos uma igreja saudável<img class="strip-sep" src="img/logo/simbolo-laranja.png" alt=""></span>
+      <span class="strip-item">Um lar de fé e acolhimento<img class="strip-sep" src="img/logo/simbolo-laranja.png" alt=""></span>
+      <span class="strip-item">Domingo é dia de igreja<img class="strip-sep" src="img/logo/simbolo-laranja.png" alt=""></span>
+      <span class="strip-item">Ariquemes · Rondônia<img class="strip-sep" src="img/logo/simbolo-laranja.png" alt=""></span>
+    </div>
+  </div>
+</div>
+
+<section class="pad sobre-bg" id="sobre">
+  <div class="wrap">
+    <div class="sec-head center reveal">
+      <span class="eyebrow">Somos a</span>
+      <div class="logo-anim" id="logoAnim" aria-label="Nib - Nova Igreja Batista - A Casa de Deus">
+        <div class="la-brasao-wrap">
+          <video class="la-brasao" id="logoVideo" muted playsinline preload="auto">
+            <source src="video/brasao-nib-alpha.webm" type="video/webm">
+          </video>
+          <img class="la-brasao-fallback" id="logoFallback" src="img/logo/nav-brasao-nib.png" alt="Nib" hidden>
+        </div>
+        <img class="la-resto" src="img/logo/anim/so-textos.png" alt="Nova Igreja Batista - A Casa de Deus">
+      </div>
+      <p class="lead">Uma igreja <b>em células</b>, cheia da presença de&nbsp;Deus.<br>Uma família que acolhe, discipula e multiplica.</p>
+    </div>
+    <div class="pillars">
+      <div class="pillar reveal">
+        <div class="k">visão</div>
+        <h3>Igreja em células</h3>
+        <p>Ser uma igreja em células cheia da presença de Deus, promovendo o Evangelho para salvação, crescimento e maturidade das pessoas.</p>
+      </div>
+      <div class="pillar reveal">
+        <div class="k">missão</div>
+        <h3>Compaixão que multiplica</h3>
+        <p>Exercer compaixão pelas vidas perdidas com atitude, convidando, acolhendo, discipulando e enviando. A multiplicação como propósito de vida.</p>
+      </div>
+      <div class="pillar reveal">
+        <div class="k">valores</div>
+        <h3>Amor e relacionamento</h3>
+        <p>Compaixão pelo perdido, amor a Deus e ao próximo, relacionamentos, compromisso e serviço ao Reino, e multiplicação que gera frutos.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Seção da galeria (fundo claro) -->
+<section class="gallery-section" id="galeria">
+  <div class="gal-bg"></div>
+  <div class="wrap">
+    <div class="sec-head center reveal">
+      <span class="eyebrow gal-eyebrow">Nossa comunidade</span>
+      <h2 class="display h-sec gal-title">Momentos que <span class="editorial">vivemos</span></h2>
+    </div>
+    <div class="gallery reveal" id="gallery">
+      <button class="gal-arrow gal-prev" id="galPrev" aria-label="Anterior">‹</button>
+      <div class="gal-stage" id="galStage">
+        <div class="gal-card gal-card-video" id="galVideoCard">
+          <video class="gal-video" id="galVideo" playsinline loop muted preload="metadata" poster="img/galeria/momentos-poster.jpg">
+            <source src="video/momentos.mp4" type="video/mp4">
+          </video>
+          <div class="gal-video-controls">
+            <button class="gal-vc-btn" id="galVidPlay" aria-label="Play/Pause">
+              <svg class="ic-pause" viewBox="0 0 24 24" width="18" height="18"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>
+              <svg class="ic-play" viewBox="0 0 24 24" width="18" height="18" style="display:none"><path d="M8 5v14l11-7z"/></svg>
+            </button>
+            <button class="gal-vc-btn gal-vc-sound" id="galVidSound" aria-label="Ativar som">
+              <svg class="ic-muted" viewBox="0 0 24 24" width="16" height="16"><path d="M16.5 12A4.5 4.5 0 0014 7.97v2.21l2.45 2.45c.03-.2.05-.42.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51A8.8 8.8 0 0021 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06a8.99 8.99 0 003.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
+              <svg class="ic-unmuted" viewBox="0 0 24 24" width="16" height="16" style="display:none"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0014 7.97v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+              <span class="gal-vc-label">Ativar som</span>
+            </button>
+          </div>
+        </div>
+        <div class="gal-card gal-card-video">
+          <video class="gal-video" playsinline loop muted preload="metadata" poster="img/galeria/batismo-2026-video02-poster.jpg">
+            <source src="video/batismo-2026-video02-web.mp4" type="video/mp4">
+          </video>
+          <div class="gal-video-controls">
+            <button class="gal-vc-btn gal-video-play" aria-label="Play/Pause">
+              <svg class="ic-pause" viewBox="0 0 24 24" width="18" height="18"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>
+              <svg class="ic-play" viewBox="0 0 24 24" width="18" height="18" style="display:none"><path d="M8 5v14l11-7z"/></svg>
+            </button>
+            <button class="gal-vc-btn gal-vc-sound gal-video-sound" aria-label="Ativar som">
+              <svg class="ic-muted" viewBox="0 0 24 24" width="16" height="16"><path d="M16.5 12A4.5 4.5 0 0014 7.97v2.21l2.45 2.45c.03-.2.05-.42.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51A8.8 8.8 0 0021 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06a8.99 8.99 0 003.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
+              <svg class="ic-unmuted" viewBox="0 0 24 24" width="16" height="16" style="display:none"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0014 7.97v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+              <span class="gal-vc-label">Ativar som</span>
+            </button>
+          </div>
+        </div>
+        <div class="gal-card"><img src="img/galeria/close-foto17.jpg" alt="Momento de adoração" loading="lazy"></div>
+        <div class="gal-card"><img src="img/galeria/alex-foto04.jpg" alt="Pregação" loading="lazy"></div>
+        <div class="gal-card"><img src="img/galeria/abraco-foto03.jpg" alt="Comunhão e celebração" loading="lazy"></div>
+        <div class="gal-card"><img src="img/galeria/close-foto04.jpg" alt="Mãos levantadas em louvor" loading="lazy"></div>
+        <div class="gal-card"><img src="img/galeria/sheila-foto02.jpg" alt="Ministração" loading="lazy"></div>
+        <div class="gal-card"><img src="img/galeria/close-foto02.jpg" alt="Estudo da Palavra" loading="lazy"></div>
+        <div class="gal-card"><img src="img/galeria/close-foto10.jpg" alt="Adoração" loading="lazy"></div>
+        <div class="gal-card"><img src="img/galeria/recepcao-foto01.jpg" alt="Recepção e acolhimento" loading="lazy"></div>
+      </div>
+      <button class="gal-arrow gal-next" id="galNext" aria-label="Próximo">›</button>
+    </div>
+  </div>
+</section>
+
+<!-- Seção Construção do Templo -->
+<section class="construcao pad" id="construcao">
+  <div class="wrap">
+    <div class="constr-grid">
+      <div class="constr-info reveal">
+        <span class="eyebrow">O futuro da nossa casa</span>
+        <h2 class="display h-sec">Construção do <span class="editorial">novo templo</span></h2>
+        <p class="lead">Estamos edificando um novo lar para a família Nib, um espaço preparado para receber ainda mais pessoas, gerações e histórias que Deus vai transformar. Cada tijolo é um passo de fé e cada contribuição faz parte dessa conquista.</p>
+        <div class="constr-progress">
+          <div class="cp-head">
+            <span class="cp-label">Andamento da obra</span>
+            <span class="cp-pct">30%</span>
+          </div>
+          <div class="cp-bar"><div class="cp-fill" data-width="30%"></div></div>
+        </div>
+        <div class="constr-stats">
+          <div class="cs-item"><div class="cs-num">1.500</div><div class="cs-txt">lugares planejados</div></div>
+          <div class="cs-item"><div class="cs-num">30%</div><div class="cs-txt">concluído</div></div>
+          <div class="cs-item"><div class="cs-num">2028</div><div class="cs-txt">previsão de entrega</div></div>
+        </div>
+        <div class="constr-cta">
+          <a href="#contribuicoes" class="btn btn-orange">Faça parte dessa obra</a>
+          <a href="#visite" class="btn btn-ghost-dark">Acompanhar de perto</a>
+        </div>
+      </div>
+      <div class="constr-media reveal">
+        <div class="constr-img-main" id="constrWrap">
+          <video class="constr-video" id="constrVideo" muted playsinline loop preload="auto" poster="img/construcao/obra-poster.jpg" autoplay>
+            <source src="video/construcao.mp4" type="video/mp4">
+          </video>
+          <span class="constr-badge">Obra em andamento</span>
+          <div class="constr-controls">
+            <button class="cc-btn" id="ccPlay" aria-label="Reproduzir ou pausar">
+              <svg class="cc-ic-pause" viewBox="0 0 24 24" width="20" height="20"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>
+              <svg class="cc-ic-play" viewBox="0 0 24 24" width="20" height="20" style="display:none"><path d="M8 5v14l11-7z"/></svg>
+            </button>
+            <button class="cc-btn" id="ccSound" aria-label="Ativar ou desativar som">
+              <svg class="cc-ic-muted" viewBox="0 0 24 24" width="20" height="20"><path d="M4 9v6h4l5 5V4L8 9H4z"/><path d="M16 8l5 8M21 8l-5 8" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+              <svg class="cc-ic-sound" viewBox="0 0 24 24" width="20" height="20" style="display:none"><path d="M4 9v6h4l5 5V4L8 9H4z"/><path d="M16 8a5 5 0 010 8" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+            </button>
+          </div>
+          <button class="constr-unmute" id="ccUnmute" aria-label="Ativar som">
+            <svg viewBox="0 0 24 24" width="18" height="18"><path d="M4 9v6h4l5 5V4L8 9H4z"/><path d="M16 8l5 8M21 8l-5 8" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+            <span>Ativar som</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cultos pad" id="cultos">
+  <div class="cultos-bg"></div>
+  <div class="wrap">
+    <div class="sec-head center reveal">
+      <span class="eyebrow">Programação</span>
+      <h2 class="display h-sec">Venha <span class="editorial">celebrar</span></h2>
+      <p class="lead">Toda semana tem lugar pra você e pra sua família. Chega mais.</p>
+    </div>
+    <div class="cultos-grid">
+      <div class="culto reveal">
+        <span class="badge">thursday</span>
+        <div><div class="d">Quinta</div><div class="t">19h30</div><div class="n">Culto da Fé</div></div>
+      </div>
+      <div class="culto reveal">
+        <span class="badge">sunday</span>
+        <div><div class="d">Domingo</div><div class="t">9h30</div><div class="n">EBS · Escola Bíblica de Sabedoria</div></div>
+      </div>
+      <div class="culto reveal">
+        <span class="badge">sunday</span>
+        <div><div class="d">Domingo</div><div class="t">19h</div><div class="n">Noite de Glória</div></div>
+      </div>
+      <div class="culto reveal">
+        <span class="badge">na semana</span>
+        <div><div class="d">Células</div><div class="t">Nos lares</div><div class="n">Comunhão &amp; discipulado</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="pad" id="celulas">
+  <div class="wrap">
+    <div class="cel-grid2">
+    <div class="cel-head reveal">
+      <span class="eyebrow">Vida em comunidade</span>
+      <h2 class="display h-sec">Nossas <span class="editorial">células</span></h2>
+      <p class="lead">A célula é parte da essência de quem somos como igreja. É nos lares que a fé encontra espaço para ser vivida de perto!<br><br>Tem uma célula perto de você. Venha viver igreja com a gente!</p>
+      <div class="cel-total">
+        <div class="ct-badge">
+          <span class="ct-num" data-target="24">0</span>
+        </div>
+        <div class="ct-info">
+          <span class="ct-label">células ativas</span>
+          <span class="ct-sub">espalhadas por toda Ariquemes</span>
+        </div>
+      </div>
+    </div>
+    <div class="days-stack">
+      <article class="day-card sticky-day" style="--i:0">
+        <div class="dc-head">
+          <div class="dc-head-left">
+            <span class="dc-count">3 células</span>
+            <h3 class="dc-dia">Segunda-feira</h3>
+          </div>
+          <div class="dc-nav">
+            <button class="dc-arrow" data-dir="-1" aria-label="Anterior">‹</button>
+            <button class="dc-arrow" data-dir="1" aria-label="Próximo">›</button>
+          </div>
+        </div>
+        <div class="dc-viewport">
+          <div class="dc-track">
+<div class="mc">
+  <span class="mc-nome">Casa de Semeador</span>
+  <span class="mc-lider">Líderes: Lucas e Nayana</span>
+  <div class="mc-rows">
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Rio Negro, Grandes Áreas</span></div>
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>19:30 às 21:30</span></div>
+  </div>
+  <a href="https://wa.me/5569984190569?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Casa%20de%20Semeador." target="_blank" rel="noopener" class="mc-wpp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg>Falar no WhatsApp</a>
+</div>
+<div class="mc">
+  <span class="mc-nome">Renascer</span>
+  <span class="mc-lider">Líder: Dieferson</span>
+  <div class="mc-rows">
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Machado de Assis, Setor 06</span></div>
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>19:30 às 21:30</span></div>
+  </div>
+  <a href="https://wa.me/556999266763?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Renascer." target="_blank" rel="noopener" class="mc-wpp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg>Falar no WhatsApp</a>
+</div>
+<div class="mc">
+  <span class="mc-nome">2 ou +</span>
+  <span class="mc-lider">Líderes: Nelson, Débora e Antony</span>
+  <div class="mc-rows">
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Paraná, Setor 05, ao lado do Kumon</span></div>
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>19:40 às 21:40</span></div>
+  </div>
+  <a href="https://wa.me/5569984637235?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%202%20ou%20+." target="_blank" rel="noopener" class="mc-wpp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg>Falar no WhatsApp</a>
+</div>
+          </div>
+        </div>
+        <div class="dc-pagination" aria-label="Paginação das células"></div>
+      </article>
+      <article class="day-card sticky-day" style="--i:1">
+        <div class="dc-head">
+          <div class="dc-head-left">
+            <span class="dc-count">19 células</span>
+            <h3 class="dc-dia">Terça-feira</h3>
+          </div>
+          <div class="dc-nav">
+            <button class="dc-arrow" data-dir="-1" aria-label="Anterior">‹</button>
+            <button class="dc-arrow" data-dir="1" aria-label="Próximo">›</button>
+          </div>
+        </div>
+        <div class="dc-viewport">
+          <div class="dc-track">
+<div class="mc">
+  <span class="mc-nome">Ágape</span>
+  <span class="mc-lider">Líderes: Sérgio e Val</span>
+  <div class="mc-rows">
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Alameda Piquia, Setor 01</span></div>
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>20:00 às 22:00</span></div>
+  </div>
+  <a href="https://wa.me/5569992910380?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Ágape." target="_blank" rel="noopener" class="mc-wpp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg>Falar no WhatsApp</a>
+</div>
+<div class="mc">
+  <span class="mc-nome">Boa Semente</span>
+  <span class="mc-lider">Líderes: Gilberto e Liliam</span>
+  <div class="mc-rows">
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>AV. Capitão Silvio, Cond. Villagio Nipote</span></div>
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>19:30 às 21:30</span></div>
+  </div>
+  <a href="https://wa.me/5569984133298?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Boa%20Semente." target="_blank" rel="noopener" class="mc-wpp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg>Falar no WhatsApp</a>
+</div>
+<div class="mc">
+  <span class="mc-nome">Casa de Elohim</span>
+  <span class="mc-lider">Líderes: Jacque e Ribinho</span>
+  <div class="mc-rows">
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Aracaju, Setor 03</span></div>
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>19:30 às 21:30</span></div>
+  </div>
+  <a href="https://wa.me/556992579289?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Casa%20de%20Elohim." target="_blank" rel="noopener" class="mc-wpp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg>Falar no WhatsApp</a>
+</div>
+<div class="mc">
+  <span class="mc-nome">Casa de Jetro</span>
+  <span class="mc-lider">Líderes: Rodrigo e Ticiana</span>
+  <div class="mc-rows">
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Rio Negro, Jardim das Palmeiras</span></div>
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>19:30 às 21:30</span></div>
+  </div>
+  <a href="https://wa.me/556993228174?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Casa%20de%20Jetro." target="_blank" rel="noopener" class="mc-wpp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg>Falar no WhatsApp</a>
+</div>
+<div class="mc">
+  <span class="mc-nome">Casa Emanuel</span>
+  <span class="mc-lider">Líder: Terezinha</span>
+  <div class="mc-rows">
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>AV. JK, Fundo Refrigeração São Paulo</span></div>
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>19:30 às 21:30</span></div>
+  </div>
+  <a href="https://wa.me/5569999966690?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Casa%20Emanuel." target="_blank" rel="noopener" class="mc-wpp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg>Falar no WhatsApp</a>
+</div>
+<div class="mc">
+  <span class="mc-nome">Casa Leão de Judá</span>
+  <span class="mc-lider">Líderes: Maycon e Thais</span>
+  <div class="mc-rows">
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Jânio Quadros, Setor 08</span></div>
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>20:00 às 22:00</span></div>
+  </div>
+  <a href="https://wa.me/556992322397?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Casa%20Leão%20de%20Judá." target="_blank" rel="noopener" class="mc-wpp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg>Falar no WhatsApp</a>
+</div>
+<div class="mc">
+  <span class="mc-nome">Efatá</span>
+  <span class="mc-lider">Líderes: Eduarda e Leandro</span>
+  <div class="mc-rows">
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Monte Negro, Apoio Social</span></div>
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>20:00 às 22:00</span></div>
+  </div>
+  <a href="https://wa.me/5569992244783?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Efatá." target="_blank" rel="noopener" class="mc-wpp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg>Falar no WhatsApp</a>
+</div>
+<div class="mc">
+  <span class="mc-nome">Filhos de Davi</span>
+  <span class="mc-lider">Líderes: Fernando e Yasmin</span>
+  <div class="mc-rows">
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Maceió, Setor 03</span></div>
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>20:30 às 22:30</span></div>
+  </div>
+  <a href="https://wa.me/5569984113315?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Filhos%20de%20Davi." target="_blank" rel="noopener" class="mc-wpp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg>Falar no WhatsApp</a>
+</div>
+<div class="mc">
+  <span class="mc-nome">Gênesis</span>
+  <span class="mc-lider">Líderes: Pr. Alex e Pra. Sheila</span>
+  <div class="mc-rows">
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Marabá, Jardim Jorge Teixeira</span></div>
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>19:30 às 21:30</span></div>
+  </div>
+  <a href="https://wa.me/5569984813665?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Gênesis." target="_blank" rel="noopener" class="mc-wpp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg>Falar no WhatsApp</a>
+</div>
+<div class="mc">
+  <span class="mc-nome">Gileade</span>
+  <span class="mc-lider">Líderes: Toni e Natália</span>
+  <div class="mc-rows">
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Beija Flor, Setor 02</span></div>
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>19:30 às 21:30</span></div>
+  </div>
+  <a href="https://wa.me/5569984110701?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Gileade." target="_blank" rel="noopener" class="mc-wpp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg>Falar no WhatsApp</a>
+</div>
+<div class="mc">
+  <span class="mc-nome">João 20</span>
+  <span class="mc-lider">Líderes: Breno, Élica e Camila</span>
+  <div class="mc-rows">
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Matão, Jardim Paulista</span></div>
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>19:30 às 21:30</span></div>
+  </div>
+  <a href="https://wa.me/5569984081528?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20João%2020." target="_blank" rel="noopener" class="mc-wpp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg>Falar no WhatsApp</a>
+</div>
+<div class="mc">
+  <span class="mc-nome">Kairos</span>
+  <span class="mc-lider">Líderes: Andréia e Filipe</span>
+  <div class="mc-rows">
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Natal, Setor 03</span></div>
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>19:30 às 21:30</span></div>
+  </div>
+  <a href="https://wa.me/5569992593087?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Kairos." target="_blank" rel="noopener" class="mc-wpp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg>Falar no WhatsApp</a>
+</div>
+<div class="mc">
+  <span class="mc-nome">Sal da Terra</span>
+  <span class="mc-lider">Líderes: Luiz e Juliana</span>
+  <div class="mc-rows">
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Pimenta Bueno, Setor BNH</span></div>
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>19:30 às 21:30</span></div>
+  </div>
+  <a href="https://wa.me/5569984447302?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Sal%20da%20Terra." target="_blank" rel="noopener" class="mc-wpp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg>Falar no WhatsApp</a>
+</div>
+<div class="mc">
+  <span class="mc-nome">Fontes de Águas Vivas</span>
+  <span class="mc-lider">Líderes: Aline, Taynara e Walter</span>
+  <div class="mc-rows">
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Milão, Jardim Alvorada</span></div>
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>20:00 às 22:00</span></div>
+  </div>
+  <a href="https://wa.me/556984859950?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Fontes%20de%20Águas%20Vivas." target="_blank" rel="noopener" class="mc-wpp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg>Falar no WhatsApp</a>
+</div>
+<div class="mc">
+  <span class="mc-nome">Jeová Jireh</span>
+  <span class="mc-lider">Líderes: Marlon e Marcia</span>
+  <div class="mc-rows">
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Moema, Jardim Jorge Teixeira</span></div>
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>19:30 às 21:30</span></div>
+  </div>
+  <a href="https://wa.me/5569984443809?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Jeová%20Jireh." target="_blank" rel="noopener" class="mc-wpp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg>Falar no WhatsApp</a>
+</div>
+<div class="mc">
+  <span class="mc-nome">Monte Ararate</span>
+  <span class="mc-lider">Líder: Lindalva</span>
+  <div class="mc-rows">
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Tabajara, BNH</span></div>
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>20:00 às 22:00</span></div>
+  </div>
+  <a href="https://wa.me/556993532978?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Monte%20Ararate." target="_blank" rel="noopener" class="mc-wpp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg>Falar no WhatsApp</a>
+</div>
+<div class="mc">
+  <span class="mc-nome">Casa de Israel</span>
+  <span class="mc-lider">Líderes: Mariana e Gabriel</span>
+  <div class="mc-rows">
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Moema, Jardim Jorge Teixeira</span></div>
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>19:30 às 21:30</span></div>
+  </div>
+  <a href="https://wa.me/5569993691157?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Casa%20de%20Israel." target="_blank" rel="noopener" class="mc-wpp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg>Falar no WhatsApp</a>
+</div>
+<div class="mc">
+  <span class="mc-nome">Moriah</span>
+  <span class="mc-lider">Líderes: Izabel e Borba</span>
+  <div class="mc-rows">
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Francisco Alves Pinto, Bom Jesus</span></div>
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>19:30 às 21:30</span></div>
+  </div>
+  <a href="https://wa.me/556999447006?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Moriah." target="_blank" rel="noopener" class="mc-wpp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg>Falar no WhatsApp</a>
+</div>
+<div class="mc">
+  <span class="mc-nome">Filhos da Promessa</span>
+  <span class="mc-lider">Líder: Pr. Sidiel</span>
+  <div class="mc-rows">
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Rio Grande do Norte, Setor 05</span></div>
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>19:30 às 21:30</span></div>
+  </div>
+  <a href="https://wa.me/5569992441207?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Filhos%20da%20Promessa." target="_blank" rel="noopener" class="mc-wpp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg>Falar no WhatsApp</a>
+</div>
+          </div>
+        </div>
+        <div class="dc-pagination" aria-label="Paginação das células"></div>
+      </article>
+      <article class="day-card sticky-day" style="--i:2">
+        <div class="dc-head">
+          <div class="dc-head-left">
+            <span class="dc-count">1 célula</span>
+            <h3 class="dc-dia">Quarta-feira</h3>
+          </div>
+          
+        </div>
+        <div class="dc-viewport">
+          <div class="dc-track">
+<div class="mc">
+  <span class="mc-nome">A Grande Comissão</span>
+  <span class="mc-lider">Líder: Netão</span>
+  <div class="mc-rows">
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>AV. Hugo Fray, Cond. residencial São Paulo</span></div>
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>20:00 às 22:00</span></div>
+  </div>
+  <a href="https://wa.me/5569999631363?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20A%20Grande%20Comissão." target="_blank" rel="noopener" class="mc-wpp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg>Falar no WhatsApp</a>
+</div>
+          </div>
+        </div>
+        <div class="dc-pagination" aria-label="Paginação das células"></div>
+      </article>
+      <article class="day-card sticky-day" style="--i:3">
+        <div class="dc-head">
+          <div class="dc-head-left">
+            <span class="dc-count">1 célula</span>
+            <h3 class="dc-dia">Sábado</h3>
+          </div>
+          
+        </div>
+        <div class="dc-viewport">
+          <div class="dc-track">
+<div class="mc">
+  <span class="mc-nome">Vida Plena</span>
+  <span class="mc-lider">Líder: Eriquis</span>
+  <div class="mc-rows">
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Santa Catarina, Setor 05</span></div>
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>17:30 às 19:30</span></div>
+  </div>
+  <a href="https://wa.me/5569984082233?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Vida%20Plena." target="_blank" rel="noopener" class="mc-wpp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg>Falar no WhatsApp</a>
+</div>
+          </div>
+        </div>
+        <div class="dc-pagination" aria-label="Paginação das células"></div>
+      </article>
+    </div>
+    </div>
+  </div>
+</section>
+
+<section class="mensagens pad" id="mensagens">
+  <div class="wrap">
+    <div class="msg-head reveal">
+      <div>
+        <span class="eyebrow">NIB TV</span>
+        <h2 class="display h-sec" style="margin-top:12px">Transmissões <span class="editorial">Ao Vivo</span></h2>
+      </div>
+      <a href="https://www.youtube.com/@nibcasadedeus" class="btn btn-ghost"><svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:currentColor"><path d="M8 5v14l11-7z"/></svg>Ver canal completo</a>
+    </div>
+    <!-- NIB TV — puxa automaticamente os 3 últimos vídeos do canal (feed público, sem chave). -->
+    <div class="videos" id="ytVideos">
+      <a class="video reveal in" href="https://www.youtube.com/@nibcasadedeus" target="_blank" rel="noopener">
+        <div class="thumb skeleton"><span class="tag-watch">Assista</span><div class="play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
+        <div class="meta"><b>Carregando…</b><span>Youtube · Nova Igreja Batista</span></div>
+      </a>
+      <a class="video reveal in" href="https://www.youtube.com/@nibcasadedeus" target="_blank" rel="noopener">
+        <div class="thumb skeleton"><span class="tag-watch">Assista</span><div class="play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
+        <div class="meta"><b>Carregando…</b><span>Youtube · Nova Igreja Batista</span></div>
+      </a>
+      <a class="video reveal in" href="https://www.youtube.com/@nibcasadedeus" target="_blank" rel="noopener">
+        <div class="thumb skeleton"><span class="tag-watch">Assista</span><div class="play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
+        <div class="meta"><b>Carregando…</b><span>Youtube · Nova Igreja Batista</span></div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="pad" id="lideranca">
+  <div class="wrap">
+    <div class="sec-head center reveal">
+      <span class="eyebrow">Quem conduz</span>
+      <h2 class="display h-sec">Nossa liderança</h2>
+      <p class="lead lideranca-lead">Pastores dedicados a servir, ensinar e cuidar da igreja<span class="lead-break"> com amor e fidelidade à Palavra.</span></p>
+    </div>
+    <div class="lid-grid">
+      <div class="lid reveal" style="background-image:url('img/pastor-alex.jpg')">
+        <div class="info">
+          <div class="role">Pastor Sênior</div>
+          <h3>Alex Nogueira</h3>
+          
+        </div>
+      </div>
+      <div class="lid reveal" style="background-image:url('img/pastora-sheila.jpg')">
+        <div class="info">
+          <div class="role">Pastora</div>
+          <h3>Sheila Nogueira</h3>
+          
+        </div>
+      </div>
+      <div class="lid reveal" style="background-image:url('img/pastor-sidiel.jpg')">
+        <div class="info">
+          <div class="role">Pastor Auxiliar</div>
+          <h3>Sidiel Castro</h3>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="eventos pad" id="eventos">
+  <div class="wrap">
+    <div class="sec-head center reveal">
+      <span class="eyebrow">Próximos acontecimentos</span>
+      <h2 class="display h-sec">O que vem por aí</h2>
+      <p class="lead">Fique por dentro do que Deus está fazendo na nossa casa.</p>
+    </div>
+    <div class="ev-grid">
+      <div class="evento evento-foto reveal" style="--ev-bg:url('img/eventos/oracao-bg.jpg')">
+        <div class="cont">
+          <span class="tag">Oração</span>
+          <div class="date">31/08 a 04/09</div>
+          <h3>Semana de Oração</h3>
+          <p>Cinco dias clamando a Deus pela igreja e pelas famílias. Na NIB, das 23h à meia-noite.</p>
+        </div>
+      </div>
+      <div class="evento evento-foto reveal" style="--ev-bg:url('img/eventos/multiplicacao-bg.jpg')">
+        <div class="cont">
+          <span class="tag">Celebração</span>
+          <div class="date">03 de outubro</div>
+          <h3>Festa da Multiplicação</h3>
+          <p>Celebração das células na Chácara Pizze. R$ 25 por integrante da família, em até 2x no cartão. Participe!</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="pad" id="contribuicoes">
+  <div class="wrap contrib-grid">
+    <div class="reveal">
+      <span class="eyebrow">Generosidade</span>
+      <h2 class="display h-sec" style="margin:16px 0 20px">Faça parte<br>dessa história</h2>
+      <p class="lead">Honre o Senhor com generosidade e seja parte do que Deus está construindo. Contribua com alegria, no seu tempo e coração.</p>
+      <div class="contrib-cta">
+        <a href="#contribuicoes" class="btn btn-orange">Oferta</a>
+        <a href="#contribuicoes" class="btn btn-ghost-dark">Dízimo</a>
+        <a href="#construcao" class="btn btn-ghost-dark">Construção do templo</a>
+      </div>
+    </div>
+    <div class="pix-card reveal">
+      <div class="pix-row"><span class="k">PIX (CNPJ)</span><span class="v">40.518.758/0001-30</span></div>
+      <div class="pix-row"><span class="k">Banco</span><span class="v">Sicoob</span></div>
+      <div class="pix-row"><span class="k">Agência / Conta</span><span class="v">3315 / 51.404-7</span></div>
+      <div class="qr"><img src="img/pix-qrcode.png" alt="QR Code PIX - Nova Igreja Batista"></div>
+      <button class="pix-copy" id="pixCopy" data-code="00020126360014br.gov.bcb.pix0114405187580001305204000053039865802BR5919NOVA IGREJA BATISTA6009ARIQUEMES62070503***6304669F">
+        <svg viewBox="0 0 24 24" width="17" height="17"><path d="M16 1H4a2 2 0 00-2 2v12h2V3h12V1zm3 4H8a2 2 0 00-2 2v14a2 2 0 002 2h11a2 2 0 002-2V7a2 2 0 00-2-2zm0 16H8V7h11v14z"/></svg>
+        <span class="pix-copy-label">Copiar código PIX</span>
+      </button>
+    </div>
+  </div>
+</section>
+
+<section class="visite pad" id="visite">
+  <div class="wrap vis-grid">
+    <div class="vis-info reveal">
+      <span class="eyebrow">Venha nos visitar</span>
+      <div class="addr">Estamos te<br>esperando</div>
+      <p>Rua França, 1409 — Áreas Especiais 01<br>Ariquemes — RO · CEP 76870-013</p>
+      <p class="hours-mini">Quinta 19h30 · Domingo 9h30 e 19h</p>
+      <div class="socials">
+        <a href="https://www.instagram.com/nibcasadedeus/" aria-label="Instagram" title="Instagram">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M7.75 2h8.5A5.76 5.76 0 0 1 22 7.75v8.5A5.76 5.76 0 0 1 16.25 22h-8.5A5.76 5.76 0 0 1 2 16.25v-8.5A5.76 5.76 0 0 1 7.75 2Zm0 2A3.75 3.75 0 0 0 4 7.75v8.5A3.75 3.75 0 0 0 7.75 20h8.5A3.75 3.75 0 0 0 20 16.25v-8.5A3.75 3.75 0 0 0 16.25 4h-8.5ZM17.5 5.5a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5ZM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6Z"/>
+          </svg>
+        </a>
+        <a href="https://www.facebook.com/nibcasadedeus" aria-label="Facebook" title="Facebook">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M24 12.07C24 5.4 18.63 0 12 0S0 5.4 0 12.07C0 18.1 4.39 23.1 10.13 24v-8.44H7.08v-3.49h3.05V9.41c0-3.03 1.79-4.7 4.53-4.7 1.31 0 2.69.24 2.69.24v2.97h-1.51c-1.49 0-1.95.93-1.95 1.89v2.26h3.32l-.53 3.49h-2.79V24C19.61 23.1 24 18.1 24 12.07Z"/>
+          </svg>
+        </a>
+        <a href="https://www.youtube.com/@nibcasadedeus" aria-label="YouTube" title="YouTube">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31.6 31.6 0 0 0 0 12a31.6 31.6 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31.6 31.6 0 0 0 24 12a31.6 31.6 0 0 0-.5-5.8ZM9.6 15.6V8.4l6.3 3.6-6.3 3.6Z"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+    <div class="map reveal">
+      <iframe src="https://www.google.com/maps?q=Rua+Fran%C3%A7a+1409+Ariquemes+RO+76870-013&output=embed" title="Localização NIB - Rua França 1409, Ariquemes-RO" loading="lazy"></iframe>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot">
+    <div class="foot-col foot-brand">
+      <a class="brand" href="#top" aria-label="Nib - Nova Igreja Batista">
+        <img class="foot-logo" src="img/logo/logo2-branco.svg" alt="Nib - Nova Igreja Batista - A Casa de Deus">
+      </a>
+    </div>
+    <div class="foot-col foot-copy">
+      <small>© 2026 Nova Igreja Batista · Um lar de fé e acolhimento.</small>
+    </div>
+    <div class="foot-col foot-dev">
+      <small>Desenvolvido por <a href="https://www.instagram.com/hilton.cmferreira" target="_blank" rel="noopener noreferrer">Hilton Ferreira</a></small>
+    </div>
+  </div>
+</footer>
+
+<script>
+const header=document.getElementById('header');
+const topBlur=document.getElementById('topBlur');
+addEventListener('scroll',()=>{
+  const s=scrollY>20;
+  header.classList.toggle('scrolled',s);
+  topBlur.classList.toggle('show',s);
+});
+const burger=document.getElementById('burger'),links=document.getElementById('navLinks');
+burger.addEventListener('click',()=>links.classList.toggle('open'));
+links.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>links.classList.remove('open')));
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+/* botão copiar código PIX */
+(function(){
+  const btn=document.getElementById('pixCopy');
+  if(!btn) return;
+  const label=btn.querySelector('.pix-copy-label');
+  const original=label.textContent;
+  btn.addEventListener('click',async()=>{
+    const code=btn.dataset.code;
+    try{
+      await navigator.clipboard.writeText(code);
+    }catch(e){
+      const ta=document.createElement('textarea');
+      ta.value=code; ta.style.position='fixed'; ta.style.opacity='0';
+      document.body.appendChild(ta); ta.select();
+      try{document.execCommand('copy');}catch(_){}
+      document.body.removeChild(ta);
+    }
+    btn.classList.add('copied');
+    label.textContent='Código copiado!';
+    setTimeout(()=>{ btn.classList.remove('copied'); label.textContent=original; },2200);
+  });
+})();
+
+/* animação crescente do contador de células */
+(function(){
+  const el=document.querySelector('.ct-num[data-target]');
+  if(!el) return;
+  const target=parseInt(el.dataset.target)||24;
+  let done=false;
+  const obs=new IntersectionObserver(es=>es.forEach(e=>{
+    if(e.isIntersecting && !done){
+      done=true;
+      const dur=1200; const start=performance.now();
+      function tick(now){
+        const p=Math.min(1,(now-start)/dur);
+        const eased=1-Math.pow(1-p,3); // ease-out
+        el.textContent=Math.round(eased*target);
+        if(p<1) requestAnimationFrame(tick);
+        else el.textContent=target;
+      }
+      requestAnimationFrame(tick);
+    }
+  }),{threshold:.6});
+  obs.observe(el);
+})();
+
+/* navegação por setas + paginação dentro de cada card de dia */
+(function(){
+  document.querySelectorAll('.day-card').forEach(card=>{
+    const track=card.querySelector('.dc-track');
+    const viewport=card.querySelector('.dc-viewport');
+    const btns=card.querySelectorAll('.dc-arrow');
+    const pagination=card.querySelector('.dc-pagination');
+    if(!track||!btns.length) return;
+    const cards=[...track.children];
+    let idx=0;
+    function perView(){
+      const cw=cards[0].getBoundingClientRect().width;
+      const gap=parseFloat(getComputedStyle(track).gap)||18;
+      return Math.max(1,Math.round(viewport.clientWidth/(cw+gap)));
+    }
+    function pageCount(){ return Math.max(1,Math.ceil(cards.length/perView())); }
+    function maxIdx(){ return Math.max(0,cards.length-perView()); }
+    function buildPagination(){
+      if(!pagination) return;
+      pagination.innerHTML='';
+      const totalPages=pageCount();
+      pagination.hidden=totalPages<=1;
+      if(totalPages<=1) return;
+      for(let page=0;page<totalPages;page++){
+        const dot=document.createElement('button');
+        dot.type='button';
+        dot.className='dc-page-dot';
+        dot.setAttribute('aria-label',`Ir para a página ${page+1}`);
+        dot.addEventListener('click',()=>{ idx=Math.min(page*perView(),maxIdx()); apply(); });
+        pagination.appendChild(dot);
+      }
+    }
+    function apply(){
+      idx=Math.max(0,Math.min(idx,maxIdx()));
+      const cw=cards[0].getBoundingClientRect().width;
+      const gap=parseFloat(getComputedStyle(track).gap)||18;
+      track.style.transform=`translateX(${-idx*(cw+gap)}px)`;
+      btns.forEach(b=>{
+        const dir=parseInt(b.dataset.dir);
+        b.disabled=(dir<0&&idx<=0)||(dir>0&&idx>=maxIdx());
+      });
+      if(pagination){
+        const pv=perView();
+        const last=maxIdx();
+        const page=(idx>=last && last>0)
+          ? pageCount()-1
+          : Math.min(pageCount()-1,Math.floor(idx/pv));
+        [...pagination.children].forEach((dot,i)=>{
+          const active=i===page;
+          dot.classList.toggle('active',active);
+          dot.setAttribute('aria-current',active?'page':'false');
+        });
+      }
+    }
+    btns.forEach(b=>b.addEventListener('click',()=>{ idx+=parseInt(b.dataset.dir)*perView(); apply(); }));
+    let rt;
+    addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{idx=0;buildPagination();apply();},150)});
+    buildPagination();
+    apply();
+  });
+})();
+
+/* anima a barra de progresso da construção quando aparece */
+(function(){
+  const fill=document.querySelector('.cp-fill');
+  if(!fill) return;
+  const obs=new IntersectionObserver(es=>es.forEach(e=>{
+    if(e.isIntersecting){ fill.style.width=fill.dataset.width; }
+    else{ fill.style.width='0'; }
+  }),{threshold:.4});
+  obs.observe(fill);
+})();
+
+/* vídeo da construção: autoplay ao aparecer + controles play/pause e som */
+(function(){
+  const vid=document.getElementById('constrVideo');
+  if(!vid) return;
+  const btnPlay=document.getElementById('ccPlay');
+  const btnSound=document.getElementById('ccSound');
+  const unmute=document.getElementById('ccUnmute');
+  const icPause=btnPlay.querySelector('.cc-ic-pause');
+  const icPlay=btnPlay.querySelector('.cc-ic-play');
+  const icMuted=btnSound.querySelector('.cc-ic-muted');
+  const icSound=btnSound.querySelector('.cc-ic-sound');
+  let userPaused=false;
+
+  function syncPlayIcon(){
+    const playing=!vid.paused;
+    icPause.style.display=playing?'':'none';
+    icPlay.style.display=playing?'none':'';
+  }
+  function syncSoundIcon(){
+    icMuted.style.display=vid.muted?'':'none';
+    icSound.style.display=vid.muted?'none':'';
+    unmute.classList.toggle('hidden',!vid.muted);
+  }
+
+  // autoplay quando a seção fica visível (só se o usuário não pausou manualmente)
+  const obs=new IntersectionObserver(es=>es.forEach(e=>{
+    if(e.isIntersecting){ if(!userPaused) vid.play().catch(()=>{}); }
+    else{ vid.pause(); }
+  }),{threshold:.35});
+  obs.observe(vid);
+
+  // play/pause
+  btnPlay.addEventListener('click',()=>{
+    if(vid.paused){ userPaused=false; vid.play().catch(()=>{}); }
+    else{ userPaused=true; vid.pause(); }
+  });
+  // liga/desliga som
+  function toggleSound(){
+    vid.muted=!vid.muted;
+    if(!vid.muted && vid.paused){ vid.play().catch(()=>{}); }
+    syncSoundIcon();
+  }
+  btnSound.addEventListener('click',toggleSound);
+  unmute.addEventListener('click',toggleSound);
+  // clicar no vídeo também libera o som (primeira interação)
+  vid.addEventListener('click',()=>{ if(vid.muted) toggleSound(); });
+
+  vid.addEventListener('play',syncPlayIcon);
+  vid.addEventListener('pause',syncPlayIcon);
+  vid.addEventListener('volumechange',syncSoundIcon);
+  syncPlayIcon(); syncSoundIcon();
+})();
+
+
+/* orquestra a animação da logo: 1) Somos a  2) brasão+Nib (vídeo)  3) textos */
+(function(){
+  const la=document.getElementById('logoAnim');
+  const vid=document.getElementById('logoVideo');
+  const fallback=document.getElementById('logoFallback');
+  if(!la||!vid) return;
+
+  // Safari/iOS não suportam webm com alpha -> usar PNG estático
+  const ua=navigator.userAgent;
+  const isSafari=/^((?!chrome|android|crios|fxios).)*safari/i.test(ua);
+  const isIOS=/iPad|iPhone|iPod/.test(ua) || (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
+  const canWebm = !isSafari && !isIOS && vid.canPlayType && vid.canPlayType('video/webm; codecs="vp9"') !== '';
+
+  if(!canWebm){
+    // esconde COMPLETAMENTE o vídeo e mostra só o PNG
+    vid.remove();
+    if(fallback) fallback.hidden=false;
+    la.classList.add('static-logo');
+    return;
+  }
+
+  let timer=null;
+  const obs=new IntersectionObserver(es=>es.forEach(e=>{
+    if(e.isIntersecting){
+      la.classList.remove('play'); void la.offsetWidth; la.classList.add('play');
+      vid.pause(); vid.currentTime=0;
+      clearTimeout(timer);
+      timer=setTimeout(()=>{ vid.play().catch(()=>{
+        vid.style.display='none'; if(fallback) fallback.hidden=false; la.classList.add('static-logo');
+      }); }, 100);
+    } else {
+      la.classList.remove('play');
+      vid.pause(); clearTimeout(timer);
+    }
+  }),{threshold:.5});
+  obs.observe(la);
+})();
+
+
+/* animação de preenchimento da palavra "saudável" quando a hero fica ativa */
+(function(){
+  const hero=document.querySelector('.hero');
+  if(!hero) return;
+  const obs=new IntersectionObserver(es=>es.forEach(e=>{
+    if(e.isIntersecting){ hero.classList.add('reveal-fill'); }
+    else{ hero.classList.remove('reveal-fill'); }  // reativa ao voltar
+  }),{threshold:.4});
+  obs.observe(hero);
+})();
+
+
+/* fundo com parallax (aparece/desaparece no scroll) — seções "Quem somos" e "Cultos" */
+(function(){
+  const secs=[document.querySelector('.sobre-bg'),document.querySelector('.cultos')].filter(Boolean);
+  if(!secs.length) return;
+  function update(){
+    const vh=window.innerHeight;
+    secs.forEach(sec=>{
+      const r=sec.getBoundingClientRect();
+      const secCenter=r.top+r.height/2;
+      const dist=Math.abs(secCenter-vh/2);
+      const range=vh*0.9+r.height/2;
+      let p=1-(dist/range);
+      p=Math.max(0,Math.min(1,p));
+      p=p*p*(3-2*p); // smoothstep
+      sec.style.setProperty('--bg-op', p.toFixed(3));
+      sec.style.setProperty('--bg-scale', (1.06 - 0.06*p).toFixed(3));
+    });
+  }
+  addEventListener('scroll',update,{passive:true});
+  addEventListener('resize',update);
+  update();
+})();
+
+
+/* ===== Galeria coverflow ===== */
 (function(){
   const stage=document.getElementById('galStage');
   if(!stage) return;
+
   const cards=[...stage.querySelectorAll('.gal-card')];
   const total=cards.length;
   let current=0, timer=null;
 
   const videoCards=cards.filter(card=>card.classList.contains('gal-card-video'));
 
-  function activeVideoCard(){
+  function centeredVideoCard(){
     return videoCards.find(card=>card.classList.contains('pos-center')) || null;
   }
 
@@ -221,6 +1633,7 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
     videoCards.forEach(card=>{
       const vid=card.querySelector('.gal-video');
       if(!vid) return;
+
       if(card.classList.contains('pos-center')){
         vid.play().catch(()=>{});
       }else{
@@ -232,7 +1645,9 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
   function layout(){
     cards.forEach((card,i)=>{
       card.classList.remove('pos-center','pos-left','pos-right','pos-far-left','pos-far-right');
-      let diff=(i-current+total)%total;
+
+      const diff=(i-current+total)%total;
+
       if(diff===0) card.classList.add('pos-center');
       else if(diff===1) card.classList.add('pos-right');
       else if(diff===total-1) card.classList.add('pos-left');
@@ -240,36 +1655,75 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
       else if(diff===total-2) card.classList.add('pos-far-left');
       else card.classList.add('pos-far-right');
     });
+
     syncVideos();
   }
 
-  function next(){ current=(current+1)%total; layout(); }
-  function prev(){ current=(current-1+total)%total; layout(); }
+  function next(){
+    current=(current+1)%total;
+    layout();
+  }
+
+  function prev(){
+    current=(current-1+total)%total;
+    layout();
+  }
+
+  function stopAuto(){
+    if(timer){
+      clearInterval(timer);
+      timer=null;
+    }
+  }
 
   function startAuto(){
     stopAuto();
-    if(activeVideoCard()) return;
+
+    // Quando qualquer vídeo estiver centralizado, a galeria não avança sozinha.
+    if(centeredVideoCard()) return;
+
     timer=setInterval(next,3500);
   }
-  function stopAuto(){ if(timer){clearInterval(timer);timer=null;} }
 
-  document.getElementById('galNext').addEventListener('click',()=>{next();startAuto();});
-  document.getElementById('galPrev').addEventListener('click',()=>{prev();startAuto();});
+  const nextBtn=document.getElementById('galNext');
+  const prevBtn=document.getElementById('galPrev');
 
-  cards.forEach((card,i)=>card.addEventListener('click',(e)=>{
-    if(e.target.closest('.gal-video-controls')) return;
-    if(!card.classList.contains('pos-center')){ current=i; layout(); startAuto(); }
-  }));
+  if(nextBtn) nextBtn.addEventListener('click',()=>{
+    next();
+    startAuto();
+  });
+
+  if(prevBtn) prevBtn.addEventListener('click',()=>{
+    prev();
+    startAuto();
+  });
+
+  cards.forEach((card,i)=>{
+    card.addEventListener('click',(e)=>{
+      if(e.target.closest('.gal-video-controls')) return;
+
+      if(!card.classList.contains('pos-center')){
+        current=i;
+        layout();
+        startAuto();
+      }
+    });
+  });
 
   const gallery=document.getElementById('gallery');
-  gallery.addEventListener('mouseenter',stopAuto);
-  gallery.addEventListener('mouseleave',startAuto);
 
+  if(gallery){
+    gallery.addEventListener('mouseenter',stopAuto);
+    gallery.addEventListener('mouseleave',startAuto);
+  }
+
+  // Controles independentes para todos os vídeos da galeria.
   videoCards.forEach(card=>{
     const vid=card.querySelector('.gal-video');
     const playBtn=card.querySelector('.gal-video-play, #galVidPlay');
     const soundBtn=card.querySelector('.gal-video-sound, #galVidSound');
-    if(!vid||!playBtn||!soundBtn) return;
+
+    if(!vid || !playBtn || !soundBtn) return;
 
     const icPause=playBtn.querySelector('.ic-pause');
     const icPlay=playBtn.querySelector('.ic-play');
@@ -277,29 +1731,38 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
     const icUnmuted=soundBtn.querySelector('.ic-unmuted');
     const label=soundBtn.querySelector('.gal-vc-label');
 
-    playBtn.addEventListener('click',()=>{
-      if(vid.paused){ vid.play().catch(()=>{}); } else { vid.pause(); }
-    });
-    vid.addEventListener('play',()=>{
-      if(icPause) icPause.style.display='';
-      if(icPlay) icPlay.style.display='none';
-    });
-    vid.addEventListener('pause',()=>{
-      if(icPause) icPause.style.display='none';
-      if(icPlay) icPlay.style.display='';
-    });
-    soundBtn.addEventListener('click',()=>{
-      vid.muted=!vid.muted;
-      if(vid.muted){
-        if(icMuted) icMuted.style.display='';
-        if(icUnmuted) icUnmuted.style.display='none';
-        if(label) label.textContent='Ativar som';
+    function syncPlayIcon(){
+      if(icPause) icPause.style.display=vid.paused?'none':'';
+      if(icPlay) icPlay.style.display=vid.paused?'':'none';
+    }
+
+    function syncSoundIcon(){
+      if(icMuted) icMuted.style.display=vid.muted?'':'none';
+      if(icUnmuted) icUnmuted.style.display=vid.muted?'none':'';
+      if(label) label.textContent=vid.muted?'Ativar som':'Som ativado';
+    }
+
+    playBtn.addEventListener('click',(e)=>{
+      e.stopPropagation();
+
+      if(vid.paused){
+        vid.play().catch(()=>{});
       }else{
-        if(icMuted) icMuted.style.display='none';
-        if(icUnmuted) icUnmuted.style.display='';
-        if(label) label.textContent='Som ativado';
+        vid.pause();
       }
     });
+
+    soundBtn.addEventListener('click',(e)=>{
+      e.stopPropagation();
+      vid.muted=!vid.muted;
+      syncSoundIcon();
+    });
+
+    vid.addEventListener('play',syncPlayIcon);
+    vid.addEventListener('pause',syncPlayIcon);
+
+    syncPlayIcon();
+    syncSoundIcon();
   });
 
   layout();
