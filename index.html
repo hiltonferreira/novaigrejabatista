@@ -1760,7 +1760,7 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
   });
 })();
 
-/* construção: percentual + barra animados em loop enquanto a seção estiver visível */
+/* construção: percentual + barra animam ao entrar na seção e reiniciam ao retornar */
 (function(){
   const section=document.getElementById('construcao');
   const pct=section && section.querySelector('.cp-pct');
@@ -1769,24 +1769,20 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 
   const target=parseInt(pct.dataset.target,10)||30;
   const duration=1600;
-  const hold=900;
-  let visible=false;
   let raf=0;
-  let holdTimer=0;
+  let wasVisible=false;
 
   function reset(){
     cancelAnimationFrame(raf);
-    clearTimeout(holdTimer);
     pct.textContent='0%';
     fill.style.width='0%';
   }
 
-  function run(){
-    if(!visible) return;
+  function animate(){
+    cancelAnimationFrame(raf);
     const start=performance.now();
 
     function tick(now){
-      if(!visible) return;
       const p=Math.min(1,(now-start)/duration);
       const eased=1-Math.pow(1-p,3);
       const value=Math.max(1,Math.round(eased*target));
@@ -1799,12 +1795,6 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
       }else{
         pct.textContent=target+'%';
         fill.style.width=target+'%';
-        holdTimer=setTimeout(()=>{
-          if(!visible) return;
-          pct.textContent='1%';
-          fill.style.width=(target/100)+'%';
-          raf=requestAnimationFrame(run);
-        },hold);
       }
     }
 
@@ -1819,13 +1809,12 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 
   const obs=new IntersectionObserver(entries=>{
     entries.forEach(entry=>{
-      visible=entry.isIntersecting;
-      if(visible){
+      if(entry.isIntersecting && !wasVisible){
+        wasVisible=true;
         reset();
-        pct.textContent='1%';
-        fill.style.width=(target/100)+'%';
-        raf=requestAnimationFrame(run);
-      }else{
+        animate();
+      }else if(!entry.isIntersecting && wasVisible){
+        wasVisible=false;
         reset();
       }
     });
