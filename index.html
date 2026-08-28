@@ -18,12 +18,12 @@
 @font-face{font-family:"Acumin Pro";src:url("fonts/AcuminPro-Bold.woff2") format("woff2");font-weight:700;font-style:normal;font-display:swap}
 :root{
   --bg:#05070d;--bg-2:#0a0f1c;--panel:#0e1526;
-  --blue:#1d7fff;--blue-bright:#3aa0ff;--cyan:#31d7f2;
+  --blue:#1d7fff;--cyan:#31d7f2;
   --ink:#eaf1ff;--muted:#8b9ac0;--line:rgba(255,255,255,.10);--gold:#f2c14e;
   /* ===== NOVA IDENTIDADE OFICIAL (rebranding 2025) ===== */
   --navy:#060749;        /* primária - cor-mãe (valor HTML oficial do manual) */
   --marfim:#EBEBDF;      /* primária - off-white quente */
-  --navy-mid:#002169;    /* complementar - azul médio */
+      /* complementar - azul médio */
   --azul-gray:#A8AFB7;   /* complementar - cinza-azulado */
   --laranja:#FF7F40;     /* acento - energia */
   --laranja-soft:#ff9560;
@@ -48,8 +48,6 @@ section{position:relative}
 .lead{font-family:var(--acumin);color:#c9cdd8;font-size:1.08rem;max-width:62ch}
 .h-sec{font-family:var(--acumin);font-weight:700;letter-spacing:-.01em;font-size:clamp(2rem,5vw,3.6rem);color:var(--marfim)}
 .btn{display:inline-flex;align-items:center;gap:.5em;font-weight:700;font-size:.9rem;letter-spacing:.04em;text-transform:uppercase;padding:1em 1.9em;border-radius:4px;transition:.25s;cursor:pointer;border:1.5px solid transparent}
-.btn-blue{font-family:var(--acumin);background:var(--laranja);color:var(--navy);border-radius:999px;font-weight:600;box-shadow:0 8px 30px -8px rgba(255,127,64,.6)}
-.btn-blue:hover{background:var(--marfim);transform:translateY(-2px)}
 .btn-ghost{border-color:var(--line);color:var(--ink)}
 .btn-ghost:hover{border-color:var(--blue);background:var(--blue);color:#fff}
 header{position:fixed;inset:16px 0 auto 0;z-index:100;transition:.35s;padding:0}
@@ -158,7 +156,7 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
 .sobre-bg.pad{padding:90px 0 200px}
 .pillars{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:130px}
 #sobre .wrap{max-width:1340px}
-#sobre .pillar{padding:32px 26px}
+#sobre .pillar{padding:32px 26px;background:rgba(4,30,66,.55);border:1px solid rgba(235,235,223,.14);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
 .pillar{background:rgba(14,20,38,.45);backdrop-filter:blur(10px) saturate(1.2);-webkit-backdrop-filter:blur(10px) saturate(1.2);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:34px 30px;transition:.4s cubic-bezier(.2,.7,.2,1);position:relative;overflow:hidden}
 .sobre-bg{position:relative;isolation:isolate}
 .sobre-bg::before{content:"";position:absolute;inset:0;z-index:-2;
@@ -195,8 +193,8 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
 .logo-anim.static-logo .la-brasao-wrap,.logo-anim.static-logo .la-resto{opacity:1;transform:none;animation:none}
 @keyframes la-fade{to{opacity:1}}
 @keyframes la-slidein{to{opacity:1;transform:translateX(0)}}
-#sobre .pillar{background:rgba(4,30,66,.55);border:1px solid rgba(235,235,223,.14);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
-#sobre .pillar:hover{border-color:rgba(255,127,64,.5);background:rgba(4,24,54,.72);box-shadow:0 24px 50px -20px rgba(4,30,66,.6)}
+
+
 #sobre .pillar .k{font-family:var(--acumin);font-style:italic;font-weight:500;color:var(--laranja)}
 #sobre .pillar h3{font-family:var(--acumin);font-weight:700;color:var(--marfim)}
 #sobre .pillar p{font-family:var(--acumin);color:#aab0c0}
@@ -332,9 +330,6 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
 .constr-unmute svg{fill:currentColor}
 .constr-unmute:hover{background:var(--marfim)}
 .constr-unmute.hidden{display:none}
-.constr-img-main.placeholder{background:linear-gradient(135deg,#0e1a44,#1a2a5e);display:flex;align-items:center;justify-content:center}
-.constr-img-main.placeholder img{display:none}
-.constr-img-main.placeholder::after{content:"Foto da obra";font-family:var(--acumin);color:var(--azul-gray);font-size:1rem}
 .constr-badge{position:absolute;top:18px;left:18px;font-family:var(--acumin);font-weight:600;font-size:.8rem;
   padding:.5em 1em;border-radius:999px;background:var(--laranja);color:var(--navy);z-index:2}
 @media(max-width:920px){
@@ -480,10 +475,24 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
   background:linear-gradient(to top,rgba(5,7,13,1) 0%,rgba(5,7,13,1) 15%,rgba(5,7,13,.96) 22%,rgba(5,7,13,.15) 65%)}
 .lid::after{content:"";position:absolute;top:0;left:0;height:3px;width:0;background:var(--laranja);transition:.4s;z-index:3;pointer-events:none}
 .lid:hover::after{width:100%}
-.lid .info{position:relative;z-index:2}
+/* correção final: hover da liderança com prioridade sobre a animação .reveal */
+#lideranca .lid.reveal.in{
+  transition:transform .4s cubic-bezier(.2,.7,.2,1),
+             border-color .4s cubic-bezier(.2,.7,.2,1),
+             box-shadow .4s cubic-bezier(.2,.7,.2,1);
+  will-change:transform;
+}
+#lideranca .lid.reveal.in:hover{
+  transform:translateY(-8px) scale(1.015);
+  border-color:rgba(255,127,64,.5);
+  box-shadow:0 24px 50px -20px rgba(255,127,64,.4);
+}
+#lideranca .lid.reveal.in:hover::after{width:100%}
+
+.lid .info{position:relative;z-index:2;padding:32px}
 .lid:hover{transform:translateY(-8px) scale(1.015);border-color:rgba(255,127,64,.5);box-shadow:0 24px 50px -20px rgba(255,127,64,.4)}
 
-.lid .info{padding:32px}
+
 .lid .role{font-family:var(--acumin);font-style:italic;font-weight:500;font-size:1.4rem;color:var(--laranja)}
 .lid h3{font-family:var(--display);font-size:2rem;color:#fff;margin:2px 0 10px}
 .lid p{color:var(--muted);font-size:.95rem;max-width:42ch}
@@ -524,7 +533,6 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
 /* Células - CLARA com degradê */
 #celulas{position:relative;
   background:linear-gradient(165deg,#EBEBDF 0%,#f2f2ea 55%,#e6e6d8 100%)}
-#celulas .cel-bg{display:none}
 #celulas .wrap{position:relative;z-index:1}
 /* Mensagens - navy profundo (mais escuro) */
 .mensagens{position:relative;isolation:isolate;
@@ -540,8 +548,8 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
 #celulas .cel-head h2 .editorial{font-family:var(--acumin);font-style:italic;font-weight:500;color:var(--laranja)}
 #celulas .lead{color:#4a5268}
 #lideranca .lead{color:#4a5268}
-#lideranca .h-sec{color:#0d3461}
-#lideranca .lead{color:#4a5268}
+
+
 /* Eventos - navy profundo com toque laranja */
 .eventos{position:relative;isolation:isolate;
   background:radial-gradient(75% 60% at 15% 5%,rgba(255,127,64,.18) 0%,transparent 55%),linear-gradient(160deg,#04051a 0%,#080c24 55%,#05061c 100%)}
@@ -586,8 +594,8 @@ footer{background:var(--bg);border-top:1px solid var(--line);padding:44px 0}
 }
 .foot .brand .txt{font-size:1.1rem}
 .foot-logo{height:40px;width:auto;display:block}
-.foot small{font-family:var(--acumin)}
-.foot small{color:var(--muted);font-size:.8rem}
+
+.foot small{font-family:var(--acumin);color:var(--muted);font-size:.8rem}
 .reveal{opacity:0;transform:translateY(28px);transition:.7s cubic-bezier(.2,.7,.2,1)}
 .reveal.in{opacity:1;transform:none}
 @media(prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}html{scroll-behavior:auto}}
@@ -667,20 +675,6 @@ footer a[href*="instagram.com/hilton.cmferreira"]:hover{color:var(--laranja)}
   #lideranca .lid-grid .lid{min-height:480px;height:480px}
 }
 
-
-/* correção final: hover da liderança com prioridade sobre a animação .reveal */
-#lideranca .lid.reveal.in{
-  transition:transform .4s cubic-bezier(.2,.7,.2,1),
-             border-color .4s cubic-bezier(.2,.7,.2,1),
-             box-shadow .4s cubic-bezier(.2,.7,.2,1);
-  will-change:transform;
-}
-#lideranca .lid.reveal.in:hover{
-  transform:translateY(-8px) scale(1.015);
-  border-color:rgba(255,127,64,.5);
-  box-shadow:0 24px 50px -20px rgba(255,127,64,.4);
-}
-#lideranca .lid.reveal.in:hover::after{width:100%}
 
 </style>
 </head>
