@@ -2411,8 +2411,17 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
       var vidNode=en.getElementsByTagNameNS("http://www.youtube.com/xml/schemas/2015","videoId")[0]
         || en.getElementsByTagName("yt:videoId")[0];
       var titleNode=en.getElementsByTagName("title")[0];
+      var publishedNode=en.getElementsByTagName("published")[0];
       var vid=vidNode ? vidNode.textContent : "";
       var title=titleNode ? titleNode.textContent : "Mensagem";
+      var published=publishedNode ? publishedNode.textContent : "";
+      var liveDate="";
+      if(published){
+        var d=new Date(published);
+        if(!isNaN(d.getTime())){
+          liveDate=d.toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit",year:"numeric"});
+        }
+      }
       var link="https://www.youtube.com/watch?v="+vid;
       var hi="https://i.ytimg.com/vi/"+vid+"/maxresdefault.jpg";
       var fb="https://i.ytimg.com/vi/"+vid+"/hqdefault.jpg";
@@ -2420,7 +2429,7 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
       return '<a class="video reveal in" style="transition-delay:'+(idx*.1)+'s" href="'+link+'" target="_blank" rel="noopener">'+
         '<div class="thumb"><span class="tag-watch">Assista</span><img src="'+hi+'" alt="'+esc(title)+'" loading="lazy" '+
         'onerror="this.onerror=null;this.src=\''+fb+'\'">'+play+'</div>'+
-        '<div class="meta"><b>'+esc(title)+'</b><span>YouTube · Nova Igreja Batista</span></div></a>';
+        '<div class="meta"><b>'+esc(title)+'</b><span>YouTube · Nova Igreja Batista'+(liveDate?' · '+liveDate:'')+'</span></div></a>';
     }).join("");
   }
 
