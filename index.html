@@ -460,10 +460,10 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
 .msg-head{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:46px}
 
 /* NIB TV — destaque automático para live e próxima transmissão */
-.yt-feature{margin:0 0 34px;border:1px solid rgba(255,127,64,.25);border-radius:18px;overflow:hidden;
+.yt-feature{width:calc((200% - 22px)/3);max-width:100%;margin:0 0 34px;border:1px solid rgba(255,127,64,.25);border-radius:18px;overflow:hidden;
   background:linear-gradient(145deg,rgba(4,30,66,.92),rgba(5,7,13,.98));box-shadow:0 28px 70px -42px rgba(255,127,64,.55)}
 .yt-feature[hidden]{display:none}
-.yt-feature-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:stretch}
+.yt-feature-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(250px,.85fr);align-items:stretch}
 .yt-feature-media{position:relative;background:#02050b;min-width:0}
 .yt-feature-media iframe{display:block;width:100%;height:auto;aspect-ratio:16/9;border:0;background:#02050b}
 .yt-feature-media img{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:contain;background:#02050b}
@@ -474,7 +474,8 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
   letter-spacing:.14em;text-transform:uppercase;border-radius:999px;padding:8px 12px;margin-bottom:18px}
 .yt-status-live{color:#fff;background:#e42525;box-shadow:0 0 22px -8px rgba(228,37,37,.95)}
 .yt-status-live::before{content:"";width:8px;height:8px;border-radius:50%;background:#fff;animation:ytPulse 1.5s ease-in-out infinite}
-.yt-status-upcoming{color:var(--navy);background:var(--laranja)}
+.yt-status-upcoming{color:var(--marfim);border:1px solid rgba(235,235,223,.3);
+  background:rgba(235,235,223,.08);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
 @keyframes ytPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.45;transform:scale(.78)}}
 .yt-feature-title{font-family:var(--display);font-size:clamp(1.55rem,2vw,2rem);line-height:1.05;color:#fff;margin:0 0 10px}
 .yt-feature-desc{font-family:var(--acumin);font-size:.86rem;line-height:1.5;color:var(--muted);margin:0 0 18px;max-width:34ch}
@@ -491,6 +492,7 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
   color:var(--azul-gray);margin:0 0 16px}
 .yt-recent-label[hidden]{display:none}
 @media(max-width:900px){
+  .yt-feature{width:100%}
   .yt-feature-grid{grid-template-columns:1fr}
   .yt-feature-media iframe,.yt-feature-media img{height:auto;aspect-ratio:16/9}
   .yt-feature-info{padding:24px 24px 26px}
@@ -500,6 +502,7 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
   .yt-feature-info{padding:23px 20px 25px}
   .yt-feature-title{font-size:1.65rem}
   .yt-open{width:100%}
+  .yt-app-note{width:100%;text-align:center}
 }
 
 .videos{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
