@@ -458,6 +458,47 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
 @media(max-width:820px){.mc{flex-basis:calc((100% - 18px)/2)};.day-card{top:80px}}
 @media(max-width:560px){.mc{flex-basis:100%}}
 .msg-head{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:46px}
+
+/* NIB TV — destaque automático para live e próxima transmissão */
+.yt-feature{margin:0 0 34px;border:1px solid rgba(255,127,64,.25);border-radius:18px;overflow:hidden;
+  background:linear-gradient(145deg,rgba(4,30,66,.92),rgba(5,7,13,.98));box-shadow:0 28px 70px -42px rgba(255,127,64,.55)}
+.yt-feature[hidden]{display:none}
+.yt-feature-grid{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(280px,.75fr);align-items:stretch}
+.yt-feature-media{position:relative;background:#02050b;min-width:0}
+.yt-feature-media iframe{display:block;width:100%;aspect-ratio:16/9;border:0;background:#02050b}
+.yt-feature-media img{display:block;width:100%;height:100%;min-height:320px;object-fit:cover}
+.yt-feature-media::after{content:"";position:absolute;inset:0;pointer-events:none;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.03)}
+.yt-feature-info{padding:34px 30px;display:flex;flex-direction:column;justify-content:center;align-items:flex-start}
+.yt-status{display:inline-flex;align-items:center;gap:9px;font-family:var(--acumin);font-size:.72rem;font-weight:700;
+  letter-spacing:.14em;text-transform:uppercase;border-radius:999px;padding:8px 12px;margin-bottom:18px}
+.yt-status-live{color:#fff;background:#e42525;box-shadow:0 0 22px -8px rgba(228,37,37,.95)}
+.yt-status-live::before{content:"";width:8px;height:8px;border-radius:50%;background:#fff;animation:ytPulse 1.5s ease-in-out infinite}
+.yt-status-upcoming{color:var(--navy);background:var(--laranja)}
+@keyframes ytPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.45;transform:scale(.78)}}
+.yt-feature-title{font-family:var(--display);font-size:clamp(1.65rem,2.4vw,2.45rem);line-height:1.04;color:#fff;margin:0 0 12px}
+.yt-feature-desc{font-family:var(--acumin);font-size:.9rem;line-height:1.55;color:var(--muted);margin:0 0 24px;max-width:42ch}
+.yt-open{display:inline-flex;align-items:center;justify-content:center;gap:9px;text-decoration:none;font-family:var(--acumin);
+  font-weight:700;font-size:.9rem;padding:.9em 1.35em;border-radius:999px;background:var(--laranja);color:var(--navy);
+  transition:.25s}
+.yt-open:hover{transform:translateY(-2px);box-shadow:0 12px 30px -12px rgba(255,127,64,.8)}
+.yt-open svg{width:17px;height:17px;fill:currentColor}
+.yt-app-note{font-family:var(--acumin);font-size:.74rem;color:var(--azul-gray);margin-top:9px}
+.yt-recent-label{font-family:var(--acumin);font-size:.74rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--azul-gray);margin:0 0 16px}
+.yt-recent-label[hidden]{display:none}
+@media(max-width:900px){
+  .yt-feature-grid{grid-template-columns:1fr}
+  .yt-feature-media img{min-height:0;aspect-ratio:16/9}
+  .yt-feature-info{padding:26px 24px 28px}
+}
+@media(max-width:560px){
+  .yt-feature{border-radius:14px;margin-bottom:28px}
+  .yt-feature-info{padding:23px 20px 25px}
+  .yt-feature-title{font-size:1.65rem}
+  .yt-open{width:100%}
+}
+
 .videos{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
 .video{border-radius:12px;overflow:hidden;background:var(--panel);border:1px solid var(--line);transition:.3s;display:block;color:inherit}
 .video:hover{transform:translateY(-5px);border-color:rgba(255,127,64,.4)}
@@ -1589,7 +1630,9 @@ footer a[href*="instagram.com/hilton.cmferreira"]:hover{color:var(--laranja)}
       </div>
       <a href="https://www.youtube.com/@nibcasadedeus" class="btn btn-ghost"><svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:currentColor"><path d="M8 5v14l11-7z"/></svg>Ver canal completo</a>
     </div>
-    <!-- NIB TV — puxa automaticamente os 3 últimos vídeos do canal (feed público, sem chave). -->
+    <!-- NIB TV — live/agendamento automáticos + 3 últimos vídeos do canal. -->
+    <div class="yt-feature" id="ytFeature" hidden aria-live="polite"></div>
+    <div class="yt-recent-label" id="ytRecentLabel" hidden>Últimas transmissões</div>
     <div class="videos" id="ytVideos">
       <a class="video reveal in" href="https://www.youtube.com/@nibcasadedeus" target="_blank" rel="noopener">
         <div class="thumb skeleton"><span class="tag-watch">Assista</span><div class="play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
@@ -2265,25 +2308,87 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 })();
 
 
-/* ===== NIB TV — 3 últimos vídeos via Cloudflare Worker + RSS oficial do YouTube ===== */
+/* ===== NIB TV — live, próxima transmissão e 3 últimos vídeos via Cloudflare Worker ===== */
 (function(){
   var FEED="https://nib-youtube-feed.hiltoncrivelon.workers.dev/";
   var box=document.getElementById("ytVideos");
+  var feature=document.getElementById("ytFeature");
+  var recentLabel=document.getElementById("ytRecentLabel");
   if(!box) return;
 
   function esc(s){
-    return (s||"").replace(/[&<>"]/g,function(c){
-      return({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"})[c];
+    return (s||"").replace(/[&<>"']/g,function(c){
+      return({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c];
     });
   }
 
-  function render(xmlText){
-    var xml=new DOMParser().parseFromString(xmlText,"text/xml");
+  function cleanDescription(s){
+    return (s||"").replace(/\s+/g," ").trim();
+  }
+
+  function renderFeature(data){
+    if(!feature) return;
+
+    var live=data && data.live && data.live.active ? data.live : null;
+    var upcoming=!live && data && data.upcoming && data.upcoming.active ? data.upcoming : null;
+
+    if(!live && !upcoming){
+      feature.hidden=true;
+      feature.innerHTML="";
+      if(recentLabel) recentLabel.hidden=true;
+      return;
+    }
+
+    var item=live || upcoming;
+    var title=esc(item.title || (live ? "Transmissão ao vivo" : "Próxima transmissão"));
+    var url=item.url || ("https://www.youtube.com/watch?v="+encodeURIComponent(item.videoId||""));
+    var desc=cleanDescription(item.description);
+    if(desc.length>170) desc=desc.slice(0,167).trim()+"…";
+
+    var youtubeIcon='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23.5 6.2a3 3 0 00-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 00.5 6.2 31 31 0 000 12a31 31 0 00.5 5.8 3 3 0 002.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 002.1-2.1A31 31 0 0024 12a31 31 0 00-.5-5.8zM9.6 15.6V8.4L15.8 12l-6.2 3.6z"/></svg>';
+
+    var media="";
+    if(live && item.videoId){
+      media='<iframe src="https://www.youtube.com/embed/'+encodeURIComponent(item.videoId)+'?rel=0" '+
+        'title="'+title+'" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" '+
+        'referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>';
+    }else{
+      var thumb=item.thumbnail || (item.videoId ? "https://i.ytimg.com/vi/"+item.videoId+"/maxresdefault.jpg" : "");
+      media=thumb
+        ? '<img src="'+esc(thumb)+'" alt="'+title+'" loading="lazy">'
+        : '<div style="aspect-ratio:16/9;background:linear-gradient(135deg,#12224d,#0a1428)"></div>';
+    }
+
+    feature.innerHTML=
+      '<div class="yt-feature-grid">'+
+        '<div class="yt-feature-media">'+media+'</div>'+
+        '<div class="yt-feature-info">'+
+          '<span class="yt-status '+(live?'yt-status-live':'yt-status-upcoming')+'">'+
+            (live?'Ao vivo agora':'Próxima transmissão')+
+          '</span>'+
+          '<h3 class="yt-feature-title">'+title+'</h3>'+
+          (desc?'<p class="yt-feature-desc">'+esc(desc)+'</p>':'')+
+          '<a class="yt-open" href="'+esc(url)+'" target="_blank" rel="noopener">'+youtubeIcon+
+            (live?'Assistir no YouTube':'Ver no YouTube')+
+          '</a>'+
+          '<span class="yt-app-note">Assista no app do YouTube</span>'+
+        '</div>'+
+      '</div>';
+
+    feature.hidden=false;
+    if(recentLabel) recentLabel.hidden=false;
+  }
+
+  function renderFeed(xmlText, excludeIds){
+    var xml=new DOMParser().parseFromString(xmlText||"","text/xml");
     var all=[].slice.call(xml.getElementsByTagName("entry"));
 
     var seenId={}, seenTitle={}, entries=[];
+    (excludeIds||[]).forEach(function(id){ if(id) seenId[id]=1; });
+
     for(var k=0;k<all.length;k++){
-      var vidNode=all[k].getElementsByTagName("yt:videoId")[0];
+      var vidNode=all[k].getElementsByTagNameNS("http://www.youtube.com/xml/schemas/2015","videoId")[0]
+        || all[k].getElementsByTagName("yt:videoId")[0];
       var titleNode=all[k].getElementsByTagName("title")[0];
       var vidk=vidNode ? vidNode.textContent : "";
       var titk=(titleNode ? titleNode.textContent : "")
@@ -2303,7 +2408,8 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
     var play='<div class="play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>';
 
     box.innerHTML=entries.map(function(en,idx){
-      var vidNode=en.getElementsByTagName("yt:videoId")[0];
+      var vidNode=en.getElementsByTagNameNS("http://www.youtube.com/xml/schemas/2015","videoId")[0]
+        || en.getElementsByTagName("yt:videoId")[0];
       var titleNode=en.getElementsByTagName("title")[0];
       var vid=vidNode ? vidNode.textContent : "";
       var title=titleNode ? titleNode.textContent : "Mensagem";
@@ -2323,11 +2429,32 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
       if(!r.ok) throw new Error("Falha HTTP "+r.status);
       return r.text();
     })
-    .then(function(t){
-      if(!t || t.indexOf("<entry")===-1) throw new Error("Feed inválido");
-      render(t);
+    .then(function(raw){
+      var data;
+
+      /* Compatibilidade: aceita tanto o novo JSON quanto o antigo XML do Worker. */
+      try{
+        data=JSON.parse(raw);
+      }catch(e){
+        data={live:{active:false},upcoming:{active:false},feed:raw};
+      }
+
+      renderFeature(data);
+
+      var excluded=[];
+      if(data.live && data.live.active) excluded.push(data.live.videoId);
+      if(data.upcoming && data.upcoming.active) excluded.push(data.upcoming.videoId);
+
+      if(!data.feed || data.feed.indexOf("<entry")===-1) throw new Error("Feed inválido");
+      renderFeed(data.feed,excluded);
     })
     .catch(function(){
+      if(feature){
+        feature.hidden=true;
+        feature.innerHTML="";
+      }
+      if(recentLabel) recentLabel.hidden=true;
+
       box.querySelectorAll(".thumb").forEach(function(t){
         t.classList.remove("skeleton");
       });
