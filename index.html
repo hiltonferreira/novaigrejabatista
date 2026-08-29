@@ -469,13 +469,21 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
 .yt-feature-media img{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:contain;background:#02050b}
 .yt-feature-media::after{content:"";position:absolute;inset:0;pointer-events:none;
   box-shadow:inset 0 0 0 1px rgba(255,255,255,.03)}
+.yt-feature-play{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:4;
+  width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);
+  backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);transition:.25s}
+.yt-feature-play:hover{transform:translate(-50%,-50%) scale(1.06);background:rgba(255,255,255,.26)}
+.yt-feature-play svg{width:22px;height:22px;fill:#fff;margin-left:3px}
+.yt-feature-media .yt-hover-preview{position:absolute;inset:0;width:100%;height:100%;border:0;z-index:3;background:#02050b}
 .yt-feature-info{padding:26px 32px;display:flex;flex-direction:column;justify-content:center;align-items:flex-start}
-.yt-status{display:inline-flex;align-items:center;gap:7px;font-family:var(--acumin);font-size:.64rem;font-weight:700;
-  letter-spacing:.12em;text-transform:uppercase;border-radius:999px;padding:6px 10px;margin-bottom:16px}
-.yt-status-live{color:#fff;background:#e42525;box-shadow:0 0 22px -8px rgba(228,37,37,.95)}
+.yt-status{display:inline-flex;align-items:center;font-family:var(--acumin);font-size:.66rem;font-weight:600;
+  letter-spacing:.14em;text-transform:uppercase;border-radius:999px;padding:6px 12px}
+.yt-status-live{color:#fff;background:#e42525;box-shadow:0 0 22px -8px rgba(228,37,37,.95);margin-bottom:16px}
 .yt-status-live::before{content:"";width:8px;height:8px;border-radius:50%;background:#fff;animation:ytPulse 1.5s ease-in-out infinite}
-.yt-status-upcoming{color:var(--marfim);border:1px solid rgba(235,235,223,.3);
-  background:rgba(235,235,223,.08);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.yt-status-upcoming{position:absolute;top:14px;right:14px;z-index:4;color:#fff;
+  border:1px solid rgba(255,255,255,.16);background:rgba(5,7,13,.7);
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
 @keyframes ytPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.45;transform:scale(.78)}}
 .yt-feature-title{font-family:var(--display);font-size:clamp(1.55rem,2vw,2rem);line-height:1.05;color:#fff;margin:0 0 10px}
 .yt-feature-desc{font-family:var(--acumin);font-size:.86rem;line-height:1.5;color:var(--muted);margin:0 0 18px;max-width:34ch}
@@ -512,6 +520,7 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
 .video:hover{transform:translateY(-5px);border-color:rgba(255,127,64,.4)}
 .video .thumb{aspect-ratio:16/9;background:linear-gradient(135deg,#12224d,#0a1428);position:relative;overflow:hidden}
 .video .thumb img{width:100%;height:100%;object-fit:cover;display:block;transition:.4s}
+.video .thumb .yt-hover-preview{position:absolute;inset:0;width:100%;height:100%;border:0;z-index:2;background:#02050b}
 .video:hover .thumb img{transform:scale(1.05)}
 .video .thumb::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at center,transparent 60%,rgba(5,7,13,.35))}
 .video .play{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:60px;height:60px;
@@ -2356,6 +2365,52 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
     return date+" · "+time;
   }
 
+  function enableYouTubeHoverPreview(root){
+    if(!root || !window.matchMedia || !window.matchMedia("(hover:hover) and (pointer:fine)").matches) return;
+
+    root.querySelectorAll("[data-yt-preview]").forEach(function(target){
+      if(target.dataset.previewBound==="1") return;
+      target.dataset.previewBound="1";
+
+      var timer=null;
+      var frame=null;
+
+      function stopPreview(){
+        if(timer){
+          clearTimeout(timer);
+          timer=null;
+        }
+        if(frame){
+          frame.remove();
+          frame=null;
+        }
+      }
+
+      target.addEventListener("mouseenter",function(){
+        var id=target.getAttribute("data-yt-preview");
+        if(!id) return;
+
+        timer=setTimeout(function(){
+          timer=null;
+          if(!target.matches(":hover")) return;
+
+          frame=document.createElement("iframe");
+          frame.className="yt-hover-preview";
+          frame.src="https://www.youtube.com/embed/"+encodeURIComponent(id)+
+            "?autoplay=1&mute=1&controls=0&rel=0&modestbranding=1&playsinline=1";
+          frame.title="Prévia do vídeo";
+          frame.setAttribute("allow","autoplay; encrypted-media; picture-in-picture");
+          frame.setAttribute("referrerpolicy","strict-origin-when-cross-origin");
+          frame.setAttribute("tabindex","-1");
+          frame.setAttribute("aria-hidden","true");
+          target.appendChild(frame);
+        },500);
+      });
+
+      target.addEventListener("mouseleave",stopPreview);
+    });
+  }
+
   function renderFeature(data){
     if(!feature) return;
 
@@ -2387,18 +2442,19 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
         'referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>';
     }else{
       var thumb=item.thumbnail || (item.videoId ? "https://i.ytimg.com/vi/"+item.videoId+"/maxresdefault.jpg" : "");
-      media=thumb
+      var playIcon='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>';
+      media=(thumb
         ? '<img src="'+esc(thumb)+'" alt="'+title+'" loading="lazy">'
-        : '<div style="aspect-ratio:16/9;background:linear-gradient(135deg,#12224d,#0a1428)"></div>';
+        : '<div style="aspect-ratio:16/9;background:linear-gradient(135deg,#12224d,#0a1428)"></div>')+
+        '<span class="yt-status yt-status-upcoming">Próxima transmissão</span>'+
+        '<a class="yt-feature-play" href="'+esc(url)+'" target="_blank" rel="noopener" aria-label="Ver transmissão no YouTube">'+playIcon+'</a>';
     }
 
     feature.innerHTML=
       '<div class="yt-feature-grid">'+
-        '<div class="yt-feature-media">'+media+'</div>'+
+        '<div class="yt-feature-media"'+(!live && item.videoId?' data-yt-preview="'+esc(item.videoId)+'"':'')+'>'+media+'</div>'+
         '<div class="yt-feature-info">'+
-          '<span class="yt-status '+(live?'yt-status-live':'yt-status-upcoming')+'">'+
-            (live?'Ao vivo agora':'Próxima transmissão')+
-          '</span>'+
+          (live?'<span class="yt-status yt-status-live">Ao vivo agora</span>':'')+
           '<h3 class="yt-feature-title">'+title+'</h3>'+
           (desc?'<p class="yt-feature-desc">'+esc(desc)+'</p>':'')+
           (schedule?'<div class="yt-schedule">'+clockIcon+'<span>'+esc(schedule)+'</span></div>':'')+
@@ -2411,6 +2467,7 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 
     feature.hidden=false;
     if(recentLabel) recentLabel.hidden=false;
+    if(!live) enableYouTubeHoverPreview(feature);
   }
 
   function renderFeed(xmlText, excludeIds){
@@ -2461,10 +2518,11 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
       var fb="https://i.ytimg.com/vi/"+vid+"/hqdefault.jpg";
 
       return '<a class="video reveal in" style="transition-delay:'+(idx*.1)+'s" href="'+link+'" target="_blank" rel="noopener">'+
-        '<div class="thumb"><span class="tag-watch">Assista</span><img src="'+hi+'" alt="'+esc(title)+'" loading="lazy" '+
+        '<div class="thumb" data-yt-preview="'+esc(vid)+'"><span class="tag-watch">Assista</span><img src="'+hi+'" alt="'+esc(title)+'" loading="lazy" '+
         'onerror="this.onerror=null;this.src=\''+fb+'\'">'+play+'</div>'+
         '<div class="meta"><b>'+esc(title)+'</b><span>YouTube · Nova Igreja Batista'+(liveDate?' · '+liveDate:'')+'</span></div></a>';
     }).join("");
+    enableYouTubeHoverPreview(box);
   }
 
   fetch(FEED,{cache:"no-store"})
