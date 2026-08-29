@@ -463,22 +463,22 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
 .yt-feature{margin:0 0 34px;border:1px solid rgba(255,127,64,.25);border-radius:18px;overflow:hidden;
   background:linear-gradient(145deg,rgba(4,30,66,.92),rgba(5,7,13,.98));box-shadow:0 28px 70px -42px rgba(255,127,64,.55)}
 .yt-feature[hidden]{display:none}
-.yt-feature-grid{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(280px,.75fr);align-items:stretch}
+.yt-feature-grid{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(290px,.65fr);align-items:stretch}
 .yt-feature-media{position:relative;background:#02050b;min-width:0}
-.yt-feature-media iframe{display:block;width:100%;aspect-ratio:16/9;border:0;background:#02050b}
-.yt-feature-media img{display:block;width:100%;height:100%;min-height:320px;object-fit:cover}
+.yt-feature-media iframe{display:block;width:100%;height:300px;border:0;background:#02050b}
+.yt-feature-media img{display:block;width:100%;height:300px;min-height:0;object-fit:cover}
 .yt-feature-media::after{content:"";position:absolute;inset:0;pointer-events:none;
   box-shadow:inset 0 0 0 1px rgba(255,255,255,.03)}
-.yt-feature-info{padding:34px 30px;display:flex;flex-direction:column;justify-content:center;align-items:flex-start}
+.yt-feature-info{padding:24px 28px;display:flex;flex-direction:column;justify-content:center;align-items:flex-start}
 .yt-status{display:inline-flex;align-items:center;gap:9px;font-family:var(--acumin);font-size:.72rem;font-weight:700;
   letter-spacing:.14em;text-transform:uppercase;border-radius:999px;padding:8px 12px;margin-bottom:18px}
 .yt-status-live{color:#fff;background:#e42525;box-shadow:0 0 22px -8px rgba(228,37,37,.95)}
 .yt-status-live::before{content:"";width:8px;height:8px;border-radius:50%;background:#fff;animation:ytPulse 1.5s ease-in-out infinite}
 .yt-status-upcoming{color:var(--navy);background:var(--laranja)}
 @keyframes ytPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.45;transform:scale(.78)}}
-.yt-feature-title{font-family:var(--display);font-size:clamp(1.65rem,2.4vw,2.45rem);line-height:1.04;color:#fff;margin:0 0 12px}
-.yt-feature-desc{font-family:var(--acumin);font-size:.9rem;line-height:1.55;color:var(--muted);margin:0 0 24px;max-width:42ch}
-.yt-schedule{font-family:var(--acumin);font-size:.88rem;font-weight:700;color:var(--marfim);margin:-8px 0 22px;
+.yt-feature-title{font-family:var(--display);font-size:clamp(1.55rem,2vw,2rem);line-height:1.05;color:#fff;margin:0 0 10px}
+.yt-feature-desc{font-family:var(--acumin);font-size:.86rem;line-height:1.5;color:var(--muted);margin:0 0 18px;max-width:34ch}
+.yt-schedule{font-family:var(--acumin);font-size:.86rem;font-weight:700;color:var(--marfim);margin:-3px 0 18px;
   display:flex;align-items:center;gap:8px}
 .yt-schedule svg{width:16px;height:16px;fill:var(--laranja);flex:0 0 auto}
 .yt-open{display:inline-flex;align-items:center;justify-content:center;gap:9px;text-decoration:none;font-family:var(--acumin);
@@ -492,8 +492,8 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
 .yt-recent-label[hidden]{display:none}
 @media(max-width:900px){
   .yt-feature-grid{grid-template-columns:1fr}
-  .yt-feature-media img{min-height:0;aspect-ratio:16/9}
-  .yt-feature-info{padding:26px 24px 28px}
+  .yt-feature-media iframe,.yt-feature-media img{height:auto;aspect-ratio:16/9}
+  .yt-feature-info{padding:24px 24px 26px}
 }
 @media(max-width:560px){
   .yt-feature{border-radius:14px;margin-bottom:28px}
@@ -2367,8 +2367,9 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
     var item=live || upcoming;
     var title=esc(item.title || (live ? "Transmissão ao vivo" : "Próxima transmissão"));
     var url=item.url || ("https://www.youtube.com/watch?v="+encodeURIComponent(item.videoId||""));
-    var desc=cleanDescription(item.description);
-    if(desc.length>170) desc=desc.slice(0,167).trim()+"…";
+    var desc=live
+      ? "Acompanhe a transmissão ao vivo da NIB."
+      : "Programe-se e acompanhe com a gente.";
 
     var youtubeIcon='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23.5 6.2a3 3 0 00-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 00.5 6.2 31 31 0 000 12a31 31 0 00.5 5.8 3 3 0 002.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 002.1-2.1A31 31 0 0024 12a31 31 0 00-.5-5.8zM9.6 15.6V8.4L15.8 12l-6.2 3.6z"/></svg>';
     var clockIcon='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg>';
