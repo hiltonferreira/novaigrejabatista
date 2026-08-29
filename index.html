@@ -460,7 +460,7 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
 .msg-head{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:46px}
 
 /* NIB TV — destaque automático para live e próxima transmissão */
-.yt-feature{width:72%;max-width:100%;margin:0 0 34px;border:1px solid rgba(255,127,64,.25);border-radius:18px;overflow:hidden;
+.yt-feature{width:calc((200% - 22px)/3);max-width:100%;margin:0 0 34px;border:1px solid rgba(255,127,64,.25);border-radius:18px;overflow:hidden;
   background:linear-gradient(145deg,rgba(4,30,66,.92),rgba(5,7,13,.98));box-shadow:0 28px 70px -42px rgba(255,127,64,.55)}
 .yt-feature[hidden]{display:none}
 .yt-feature-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(250px,.85fr);align-items:stretch}
@@ -492,10 +492,10 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
   border:1px solid rgba(255,255,255,.16);background:rgba(5,7,13,.7);
   backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
 @keyframes ytPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.45;transform:scale(.78)}}
-.yt-feature-title{font-family:var(--display);font-size:clamp(1rem,1.02vw,1.2rem);line-height:1.16;color:#fff;margin:0 0 8px;
+.yt-feature-title{font-family:var(--display);font-size:clamp(1rem,1.02vw,1.2rem);line-height:1.16;color:#fff;margin:0 0 13px;
   max-width:27ch;overflow-wrap:normal;word-break:normal}
-.yt-feature-desc{font-family:var(--acumin);font-size:.76rem;line-height:1.45;color:var(--muted);margin:0 0 12px;max-width:34ch}
-.yt-schedule{font-family:var(--acumin);font-size:.76rem;font-weight:700;color:var(--marfim);margin:0 0 16px;
+.yt-feature-desc{font-family:var(--acumin);font-size:.76rem;line-height:1.45;color:var(--muted);margin:0 0 15px;max-width:34ch}
+.yt-schedule{font-family:var(--acumin);font-size:.76rem;font-weight:700;color:var(--marfim);margin:0 0 21px;
   display:flex;align-items:center;gap:8px}
 .yt-schedule svg{width:16px;height:16px;fill:var(--laranja);flex:0 0 auto}
 .yt-open{display:inline-flex;align-items:center;justify-content:center;gap:7px;text-decoration:none;font-family:var(--acumin);
@@ -505,8 +505,8 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
 .yt-open:hover{transform:translateY(-2px);background:var(--laranja);color:var(--navy);border-color:var(--laranja);
   box-shadow:0 12px 30px -14px rgba(255,127,64,.65)}
 .yt-open svg{width:14px;height:14px;fill:currentColor}
-.yt-feature-info .yt-open{margin-top:2px}
-.yt-app-note{font-family:var(--acumin);font-size:.68rem;color:var(--azul-gray);margin-top:10px}
+.yt-feature-info .yt-open{margin-top:4px}
+.yt-app-note{font-family:var(--acumin);font-size:.68rem;color:var(--azul-gray);margin-top:12px}
 .yt-recent-label{font-family:var(--acumin);font-size:.74rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
   color:var(--azul-gray);margin:0 0 16px}
 .yt-recent-label[hidden]{display:none}
