@@ -1328,16 +1328,23 @@ footer a[href*="instagram.com/hilton.cmferreira"]:hover{color:var(--laranja)}
 }
 
 
-/* ===== Ajuste dos CTAs do topo em telas compactas =====
-   Afasta os botões da cabeça da pastora sem alterar/cortar a imagem. */
-@media (min-width:921px) and (max-width:1180px){
-  header{inset:4px 0 auto 0}
-  header.scrolled{inset:4px 0 auto 0}
+
+
+/* ===== Ajuste real dos CTAs do topo — desktop v126 ===== */
+@media (min-width:821px){
+  header,
+  header.scrolled{
+    inset:2px 0 auto 0;
+  }
+
   header .nav > .nav-cta{
-    padding:.66em 1.28em;
+    padding:.68em 1.32em;
     font-size:.82rem;
   }
-  header .nav > .nav-cta-alt{margin-right:7px}
+
+  header .nav > .nav-cta-alt{
+    margin-right:7px;
+  }
 }
 
 </style>
