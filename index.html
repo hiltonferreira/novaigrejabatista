@@ -1083,6 +1083,42 @@ footer a[href*="instagram.com/hilton.cmferreira"]:hover{color:var(--laranja)}
   border-color:var(--marfim)!important;
   box-shadow:0 12px 30px -14px rgba(255,255,255,.65)!important
 }
+
+/* Mesmo modelo visual do botão "Encontre uma célula" */
+.btn-cell-model{
+  font-family:var(--acumin)!important;
+  font-weight:600!important;
+  border-radius:999px!important;
+  border:1px solid var(--laranja)!important;
+  color:var(--laranja)!important;
+  background:rgba(255,127,64,.10)!important;
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px)
+}
+.btn-cell-model:hover{
+  background:var(--marfim)!important;
+  color:#041e42!important;
+  border-color:var(--marfim)!important;
+  box-shadow:0 12px 30px -14px rgba(235,235,223,.55)!important
+}
+
+/* Tags de quantidade das células no mesmo estilo */
+.dc-count{
+  color:var(--laranja)!important;
+  background:rgba(255,127,64,.10)!important;
+  border:1px solid var(--laranja)!important;
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px)
+}
+
+/* Tags de quantidade — modelo "Conhecer a igreja" */
+.dc-count{
+  color:var(--marfim)!important;
+  background:rgba(255,255,255,.04)!important;
+  border:1px solid rgba(235,235,223,.28)!important;
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px)
+}
 </style>
 </head>
 <body>
@@ -1292,7 +1328,7 @@ footer a[href*="instagram.com/hilton.cmferreira"]:hover{color:var(--laranja)}
           <div class="cs-item"><div class="cs-num">2028</div><div class="cs-txt">previsão de entrega</div></div>
         </div>
         <div class="constr-cta">
-          <a href="#contribuicoes" class="btn btn-orange">Faça parte dessa obra</a>
+          <a href="#contribuicoes" class="btn btn-orange btn-cell-model">Faça parte dessa obra</a>
           <a href="#visite" class="btn btn-ghost-dark">Acompanhar de perto</a>
         </div>
       </div>
@@ -1770,7 +1806,7 @@ footer a[href*="instagram.com/hilton.cmferreira"]:hover{color:var(--laranja)}
       <h2 class="display h-sec" style="margin:16px 0 20px">Faça parte<br>dessa história</h2>
       <p class="lead">Honre o Senhor com generosidade e seja parte do que Deus está construindo. Contribua com alegria, no seu tempo e coração.</p>
       <div class="contrib-cta">
-        <button type="button" class="btn btn-orange contrib-btn-disabled">Oferta</button>
+        <button type="button" class="btn btn-orange contrib-btn-disabled btn-cell-model">Oferta</button>
         <button type="button" class="btn btn-ghost-dark contrib-btn-disabled">Dízimo</button>
         <button type="button" class="btn btn-ghost-dark contrib-btn-disabled">Construção do templo</button>
       </div>
