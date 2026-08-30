@@ -94,11 +94,11 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
 .mobile-menu-overlay{display:none}
 
 .hero{min-height:auto;display:flex;align-items:flex-end;padding:100px 0 44px;overflow:hidden}
-.hero .photo{position:absolute;inset:0;z-index:-2;background:#0a1330 center center/cover no-repeat;
+.hero .photo{position:absolute;inset:0;z-index:-2;background:#0a1330 center 35%/cover no-repeat;
   background-image:url('img/hero-nib.webp')}
 /* desfoque só na faixa esquerda, onde ficam os textos */
 .hero .photo::before{content:"";position:absolute;inset:0;
-  background:#0a1330 center center/cover no-repeat;background-image:url('img/hero-nib.webp');
+  background:#0a1330 center 35%/cover no-repeat;background-image:url('img/hero-nib.webp');
   -webkit-mask-image:linear-gradient(to right,#000 0%,#000 32%,transparent 55%);
   mask-image:linear-gradient(to right,#000 0%,#000 32%,transparent 55%);
   filter:blur(9px);transform:scale(1.04)}
