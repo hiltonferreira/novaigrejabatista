@@ -1208,6 +1208,27 @@ footer a[href*="instagram.com/hilton.cmferreira"]:hover{color:var(--laranja)}
 #cultos .badge{
   transition:color .25s ease;
 }
+
+/* Generosidade — orientação abaixo do QR Code */
+.pix-qr-note{
+  max-width:360px;
+  margin:14px auto 0;
+  font-family:var(--acumin);
+  font-size:.78rem;
+  line-height:1.45;
+  color:var(--azul-gray);
+  text-align:center;
+  text-wrap:balance;
+}
+@media(max-width:560px){
+  .pix-qr-note{
+    max-width:290px;
+    padding:0 8px;
+    font-size:.75rem;
+    line-height:1.5;
+    text-wrap:pretty;
+  }
+}
 </style>
 </head>
 <body>
@@ -1905,6 +1926,7 @@ footer a[href*="instagram.com/hilton.cmferreira"]:hover{color:var(--laranja)}
       <div class="pix-row"><span class="k">Banco</span><span class="v">Sicoob</span></div>
       <div class="pix-row"><span class="k">Agência / Conta</span><span class="v">3315 / 51.404-7</span></div>
       <div class="qr"><img src="img/pix-qrcode.png" alt="QR Code PIX - Nova Igreja Batista"></div>
+      <p class="pix-qr-note">Abra o app do seu banco e escaneie o QR CODE para fazer uma transferência via PIX</p>
       <button class="pix-copy" id="pixCopy" data-code="00020126360014br.gov.bcb.pix0114405187580001305204000053039865802BR5919NOVA IGREJA BATISTA6009ARIQUEMES62070503***6304669F">
         <svg viewBox="0 0 24 24" width="17" height="17"><path d="M16 1H4a2 2 0 00-2 2v12h2V3h12V1zm3 4H8a2 2 0 00-2 2v14a2 2 0 002 2h11a2 2 0 002-2V7a2 2 0 00-2-2zm0 16H8V7h11v14z"/></svg>
         <span class="pix-copy-label">Copiar código PIX</span>
