@@ -1330,16 +1330,25 @@ footer a[href*="instagram.com/hilton.cmferreira"]:hover{color:var(--laranja)}
 
 
 
-/* ===== Ajuste real dos CTAs do topo — desktop v126 ===== */
+/* ===== Ajuste dos CTAs do topo — desktop v127 ===== */
 @media (min-width:821px){
+  /* Mantém o header na posição original para preservar o alinhamento vertical
+     entre menu suspenso e botões. */
   header,
   header.scrolled{
-    inset:2px 0 auto 0;
+    inset:16px 0 auto 0;
   }
 
+  header .nav{
+    align-items:center;
+  }
+
+  /* Meio-termo entre o tamanho original e o v126. */
   header .nav > .nav-cta{
-    padding:.68em 1.32em;
-    font-size:.82rem;
+    padding:.76em 1.48em;
+    font-size:.88rem;
+    line-height:1;
+    align-self:center;
   }
 
   header .nav > .nav-cta-alt{
