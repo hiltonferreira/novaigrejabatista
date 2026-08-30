@@ -1128,6 +1128,20 @@ footer a[href*="instagram.com/hilton.cmferreira"]:hover{color:var(--laranja)}
   backdrop-filter:blur(10px);
   -webkit-backdrop-filter:blur(10px)
 }
+
+/* Eventos — hover/tap das tags */
+#eventos .tag{
+  cursor:pointer;
+  transition:background .25s ease,color .25s ease,border-color .25s ease,transform .25s ease,box-shadow .25s ease;
+}
+#eventos .tag:hover,
+#eventos .tag:active,
+#eventos .tag.tap-active{
+  background:var(--marfim)!important;
+  color:#041e42!important;
+  border-color:var(--marfim)!important;
+  box-shadow:0 10px 24px -14px rgba(235,235,223,.7);
+}
 </style>
 </head>
 <body>
@@ -2690,6 +2704,15 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
   });
 })();
 
+
+
+/* feedback visual das tags de eventos em toque/clique */
+document.querySelectorAll('#eventos .tag').forEach(function(tag){
+  tag.addEventListener('click',function(){
+    tag.classList.add('tap-active');
+    window.setTimeout(function(){ tag.classList.remove('tap-active'); },700);
+  });
+});
 </script>
 </body>
 </html>
