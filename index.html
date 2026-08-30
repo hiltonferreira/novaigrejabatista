@@ -1142,6 +1142,25 @@ footer a[href*="instagram.com/hilton.cmferreira"]:hover{color:var(--laranja)}
   border-color:var(--marfim)!important;
   box-shadow:0 10px 24px -14px rgba(235,235,223,.7);
 }
+
+/* Tags reagem ao hover/toque do card inteiro */
+#eventos .evento:hover .tag,
+#eventos .evento.tap-active .tag{
+  background:var(--marfim)!important;
+  color:#041e42!important;
+  border-color:var(--marfim)!important;
+  box-shadow:0 10px 24px -14px rgba(235,235,223,.7);
+}
+#celulas .day-card:hover .dc-count,
+#celulas .day-card.tap-active .dc-count{
+  background:var(--marfim)!important;
+  color:#041e42!important;
+  border-color:var(--marfim)!important;
+  box-shadow:0 10px 24px -14px rgba(235,235,223,.7);
+}
+#celulas .dc-count{
+  transition:background .25s ease,color .25s ease,border-color .25s ease,box-shadow .25s ease;
+}
 </style>
 </head>
 <body>
