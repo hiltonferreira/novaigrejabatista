@@ -8,7 +8,24 @@
 <link rel="preload" href="fonts/NIB-Acumin-MediumItalic-v105.woff2" as="font" type="font/woff2" crossorigin="anonymous">
 <link rel="preload" href="fonts/NIB-Acumin-Bold-v105.woff2" as="font" type="font/woff2" crossorigin="anonymous">
 <link rel="preload" href="fonts/NIB-Acumin-Regular-v105.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="fonts/NIB-Acumin-Regular-Mobile-v124.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="fonts/NIB-Acumin-MediumItalic-Mobile-v124.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="fonts/NIB-Acumin-Bold-Mobile-v124.woff2" as="font" type="font/woff2" crossorigin="anonymous">
 <style>
+
+/* ===== Acumin Mobile v124 — desenho v105, embedding installable ===== */
+@font-face{font-family:"NIB Acumin Mobile v124";src:url("fonts/NIB-Acumin-Light-Mobile-v124.woff2") format("woff2");font-weight:300;font-style:normal;font-display:swap}
+@font-face{font-family:"NIB Acumin Mobile v124";src:url("fonts/NIB-Acumin-LightItalic-Mobile-v124.woff2") format("woff2");font-weight:300;font-style:italic;font-display:swap}
+@font-face{font-family:"NIB Acumin Mobile v124";src:url("fonts/NIB-Acumin-Regular-Mobile-v124.woff2") format("woff2");font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:"NIB Acumin Mobile v124";src:url("fonts/NIB-Acumin-Italic-Mobile-v124.woff2") format("woff2");font-weight:400;font-style:italic;font-display:swap}
+@font-face{font-family:"NIB Acumin Mobile v124";src:url("fonts/NIB-Acumin-Medium-Mobile-v124.woff2") format("woff2");font-weight:500;font-style:normal;font-display:swap}
+@font-face{font-family:"NIB Acumin Mobile v124";src:url("fonts/NIB-Acumin-MediumItalic-Mobile-v124.woff2") format("woff2");font-weight:500;font-style:italic;font-display:swap}
+@font-face{font-family:"NIB Acumin Mobile v124";src:url("fonts/NIB-Acumin-Semibold-Mobile-v124.woff2") format("woff2");font-weight:600;font-style:normal;font-display:swap}
+@font-face{font-family:"NIB Acumin Mobile v124";src:url("fonts/NIB-Acumin-SemiboldItalic-Mobile-v124.woff2") format("woff2");font-weight:600;font-style:italic;font-display:swap}
+@font-face{font-family:"NIB Acumin Mobile v124";src:url("fonts/NIB-Acumin-Bold-Mobile-v124.woff2") format("woff2");font-weight:700;font-style:normal;font-display:swap}
+@font-face{font-family:"NIB Acumin Mobile v124";src:url("fonts/NIB-Acumin-BoldItalic-Mobile-v124.woff2") format("woff2");font-weight:700;font-style:italic;font-display:swap}
+@font-face{font-family:"NIB Acumin Mobile v124";src:url("fonts/NIB-Acumin-Black-Mobile-v124.woff2") format("woff2");font-weight:800;font-style:normal;font-display:swap}
+@font-face{font-family:"NIB Acumin Mobile v124";src:url("fonts/NIB-Acumin-BlackItalic-Mobile-v124.woff2") format("woff2");font-weight:800;font-style:italic;font-display:swap}
 
 /* ===== Fonte oficial da marca: Acumin Pro ===== */
 @font-face{font-family:"NIB Acumin v105";src:url("fonts/NIB-Acumin-Light-v105.woff2") format("woff2");font-weight:300;font-style:normal;font-display:swap}
@@ -23,6 +40,8 @@
 @font-face{font-family:"NIB Acumin v105";src:url("fonts/NIB-Acumin-BoldItalic-v105.woff2") format("woff2");font-weight:700;font-style:italic;font-display:swap}
 @font-face{font-family:"NIB Acumin v105";src:url("fonts/NIB-Acumin-Black-v105.woff2") format("woff2");font-weight:800;font-style:normal;font-display:swap}
 @font-face{font-family:"NIB Acumin v105";src:url("fonts/NIB-Acumin-BlackItalic-v105.woff2") format("woff2");font-weight:800;font-style:italic;font-display:swap}
+
+
 :root{
   --bg:#05070d;--bg-2:#0a0f1c;--panel:#0e1526;
   --blue:#1d7fff;--cyan:#31d7f2;
@@ -254,14 +273,28 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
 .gal-card img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s cubic-bezier(.25,.8,.25,1)}
 /* card de vídeo na galeria */
 .gal-video{width:100%;height:100%;object-fit:cover;display:block}
-.gal-video-controls{position:absolute;left:0;right:0;bottom:0;z-index:4;display:flex;align-items:center;gap:8px;padding:12px;
-  background:linear-gradient(to top,rgba(5,7,13,.75),transparent);opacity:0;transition:.3s}
-.gal-card-video.pos-center .gal-video-controls{opacity:1}
-.gal-vc-btn{display:inline-flex;align-items:center;gap:7px;cursor:pointer;border:none;
-  background:rgba(255,127,64,.92);color:var(--navy);border-radius:999px;padding:8px 12px;font-family:var(--acumin);font-weight:600;font-size:.78rem;transition:.2s}
-.gal-vc-btn svg{fill:currentColor;flex:0 0 auto}
-.gal-vc-btn:hover{background:var(--laranja)}
-.gal-vc-btn.gal-vc-sound{padding:8px 13px}
+.gal-video-controls{position:absolute;left:12px;bottom:12px;z-index:4;display:flex;align-items:center;gap:7px;padding:0;
+  background:none;opacity:0;transform:translateY(4px);transition:opacity .25s ease,transform .25s ease}
+@media(hover:hover){
+  .gal-card-video.pos-center:hover .gal-video-controls{opacity:1;transform:translateY(0)}
+}
+@media(hover:none){
+  .gal-card-video.pos-center .gal-video-controls{opacity:1;transform:none}
+}
+.gal-vc-btn{width:36px;height:36px;flex:0 0 36px;border-radius:50%;border:none;cursor:pointer;
+  display:grid;place-items:center;padding:0;background:rgba(6,7,50,.58);
+  backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);color:#fff;transition:.2s}
+.gal-vc-btn svg{width:17px;height:17px;fill:currentColor;flex:0 0 auto}
+.gal-vc-btn:hover{background:var(--laranja);color:var(--navy)}
+.gal-vc-btn.gal-vc-sound{padding:0}
+.gal-vc-label{display:none}
+.gal-unmute{position:absolute;right:12px;bottom:12px;z-index:4;display:inline-flex;align-items:center;gap:6px;cursor:pointer;
+  padding:.45em .82em;border-radius:999px;border:none;font-family:var(--acumin);font-weight:600;font-size:.72rem;
+  background:rgba(255,127,64,.92);color:var(--navy);backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);
+  transition:.2s;box-shadow:0 5px 16px -7px rgba(255,127,64,.55)}
+.gal-unmute svg{width:15px;height:15px;fill:currentColor}
+.gal-unmute:hover{background:var(--marfim)}
+.gal-unmute.hidden{display:none}
 /* posições: center, left, right, far (escondidos) */
 .gal-card.pos-center{opacity:1;pointer-events:auto;z-index:3;transform:translate(-50%,-50%) scale(1);filter:none;
   box-shadow:0 30px 70px -20px rgba(10,20,40,.55),0 0 0 1px rgba(10,20,40,.08)}
@@ -336,16 +369,16 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
 .constr-img-main img{width:100%;height:100%;object-fit:cover;display:block}
 .constr-img-main .constr-video{width:100%;height:100%;object-fit:cover;display:block}
 /* controles do vídeo da construção */
-.constr-controls{position:absolute;bottom:16px;left:16px;display:flex;gap:8px;z-index:3;opacity:0;transform:translateY(6px);transition:.3s}
+.constr-controls{position:absolute;bottom:12px;left:12px;display:flex;gap:7px;z-index:3;opacity:0;transform:translateY(4px);transition:.25s}
 .constr-img-main:hover .constr-controls{opacity:1;transform:translateY(0)}
-.cc-btn{width:42px;height:42px;border-radius:50%;border:none;cursor:pointer;display:grid;place-items:center;
-  background:rgba(6,7,50,.65);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:#fff;transition:.2s}
+.cc-btn{width:36px;height:36px;border-radius:50%;border:none;cursor:pointer;display:grid;place-items:center;
+  background:rgba(6,7,50,.58);backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);color:#fff;transition:.2s}
 .cc-btn:hover{background:var(--laranja);color:var(--navy)}
-.cc-btn svg{fill:currentColor}
-.constr-unmute{position:absolute;bottom:16px;right:16px;z-index:3;display:inline-flex;align-items:center;gap:7px;cursor:pointer;
-  padding:.55em 1em;border-radius:999px;border:none;font-family:var(--acumin);font-weight:600;font-size:.82rem;
-  background:var(--laranja);color:var(--navy);transition:.25s;box-shadow:0 6px 20px -6px rgba(255,127,64,.6)}
-.constr-unmute svg{fill:currentColor}
+.cc-btn svg{width:17px;height:17px;fill:currentColor}
+.constr-unmute{position:absolute;bottom:12px;right:12px;z-index:3;display:inline-flex;align-items:center;gap:6px;cursor:pointer;
+  padding:.45em .82em;border-radius:999px;border:none;font-family:var(--acumin);font-weight:600;font-size:.72rem;
+  background:rgba(255,127,64,.92);color:var(--navy);transition:.2s;box-shadow:0 5px 16px -7px rgba(255,127,64,.55)}
+.constr-unmute svg{width:15px;height:15px;fill:currentColor}
 .constr-unmute:hover{background:var(--marfim)}
 .constr-unmute.hidden{display:none}
 .constr-badge{position:absolute;top:18px;left:18px;font-family:var(--acumin);font-weight:600;font-size:.8rem;
@@ -1285,10 +1318,33 @@ footer a[href*="instagram.com/hilton.cmferreira"]:hover{color:var(--laranja)}
   .desktop-break{display:none}
 }
 
+
+/* ===== Override móvel v124 ===== */
+@media (max-width:820px){
+  html, body, body *,
+  button, input, select, textarea {
+    font-family:"NIB Acumin Mobile v124",Arial,sans-serif !important;
+  }
+}
+
+
+/* ===== Ajuste dos CTAs do topo em telas compactas =====
+   Afasta os botões da cabeça da pastora sem alterar/cortar a imagem. */
+@media (min-width:921px) and (max-width:1180px){
+  header{inset:4px 0 auto 0}
+  header.scrolled{inset:4px 0 auto 0}
+  header .nav > .nav-cta{
+    padding:.66em 1.28em;
+    font-size:.82rem;
+  }
+  header .nav > .nav-cta-alt{margin-right:7px}
+}
+
 </style>
-<link rel="icon" type="image/png" sizes="512x512" href="img/favicon-nib.png">
-<link rel="icon" href="img/favicon.ico" sizes="any">
-<link rel="apple-touch-icon" href="img/favicon-nib.png">
+<link rel="icon" type="image/png" sizes="16x16" href="img/favicon-nib-16-v113.png">
+<link rel="icon" type="image/png" sizes="32x32" href="img/favicon-nib-32-v113.png">
+<link rel="icon" type="image/png" sizes="48x48" href="img/favicon-nib-48-v113.png">
+<link rel="apple-touch-icon" sizes="180x180" href="img/favicon-nib-180-v113.png">
 </head>
 <body>
 
@@ -1427,8 +1483,48 @@ footer a[href*="instagram.com/hilton.cmferreira"]:hover{color:var(--laranja)}
     <div class="gallery reveal" id="gallery">
       <button class="gal-arrow gal-prev" id="galPrev" aria-label="Anterior">‹</button>
       <div class="gal-stage" id="galStage">
+        <div class="gal-card gal-card-video">
+          <video class="gal-video" playsinline muted preload="metadata" poster="img/galeria/galeria-video-29-08-01-poster.jpg">
+            <source src="video/galeria-29-08-01.mp4" type="video/mp4">
+          </video>
+          <div class="gal-video-controls">
+            <button class="gal-vc-btn gal-video-play" aria-label="Play/Pause">
+              <svg class="ic-pause" viewBox="0 0 24 24" width="18" height="18"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>
+              <svg class="ic-play" viewBox="0 0 24 24" width="18" height="18" style="display:none"><path d="M8 5v14l11-7z"/></svg>
+            </button>
+            <button class="gal-vc-btn gal-vc-sound gal-video-sound" aria-label="Ativar som">
+              <svg class="ic-muted" viewBox="0 0 24 24" width="16" height="16"><path d="M16.5 12A4.5 4.5 0 0014 7.97v2.21l2.45 2.45c.03-.2.05-.42.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51A8.8 8.8 0 0021 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06a8.99 8.99 0 003.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
+              <svg class="ic-unmuted" viewBox="0 0 24 24" width="16" height="16" style="display:none"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0014 7.97v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+              <span class="gal-vc-label">Ativar som</span>
+            </button>
+          </div>
+          <button class="gal-unmute" aria-label="Ativar som">
+            <svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 5V4L8 9H4z"/><path d="M16 8l5 8M21 8l-5 8" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+            <span>Ativar som</span>
+          </button>
+        </div>
+        <div class="gal-card gal-card-video">
+          <video class="gal-video" playsinline muted preload="metadata" poster="img/galeria/galeria-video-29-08-02-poster.jpg">
+            <source src="video/galeria-29-08-02.mp4" type="video/mp4">
+          </video>
+          <div class="gal-video-controls">
+            <button class="gal-vc-btn gal-video-play" aria-label="Play/Pause">
+              <svg class="ic-pause" viewBox="0 0 24 24" width="18" height="18"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>
+              <svg class="ic-play" viewBox="0 0 24 24" width="18" height="18" style="display:none"><path d="M8 5v14l11-7z"/></svg>
+            </button>
+            <button class="gal-vc-btn gal-vc-sound gal-video-sound" aria-label="Ativar som">
+              <svg class="ic-muted" viewBox="0 0 24 24" width="16" height="16"><path d="M16.5 12A4.5 4.5 0 0014 7.97v2.21l2.45 2.45c.03-.2.05-.42.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51A8.8 8.8 0 0021 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06a8.99 8.99 0 003.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
+              <svg class="ic-unmuted" viewBox="0 0 24 24" width="16" height="16" style="display:none"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0014 7.97v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+              <span class="gal-vc-label">Ativar som</span>
+            </button>
+          </div>
+          <button class="gal-unmute" aria-label="Ativar som">
+            <svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 5V4L8 9H4z"/><path d="M16 8l5 8M21 8l-5 8" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+            <span>Ativar som</span>
+          </button>
+        </div>
         <div class="gal-card gal-card-video" id="galVideoCard">
-          <video class="gal-video" id="galVideo" playsinline loop muted preload="metadata" poster="img/galeria/momentos-poster.jpg">
+          <video class="gal-video" id="galVideo" playsinline muted preload="metadata" poster="img/galeria/momentos-poster.jpg">
             <source src="video/momentos.mp4" type="video/mp4">
           </video>
           <div class="gal-video-controls">
@@ -1442,9 +1538,13 @@ footer a[href*="instagram.com/hilton.cmferreira"]:hover{color:var(--laranja)}
               <span class="gal-vc-label">Ativar som</span>
             </button>
           </div>
+          <button class="gal-unmute" aria-label="Ativar som">
+            <svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 5V4L8 9H4z"/><path d="M16 8l5 8M21 8l-5 8" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+            <span>Ativar som</span>
+          </button>
         </div>
         <div class="gal-card gal-card-video">
-          <video class="gal-video" playsinline loop muted preload="metadata" poster="img/galeria/batismo-2026-video02-poster.jpg">
+          <video class="gal-video" playsinline muted preload="metadata" poster="img/galeria/batismo-2026-video02-poster.jpg">
             <source src="video/batismo-2026-video02-web.mp4" type="video/mp4">
           </video>
           <div class="gal-video-controls">
@@ -1458,6 +1558,10 @@ footer a[href*="instagram.com/hilton.cmferreira"]:hover{color:var(--laranja)}
               <span class="gal-vc-label">Ativar som</span>
             </button>
           </div>
+          <button class="gal-unmute" aria-label="Ativar som">
+            <svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 5V4L8 9H4z"/><path d="M16 8l5 8M21 8l-5 8" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+            <span>Ativar som</span>
+          </button>
         </div>
         <div class="gal-card"><img src="img/galeria/momentos-kids-01.jpg" alt="Ministério infantil e cuidado com as crianças" loading="lazy"></div>
         <div class="gal-card"><img src="img/galeria/momentos-celebracao-01.jpg" alt="Celebração e alegria na igreja" loading="lazy"></div>
@@ -2481,6 +2585,21 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
     timer=setInterval(next,3500);
   }
 
+  // Ao terminar o vídeo central, avança de verdade pelo coverflow.
+  // Se o próximo item for outro vídeo, layout() já inicia sua reprodução.
+  videoCards.forEach(card=>{
+    const vid=card.querySelector('.gal-video');
+    if(!vid) return;
+
+    vid.addEventListener('ended',()=>{
+      if(!card.classList.contains('pos-center')) return;
+
+      vid.currentTime=0;
+      next();
+      startAuto();
+    });
+  });
+
   const nextBtn=document.getElementById('galNext');
   const prevBtn=document.getElementById('galPrev');
 
@@ -2518,6 +2637,7 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
     const vid=card.querySelector('.gal-video');
     const playBtn=card.querySelector('.gal-video-play, #galVidPlay');
     const soundBtn=card.querySelector('.gal-video-sound, #galVidSound');
+    const unmuteTag=card.querySelector('.gal-unmute');
 
     if(!vid || !playBtn || !soundBtn) return;
 
@@ -2536,6 +2656,7 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
       if(icMuted) icMuted.style.display=vid.muted?'':'none';
       if(icUnmuted) icUnmuted.style.display=vid.muted?'none':'';
       if(label) label.textContent=vid.muted?'Ativar som':'Som ativado';
+      if(unmuteTag) unmuteTag.classList.toggle('hidden',!vid.muted);
     }
 
     playBtn.addEventListener('click',(e)=>{
@@ -2548,14 +2669,19 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
       }
     });
 
-    soundBtn.addEventListener('click',(e)=>{
-      e.stopPropagation();
+    function toggleGallerySound(e){
+      if(e) e.stopPropagation();
       vid.muted=!vid.muted;
+      if(!vid.muted && vid.paused) vid.play().catch(()=>{});
       syncSoundIcon();
-    });
+    }
+
+    soundBtn.addEventListener('click',toggleGallerySound);
+    if(unmuteTag) unmuteTag.addEventListener('click',toggleGallerySound);
 
     vid.addEventListener('play',syncPlayIcon);
     vid.addEventListener('pause',syncPlayIcon);
+    vid.addEventListener('volumechange',syncSoundIcon);
 
     syncPlayIcon();
     syncSoundIcon();
