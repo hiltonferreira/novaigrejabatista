@@ -1,8 +1,8 @@
 @import url('secao-mulheres-v199.css');
 
 /* ==========================================================
-   Eventos em destaque · carrossel preview v2
-   Navegação editorial/minimalista, integrada à seção.
+   Eventos em destaque · carrossel preview v3
+   Abas abaixo do banner + setas nas laterais da arte.
    ========================================================== */
 #mulheres-virtuosas.event-carousel-section{overflow:hidden}
 #mulheres-virtuosas .event-carousel-viewport{display:grid;position:relative}
@@ -10,63 +10,78 @@
 #mulheres-virtuosas .event-slide.is-active{opacity:1;visibility:visible;pointer-events:auto;transform:translateX(0);z-index:2}
 #mulheres-virtuosas .event-slide.is-leaving{opacity:0;visibility:visible;transform:translateX(-28px);z-index:1}
 
-/* ---------- nova proposta de navegação ---------- */
+/* ---------- navegação: banner como referência visual ---------- */
 #mulheres-virtuosas .event-carousel-controls{
   position:absolute;
   z-index:8;
-  left:50%;
-  bottom:28px;
+  inset:0;
   width:min(var(--wrap),100%);
-  transform:translateX(-50%);
+  margin:0 auto;
   padding:0 26px;
-  display:flex;
-  align-items:center;
-  justify-content:flex-end;
-  gap:8px;
   pointer-events:none;
 }
 #mulheres-virtuosas .event-carousel-btn,
 #mulheres-virtuosas .event-carousel-dot{pointer-events:auto;appearance:none;-webkit-appearance:none;border:0;cursor:pointer;font:inherit}
 
-/* Setas deixam de ser círculos grandes e viram controles discretos */
+/* Setas ficam nas duas laterais do banner, verticalmente centralizadas. */
 #mulheres-virtuosas .event-carousel-btn{
-  width:34px;
-  height:34px;
+  position:absolute;
+  top:calc(72px + min(12vw,149px));
+  width:38px;
+  height:38px;
   display:grid;
   place-items:center;
-  background:transparent;
-  color:rgba(235,235,223,.72);
   border-radius:999px;
-  font-size:1.12rem;
+  background:rgba(2,12,30,.68);
+  color:rgba(235,235,223,.86);
+  border:1px solid rgba(235,235,223,.18);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  box-shadow:0 12px 28px -16px rgba(0,0,0,.9);
+  font-size:1.16rem;
   line-height:1;
-  transition:color .2s ease,background .2s ease,transform .2s ease;
+  transform:translate(-50%,-50%);
+  transition:background .2s ease,border-color .2s ease,color .2s ease,transform .2s ease;
 }
+#mulheres-virtuosas .event-carousel-btn[data-event-prev]{left:10px}
+#mulheres-virtuosas .event-carousel-btn[data-event-next]{left:calc(52.83% - 14px)}
 #mulheres-virtuosas .event-carousel-btn:hover,
-#mulheres-virtuosas .event-carousel-btn:focus-visible{background:rgba(235,235,223,.08);color:#fff;transform:translateY(-1px);outline:none}
+#mulheres-virtuosas .event-carousel-btn:focus-visible{
+  background:var(--marfim);
+  border-color:var(--marfim);
+  color:#041e42;
+  transform:translate(-50%,-50%) scale(1.05);
+  outline:none;
+}
 
-/* O seletor central passa a funcionar como duas abas editoriais */
+/* Abas ficam centralizadas exatamente abaixo da coluna do banner. */
 #mulheres-virtuosas .event-carousel-dots{
+  position:absolute;
+  top:calc(90px + min(24vw,299px));
+  left:calc(26.415% - 2.5px);
+  transform:translateX(-50%);
   display:grid;
   grid-template-columns:1fr 1fr;
   align-items:center;
   gap:0;
-  min-width:260px;
+  width:270px;
+  max-width:calc(52.83% - 30px);
   padding:4px;
   border-radius:999px;
-  background:rgba(2,12,30,.48);
-  border:1px solid rgba(235,235,223,.13);
+  background:rgba(2,12,30,.62);
+  border:1px solid rgba(235,235,223,.14);
   backdrop-filter:blur(14px) saturate(1.15);
   -webkit-backdrop-filter:blur(14px) saturate(1.15);
-  box-shadow:0 12px 30px -18px rgba(0,0,0,.85);
+  box-shadow:0 14px 34px -20px rgba(0,0,0,.95);
 }
 #mulheres-virtuosas .event-carousel-dot{
   position:relative;
   width:auto;
-  height:32px;
+  height:34px;
   padding:0 14px;
   border-radius:999px;
   background:transparent;
-  color:rgba(235,235,223,.58);
+  color:rgba(235,235,223,.6);
   font-family:var(--acumin);
   font-size:.67rem;
   font-weight:600;
@@ -77,11 +92,7 @@
 #mulheres-virtuosas .event-carousel-dot::before{display:block;white-space:nowrap}
 #mulheres-virtuosas .event-carousel-dot:nth-child(1)::before{content:'Mulheres'}
 #mulheres-virtuosas .event-carousel-dot:nth-child(2)::before{content:'NXT Camp'}
-#mulheres-virtuosas .event-carousel-dot.is-active{
-  background:var(--marfim);
-  color:#041e42;
-  box-shadow:0 5px 14px -9px rgba(0,0,0,.9);
-}
+#mulheres-virtuosas .event-carousel-dot.is-active{background:var(--marfim);color:#041e42;box-shadow:0 5px 14px -9px rgba(0,0,0,.9)}
 #mulheres-virtuosas .event-carousel-dot:focus-visible{outline:2px solid var(--laranja);outline-offset:3px}
 
 /* ---------- arte NXT CAMP ---------- */
@@ -109,18 +120,27 @@
 }
 
 @media(max-width:820px){
-  #mulheres-virtuosas .event-carousel-controls{
-    position:relative;
-    left:auto;
-    bottom:auto;
-    width:100%;
-    transform:none;
-    padding:10px 26px 0;
-    margin-top:-2px;
-    justify-content:center;
+  /* Abre espaço entre banner e texto para o seletor. */
+  #mulheres-virtuosas .mv-event-grid{gap:76px}
+  #mulheres-virtuosas .event-carousel-controls{width:100%;padding:0 26px;margin:0}
+  #mulheres-virtuosas .event-carousel-btn{
+    top:calc(31px + 25.02vw);
+    width:36px;
+    height:36px;
+    font-size:1.05rem;
+    background:rgba(2,12,30,.76);
   }
-  #mulheres-virtuosas .event-carousel-btn{display:none}
-  #mulheres-virtuosas .event-carousel-dots{min-width:0;width:min(100%,310px)}
+  #mulheres-virtuosas .event-carousel-btn[data-event-prev]{left:17px}
+  #mulheres-virtuosas .event-carousel-btn[data-event-next]{left:auto;right:-19px;transform:translate(-50%,-50%)}
+  #mulheres-virtuosas .event-carousel-btn[data-event-next]:hover,
+  #mulheres-virtuosas .event-carousel-btn[data-event-next]:focus-visible{transform:translate(-50%,-50%) scale(1.05)}
+  #mulheres-virtuosas .event-carousel-dots{
+    top:calc(32px + 50.04vw);
+    left:50%;
+    width:min(78vw,300px);
+    max-width:none;
+    transform:translateX(-50%);
+  }
   #mulheres-virtuosas .event-carousel-dot{height:34px;font-size:.65rem;padding:0 10px}
   #mulheres-virtuosas .nxt-art-date{font-size:clamp(2.7rem,13vw,4.5rem)}
   #mulheres-virtuosas .nxt-art-month{font-size:clamp(1.45rem,6.5vw,2.2rem)}
@@ -129,8 +149,7 @@
 @media(max-width:520px){
   #mulheres-virtuosas .event-slide{transform:translateX(18px)}
   #mulheres-virtuosas .event-slide.is-leaving{transform:translateX(-18px)}
-  #mulheres-virtuosas .event-carousel-controls{padding-left:20px;padding-right:20px}
-  #mulheres-virtuosas .event-carousel-dots{width:100%}
+  #mulheres-virtuosas .event-carousel-dots{width:min(82vw,286px)}
   #mulheres-virtuosas .nxt-art-tag.tag-palavra{right:24%;top:16%}
   #mulheres-virtuosas .nxt-art-tag.tag-worship{right:5%;top:35%}
   #mulheres-virtuosas .nxt-art-tag.tag-gincanas{right:21%;top:55%}
