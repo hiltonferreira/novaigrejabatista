@@ -25,7 +25,7 @@ jobs:
           from pathlib import Path
           p = Path('index.html')
           s = p.read_text(encoding='utf-8')
-          old = 'EU VOU PRO ACAMP'
+          old = 'Conheça o NXT CAMP'
           new = 'EU VOU PRO NXT CAMP'
           if old not in s:
               raise SystemExit('CTA antigo não encontrado')
