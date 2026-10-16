@@ -1,0 +1,327 @@
+@import url('secao-mulheres-v199.css');
+
+/* ==========================================================
+   Eventos em destaque · carrossel preview v1
+   Mantém a linguagem visual da seção Mulheres Virtuosas.
+   ========================================================== */
+#mulheres-virtuosas.event-carousel-section{
+  overflow:hidden;
+}
+
+#mulheres-virtuosas .event-carousel-viewport{
+  display:grid;
+  position:relative;
+}
+
+#mulheres-virtuosas .event-slide{
+  grid-area:1 / 1;
+  min-width:0;
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+  transform:translateX(28px);
+  transition:opacity .5s ease,transform .65s cubic-bezier(.2,.75,.25,1),visibility .5s;
+}
+
+#mulheres-virtuosas .event-slide.is-active{
+  opacity:1;
+  visibility:visible;
+  pointer-events:auto;
+  transform:translateX(0);
+  z-index:2;
+}
+
+#mulheres-virtuosas .event-slide.is-leaving{
+  opacity:0;
+  visibility:visible;
+  transform:translateX(-28px);
+  z-index:1;
+}
+
+#mulheres-virtuosas .event-carousel-controls{
+  position:absolute;
+  z-index:8;
+  left:50%;
+  bottom:42px;
+  width:min(var(--wrap),100%);
+  transform:translateX(-50%);
+  padding:0 26px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:13px;
+  pointer-events:none;
+}
+
+#mulheres-virtuosas .event-carousel-btn,
+#mulheres-virtuosas .event-carousel-dot{
+  pointer-events:auto;
+  appearance:none;
+  -webkit-appearance:none;
+  border:0;
+  cursor:pointer;
+  font:inherit;
+}
+
+#mulheres-virtuosas .event-carousel-btn{
+  width:42px;
+  height:42px;
+  border-radius:999px;
+  display:grid;
+  place-items:center;
+  background:rgba(235,235,223,.08);
+  color:var(--marfim);
+  border:1px solid rgba(235,235,223,.22);
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+  transition:background .25s ease,border-color .25s ease,transform .25s ease;
+  font-size:1.35rem;
+  line-height:1;
+}
+
+#mulheres-virtuosas .event-carousel-btn:hover,
+#mulheres-virtuosas .event-carousel-btn:focus-visible{
+  background:var(--laranja);
+  border-color:var(--laranja);
+  color:#041e42;
+  transform:translateY(-2px);
+  outline:none;
+}
+
+#mulheres-virtuosas .event-carousel-dots{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:7px 10px;
+  border-radius:999px;
+  background:rgba(2,12,30,.42);
+  border:1px solid rgba(235,235,223,.12);
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+}
+
+#mulheres-virtuosas .event-carousel-dot{
+  width:8px;
+  height:8px;
+  padding:0;
+  border-radius:999px;
+  background:rgba(235,235,223,.35);
+  transition:width .25s ease,background .25s ease,transform .25s ease;
+}
+
+#mulheres-virtuosas .event-carousel-dot.is-active{
+  width:24px;
+  background:var(--laranja);
+}
+
+#mulheres-virtuosas .event-carousel-dot:focus-visible{
+  outline:2px solid var(--laranja);
+  outline-offset:3px;
+}
+
+/* ---------- arte NXT CAMP ---------- */
+#mulheres-virtuosas .nxt-event-art{
+  display:block;
+  position:relative;
+  aspect-ratio:1199/600;
+  min-width:0;
+  overflow:hidden;
+  border-radius:16px;
+  border:1px solid rgba(235,235,223,.2);
+  background:#0d1a28;
+  transition:transform .45s ease,border-color .45s ease,box-shadow .45s ease;
+  isolation:isolate;
+}
+
+#mulheres-virtuosas .nxt-event-art::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:-3;
+  background:
+    radial-gradient(circle at 78% 12%,rgba(255,255,255,.07),transparent 28%),
+    linear-gradient(174deg,#101d2a 0 66%,#2a8bd8 66.2% 100%);
+}
+
+#mulheres-virtuosas .nxt-event-art::after{
+  content:"";
+  position:absolute;
+  inset:auto -8% -22% -8%;
+  height:56%;
+  z-index:-2;
+  background:linear-gradient(180deg,#2a8bd8,#2486d4);
+  transform:rotate(-3deg);
+  transform-origin:center;
+}
+
+#mulheres-virtuosas .nxt-art-top{
+  position:absolute;
+  top:9%;
+  left:6%;
+  right:6%;
+  display:flex;
+  justify-content:space-between;
+  color:#fff;
+  font-family:var(--acumin);
+  font-size:clamp(.55rem,.8vw,.72rem);
+  font-weight:700;
+  text-transform:uppercase;
+}
+
+#mulheres-virtuosas .nxt-art-date{
+  position:absolute;
+  left:6%;
+  top:25%;
+  color:#fff;
+  font-family:var(--acumin);
+  font-weight:800;
+  letter-spacing:-.055em;
+  font-size:clamp(3rem,5.6vw,5.2rem);
+  line-height:.8;
+  white-space:nowrap;
+}
+
+#mulheres-virtuosas .nxt-art-date small{
+  font-size:.42em;
+  letter-spacing:-.04em;
+}
+
+#mulheres-virtuosas .nxt-art-month{
+  position:absolute;
+  left:6%;
+  top:49%;
+  color:#fff;
+  font-family:var(--acumin);
+  font-weight:800;
+  font-size:clamp(1.65rem,3vw,2.7rem);
+  line-height:1;
+  letter-spacing:-.025em;
+}
+
+#mulheres-virtuosas .nxt-art-tag{
+  position:absolute;
+  z-index:3;
+  background:#f6f2e8;
+  color:#041e42;
+  padding:.48em .75em;
+  font-family:var(--acumin);
+  font-size:clamp(.42rem,.62vw,.57rem);
+  font-weight:800;
+  letter-spacing:.07em;
+  text-transform:uppercase;
+  box-shadow:0 5px 18px rgba(0,0,0,.12);
+}
+
+#mulheres-virtuosas .nxt-art-tag.tag-palavra{right:26%;top:18%;transform:rotate(-4deg)}
+#mulheres-virtuosas .nxt-art-tag.tag-worship{right:7%;top:36%;transform:rotate(5deg)}
+#mulheres-virtuosas .nxt-art-tag.tag-gincanas{right:24%;top:55%;transform:rotate(-3deg)}
+
+#mulheres-virtuosas .nxt-art-local{
+  position:absolute;
+  left:6%;
+  bottom:7%;
+  z-index:3;
+  color:#fff;
+  font-family:var(--acumin);
+  text-transform:uppercase;
+}
+
+#mulheres-virtuosas .nxt-art-local small{
+  display:block;
+  margin-bottom:3px;
+  font-size:clamp(.42rem,.58vw,.54rem);
+  font-weight:700;
+  letter-spacing:.08em;
+}
+
+#mulheres-virtuosas .nxt-art-local strong{
+  display:block;
+  font-size:clamp(.7rem,1.05vw,.95rem);
+  line-height:1.05;
+}
+
+#mulheres-virtuosas .nxt-art-badge{
+  position:absolute;
+  right:6%;
+  bottom:7%;
+  z-index:3;
+  padding:.6em .9em;
+  border:1px solid rgba(255,255,255,.72);
+  border-radius:999px;
+  color:#fff;
+  font-family:var(--acumin);
+  font-size:clamp(.48rem,.65vw,.58rem);
+  font-weight:700;
+}
+
+#mulheres-virtuosas .nxt-event-copy .editorial{
+  color:#2a8bd8;
+}
+
+#mulheres-virtuosas .nxt-event-copy .mv-event-cta:hover,
+#mulheres-virtuosas .nxt-event-copy .mv-event-cta:focus-visible{
+  background:#2a8bd8;
+  border-color:#2a8bd8;
+  color:#041e42;
+}
+
+#mulheres-virtuosas .nxt-event-art:focus-visible{
+  outline:3px solid #2a8bd8;
+  outline-offset:5px;
+}
+
+@media(hover:hover) and (pointer:fine){
+  #mulheres-virtuosas .nxt-event-art:hover{
+    transform:translateY(-4px);
+    border-color:rgba(42,139,216,.7);
+    box-shadow:0 18px 42px -24px rgba(42,139,216,.52);
+  }
+}
+
+@media(max-width:820px){
+  #mulheres-virtuosas .event-carousel-controls{
+    position:relative;
+    left:auto;
+    bottom:auto;
+    width:100%;
+    transform:none;
+    padding:4px 26px 0;
+    margin-top:-8px;
+  }
+
+  #mulheres-virtuosas .event-carousel-btn{
+    width:40px;
+    height:40px;
+  }
+
+  #mulheres-virtuosas .nxt-art-date{
+    font-size:clamp(2.7rem,13vw,4.5rem);
+  }
+
+  #mulheres-virtuosas .nxt-art-month{
+    font-size:clamp(1.45rem,6.5vw,2.2rem);
+  }
+}
+
+@media(max-width:520px){
+  #mulheres-virtuosas .event-slide{
+    transform:translateX(18px);
+  }
+
+  #mulheres-virtuosas .event-slide.is-leaving{
+    transform:translateX(-18px);
+  }
+
+  #mulheres-virtuosas .nxt-art-tag.tag-palavra{right:24%;top:16%}
+  #mulheres-virtuosas .nxt-art-tag.tag-worship{right:5%;top:35%}
+  #mulheres-virtuosas .nxt-art-tag.tag-gincanas{right:21%;top:55%}
+}
+
+@media(prefers-reduced-motion:reduce){
+  #mulheres-virtuosas .event-slide,
+  #mulheres-virtuosas .event-carousel-btn,
+  #mulheres-virtuosas .event-carousel-dot,
+  #mulheres-virtuosas .nxt-event-art{
+    transition:none!important;
+  }
+}
