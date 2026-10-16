@@ -2,6 +2,31 @@
   const root=document.querySelector('[data-event-carousel]');
   if(!root)return;
 
+  /* v4 — refinamento visual do seletor e CTA do NXT */
+  const style=document.createElement('style');
+  style.textContent=`
+    /* Deixa o seletor realmente abaixo da arte, sem sobreposição. */
+    #mulheres-virtuosas .event-carousel-dots{
+      top:calc(124px + min(24vw,299px))!important;
+    }
+    @media(max-width:820px){
+      #mulheres-virtuosas .mv-event-grid{gap:88px!important}
+      #mulheres-virtuosas .event-carousel-dots{
+        top:calc(50px + 50.04vw)!important;
+      }
+    }
+    @media(max-width:520px){
+      #mulheres-virtuosas .mv-event-grid{gap:82px!important}
+      #mulheres-virtuosas .event-carousel-dots{
+        top:calc(48px + 50.04vw)!important;
+      }
+    }
+  `;
+  document.head.appendChild(style);
+
+  const nxtCta=[...document.querySelectorAll('.nxt-event-copy .mv-event-cta')][0];
+  if(nxtCta)nxtCta.textContent='EU VOU PRO ACAMP';
+
   const slides=[...root.querySelectorAll('[data-event-slide]')];
   const dots=[...document.querySelectorAll('[data-event-dot]')];
   const prev=document.querySelector('[data-event-prev]');
