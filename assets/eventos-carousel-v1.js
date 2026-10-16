@@ -2,14 +2,12 @@
   const root=document.querySelector('[data-event-carousel]');
   if(!root)return;
 
-  /* v5 — seletor refinado + setas no padrão "Nossa comunidade" */
-  const arrowsCss=document.createElement('link');
-  arrowsCss.rel='stylesheet';
-  arrowsCss.href='assets/eventos-carousel-setas-v5.css';
-  document.head.appendChild(arrowsCss);
-
+  /* v6 — navegação sem setas: abas + swipe + autoplay */
   const style=document.createElement('style');
   style.textContent=`
+    /* Remove completamente as setas do carrossel. */
+    #mulheres-virtuosas .event-carousel-btn{display:none!important}
+
     /* Deixa o seletor realmente abaixo da arte, sem sobreposição. */
     #mulheres-virtuosas .event-carousel-dots{
       top:calc(124px + min(24vw,299px))!important;
@@ -34,8 +32,6 @@
 
   const slides=[...root.querySelectorAll('[data-event-slide]')];
   const dots=[...document.querySelectorAll('[data-event-dot]')];
-  const prev=document.querySelector('[data-event-prev]');
-  const next=document.querySelector('[data-event-next]');
   const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   let index=Math.max(0,slides.findIndex(s=>s.classList.contains('is-active')));
@@ -81,9 +77,6 @@
     if(reduce||slides.length<2)return;
     timer=setInterval(goNext,7000);
   };
-
-  next?.addEventListener('click',()=>{goNext();start();});
-  prev?.addEventListener('click',()=>{goPrev();start();});
 
   dots.forEach((dot,i)=>dot.addEventListener('click',()=>{sync(i,i>index?1:-1);start();}));
 
