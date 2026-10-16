@@ -2,7 +2,12 @@
   const root=document.querySelector('[data-event-carousel]');
   if(!root)return;
 
-  /* v4 — refinamento visual do seletor e CTA do NXT */
+  /* v5 — seletor refinado + setas no padrão "Nossa comunidade" */
+  const arrowsCss=document.createElement('link');
+  arrowsCss.rel='stylesheet';
+  arrowsCss.href='assets/eventos-carousel-setas-v5.css';
+  document.head.appendChild(arrowsCss);
+
   const style=document.createElement('style');
   style.textContent=`
     /* Deixa o seletor realmente abaixo da arte, sem sobreposição. */
@@ -25,7 +30,7 @@
   document.head.appendChild(style);
 
   const nxtCta=[...document.querySelectorAll('.nxt-event-copy .mv-event-cta')][0];
-  if(nxtCta)nxtCta.textContent='EU VOU PRO ACAMP';
+  if(nxtCta)nxtCta.textContent='EU VOU PRO NXT CAMP';
 
   const slides=[...root.querySelectorAll('[data-event-slide]')];
   const dots=[...document.querySelectorAll('[data-event-dot]')];
