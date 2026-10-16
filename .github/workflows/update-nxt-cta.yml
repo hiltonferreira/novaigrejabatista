@@ -1,0 +1,43 @@
+name: Update NXT CTA
+
+on:
+  push:
+    branches:
+      - eventos-carousel-preview
+    paths:
+      - .github/workflows/update-nxt-cta.yml
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: eventos-carousel-preview
+
+      - name: Update CTA text
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+          old = 'EU VOU PRO ACAMP'
+          new = 'EU VOU PRO NXT CAMP'
+          if old not in s:
+              raise SystemExit('CTA antigo não encontrado')
+          p.write_text(s.replace(old, new), encoding='utf-8')
+          Path('.github/workflows/update-nxt-cta.yml').unlink(missing_ok=True)
+          PY
+
+      - name: Commit change
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Update NXT CAMP CTA text"
+          git push origin HEAD:eventos-carousel-preview
