@@ -2,11 +2,15 @@
   const root=document.querySelector('[data-event-carousel]');
   if(!root)return;
 
-  /* v6 — navegação sem setas: abas + swipe + autoplay */
+  /* v7 — NXT CAMP primeiro + navegação sem setas: abas + swipe + autoplay */
   const style=document.createElement('style');
   style.textContent=`
     /* Remove completamente as setas do carrossel. */
     #mulheres-virtuosas .event-carousel-btn{display:none!important}
+
+    /* Ordem visual das abas: NXT CAMP primeiro, Mulheres depois. */
+    #mulheres-virtuosas .event-carousel-dot:nth-child(1)::before{content:'NXT Camp'!important}
+    #mulheres-virtuosas .event-carousel-dot:nth-child(2)::before{content:'Mulheres'!important}
 
     /* Deixa o seletor realmente abaixo da arte, sem sobreposição. */
     #mulheres-virtuosas .event-carousel-dots{
@@ -30,11 +34,49 @@
   const nxtCta=[...document.querySelectorAll('.nxt-event-copy .mv-event-cta')][0];
   if(nxtCta)nxtCta.textContent='EU VOU PRO NXT CAMP';
 
+  /*
+    A marcação original mantém Mulheres primeiro para preservar o histórico do HTML.
+    No preview, reorganizamos o DOM antes de inicializar o carrossel para que:
+    1) NXT CAMP seja o primeiro slide;
+    2) NXT CAMP abra ativo;
+    3) a primeira aba seja NXT CAMP;
+    4) autoplay, swipe e teclado sigam a mesma ordem.
+  */
+  const initialSlides=[...root.querySelectorAll('[data-event-slide]')];
+  const nxtSlide=initialSlides.find(slide=>(slide.getAttribute('aria-label')||'').includes('NXT CAMP'));
+  const mulheresSlide=initialSlides.find(slide=>(slide.getAttribute('aria-label')||'').includes('Mulheres Virtuosas'));
+  if(nxtSlide&&mulheresSlide){
+    root.append(nxtSlide,mulheresSlide);
+  }
+
+  const dotsWrap=document.querySelector('.event-carousel-dots');
+  if(dotsWrap){
+    const initialDots=[...dotsWrap.querySelectorAll('[data-event-dot]')];
+    const nxtDot=initialDots.find(dot=>(dot.getAttribute('aria-label')||'').includes('NXT CAMP'));
+    const mulheresDot=initialDots.find(dot=>(dot.getAttribute('aria-label')||'').includes('Mulheres Virtuosas'));
+    if(nxtDot&&mulheresDot)dotsWrap.append(nxtDot,mulheresDot);
+  }
+
   const slides=[...root.querySelectorAll('[data-event-slide]')];
   const dots=[...document.querySelectorAll('[data-event-dot]')];
   const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  let index=Math.max(0,slides.findIndex(s=>s.classList.contains('is-active')));
+  /* Garante o estado inicial coerente depois da inversão. */
+  slides.forEach((slide,i)=>{
+    const active=i===0;
+    slide.classList.toggle('is-active',active);
+    slide.classList.remove('is-leaving');
+    slide.setAttribute('aria-hidden',active?'false':'true');
+    const name=(slide.getAttribute('aria-label')||'').includes('NXT CAMP')?'NXT CAMP 2026':'Mulheres Virtuosas';
+    slide.setAttribute('aria-label',`${i+1} de ${slides.length} · ${name}`);
+  });
+  dots.forEach((dot,i)=>{
+    const active=i===0;
+    dot.classList.toggle('is-active',active);
+    dot.setAttribute('aria-current',active?'true':'false');
+  });
+
+  let index=0;
   let timer=null;
   let startX=0;
   let startY=0;
