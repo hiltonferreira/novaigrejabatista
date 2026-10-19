@@ -11,283 +11,48 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
   <style>
-    :root{
-      --orange:#e85c12;
-      --orange-deep:#b93d09;
-      --cream:#f6f3e4;
-      --paper:#e7e2c9;
-      --green:#263714;
-      --green-2:#425c25;
-      --yellow:#f1c514;
-      --ink:#1b2411;
-      --muted:#4f5941;
-      --line:rgba(38,55,20,.20);
-      --wrap:1180px;
-    }
-    *{box-sizing:border-box}
-    html{scroll-behavior:smooth}
-    body{margin:0;background:var(--cream);color:var(--ink);font-family:Manrope,Arial,sans-serif;overflow-x:hidden}
-    a{color:inherit;text-decoration:none}
-    .wrap{width:min(var(--wrap),calc(100% - 48px));margin:auto}
-
-    .site-header{position:fixed;left:50%;top:18px;transform:translateX(-50%);z-index:50;width:min(1180px,calc(100% - 34px));display:flex;align-items:center;justify-content:space-between;padding:11px 14px 11px 18px;border:1px solid rgba(255,255,255,.2);background:rgba(31,45,16,.88);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:999px;box-shadow:0 16px 45px rgba(39,40,19,.19);transition:background .3s ease,box-shadow .3s ease,transform .3s ease}
-    .site-header.scrolled{background:rgba(31,45,16,.96);box-shadow:0 18px 52px rgba(24,32,12,.28)}
-    .brand{display:flex;align-items:center;gap:9px;color:#fff;font-family:Montserrat,sans-serif;font-weight:900;letter-spacing:-.04em}
-    .brand b{color:#ff7a2d}
-    .brand small{display:block;font:700 .58rem Manrope;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.74)}
-    .brand-stack{display:flex;flex-direction:column;line-height:.84}
-    nav{display:flex;align-items:center;gap:22px}
-    nav>a{font-size:.82rem;font-weight:700;color:rgba(255,255,255,.84);transition:.22s}
-    nav>a:hover{color:#fff}
-    .nav-cta{padding:11px 18px;border-radius:999px;background:var(--cream);color:var(--green)!important;box-shadow:0 8px 22px rgba(0,0,0,.08)}
-    .nav-cta:hover,.nav-cta:focus-visible{background:var(--orange);color:#fff!important}
-
-    .hero{min-height:100vh;padding:116px 0 62px;background:var(--orange);position:relative;overflow:hidden}
-    .hero::before{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(55,43,20,.14) .7px,transparent .7px);background-size:4px 4px;opacity:.58;pointer-events:none}
-    .hero::after{content:"";position:absolute;width:440px;height:440px;border-radius:50%;right:-110px;bottom:-170px;background:var(--yellow);box-shadow:-80px -22px 0 var(--green-2);opacity:.96}
-    .hero-grid{position:relative;z-index:2;display:grid;grid-template-columns:minmax(0,1.08fr) minmax(360px,.92fr);gap:52px;align-items:center}
-    .hero-copy{padding-top:24px}
-    .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:.74rem;letter-spacing:.18em;text-transform:uppercase;font-weight:900;color:#fff;text-shadow:0 1px 0 rgba(38,55,20,.2)}
-    .eyebrow::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--yellow);box-shadow:0 0 0 4px rgba(241,197,20,.14)}
-    h1{font-family:Montserrat,sans-serif;font-size:clamp(4.5rem,11vw,9.2rem);line-height:.74;letter-spacing:-.075em;margin:26px 0 30px;text-transform:uppercase;color:#fff}
-    h1 span{display:block}
-    h1 .camp{color:var(--green);text-shadow:0 2px 0 rgba(255,255,255,.08)}
-    .hero-lead{font-size:clamp(1.05rem,1.8vw,1.38rem);line-height:1.55;color:#fff;max-width:34ch;margin:0 0 30px;text-shadow:0 1px 0 rgba(66,38,10,.14)}
-    .hero-actions{display:flex;gap:12px;flex-wrap:wrap}
-    .btn{display:inline-flex;align-items:center;justify-content:center;min-height:50px;padding:13px 23px;border-radius:999px;font-weight:800;font-size:.82rem;letter-spacing:.04em;text-transform:uppercase;transition:transform .22s ease,background .22s ease,color .22s ease,border-color .22s ease,box-shadow .22s ease;border:1px solid transparent}
-    .btn:hover{transform:translateY(-2px)}
-    .btn:focus-visible{outline:3px solid var(--cream);outline-offset:4px}
-    .btn-main{background:var(--green);color:#fff;box-shadow:0 12px 28px rgba(38,55,20,.16)}
-    .btn-main:hover{background:var(--cream);color:var(--green);box-shadow:0 14px 30px rgba(38,55,20,.18)}
-    .btn-ghost{border-color:rgba(255,255,255,.72);color:#fff;background:rgba(38,55,20,.10)}
-    .btn-ghost:hover{background:var(--cream);color:var(--green);border-color:var(--cream)}
-    .hero-meta{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:46px;border-top:1px solid rgba(255,255,255,.42);max-width:680px}
-    .hero-meta>div{padding:18px 18px 0 0}
-    .hero-meta span{display:block;font-size:.64rem;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.84);font-weight:900}
-    .hero-meta strong{display:block;margin-top:5px;color:#fff;font-size:.94rem}
-
-    .poster{position:relative;border-radius:28px;overflow:hidden;min-height:540px;background:var(--paper);box-shadow:0 38px 90px rgba(72,43,12,.23);transform:rotate(1.5deg);border:1px solid rgba(38,55,20,.22);transform-origin:center center}
-    .poster::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(69,91,43,.22) 1px,transparent 1px),linear-gradient(90deg,rgba(69,91,43,.22) 1px,transparent 1px);background-size:34px 34px;opacity:.72}
-    .poster::after{content:"";position:absolute;width:170px;height:170px;border-radius:50%;right:-35px;bottom:-24px;background:var(--yellow);box-shadow:0 0 0 18px rgba(232,92,18,.12)}
-    .poster-top{position:relative;z-index:3;padding:35px 34px 0;display:flex;justify-content:space-between;gap:16px;font-weight:900;font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--green)}
-    .poster-title{position:relative;z-index:3;padding:34px 34px 0;font-family:Montserrat,sans-serif;font-size:clamp(3.6rem,7vw,6.7rem);line-height:.78;letter-spacing:-.07em;text-transform:uppercase;color:var(--orange-deep)}
-    .poster-title b{display:block;color:var(--green)}
-    .poster-tags{position:relative;z-index:4;padding:24px 34px;display:flex;flex-wrap:wrap;gap:8px}
-    .poster-tag{display:inline-flex;background:var(--green);color:#fff;padding:7px 11px;font-size:.68rem;font-weight:900;text-transform:uppercase;letter-spacing:.09em;transform:rotate(-2deg);box-shadow:0 7px 16px rgba(38,55,20,.12)}
-    .poster-tag:nth-child(2){transform:rotate(2deg);background:var(--orange-deep)}
-    .poster-tag:nth-child(3){transform:rotate(-1deg);background:var(--yellow);color:var(--green)}
-    .tent{position:absolute;z-index:3;left:26%;right:7%;bottom:50px;height:190px;clip-path:polygon(50% 0,100% 100%,0 100%);background:linear-gradient(90deg,#b53b0a 0 48%,#ef6d20 48% 54%,#c94b0e 54%);filter:drop-shadow(0 24px 20px rgba(47,38,17,.18))}
-    .tent::after{content:"";position:absolute;left:49%;top:8%;width:4px;height:92%;background:#f3ead6}
-    .poster-note{position:absolute;z-index:4;left:34px;bottom:34px;background:var(--green);color:#fff;padding:10px 12px;font-size:.75rem;font-weight:800;line-height:1.45;transform:rotate(-1deg);box-shadow:0 10px 24px rgba(38,55,20,.16)}
-
-    .marquee{background:var(--green);color:#fff;overflow:hidden;border-top:1px solid rgba(255,255,255,.08);border-bottom:1px solid rgba(255,255,255,.08)}
-    .marquee-track{display:flex;width:max-content;animation:move 28s linear infinite;will-change:transform}
-    .marquee:hover .marquee-track{animation-play-state:paused}
-    .marquee span{display:inline-flex;align-items:center;gap:24px;padding:15px 24px;font-weight:900;font-size:.78rem;letter-spacing:.13em;text-transform:uppercase}
-    .marquee span::after{content:"✦";color:#ff7a2d}
-    @keyframes move{to{transform:translateX(-50%)}}
-
-    .section{padding:104px 0}
-    .section-head{display:grid;grid-template-columns:1fr .75fr;gap:50px;align-items:end;margin-bottom:54px}
-    .kicker{font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;font-weight:900;color:var(--orange-deep);margin:0 0 12px}
-    h2{font-family:Montserrat,sans-serif;font-size:clamp(2.8rem,6vw,5.8rem);line-height:.88;letter-spacing:-.06em;margin:0;color:var(--green)}
-    .section-head p:last-child{max-width:38ch;line-height:1.65;color:var(--muted);margin:0 0 4px}
-    .experience{background:var(--cream)}
-    .cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
-    .card{min-height:330px;border-radius:22px;padding:25px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden;border:1px solid rgba(38,55,20,.10);transition:transform .32s cubic-bezier(.2,.75,.2,1),box-shadow .32s ease,border-color .32s ease}
-    .card:hover{transform:translateY(-7px);box-shadow:0 22px 42px rgba(38,55,20,.14);border-color:rgba(38,55,20,.2)}
-    .card .n{font:900 .68rem Montserrat;letter-spacing:.14em}
-    .card h3{font:900 1.55rem Montserrat;margin:0 0 7px;letter-spacing:-.04em}
-    .card p{margin:0;font-size:.9rem;line-height:1.5;opacity:.9}
-    .c1{background:var(--green);color:#fff}.c2{background:var(--orange-deep);color:#fff}.c3{background:var(--paper);color:var(--green)}.c4{background:var(--yellow);color:var(--green)}
-    .shape{width:106px;height:106px;border:2px solid currentColor;border-radius:50%;opacity:.24;position:absolute;right:-22px;top:70px}.shape::before,.shape::after{content:"";position:absolute;background:currentColor}.shape::before{width:2px;height:145px;left:51px;top:-20px}.shape::after{height:2px;width:145px;left:-20px;top:51px}
-
-    .manifesto{background:var(--orange);color:#fff;padding:88px 0;position:relative;overflow:hidden}
-    .manifesto::before{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(69,41,14,.14) .7px,transparent .7px);background-size:4px 4px}
-    .manifesto h2{position:relative;color:#fff;max-width:900px}.manifesto h2 span{color:var(--green)}
-    .manifesto-tags{position:relative;display:flex;gap:10px;flex-wrap:wrap;margin-top:28px}.manifesto-tags span{border:1px solid rgba(255,255,255,.58);border-radius:999px;padding:8px 13px;font-size:.72rem;font-weight:900;letter-spacing:.1em;text-transform:uppercase;background:rgba(38,55,20,.08)}
-
-    .info{background:var(--paper);position:relative;overflow:hidden}
-    .info::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(69,91,43,.12) 1px,transparent 1px),linear-gradient(90deg,rgba(69,91,43,.12) 1px,transparent 1px);background-size:42px 42px;opacity:.7}
-    .info-grid{position:relative;display:grid;grid-template-columns:.95fr 1.05fr;gap:70px;align-items:center}
-    .big-date{font:900 clamp(5rem,12vw,10rem) Montserrat;line-height:.76;letter-spacing:-.08em;color:var(--orange-deep);margin-top:22px;overflow:hidden}
-    .big-date small{display:block;font-size:.16em;letter-spacing:.08em;color:var(--green);margin-top:24px}
-    .info-panel{background:rgba(246,243,228,.96);border:1px solid rgba(38,55,20,.15);border-radius:24px;overflow:hidden;box-shadow:0 28px 60px rgba(59,57,29,.09)}
-    .info-row{display:grid;grid-template-columns:110px 1fr;gap:20px;padding:24px 26px;border-bottom:1px solid rgba(38,55,20,.12);transition:background .22s ease}.info-row:last-child{border-bottom:0}.info-row:hover{background:rgba(255,255,255,.44)}
-    .info-label{font-size:.68rem;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--orange-deep)}
-    .info-value strong{display:block;font-size:1.03rem;color:var(--green)}.info-value span{display:block;font-size:.86rem;color:#46513b;margin-top:4px}
-
-    .signup{background:var(--green);color:#fff;padding:94px 0}
-    .signup-grid{display:grid;grid-template-columns:1fr .78fr;gap:54px;align-items:center}.signup h2{color:#fff}.signup h2 span{color:#ff7a2d}.signup p{color:rgba(255,255,255,.82);line-height:1.65;max-width:38ch}.signup .btn-main{background:#ff7a2d;color:#1f2f12}.signup .btn-main:hover{background:var(--cream);color:var(--green)}
-    footer{background:#18250d;color:rgba(255,255,255,.76);padding:28px 0;font-size:.78rem}.footer-grid{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap}.footer-grid a:hover{color:#fff}
-
-    /* Entrada do hero */
-    .hero .eyebrow,.hero h1 span,.hero-lead,.hero-actions,.hero-meta,.poster{opacity:0}
-    .page-ready .hero .eyebrow{animation:rise .55s .08s both}
-    .page-ready .hero h1 span:first-child{animation:rise .65s .18s both}
-    .page-ready .hero h1 .camp{animation:rise .65s .29s both}
-    .page-ready .hero-lead{animation:rise .6s .42s both}
-    .page-ready .hero-actions{animation:rise .6s .52s both}
-    .page-ready .hero-meta{animation:rise .6s .62s both}
-    .page-ready .poster{animation:poster-in .8s .18s cubic-bezier(.18,.8,.22,1) both}
-    .page-ready .poster-tag:nth-child(1){animation:tag-in .46s .82s both}
-    .page-ready .poster-tag:nth-child(2){animation:tag-in .46s .91s both}
-    .page-ready .poster-tag:nth-child(3){animation:tag-in .46s 1s both}
-    @keyframes rise{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
-    @keyframes poster-in{from{opacity:0;transform:translateY(30px) rotate(-1deg) scale(.98)}to{opacity:1;transform:rotate(1.5deg) scale(1)}}
-    @keyframes tag-in{from{opacity:0;transform:translateY(8px) rotate(0) scale(.94)}to{opacity:1}}
-
-    /* Revelação no scroll */
-    [data-reveal]{opacity:0;transform:translateY(26px);transition:opacity .7s cubic-bezier(.2,.7,.2,1),transform .7s cubic-bezier(.2,.7,.2,1)}
-    [data-reveal].is-visible{opacity:1;transform:none}
-    .cards [data-reveal]:nth-child(2){transition-delay:.08s}.cards [data-reveal]:nth-child(3){transition-delay:.16s}.cards [data-reveal]:nth-child(4){transition-delay:.24s}
-    .big-date .date-mask{display:block;transform:translateY(108%);transition:transform .8s cubic-bezier(.18,.8,.2,1)}
-    .big-date.is-visible .date-mask{transform:none}
-
-    @media(max-width:920px){
-      .site-header{top:10px}.desktop-links{display:none}.wrap{width:min(100% - 28px,var(--wrap))}
-      .hero{min-height:auto;padding:104px 0 42px}.hero-grid{grid-template-columns:1fr;gap:34px}.hero-copy{text-align:center}.hero-lead{margin-left:auto;margin-right:auto}.hero-actions{justify-content:center}.hero-meta{margin-left:auto;margin-right:auto}.poster{min-height:460px;transform:none}.poster-title{font-size:clamp(3.4rem,16vw,6rem)}
-      .page-ready .poster{animation-name:poster-in-mobile}
-      @keyframes poster-in-mobile{from{opacity:0;transform:translateY(26px) scale(.985)}to{opacity:1;transform:none}}
-      .section{padding:76px 0}.section-head{grid-template-columns:1fr;gap:22px}.cards{grid-template-columns:repeat(2,1fr)}.info-grid,.signup-grid{grid-template-columns:1fr}.signup{text-align:center}.signup p{margin-left:auto;margin-right:auto}.signup .hero-actions{justify-content:center}
-    }
-    @media(max-width:600px){
-      .site-header{width:calc(100% - 20px);padding:10px 12px 10px 14px}.nav-cta{padding:10px 14px;font-size:.73rem}
-      .hero{padding-top:92px}.eyebrow{font-size:.65rem}h1{font-size:clamp(4.2rem,25vw,6.3rem);margin-top:20px}.hero-meta{grid-template-columns:1fr;gap:0;border-top:1px solid rgba(255,255,255,.36);text-align:left}.hero-meta>div{display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.2)}.hero-meta strong{margin:0;text-align:right}
-      .poster{min-height:400px;border-radius:20px}.poster-top{padding:24px 22px 0}.poster-title{padding:28px 22px 0;font-size:clamp(3rem,17vw,4.6rem)}.poster-tags{padding:18px 22px}.poster-note{left:22px;bottom:22px}.tent{left:22%;right:4%;bottom:40px;height:150px}
-      .cards{grid-template-columns:1fr}.card{min-height:260px}.info-row{grid-template-columns:80px 1fr;padding:20px 18px}.big-date{font-size:clamp(4.4rem,25vw,7rem)}
-      .section-head p:last-child{font-size:.95rem}h2{font-size:clamp(2.6rem,13vw,4.2rem)}.footer-grid{justify-content:center;text-align:center}
-    }
-    @media(prefers-reduced-motion:reduce){
-      html{scroll-behavior:auto}.marquee-track{animation:none!important}.hero .eyebrow,.hero h1 span,.hero-lead,.hero-actions,.hero-meta,.poster,.poster-tag,[data-reveal]{opacity:1!important;transform:none!important;animation:none!important;transition:none!important}.big-date .date-mask{transform:none!important}.btn,.card{transition:none!important}
-    }
+    :root{--orange:#e85c12;--orange-deep:#b93d09;--cream:#f6f3e4;--paper:#e7e2c9;--green:#263714;--green-2:#425c25;--yellow:#f1c514;--ink:#1b2411;--muted:#4f5941;--line:rgba(38,55,20,.20);--wrap:1180px}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--cream);color:var(--ink);font-family:Manrope,Arial,sans-serif;overflow-x:hidden}a{color:inherit;text-decoration:none}.wrap{width:min(var(--wrap),calc(100% - 48px));margin:auto}
+    .site-header{position:fixed;left:50%;top:18px;transform:translateX(-50%);z-index:50;width:min(1180px,calc(100% - 34px));display:flex;align-items:center;justify-content:space-between;padding:11px 14px 11px 18px;border:1px solid rgba(255,255,255,.24);background:rgba(31,45,16,.94);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:999px;box-shadow:0 16px 45px rgba(39,40,19,.22);transition:background .3s ease,box-shadow .3s ease,transform .3s ease}
+    .site-header.scrolled{background:rgba(26,39,13,.985);box-shadow:0 18px 52px rgba(24,32,12,.32)}
+    .brand{display:flex;align-items:center;gap:9px;color:#fff;font-family:Montserrat,sans-serif;font-weight:900;letter-spacing:-.04em}.brand b{color:#ff7a2d}.brand small{display:block;font:700 .58rem Manrope;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.82)}.brand-stack{display:flex;flex-direction:column;line-height:.84}
+    nav{display:flex;align-items:center;gap:12px}
+    .desktop-links{display:contents}
+    .desktop-links>a{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:9px 14px;border:1px solid rgba(246,243,228,.28);border-radius:999px;background:rgba(246,243,228,.08);color:#fff;font-size:.82rem;font-weight:800;letter-spacing:.01em;transition:background .22s ease,color .22s ease,border-color .22s ease,transform .22s ease,box-shadow .22s ease}
+    .desktop-links>a:hover,.desktop-links>a:focus-visible{background:var(--cream);color:var(--green);border-color:var(--cream);transform:translateY(-1px);box-shadow:0 10px 22px rgba(0,0,0,.12);outline:none}
+    .nav-cta{padding:11px 18px;border-radius:999px;background:var(--cream);color:var(--green)!important;box-shadow:0 8px 22px rgba(0,0,0,.08);font-size:.82rem;font-weight:800;transition:background .22s ease,color .22s ease,transform .22s ease,box-shadow .22s ease}.nav-cta:hover,.nav-cta:focus-visible{background:var(--orange);color:#fff!important;transform:translateY(-1px);box-shadow:0 10px 24px rgba(0,0,0,.14);outline:none}
+    .hero{min-height:100vh;padding:116px 0 62px;background:var(--orange);position:relative;overflow:hidden}.hero::before{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(55,43,20,.14) .7px,transparent .7px);background-size:4px 4px;opacity:.58;pointer-events:none}.hero::after{content:"";position:absolute;width:440px;height:440px;border-radius:50%;right:-110px;bottom:-170px;background:var(--yellow);box-shadow:-80px -22px 0 var(--green-2);opacity:.96}.hero-grid{position:relative;z-index:2;display:grid;grid-template-columns:minmax(0,1.08fr) minmax(360px,.92fr);gap:52px;align-items:center}.hero-copy{padding-top:24px}.eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:.74rem;letter-spacing:.18em;text-transform:uppercase;font-weight:900;color:#fff;text-shadow:0 1px 0 rgba(38,55,20,.2)}.eyebrow::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--yellow);box-shadow:0 0 0 4px rgba(241,197,20,.14)}h1{font-family:Montserrat,sans-serif;font-size:clamp(4.5rem,11vw,9.2rem);line-height:.74;letter-spacing:-.075em;margin:26px 0 30px;text-transform:uppercase;color:#fff}h1 span{display:block}h1 .camp{color:var(--green);text-shadow:0 2px 0 rgba(255,255,255,.08)}.hero-lead{font-size:clamp(1.05rem,1.8vw,1.38rem);line-height:1.55;color:#fff;max-width:34ch;margin:0 0 30px;text-shadow:0 1px 0 rgba(66,38,10,.14)}.hero-actions{display:flex;gap:12px;flex-wrap:wrap}.btn{display:inline-flex;align-items:center;justify-content:center;min-height:50px;padding:13px 23px;border-radius:999px;font-weight:800;font-size:.82rem;letter-spacing:.04em;text-transform:uppercase;transition:transform .22s ease,background .22s ease,color .22s ease,border-color .22s ease,box-shadow .22s ease;border:1px solid transparent}.btn:hover{transform:translateY(-2px)}.btn:focus-visible{outline:3px solid var(--cream);outline-offset:4px}.btn-main{background:var(--green);color:#fff;box-shadow:0 12px 28px rgba(38,55,20,.16)}.btn-main:hover{background:var(--cream);color:var(--green);box-shadow:0 14px 30px rgba(38,55,20,.18)}.btn-ghost{border-color:rgba(255,255,255,.72);color:#fff;background:rgba(38,55,20,.10)}.btn-ghost:hover{background:var(--cream);color:var(--green);border-color:var(--cream)}.hero-meta{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:46px;border-top:1px solid rgba(255,255,255,.42);max-width:680px}.hero-meta>div{padding:18px 18px 0 0}.hero-meta span{display:block;font-size:.64rem;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.84);font-weight:900}.hero-meta strong{display:block;margin-top:5px;color:#fff;font-size:.94rem}
+    .poster{position:relative;border-radius:28px;overflow:hidden;min-height:540px;background:var(--paper);box-shadow:0 38px 90px rgba(72,43,12,.23);transform:rotate(1.5deg);border:1px solid rgba(38,55,20,.22);transform-origin:center center}.poster::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(69,91,43,.22) 1px,transparent 1px),linear-gradient(90deg,rgba(69,91,43,.22) 1px,transparent 1px);background-size:34px 34px;opacity:.72}.poster::after{content:"";position:absolute;width:170px;height:170px;border-radius:50%;right:-35px;bottom:-24px;background:var(--yellow);box-shadow:0 0 0 18px rgba(232,92,18,.12)}.poster-top{position:relative;z-index:3;padding:35px 34px 0;display:flex;justify-content:space-between;gap:16px;font-weight:900;font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--green)}.poster-title{position:relative;z-index:3;padding:34px 34px 0;font-family:Montserrat,sans-serif;font-size:clamp(3.6rem,7vw,6.7rem);line-height:.78;letter-spacing:-.07em;text-transform:uppercase;color:var(--orange-deep)}.poster-title b{display:block;color:var(--green)}.poster-tags{position:relative;z-index:4;padding:24px 34px;display:flex;flex-wrap:wrap;gap:8px}.poster-tag{display:inline-flex;background:var(--green);color:#fff;padding:7px 11px;font-size:.68rem;font-weight:900;text-transform:uppercase;letter-spacing:.09em;transform:rotate(-2deg);box-shadow:0 7px 16px rgba(38,55,20,.12)}.poster-tag:nth-child(2){transform:rotate(2deg);background:var(--orange-deep)}.poster-tag:nth-child(3){transform:rotate(-1deg);background:var(--yellow);color:var(--green)}.tent{position:absolute;z-index:3;left:26%;right:7%;bottom:50px;height:190px;clip-path:polygon(50% 0,100% 100%,0 100%);background:linear-gradient(90deg,#b53b0a 0 48%,#ef6d20 48% 54%,#c94b0e 54%);filter:drop-shadow(0 24px 20px rgba(47,38,17,.18))}.tent::after{content:"";position:absolute;left:49%;top:8%;width:4px;height:92%;background:#f3ead6}.poster-note{position:absolute;z-index:4;left:34px;bottom:34px;background:var(--green);color:#fff;padding:10px 12px;font-size:.75rem;font-weight:800;line-height:1.45;transform:rotate(-1deg);box-shadow:0 10px 24px rgba(38,55,20,.16)}
+    .marquee{background:var(--green);color:#fff;overflow:hidden;border-top:1px solid rgba(255,255,255,.08);border-bottom:1px solid rgba(255,255,255,.08)}.marquee-track{display:flex;width:max-content;animation:move 28s linear infinite;will-change:transform}.marquee:hover .marquee-track{animation-play-state:paused}.marquee span{display:inline-flex;align-items:center;gap:24px;padding:15px 24px;font-weight:900;font-size:.78rem;letter-spacing:.13em;text-transform:uppercase}.marquee span::after{content:"✦";color:#ff7a2d}@keyframes move{to{transform:translateX(-50%)}}
+    .section{padding:104px 0}.section-head{display:grid;grid-template-columns:1fr .75fr;gap:50px;align-items:end;margin-bottom:54px}.kicker{font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;font-weight:900;color:var(--orange-deep);margin:0 0 12px}h2{font-family:Montserrat,sans-serif;font-size:clamp(2.8rem,6vw,5.8rem);line-height:.88;letter-spacing:-.06em;margin:0;color:var(--green)}.section-head p:last-child{max-width:38ch;line-height:1.65;color:var(--muted);margin:0 0 4px}.experience{background:var(--cream)}.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.card{min-height:330px;border-radius:22px;padding:25px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden;border:1px solid rgba(38,55,20,.10);transition:transform .32s cubic-bezier(.2,.75,.2,1),box-shadow .32s ease,border-color .32s ease}.card:hover{transform:translateY(-7px);box-shadow:0 22px 42px rgba(38,55,20,.14);border-color:rgba(38,55,20,.2)}.card .n{font:900 .68rem Montserrat;letter-spacing:.14em}.card h3{font:900 1.55rem Montserrat;margin:0 0 7px;letter-spacing:-.04em}.card p{margin:0;font-size:.9rem;line-height:1.5;opacity:.9}.c1{background:var(--green);color:#fff}.c2{background:var(--orange-deep);color:#fff}.c3{background:var(--paper);color:var(--green)}.c4{background:var(--yellow);color:var(--green)}.shape{width:106px;height:106px;border:2px solid currentColor;border-radius:50%;opacity:.24;position:absolute;right:-22px;top:70px}.shape::before,.shape::after{content:"";position:absolute;background:currentColor}.shape::before{width:2px;height:145px;left:51px;top:-20px}.shape::after{height:2px;width:145px;left:-20px;top:51px}
+    .manifesto{background:var(--orange);color:#fff;padding:88px 0;position:relative;overflow:hidden}.manifesto::before{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(69,41,14,.14) .7px,transparent .7px);background-size:4px 4px}.manifesto h2{position:relative;color:#fff;max-width:900px}.manifesto h2 span{color:var(--green)}.manifesto-tags{position:relative;display:flex;gap:10px;flex-wrap:wrap;margin-top:28px}.manifesto-tags span{border:1px solid rgba(255,255,255,.58);border-radius:999px;padding:8px 13px;font-size:.72rem;font-weight:900;letter-spacing:.1em;text-transform:uppercase;background:rgba(38,55,20,.08)}
+    .info{background:var(--paper);position:relative;overflow:hidden}.info::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(69,91,43,.12) 1px,transparent 1px),linear-gradient(90deg,rgba(69,91,43,.12) 1px,transparent 1px);background-size:42px 42px;opacity:.7}.info-grid{position:relative;display:grid;grid-template-columns:.95fr 1.05fr;gap:70px;align-items:center}.big-date{font:900 clamp(5rem,12vw,10rem) Montserrat;line-height:.76;letter-spacing:-.08em;color:var(--orange-deep);margin-top:22px;overflow:hidden}.big-date small{display:block;font-size:.16em;letter-spacing:.08em;color:var(--green);margin-top:24px}.info-panel{background:rgba(246,243,228,.96);border:1px solid rgba(38,55,20,.15);border-radius:24px;overflow:hidden;box-shadow:0 28px 60px rgba(59,57,29,.09)}.info-row{display:grid;grid-template-columns:110px 1fr;gap:20px;padding:24px 26px;border-bottom:1px solid rgba(38,55,20,.12);transition:background .22s ease}.info-row:last-child{border-bottom:0}.info-row:hover{background:rgba(255,255,255,.44)}.info-label{font-size:.68rem;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--orange-deep)}.info-value strong{display:block;font-size:1.03rem;color:var(--green)}.info-value span{display:block;font-size:.86rem;color:#46513b;margin-top:4px}
+    .signup{background:var(--green);color:#fff;padding:94px 0}.signup-grid{display:grid;grid-template-columns:1fr .78fr;gap:54px;align-items:center}.signup h2{color:#fff}.signup h2 span{color:#ff7a2d}.signup p{color:rgba(255,255,255,.82);line-height:1.65;max-width:38ch}.signup .btn-main{background:#ff7a2d;color:#1f2f12}.signup .btn-main:hover{background:var(--cream);color:var(--green)}footer{background:#18250d;color:rgba(255,255,255,.76);padding:28px 0;font-size:.78rem}.footer-grid{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap}.footer-grid a:hover{color:#fff}
+    .hero .eyebrow,.hero h1 span,.hero-lead,.hero-actions,.hero-meta,.poster{opacity:0}.page-ready .hero .eyebrow{animation:rise .55s .08s both}.page-ready .hero h1 span:first-child{animation:rise .65s .18s both}.page-ready .hero h1 .camp{animation:rise .65s .29s both}.page-ready .hero-lead{animation:rise .6s .42s both}.page-ready .hero-actions{animation:rise .6s .52s both}.page-ready .hero-meta{animation:rise .6s .62s both}.page-ready .poster{animation:poster-in .8s .18s cubic-bezier(.18,.8,.22,1) both}.page-ready .poster-tag:nth-child(1){animation:tag-in .46s .82s both}.page-ready .poster-tag:nth-child(2){animation:tag-in .46s .91s both}.page-ready .poster-tag:nth-child(3){animation:tag-in .46s 1s both}@keyframes rise{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}@keyframes poster-in{from{opacity:0;transform:translateY(30px) rotate(-1deg) scale(.98)}to{opacity:1;transform:rotate(1.5deg) scale(1)}}@keyframes tag-in{from{opacity:0;transform:translateY(8px) rotate(0) scale(.94)}to{opacity:1}}
+    [data-reveal]{opacity:0;transform:translateY(26px);transition:opacity .7s cubic-bezier(.2,.7,.2,1),transform .7s cubic-bezier(.2,.7,.2,1)}[data-reveal].is-visible{opacity:1;transform:none}.cards [data-reveal]:nth-child(2){transition-delay:.08s}.cards [data-reveal]:nth-child(3){transition-delay:.16s}.cards [data-reveal]:nth-child(4){transition-delay:.24s}.big-date .date-mask{display:block;transform:translateY(108%);transition:transform .8s cubic-bezier(.18,.8,.2,1)}.big-date.is-visible .date-mask{transform:none}
+    @media(max-width:920px){.site-header{top:10px}.desktop-links{display:none}.wrap{width:min(100% - 28px,var(--wrap))}.hero{min-height:auto;padding:104px 0 42px}.hero-grid{grid-template-columns:1fr;gap:34px}.hero-copy{text-align:center}.hero-lead{margin-left:auto;margin-right:auto}.hero-actions{justify-content:center}.hero-meta{margin-left:auto;margin-right:auto}.poster{min-height:460px;transform:none}.poster-title{font-size:clamp(3.4rem,16vw,6rem)}.page-ready .poster{animation-name:poster-in-mobile}@keyframes poster-in-mobile{from{opacity:0;transform:translateY(26px) scale(.985)}to{opacity:1;transform:none}}.section{padding:76px 0}.section-head{grid-template-columns:1fr;gap:22px}.cards{grid-template-columns:repeat(2,1fr)}.info-grid,.signup-grid{grid-template-columns:1fr}.signup{text-align:center}.signup p{margin-left:auto;margin-right:auto}.signup .hero-actions{justify-content:center}}
+    @media(max-width:600px){.site-header{width:calc(100% - 20px);padding:10px 12px 10px 14px}.nav-cta{padding:10px 14px;font-size:.73rem}.hero{padding-top:92px}.eyebrow{font-size:.65rem}h1{font-size:clamp(4.2rem,25vw,6.3rem);margin-top:20px}.hero-meta{grid-template-columns:1fr;gap:0;border-top:1px solid rgba(255,255,255,.36);text-align:left}.hero-meta>div{display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.2)}.hero-meta strong{margin:0;text-align:right}.poster{min-height:400px;border-radius:20px}.poster-top{padding:24px 22px 0}.poster-title{padding:28px 22px 0;font-size:clamp(3rem,17vw,4.6rem)}.poster-tags{padding:18px 22px}.poster-note{left:22px;bottom:22px}.tent{left:22%;right:4%;bottom:40px;height:150px}.cards{grid-template-columns:1fr}.card{min-height:260px}.info-row{grid-template-columns:80px 1fr;padding:20px 18px}.big-date{font-size:clamp(4.4rem,25vw,7rem)}.section-head p:last-child{font-size:.95rem}h2{font-size:clamp(2.6rem,13vw,4.2rem)}.footer-grid{justify-content:center;text-align:center}}
+    @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.marquee-track{animation:none!important}.hero .eyebrow,.hero h1 span,.hero-lead,.hero-actions,.hero-meta,.poster,.poster-tag,[data-reveal]{opacity:1!important;transform:none!important;animation:none!important;transition:none!important}.big-date .date-mask{transform:none!important}.btn,.card{transition:none!important}}
   </style>
 </head>
 <body>
   <header class="site-header" id="siteHeader">
-    <a class="brand" href="../../../index.html" aria-label="Voltar para Nova Igreja Batista">
-      <span>NXT</span><span class="brand-stack"><b>CAMP</b><small>sbgp.1</small></span>
-    </a>
-    <nav>
-      <div class="desktop-links" style="display:contents">
-        <a href="#experiencia">Experiência</a>
-        <a href="#informacoes">Informações</a>
-      </div>
-      <a class="nav-cta" href="https://novaigrejabatista.com.br/next/camp-sbgp1-nov26/inscricao.html">Inscrição</a>
-    </nav>
+    <a class="brand" href="../../../index.html" aria-label="Voltar para Nova Igreja Batista"><span>NXT</span><span class="brand-stack"><b>CAMP</b><small>sbgp.1</small></span></a>
+    <nav><div class="desktop-links"><a href="#experiencia">Experiência</a><a href="#informacoes">Informações</a></div><a class="nav-cta" href="https://novaigrejabatista.com.br/next/camp-sbgp1-nov26/inscricao.html">Inscrição</a></nav>
   </header>
-
   <main>
-    <section class="hero">
-      <div class="wrap hero-grid">
-        <div class="hero-copy">
-          <div class="eyebrow">Acampamento dos adolescentes · 2026</div>
-          <h1><span>NXT</span><span class="camp">CAMP</span></h1>
-          <p class="hero-lead">Dois dias fora da rotina para viver fé, palavra, amizade e experiências que continuam depois do camp.</p>
-          <div class="hero-actions">
-            <a class="btn btn-main" href="https://novaigrejabatista.com.br/next/camp-sbgp1-nov26/inscricao.html">Eu vou pro NXT CAMP</a>
-            <a class="btn btn-ghost" href="#informacoes">Ver informações</a>
-          </div>
-          <div class="hero-meta">
-            <div><span>Quando</span><strong>21 e 22 de novembro</strong></div>
-            <div><span>Idade</span><strong>12 a 17 anos</strong></div>
-            <div><span>Inscrição</span><strong>R$ 80</strong></div>
-          </div>
-        </div>
-
-        <div class="poster" aria-label="Identidade visual do NXT CAMP">
-          <div class="poster-top"><span>2026</span><span>Ariquemes · RO</span></div>
-          <div class="poster-title">Acamp<b>Next</b></div>
-          <div class="poster-tags"><span class="poster-tag">Palavra</span><span class="poster-tag">Worship</span><span class="poster-tag">Gincanas</span></div>
-          <div class="tent" aria-hidden="true"></div>
-          <div class="poster-note">Chácara Colina Verde<br>12 a 17 anos</div>
-        </div>
-      </div>
-    </section>
-
+    <section class="hero"><div class="wrap hero-grid"><div class="hero-copy"><div class="eyebrow">Acampamento dos adolescentes · 2026</div><h1><span>NXT</span><span class="camp">CAMP</span></h1><p class="hero-lead">Dois dias fora da rotina para viver fé, palavra, amizade e experiências que continuam depois do camp.</p><div class="hero-actions"><a class="btn btn-main" href="https://novaigrejabatista.com.br/next/camp-sbgp1-nov26/inscricao.html">Eu vou pro NXT CAMP</a><a class="btn btn-ghost" href="#informacoes">Ver informações</a></div><div class="hero-meta"><div><span>Quando</span><strong>21 e 22 de novembro</strong></div><div><span>Idade</span><strong>12 a 17 anos</strong></div><div><span>Inscrição</span><strong>R$ 80</strong></div></div></div><div class="poster" aria-label="Identidade visual do NXT CAMP"><div class="poster-top"><span>2026</span><span>Ariquemes · RO</span></div><div class="poster-title">Acamp<b>Next</b></div><div class="poster-tags"><span class="poster-tag">Palavra</span><span class="poster-tag">Worship</span><span class="poster-tag">Gincanas</span></div><div class="tent" aria-hidden="true"></div><div class="poster-note">Chácara Colina Verde<br>12 a 17 anos</div></div></div></section>
     <div class="marquee" aria-hidden="true"><div class="marquee-track"><span>PALAVRA</span><span>WORSHIP</span><span>GINCANAS</span><span>COMUNHÃO</span><span>NXT CAMP</span><span>PALAVRA</span><span>WORSHIP</span><span>GINCANAS</span><span>COMUNHÃO</span><span>NXT CAMP</span></div></div>
-
-    <section class="section experience" id="experiencia">
-      <div class="wrap">
-        <div class="section-head" data-reveal>
-          <div><p class="kicker">01 / A EXPERIÊNCIA</p><h2>MAIS QUE<br>UM FIM DE SEMANA.</h2></div>
-          <p>Uma pausa da rotina para viver algo novo com Deus, criar memórias e fortalecer conexões com gente da mesma geração.</p>
-        </div>
-        <div class="cards">
-          <article class="card c1" data-reveal><span class="n">01 / FÉ</span><span class="shape"></span><div><h3>PALAVRA</h3><p>Pra ouvir, pensar e viver.</p></div></article>
-          <article class="card c2" data-reveal><span class="n">02 / ADORAÇÃO</span><span class="shape"></span><div><h3>WORSHIP</h3><p>Sem plateia. Todo mundo junto.</p></div></article>
-          <article class="card c3" data-reveal><span class="n">03 / DESAFIO</span><span class="shape"></span><div><h3>GINCANAS</h3><p>Equipe, estratégia, Bíblia e movimento.</p></div></article>
-          <article class="card c4" data-reveal><span class="n">04 / GALERA</span><span class="shape"></span><div><h3>CONEXÃO</h3><p>Amizades que continuam depois do camp.</p></div></article>
-        </div>
-      </div>
-    </section>
-
-    <section class="manifesto">
-      <div class="wrap" data-reveal>
-        <p class="kicker" style="color:#fff">NXT CAMP · SBGP.1</p>
-        <h2>DOIS DIAS.<br>UMA EXPERIÊNCIA <span>QUE CONTINUA.</span></h2>
-        <div class="manifesto-tags"><span>Fé</span><span>Amizade</span><span>Propósito</span><span>Desafio</span></div>
-      </div>
-    </section>
-
-    <section class="section info" id="informacoes">
-      <div class="wrap info-grid">
-        <div data-reveal>
-          <p class="kicker">02 / INFORMAÇÕES</p>
-          <h2>MARCA NA<br>AGENDA.</h2>
-          <div class="big-date" data-date-reveal><span class="date-mask">21 e 22</span><small>NOVEMBRO · 2026</small></div>
-        </div>
-        <div class="info-panel" data-reveal>
-          <div class="info-row"><div class="info-label">Quando</div><div class="info-value"><strong>21 e 22 de novembro</strong><span>Sábado + domingo · 2026</span></div></div>
-          <div class="info-row"><div class="info-label">Onde</div><div class="info-value"><strong>Chácara Colina Verde</strong><span>Ariquemes · Rondônia</span></div></div>
-          <div class="info-row"><div class="info-label">Quem</div><div class="info-value"><strong>Adolescentes de 12 a 17 anos</strong><span>NXT · Nova Igreja Batista</span></div></div>
-          <div class="info-row"><div class="info-label">Valor</div><div class="info-value"><strong>R$ 80 por participante</strong><span>Inscrição individual</span></div></div>
-        </div>
-      </div>
-    </section>
-
-    <section class="signup">
-      <div class="wrap signup-grid" data-reveal>
-        <div><p class="kicker" style="color:#ff7a2d">03 / INSCRIÇÕES</p><h2>EU TÔ<br><span>DENTRO.</span></h2></div>
-        <div><p>As inscrições estão abertas. Preencha os dados do participante, faça o pagamento via Pix e envie o comprovante para concluir.</p><div class="hero-actions"><a class="btn btn-main" href="https://novaigrejabatista.com.br/next/camp-sbgp1-nov26/inscricao.html">Fazer inscrição</a></div></div>
-      </div>
-    </section>
+    <section class="section experience" id="experiencia"><div class="wrap"><div class="section-head" data-reveal><div><p class="kicker">01 / A EXPERIÊNCIA</p><h2>MAIS QUE<br>UM FIM DE SEMANA.</h2></div><p>Uma pausa da rotina para viver algo novo com Deus, criar memórias e fortalecer conexões com gente da mesma geração.</p></div><div class="cards"><article class="card c1" data-reveal><span class="n">01 / FÉ</span><span class="shape"></span><div><h3>PALAVRA</h3><p>Pra ouvir, pensar e viver.</p></div></article><article class="card c2" data-reveal><span class="n">02 / ADORAÇÃO</span><span class="shape"></span><div><h3>WORSHIP</h3><p>Sem plateia. Todo mundo junto.</p></div></article><article class="card c3" data-reveal><span class="n">03 / DESAFIO</span><span class="shape"></span><div><h3>GINCANAS</h3><p>Equipe, estratégia, Bíblia e movimento.</p></div></article><article class="card c4" data-reveal><span class="n">04 / GALERA</span><span class="shape"></span><div><h3>CONEXÃO</h3><p>Amizades que continuam depois do camp.</p></div></article></div></div></section>
+    <section class="manifesto"><div class="wrap" data-reveal><p class="kicker" style="color:#fff">NXT CAMP · SBGP.1</p><h2>DOIS DIAS.<br>UMA EXPERIÊNCIA <span>QUE CONTINUA.</span></h2><div class="manifesto-tags"><span>Fé</span><span>Amizade</span><span>Propósito</span><span>Desafio</span></div></div></section>
+    <section class="section info" id="informacoes"><div class="wrap info-grid"><div data-reveal><p class="kicker">02 / INFORMAÇÕES</p><h2>MARCA NA<br>AGENDA.</h2><div class="big-date" data-date-reveal><span class="date-mask">21 e 22</span><small>NOVEMBRO · 2026</small></div></div><div class="info-panel" data-reveal><div class="info-row"><div class="info-label">Quando</div><div class="info-value"><strong>21 e 22 de novembro</strong><span>Sábado + domingo · 2026</span></div></div><div class="info-row"><div class="info-label">Onde</div><div class="info-value"><strong>Chácara Colina Verde</strong><span>Ariquemes · Rondônia</span></div></div><div class="info-row"><div class="info-label">Quem</div><div class="info-value"><strong>Adolescentes de 12 a 17 anos</strong><span>NXT · Nova Igreja Batista</span></div></div><div class="info-row"><div class="info-label">Valor</div><div class="info-value"><strong>R$ 80 por participante</strong><span>Inscrição individual</span></div></div></div></div></section>
+    <section class="signup"><div class="wrap signup-grid" data-reveal><div><p class="kicker" style="color:#ff7a2d">03 / INSCRIÇÕES</p><h2>EU TÔ<br><span>DENTRO.</span></h2></div><div><p>As inscrições estão abertas. Preencha os dados do participante, faça o pagamento via Pix e envie o comprovante para concluir.</p><div class="hero-actions"><a class="btn btn-main" href="https://novaigrejabatista.com.br/next/camp-sbgp1-nov26/inscricao.html">Fazer inscrição</a></div></div></div></section>
   </main>
-
   <footer><div class="wrap footer-grid"><span>© 2026 Nova Igreja Batista · NXT CAMP</span><a href="../../../index.html">Voltar para o site da igreja</a></div></footer>
-
   <script>
-    document.documentElement.classList.add('js');
-    addEventListener('load',()=>document.body.classList.add('page-ready'));
-
-    const header=document.getElementById('siteHeader');
-    const syncHeader=()=>header&&header.classList.toggle('scrolled',scrollY>24);
-    addEventListener('scroll',syncHeader,{passive:true});
-    syncHeader();
-
-    const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if(!reduced && 'IntersectionObserver' in window){
-      const io=new IntersectionObserver(entries=>{
-        entries.forEach(entry=>{
-          if(entry.isIntersecting){
-            entry.target.classList.add('is-visible');
-            io.unobserve(entry.target);
-          }
-        });
-      },{threshold:.16,rootMargin:'0px 0px -5% 0px'});
-      document.querySelectorAll('[data-reveal]').forEach(el=>io.observe(el));
-
-      const date=document.querySelector('[data-date-reveal]');
-      if(date){
-        const dateIo=new IntersectionObserver(entries=>entries.forEach(entry=>{
-          if(entry.isIntersecting){date.classList.add('is-visible');dateIo.unobserve(date)}
-        }),{threshold:.35});
-        dateIo.observe(date);
-      }
-    }else{
-      document.querySelectorAll('[data-reveal]').forEach(el=>el.classList.add('is-visible'));
-      const date=document.querySelector('[data-date-reveal]'); if(date) date.classList.add('is-visible');
-    }
+    document.documentElement.classList.add('js');addEventListener('load',()=>document.body.classList.add('page-ready'));
+    const header=document.getElementById('siteHeader');const syncHeader=()=>header&&header.classList.toggle('scrolled',scrollY>24);addEventListener('scroll',syncHeader,{passive:true});syncHeader();
+    const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;if(!reduced&&'IntersectionObserver'in window){const io=new IntersectionObserver(entries=>{entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('is-visible');io.unobserve(entry.target)}})},{threshold:.16,rootMargin:'0px 0px -5% 0px'});document.querySelectorAll('[data-reveal]').forEach(el=>io.observe(el));const date=document.querySelector('[data-date-reveal]');if(date){const dateIo=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){date.classList.add('is-visible');dateIo.unobserve(date)}}),{threshold:.35});dateIo.observe(date)}}else{document.querySelectorAll('[data-reveal]').forEach(el=>el.classList.add('is-visible'));const date=document.querySelector('[data-date-reveal]');if(date)date.classList.add('is-visible')}
   </script>
 </body>
 </html>
