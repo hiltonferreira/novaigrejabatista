@@ -3,8 +3,55 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Nova Igreja Batista</title>
-<meta name="description" content="Um lar de fé e acolhimento. Uma igreja que busca a santidade e o profundo relacionamento com Cristo. Nós somos a Nova Igreja Batista.">
+<title>Nova Igreja Batista - NIB | A CASA DE DEUS</title>
+<meta name="description" content="Nova Igreja Batista em Ariquemes, Rondônia. Uma igreja que vive o amor de Cristo de casa em casa. Conheça nossos cultos, células, eventos e venha nos visitar.">
+
+  <!-- SEO v152 -->
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <link rel="canonical" href="https://novaigrejabatista.com.br/">
+
+  <meta property="og:locale" content="pt_BR">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Nova Igreja Batista - NIB">
+  <meta property="og:title" content="Nova Igreja Batista - NIB | A CASA DE DEUS">
+  <meta property="og:description" content="Nova Igreja Batista em Ariquemes, Rondônia. Uma igreja que vive o amor de Cristo de casa em casa. Conheça nossos cultos, células, eventos e venha nos visitar.">
+  <meta property="og:url" content="https://novaigrejabatista.com.br/">
+  <meta property="og:image" content="https://novaigrejabatista.com.br/img/og-nova-igreja-batista.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Nova Igreja Batista - NIB | A CASA DE DEUS">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Nova Igreja Batista - NIB | A CASA DE DEUS">
+  <meta name="twitter:description" content="Nova Igreja Batista em Ariquemes, Rondônia. Conheça nossos cultos, células, eventos e venha nos visitar.">
+  <meta name="twitter:image" content="https://novaigrejabatista.com.br/img/og-nova-igreja-batista.jpg">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Church",
+    "name": "Nova Igreja Batista - NIB",
+    "alternateName": "NIB Casa de Deus",
+    "url": "https://novaigrejabatista.com.br/",
+    "logo": "https://novaigrejabatista.com.br/img/favicon-nib-512-v113.png",
+    "image": "https://novaigrejabatista.com.br/img/og-nova-igreja-batista.jpg",
+    "description": "Nova Igreja Batista em Ariquemes, Rondônia. Uma igreja que vive o amor de Cristo de casa em casa.",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Rua França, 1409 - Áreas Especiais 01",
+      "addressLocality": "Ariquemes",
+      "addressRegion": "RO",
+      "postalCode": "76870-013",
+      "addressCountry": "BR"
+    },
+    "sameAs": [
+      "https://www.instagram.com/nibcasadedeus/",
+      "https://www.facebook.com/nibcasadedeus",
+      "https://www.youtube.com/@nibcasadedeus"
+    ]
+  }
+  </script>
+
 <link rel="preload" href="fonts/NIB-Acumin-MediumItalic-v105.woff2" as="font" type="font/woff2" crossorigin="anonymous">
 <link rel="preload" href="fonts/NIB-Acumin-Bold-v105.woff2" as="font" type="font/woff2" crossorigin="anonymous">
 <link rel="preload" href="fonts/NIB-Acumin-Regular-v105.woff2" as="font" type="font/woff2" crossorigin="anonymous">
@@ -631,16 +678,56 @@ header.scrolled .nav-links{background:rgba(8,12,24,.8);box-shadow:0 10px 34px -1
 
 /* enquadramento específico — Festa da Multiplicação */
 .evento-foto.evento-multiplicacao{background-position:center bottom}
-.evento-foto.evento-multiplicacao:hover{background-position:center bottom}
+.evento-foto.evento-multiplicacao:hover{background-position:center 96%}
+/* enquadramento específico — Mulheres Virtuosas
+   Replica o recorte horizontal do formulário: a arte original (1599x600)
+   é ampliada para exibir a faixa central equivalente a 1199px de largura. */
+.evento-foto.evento-mulheres{
+  background-size:100% 100%,133.36113428% auto;
+  background-position:center center,center center;
+  background-repeat:no-repeat,no-repeat;
+}
+.evento-foto.evento-mulheres:hover{
+  background-size:100% 100%,133.36113428% auto;
+  background-position:center center,center calc(50% - 12px);
+}
+/* enquadramento específico — NXT CAMP */
+.evento-foto.evento-nxt{
+  background-position:center center,center center;
+  background-size:100% 100%,cover;
+  background-repeat:no-repeat,no-repeat;
+}
+.evento-foto.evento-nxt:hover{
+  background-position:center center,center 46%;
+}
+/* enquadramento específico — Jornada DNA */
+.evento-foto.evento-dna{
+  background-position:center center,center center;
+  background-size:100% 100%,cover;
+  background-repeat:no-repeat,no-repeat;
+}
+.evento-foto.evento-dna:hover{
+  background-position:center center,center 46%;
+}
+
 @media(max-width:760px){
   .evento-foto.evento-multiplicacao{background-position:center bottom}
-  .evento-foto.evento-multiplicacao:hover{background-position:center bottom}
+  .evento-foto.evento-multiplicacao:hover{background-position:center 96%}
+  .evento-foto.evento-mulheres{
+    background-size:100% 100%,133.36113428% auto;
+    background-position:center center,center 50%;
+  }
+  .evento-foto.evento-mulheres:hover{
+    background-size:100% 100%,133.36113428% auto;
+    background-position:center center,center calc(50% - 10px);
+  }
 }
 
 .evento .tag{display:inline-block;font-family:var(--acumin);font-size:.7rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--navy);background:var(--laranja);padding:4px 10px;border-radius:999px;margin-bottom:12px}
 .evento .date{font-family:var(--acumin);font-style:italic;font-weight:500;font-size:1.4rem;color:var(--laranja);margin-bottom:2px}
 .evento h3{font-family:var(--acumin);font-weight:700;font-size:1.7rem;color:var(--marfim);line-height:.95}
 .evento p{font-family:var(--acumin);color:var(--azul-gray);font-size:.9rem;margin-top:8px;max-width:44ch}
+.evento-mulheres p{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;line-height:1.35;max-height:2.7em}
 .contrib-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
 .pix-card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:38px}
 .pix-copy{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;max-width:220px;margin:18px auto 0;
@@ -1059,7 +1146,9 @@ footer a[href*="instagram.com/hilton.cmferreira"]:hover{color:var(--laranja)}
   }
   .evento.tap-active::before{width:100%}
   .evento-foto.tap-active{background-position:center 26%}
-  .evento-foto.evento-multiplicacao.tap-active{background-position:center bottom}
+  .evento-foto.evento-multiplicacao.tap-active{background-position:center 96%}
+  .evento-foto.evento-mulheres.tap-active{background-position:center center,center 46%}
+  .evento-foto.evento-dna.tap-active{transform:translateY(-3px);box-shadow:0 18px 38px rgba(0,0,0,.24)}
 
   .video.tap-active{
     transform:translateY(-5px);
@@ -1370,11 +1459,805 @@ footer a[href*="instagram.com/hilton.cmferreira"]:hover{color:var(--laranja)}
   }
 }
 
+
+
+/* ===== Restauração tipográfica desktop v141 =====
+   Reproduz explicitamente o estado visual anterior ao upload das fontes v105:
+   no desktop, a família NIB Acumin v105 não existia no servidor e o navegador
+   utilizava o fallback system-ui. */
+@media (min-width:821px){
+  :root{
+    --display:system-ui,-apple-system,"Segoe UI",sans-serif;
+    --editorial:system-ui,-apple-system,"Segoe UI",sans-serif;
+    --body:system-ui,-apple-system,"Segoe UI",sans-serif;
+    --acumin:system-ui,-apple-system,"Segoe UI",sans-serif;
+  }
+}
+
+
+
+/* ===== v142 — preserva o estilo editorial também no mobile =====
+   A regra mobile geral força NIB Acumin Mobile v124 em body *.
+   Aqui devolvemos somente os destaques .editorial ao mesmo fallback
+   usado no desktop, preservando o restante da tipografia mobile. */
+@media (max-width:820px){
+  .editorial{
+    font-family:system-ui,-apple-system,"Segoe UI",sans-serif!important;
+  }
+}
+
+
+
+/* ===== v143 — comparador editorial multiplataforma ===== */
+.editorial-font-test{
+  position:fixed;left:10px;right:10px;bottom:10px;z-index:999999;
+  max-height:72vh;overflow:auto;padding:12px;border-radius:12px;
+  background:rgba(5,7,14,.96);color:#fff;
+  box-shadow:0 12px 40px rgba(0,0,0,.4);
+  font-family:Arial,sans-serif;
+}
+.editorial-font-test[hidden]{display:none}
+.editorial-font-test h3{margin:0 0 8px;font:700 13px/1.2 Arial,sans-serif;color:#ff7f40}
+.editorial-font-test .eft-row{margin:7px 0;padding:8px 10px;background:#efefe7;color:#ff7f40;border-radius:7px}
+.editorial-font-test .eft-label{display:block;margin-bottom:3px;font:700 10px/1 Arial,sans-serif;color:#333}
+.editorial-font-test .eft-word{font-size:36px;line-height:1;font-weight:500;font-style:italic;letter-spacing:-.01em}
+.editorial-font-test button{margin-top:8px;padding:7px 12px;border:0;border-radius:7px;font:700 12px Arial,sans-serif;cursor:pointer}
+
+
+
+/* ===== v147 — reenquadramento responsivo real do header =====
+   Em telas intermediárias, mantém o menu desktop, mas reduz
+   proporcionalmente o menu central e os dois botões laterais. */
+
+@media (min-width:921px) and (max-width:1180px){
+  header .wrap{
+    padding-left:12px !important;
+    padding-right:12px !important;
+  }
+
+  header .nav{
+    gap:8px !important;
+    flex-wrap:nowrap !important;
+  }
+
+  /* Menu central ("suspenso") */
+  header .nav-links{
+    gap:clamp(10px,1.25vw,18px) !important;
+    padding:clamp(10px,1.05vw,13px) clamp(14px,1.8vw,22px) !important;
+    flex:0 1 auto !important;
+    min-width:0 !important;
+    white-space:nowrap !important;
+  }
+
+  header .nav-links a{
+    font-size:clamp(.68rem,.74vw,.80rem) !important;
+    white-space:nowrap !important;
+  }
+
+  /* Botões laterais */
+  header .nav > .nav-cta{
+    height:clamp(44px,4.5vw,54px) !important;
+    min-height:0 !important;
+    padding:0 clamp(.85em,1.2vw,1.25em) !important;
+    font-size:clamp(.68rem,.76vw,.80rem) !important;
+    line-height:1 !important;
+    white-space:nowrap !important;
+    flex:0 0 auto !important;
+  }
+
+  header .nav > .nav-cta-alt{
+    margin-right:4px !important;
+  }
+
+  /* Economiza largura sem remover a identidade visual */
+  .logo-full .lf-mark{
+    height:34px !important;
+  }
+  .logo-full .lf-text{
+    height:25px !important;
+    max-width:145px !important;
+  }
+}
+
+/* Faixa mais apertada: reduz também o texto estendido da marca. */
+@media (min-width:921px) and (max-width:1050px){
+  .logo-full .lf-text{
+    opacity:0 !important;
+    max-width:0 !important;
+    width:0 !important;
+    margin-left:-10px !important;
+    transform:translateX(-10px) !important;
+    overflow:hidden !important;
+  }
+
+  header .nav-links{
+    gap:9px !important;
+    padding:10px 13px !important;
+  }
+
+  header .nav-links a{
+    font-size:.66rem !important;
+  }
+
+  header .nav > .nav-cta{
+    height:44px !important;
+    padding:0 .82em !important;
+    font-size:.66rem !important;
+  }
+}
+
+/* Próximo ao breakpoint mobile: compactação máxima sem quebrar textos. */
+@media (min-width:921px) and (max-width:980px){
+  header .wrap{
+    padding-left:8px !important;
+    padding-right:8px !important;
+  }
+
+  header .nav{
+    gap:5px !important;
+  }
+
+  header .nav-links{
+    gap:7px !important;
+    padding:9px 10px !important;
+  }
+
+  header .nav-links a{
+    font-size:.62rem !important;
+  }
+
+  header .nav > .nav-cta{
+    height:42px !important;
+    padding:0 .68em !important;
+    font-size:.62rem !important;
+  }
+}
+
+
+
+/* ===== v148 — hero wide + CTAs sem quebra ===== */
+
+/* Mantém os dois CTAs do topo sempre em uma linha nas faixas intermediárias. */
+@media (min-width:921px) and (max-width:1280px){
+  header .nav > .nav-cta{
+    white-space:nowrap !important;
+    min-width:max-content !important;
+    width:auto !important;
+    flex:0 0 auto !important;
+    line-height:1 !important;
+  }
+
+  header .nav > .nav-cta-alt{
+    padding-left:clamp(.75em,1vw,1.05em) !important;
+    padding-right:clamp(.75em,1vw,1.05em) !important;
+  }
+
+  header .nav > .btn-hero-visitar{
+    padding-left:clamp(.85em,1.05vw,1.15em) !important;
+    padding-right:clamp(.85em,1.05vw,1.15em) !important;
+  }
+}
+
+/* Em telas mais largas/zoom reduzido, preserva melhor o conteúdo da imagem do hero. */
+@media (min-width:1360px){
+  .hero .photo,
+  .hero .photo::before{
+    background-size:100% auto !important;
+    background-position:center top !important;
+  }
+}
+
+/* Em telas muito largas, limita o crescimento do recorte vertical. */
+@media (min-width:1600px){
+  .hero .photo,
+  .hero .photo::before{
+    background-size:auto 100% !important;
+    background-position:center top !important;
+  }
+}
+
+
+
+/* ===== v149 — header desktop mais compacto e sem quebra =====
+   Aplica também quando o navegador está com zoom reduzido, situação em que
+   a viewport CSS fica maior e os breakpoints intermediários deixam de entrar. */
+@media (min-width:821px){
+
+  header .nav{
+    gap:10px !important;
+    flex-wrap:nowrap !important;
+  }
+
+  /* Menu suspenso central */
+  header .nav-links{
+    gap:18px !important;
+    padding:11px 22px !important;
+    flex:0 1 auto !important;
+    min-width:0 !important;
+    white-space:nowrap !important;
+  }
+
+  header .nav-links a{
+    font-size:.78rem !important;
+    line-height:1 !important;
+    white-space:nowrap !important;
+  }
+
+  /* CTAs do topo */
+  header .nav > .nav-cta{
+    height:52px !important;
+    width:auto !important;
+    min-width:max-content !important;
+    padding:0 1.05em !important;
+    font-size:.78rem !important;
+    line-height:1 !important;
+    white-space:nowrap !important;
+    flex:0 0 auto !important;
+  }
+
+  header .nav > .nav-cta-alt{
+    margin-right:4px !important;
+  }
+}
+
+/* Em desktops mais estreitos, comprime um pouco mais sem quebrar texto. */
+@media (min-width:821px) and (max-width:1180px){
+  header .nav{gap:7px !important}
+
+  header .nav-links{
+    gap:12px !important;
+    padding:10px 16px !important;
+  }
+
+  header .nav-links a{
+    font-size:.72rem !important;
+  }
+
+  header .nav > .nav-cta{
+    height:48px !important;
+    padding:0 .90em !important;
+    font-size:.72rem !important;
+  }
+}
+
+
+
+/* ===== v150 — restaura preenchimento total do hero =====
+   O v148 usou 100% auto / auto 100% em telas wide, o que podia deixar
+   a base da seção sem cobertura. Mantemos cover e ajustamos apenas o enquadramento. */
+@media (min-width:821px){
+  .hero .photo,
+  .hero .photo::before{
+    background-size:cover !important;
+    background-position:center top !important;
+  }
+}
+
+/* Em telas muito largas, desloca levemente o enquadramento sem perder cobertura. */
+@media (min-width:1360px){
+  .hero .photo,
+  .hero .photo::before{
+    background-size:cover !important;
+    background-position:center 8% !important;
+  }
+}
+
+
+
+/* ===== v151 — proporção do menu + preservação do lado direito do hero ===== */
+
+/* Desktop: menu suspenso com altura visual compatível com os CTAs laterais. */
+@media (min-width:821px){
+  header .nav-links{
+    min-height:52px !important;
+    padding:0 26px !important;
+    gap:20px !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    box-sizing:border-box !important;
+  }
+
+  header .nav-links a{
+    font-size:.78rem !important;
+    line-height:1 !important;
+  }
+
+  header .nav > .nav-cta{
+    height:52px !important;
+    font-size:.78rem !important;
+  }
+}
+
+/* Faixa intermediária: compacta largura, mas mantém a mesma altura visual. */
+@media (min-width:821px) and (max-width:1180px){
+  header .nav-links{
+    min-height:48px !important;
+    padding:0 18px !important;
+    gap:14px !important;
+  }
+
+  header .nav-links a{
+    font-size:.72rem !important;
+  }
+
+  header .nav > .nav-cta{
+    height:48px !important;
+    font-size:.72rem !important;
+  }
+}
+
+/* Hero: preservar o conteúdo da direita e aceitar o corte do lado esquerdo. */
+@media (min-width:821px){
+  .hero .photo,
+  .hero .photo::before{
+    background-size:cover !important;
+    background-position:right top !important;
+  }
+}
+
+/* Em telas wide/zoom reduzido, ancora ainda mais o enquadramento no lado direito. */
+@media (min-width:1360px){
+  .hero .photo,
+  .hero .photo::before{
+    background-size:cover !important;
+    background-position:100% 8% !important;
+  }
+}
+
+
+/* v232 — Eventos: refinamento exclusivo para celular */
+@media(max-width:760px){
+  #eventos .ev-grid{gap:18px;margin-top:36px}
+  #eventos .evento{min-height:230px;border-radius:14px}
+  #eventos .evento .cont{padding:22px}
+  #eventos .evento .tag{margin-bottom:9px;font-size:.66rem;padding:4px 9px}
+  #eventos .evento .date{font-size:1.22rem;line-height:1.08;margin-bottom:5px}
+  #eventos .evento h3{font-size:1.52rem;line-height:1.02}
+  #eventos .evento p{font-size:.86rem;line-height:1.42;margin-top:7px}
+
+  /* Mulheres Virtuosas: a arte passa a preencher toda a altura do card.
+     Mantém o recorte central e elimina a faixa vazia que aparecia no topo. */
+  #eventos .evento-foto.evento-mulheres{
+    background-size:100% 100%,auto 100%;
+    background-position:center center,center center;
+    background-repeat:no-repeat,no-repeat;
+  }
+  #eventos .evento-foto.evento-mulheres:hover,
+  #eventos .evento-foto.evento-mulheres.tap-active{
+    background-size:100% 100%,auto 106%;
+    background-position:center center,center 46%;
+  }
+}
 </style>
 <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-nib-16-v113.png">
 <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-nib-32-v113.png">
 <link rel="icon" type="image/png" sizes="48x48" href="img/favicon-nib-48-v113.png">
 <link rel="apple-touch-icon" sizes="180x180" href="img/favicon-nib-180-v113.png">
+<style>
+
+/* ===== v164 — Jornada DNA integrada ao padrão do site ===== */
+#jornada-dna{position:relative;isolation:isolate;padding:80px 0;scroll-margin-top:124px;background:radial-gradient(120% 90% at 15% 0%,#0d3a7a 0%,transparent 55%),linear-gradient(160deg,#041e42 0%,#03152f 60%,#020c1e 100%);border-top:1px solid rgba(235,235,223,.12);border-bottom:1px solid rgba(235,235,223,.12)}
+#jornada-dna .dna-grid{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr);gap:64px;align-items:center}
+#jornada-dna .eyebrow{display:block;margin-bottom:16px}
+#jornada-dna .h-sec{margin-bottom:20px;line-height:1.06}
+#jornada-dna .h-sec .editorial{color:var(--laranja)}
+#jornada-dna .lead{color:var(--marfim);max-width:48ch;line-height:1.6}
+#jornada-dna .dna-enrollment{padding-left:32px;border-left:1px solid rgba(235,235,223,.22)}
+#jornada-dna .dna-status{display:block;color:#fff;font-family:var(--acumin);font-size:1.2rem;font-weight:700;line-height:1.4;margin-bottom:12px}
+#jornada-dna .dna-enrollment p{font-family:var(--acumin);font-size:1.08rem;line-height:1.6;color:var(--marfim);margin:0 0 20px;max-width:36ch}
+#jornada-dna .dna-cta{justify-content:center;text-align:center;min-height:48px;white-space:normal}
+#jornada-dna .dna-cta:focus-visible,.hero-dna-cta:focus-visible{outline:3px solid var(--marfim);outline-offset:5px}
+#jornada-dna .dna-modules{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));list-style:none;gap:0;margin:42px 0 0;padding:0}
+#jornada-dna .dna-modules li{position:relative;min-width:0;padding-right:18px}
+#jornada-dna .dna-modules li:not(:last-child)::after{content:"";position:absolute;left:44px;right:0;top:21px;height:1px;background:rgba(235,235,223,.25)}
+#jornada-dna .dna-module-number{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;width:44px;height:44px;border:1px solid rgba(255,127,64,.55);border-radius:50%;background:#041e42;color:var(--laranja);font-size:.8rem;font-weight:600;margin-bottom:12px}
+#jornada-dna .dna-module-name{display:block;color:var(--marfim);font-size:1.125rem;font-weight:600;line-height:1.4}
+@media(max-width:920px){#jornada-dna{padding:60px 0;scroll-margin-top:112px}#jornada-dna .dna-grid{grid-template-columns:1fr;gap:24px}#jornada-dna .dna-enrollment{padding:0;border:0}#jornada-dna .dna-enrollment p{max-width:48ch}#jornada-dna .dna-modules{margin-top:32px}}
+@media(max-width:540px){#jornada-dna .dna-modules{grid-template-columns:1fr;gap:0}#jornada-dna .dna-modules li{display:grid;grid-template-columns:44px minmax(0,1fr);gap:16px;align-items:center;padding:0 0 20px}#jornada-dna .dna-modules li:last-child{padding-bottom:0}#jornada-dna .dna-module-number{margin:0}#jornada-dna .dna-modules li:not(:last-child)::after{left:21px;right:auto;top:44px;width:1px;height:20px}#jornada-dna .dna-module-name{font-size:1.05rem}#jornada-dna .dna-cta{width:auto;max-width:100%;padding:.9em 1.6em}}
+
+/* Same font tokens as the existing site; mobile v124 override remains in effect. */
+#jornada-dna{font-family:var(--acumin)}
+#jornada-dna .dna-no-break{white-space:nowrap}
+#jornada-dna .dna-module-number{padding:0;font-family:inherit;line-height:1;cursor:pointer;appearance:none;transition:transform .22s,background .22s,color .22s,box-shadow .22s,border-color .22s}
+#jornada-dna .dna-module-number:focus-visible{outline:3px solid var(--marfim);outline-offset:4px}
+@media(hover:hover){#jornada-dna .dna-module-number:hover{transform:scale(1.1);background:#fff;color:#041e42;border-color:#fff;box-shadow:0 0 0 6px rgba(255,255,255,.15)}}
+#jornada-dna .dna-module-number.is-animated{animation:dna-number-pulse .6s ease-out;background:#fff;color:#041e42;border-color:#fff}
+@keyframes dna-number-pulse{0%{transform:scale(1);box-shadow:0 0 0 0 rgba(255,255,255,.35)}45%{transform:scale(1.13)}100%{transform:scale(1);box-shadow:0 0 0 12px rgba(255,255,255,0)}}
+@media(prefers-reduced-motion:reduce){#jornada-dna .dna-module-number{transition:none}#jornada-dna .dna-module-number.is-animated{animation:none}#jornada-dna .dna-module-number:hover{transform:none}}
+
+/* v164 — three balanced CTAs share the schedule card's available width. */
+#top .hero-cta,#top .hero-hours{width:100%;max-width:740px;box-sizing:border-box}
+#top .hero-cta .btn{min-width:0;min-height:56px;box-sizing:border-box;justify-content:center;text-align:center}
+#top .hero-dna-action{position:relative;min-width:0}
+#top .hero-dna-status{position:absolute;bottom:calc(100% + 8px);left:0;width:100%;text-align:center;color:#fff;font-family:var(--acumin);font-size:.75rem;font-weight:500;line-height:1.3}
+.hero-dna-cta{display:flex;align-items:center;width:100%;border:1px solid #fff;border-radius:999px;background:#fff;color:var(--navy);line-height:1.25}
+.hero-dna-cta:hover,.hero-dna-cta:focus-visible,.hero-dna-cta:active{background:var(--laranja);border-color:var(--laranja);color:var(--navy)}
+@media(min-width:921px){
+  #top .hero-cta{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.12fr) minmax(0,1fr);gap:10px;align-items:stretch}
+  #top .hero-cta .btn{width:100%;max-width:none;margin:0;padding:10px 12px;font-size:.78rem;letter-spacing:.02em;white-space:normal;line-height:1.25}
+}
+@media(max-width:920px){
+  #top .hero-cta .btn{font-size:.9rem}
+  #top .hero-dna-action{width:100%;max-width:340px;margin-top:8px}
+  #top .hero-dna-status{position:static;display:block;margin-bottom:8px}
+  .hero-dna-cta{padding:10px 20px}
+}
+#jornada-dna .lead{max-width:56ch}
+
+
+/* v172 — open editorial phone layout, matching the site's existing timeline. */
+@media(max-width:820px){
+  #jornada-dna{padding:48px 0;scroll-margin-top:132px}
+  #jornada-dna>.wrap{display:flex;flex-direction:column;gap:28px}
+  #jornada-dna .dna-grid{display:contents}
+  #jornada-dna .dna-grid>div:first-child{order:0;min-width:0}
+  #jornada-dna .eyebrow{font-size:.7rem;letter-spacing:.22em;margin-bottom:12px}
+  #jornada-dna .h-sec{font-size:clamp(2rem,8vw,2.5rem);line-height:1.12;margin:0 0 18px}
+  #jornada-dna .lead{font-size:1rem;line-height:1.6;max-width:none;margin:0}
+  #jornada-dna .dna-modules{order:1;display:grid;grid-template-columns:1fr;gap:0;margin:0;padding:0}
+  #jornada-dna .dna-modules li{display:grid;grid-template-columns:44px minmax(0,1fr);align-items:center;gap:18px;min-width:0;padding:0 0 12px;border:0;border-radius:0;background:none}
+  #jornada-dna .dna-modules li:last-child{padding-bottom:0}
+  #jornada-dna .dna-modules li:not(:last-child)::after{display:block;left:21px;right:auto;top:44px;width:1px;height:12px;background:rgba(235,235,223,.22)}
+  #jornada-dna .dna-module-number{width:44px;height:44px;margin:0;font-size:.8rem}
+  #jornada-dna .dna-module-name{font-size:1.05rem;font-weight:500;line-height:1.3}
+  #jornada-dna .dna-enrollment{order:2;padding:24px 0 0;border:0;border-top:1px solid rgba(235,235,223,.2);border-radius:0;background:none}
+  #jornada-dna .dna-status{font-size:1.15rem;line-height:1.3;font-weight:600;margin-bottom:10px;color:#fff}
+  #jornada-dna .dna-enrollment p{font-size:1rem;line-height:1.5;max-width:none;margin:0 0 20px}
+  #jornada-dna .dna-cta{display:flex;width:100%;max-width:100%;box-sizing:border-box;align-items:center;justify-content:center;text-align:center;min-height:50px;margin:0 auto;padding:13px 24px;font-size:.9rem;line-height:1.3;letter-spacing:.025em;background:#fff;border-color:#fff;color:var(--navy)}
+  #jornada-dna .dna-cta:hover,#jornada-dna .dna-cta:focus-visible,#jornada-dna .dna-cta:active{background:var(--laranja);border-color:var(--laranja);color:var(--navy)}
+}
+
+/* v174 — matching white registration button on all screen sizes. */
+#jornada-dna .dna-cta{font-family:var(--acumin);font-weight:600;border:1px solid #fff;border-radius:999px;background:#fff;color:var(--navy)}
+#jornada-dna .dna-cta:hover,#jornada-dna .dna-cta:focus-visible,#jornada-dna .dna-cta:active{background:var(--laranja);border-color:var(--laranja);color:var(--navy)}
+
+/* v177 — content-sized section CTA on desktop; full width on phones. */
+@media(min-width:821px){#jornada-dna .dna-cta{display:inline-flex;width:auto;max-width:100%;padding:14px 26px;min-height:50px}}
+
+/* v179 — same background and warm lighting as the Construction section. */
+#jornada-dna::before{content:"";position:absolute;top:0;right:0;width:50%;height:100%;pointer-events:none;background:radial-gradient(circle at 80% 40%,rgba(255,127,64,.12) 0%,transparent 60%)}
+#jornada-dna>.wrap{position:relative;z-index:1}
+
+/* v185 — keep each date with its label and restore the invitation above. */
+#jornada-dna .dna-enrollment>p:not(.dna-dates){margin-bottom:12px}
+#jornada-dna .dna-enrollment .dna-dates{display:flex;flex-direction:column;gap:4px;font-size:.95rem;line-height:1.5;margin:0 0 22px;max-width:none}
+#jornada-dna .dna-dates>span{display:block}
+#jornada-dna .dna-dates strong{white-space:nowrap}
+
+/* v8.9 — CTA do carrossel no mesmo padrão cromático dos demais botões */
+.event-carousel-section .mv-event-cta{
+  transition:background-color .22s ease,border-color .22s ease,color .22s ease,transform .22s ease!important;
+}
+.event-carousel-section .mv-event-cta:hover,
+.event-carousel-section .mv-event-cta:focus-visible,
+.event-carousel-section .mv-event-cta:active{
+  background:var(--laranja)!important;
+  border-color:var(--laranja)!important;
+  color:var(--navy)!important;
+}
+.event-carousel-section .mv-event-cta:focus-visible{
+  outline:3px solid rgba(255,255,255,.78)!important;
+  outline-offset:4px!important;
+}
+</style>
+<link rel="stylesheet" href="assets/secao-mulheres-v199.css">
+<link rel="stylesheet" href="assets/secao-eventos-carousel-v2.css">
+<link rel="stylesheet" href="assets/hero-cta-v200.css">
+<style>
+/* v4 — ajustes finais do carrossel de eventos */
+.event-carousel-controls{
+  width:100%;
+  box-sizing:border-box;
+}
+.event-carousel-dots{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:8px!important;
+  width:fit-content!important;
+  max-width:100%!important;
+  margin:14px auto 0!important;
+  padding:4px!important;
+  border:1px solid rgba(235,235,223,.16)!important;
+  border-radius:999px!important;
+  background:rgba(3,21,47,.28)!important;
+  box-sizing:border-box!important;
+}
+.event-carousel-dot{
+  position:relative!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  flex:0 0 auto!important;
+  width:auto!important;
+  min-width:0!important;
+  height:34px!important;
+  margin:0!important;
+  padding:0 16px!important;
+  border:0!important;
+  border-radius:999px!important;
+  background:transparent!important;
+  color:rgba(235,235,223,.56)!important;
+  font-family:var(--acumin)!important;
+  font-size:.66rem!important;
+  font-weight:700!important;
+  line-height:1!important;
+  letter-spacing:.045em!important;
+  text-transform:uppercase!important;
+  white-space:nowrap!important;
+  box-shadow:none!important;
+  box-sizing:border-box!important;
+  overflow:visible!important;
+  transition:background .2s,border-color .2s,color .2s!important;
+}
+.event-carousel-dot::before,.event-carousel-dot::after{content:none!important;display:none!important}
+.event-carousel-dot.is-active,.event-carousel-dot[aria-current="true"],.event-carousel-dot[aria-current="page"]{
+  background:#ebe8df!important;
+  color:#041e42!important;
+  border:0!important;
+}
+.event-carousel-dot:hover{color:#fff!important;border:0!important;background:transparent!important;transform:none!important}
+.event-carousel-dot.is-active:hover,.event-carousel-dot[aria-current="true"]:hover,.event-carousel-dot[aria-current="page"]:hover{background:#ebe8df!important;color:#041e42!important}
+
+/* Jornada DNA — arte preenche corretamente o card sem deformar */
+.jornada-event-art{
+  position:relative!important;
+  overflow:hidden!important;
+  background:#041e42 url('img/eventos/jornada-dna.webp') center center / cover no-repeat!important;
+}
+.jornada-event-art img{
+  position:absolute!important;
+  inset:0!important;
+  display:block!important;
+  width:100%!important;
+  height:100%!important;
+  max-width:none!important;
+  object-fit:cover!important;
+  object-position:center!important;
+  opacity:0!important;
+  transform:none!important;
+}
+
+/* NXT CAMP — banner oficial dentro do card */
+.nxt-event-art{
+  position:relative!important;
+  display:block!important;
+  overflow:hidden!important;
+  background:#ef7d12!important;
+}
+.nxt-event-art::before,
+.nxt-event-art::after{content:none!important;display:none!important}
+.nxt-event-banner{
+  position:absolute!important;
+  inset:-1px!important;
+  display:block!important;
+  width:calc(100% + 2px)!important;
+  height:calc(100% + 2px)!important;
+  max-width:none!important;
+  object-fit:cover!important;
+  object-position:43% center!important;
+  transform:none!important;
+  opacity:1!important;
+}
+
+/* mesmo banner oficial no card de eventos menores */
+.evento-foto.evento-nxt{
+  background-image:
+    linear-gradient(to top,rgba(3,4,20,.96) 0%,rgba(3,4,20,.82) 38%,rgba(3,4,20,.5) 70%,rgba(3,4,20,.35) 100%),
+    url('img/eventos/nxt-camp-oficial-led-recorte-v85.png')!important;
+  background-position:center center,43% center!important;
+  background-size:100% 100%,auto 100%!important;
+  background-repeat:no-repeat,no-repeat!important;
+}
+.evento-foto.evento-nxt:hover{background-position:center center,43% center!important}
+
+/* Jornada DNA — CTA com respiro real nas laterais */
+.jornada-slide .mv-event-enrollment{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:26px!important;
+  flex-wrap:wrap!important;
+}
+.jornada-slide .mv-event-cta{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  flex:0 0 auto!important;
+  width:auto!important;
+  min-width:320px!important;
+  max-width:100%!important;
+  min-height:58px!important;
+  padding:16px 48px!important;
+  box-sizing:border-box!important;
+  white-space:nowrap!important;
+  line-height:1.15!important;
+  font-size:.9rem!important;
+  letter-spacing:.025em!important;
+}
+
+@media(max-width:760px){
+  .event-carousel-controls{margin-bottom:32px!important}
+  .event-carousel-dots{gap:6px!important;margin-top:18px!important;padding:4px!important}
+  .event-carousel-dot{height:32px!important;padding:0 11px!important;font-size:.58rem!important;letter-spacing:.035em!important}
+  .event-slide .mv-event-copy>.eyebrow{margin-top:0!important}
+  .jornada-slide .mv-event-enrollment{align-items:flex-start!important;gap:14px!important}
+  .jornada-slide .mv-event-cta{width:100%!important;min-width:0!important;min-height:52px!important;padding:14px 28px!important;font-size:.82rem!important;white-space:normal!important;text-align:center!important}
+  .nxt-event-banner{object-position:center center!important}
+}
+@media(max-width:390px){
+  .event-carousel-dots{gap:5px!important}
+  .event-carousel-dot{padding:0 9px!important;font-size:.54rem!important}
+}
+
+
+/* v8.5 — correção real do NXT CAMP: recorte simétrico + respiro mobile */
+.nxt-event-art{
+  position:relative!important;
+  aspect-ratio:2 / 1!important;
+  height:auto!important;
+  min-height:0!important;
+  overflow:hidden!important;
+  background:#041e42!important;
+}
+.nxt-event-banner{
+  position:absolute!important;
+  inset:0!important;
+  display:block!important;
+  width:100%!important;
+  height:100%!important;
+  max-width:none!important;
+  object-fit:cover!important;
+  object-position:center center!important;
+  transform:none!important;
+  opacity:1!important;
+}
+.evento-foto.evento-nxt{
+  background-image:
+    linear-gradient(to top,rgba(3,4,20,.96) 0%,rgba(3,4,20,.82) 38%,rgba(3,4,20,.5) 70%,rgba(3,4,20,.35) 100%),
+    url('img/eventos/nxt-camp-oficial-led-recorte-v85.png')!important;
+  background-position:center center,center center!important;
+  background-size:100% 100%,cover!important;
+  background-repeat:no-repeat,no-repeat!important;
+}
+.evento-foto.evento-nxt:hover{
+  background-position:center center,center center!important;
+}
+
+@media(max-width:760px){
+  .nxt-event-art{
+    width:100%!important;
+    aspect-ratio:2 / 1!important;
+    margin-bottom:0!important;
+  }
+  .nxt-event-banner{
+    inset:0!important;
+    width:100%!important;
+    height:100%!important;
+    object-fit:cover!important;
+    object-position:center center!important;
+  }
+
+  /* MENOS espaço entre o banner e o indicador */
+  .event-carousel-dots{
+    margin-top:6px!important;
+  }
+
+  /* MAIS espaço entre o indicador e o conteúdo textual abaixo */
+  .event-carousel-controls{
+    margin-bottom:44px!important;
+  }
+
+  .nxt-event-copy{
+    padding-top:0!important;
+  }
+  .event-slide .nxt-event-copy>.eyebrow{
+    margin-top:0!important;
+    margin-bottom:10px!important;
+  }
+  .nxt-event-copy h2{
+    margin-top:0!important;
+  }
+}
+@media(max-width:390px){
+  .event-carousel-dots{margin-top:5px!important}
+  .event-carousel-controls{margin-bottom:30px!important}
+}
+
+
+/* v8.8 — título NXT CAMP no padrão dos eventos */
+.nxt-event-copy h2 .editorial{color:var(--laranja)!important}
+
+/* v8.7 — respiro real entre o indicador e o texto no mobile */
+@media(max-width:760px){
+  .event-slide.is-active .mv-event-copy{
+    margin-top:18px!important;
+    padding-top:0!important;
+  }
+}
+@media(max-width:390px){
+  .event-slide.is-active .mv-event-copy{
+    margin-top:18px!important;
+  }
+}
+
+
+
+/* v9.0 — refinamento mobile do carrossel: status centralizado + ritmo de texto uniforme */
+@media(max-width:760px){
+  /* A Jornada tinha um override próprio alinhando o bloco à esquerda.
+     Volta ao mesmo eixo central usado pelos demais eventos. */
+  .event-carousel-section .jornada-slide .mv-event-enrollment{
+    align-items:center!important;
+  }
+  .event-carousel-section .jornada-slide .mv-event-status{
+    align-self:center!important;
+    text-align:center!important;
+  }
+
+  /* Padroniza o espaço entre título, descrição e detalhes em todos os slides. */
+  .event-carousel-section .mv-event-copy h2{
+    margin-top:0!important;
+    margin-bottom:12px!important;
+  }
+  .event-carousel-section .mv-event-copy>.lead{
+    margin-top:0!important;
+    margin-bottom:24px!important;
+  }
+}
+
+@media(max-width:390px){
+  .event-carousel-section .mv-event-copy h2{
+    margin-bottom:10px!important;
+  }
+  .event-carousel-section .mv-event-copy>.lead{
+    margin-bottom:22px!important;
+  }
+}
+
+</style>
+
+<style>
+/* v9.1 — correção efetiva do alinhamento e espaçamento no mobile */
+@media (max-width:760px){
+  /* Todos os textos de status ocupam a largura do bloco e ficam realmente centralizados. */
+  .mv-event-section .event-slide .mv-event-enrollment{
+    width:100%!important;
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:center!important;
+    justify-content:flex-start!important;
+    gap:14px!important;
+  }
+  .mv-event-section .event-slide .mv-event-status{
+    display:block!important;
+    width:100%!important;
+    margin:0!important;
+    text-align:center!important;
+    align-self:stretch!important;
+  }
+
+  /* Mesmo ritmo vertical em todos os eventos: título -> descrição -> informações. */
+  .mv-event-section .event-slide .mv-event-copy .h-sec{
+    margin-top:0!important;
+    margin-bottom:14px!important;
+  }
+  .mv-event-section .event-slide .mv-event-copy > .lead{
+    margin-top:0!important;
+    margin-bottom:26px!important;
+  }
+  .mv-event-section .event-slide .mv-event-details{
+    margin-top:0!important;
+  }
+}
+@media (max-width:390px){
+  .mv-event-section .event-slide .mv-event-copy .h-sec{margin-bottom:12px!important}
+  .mv-event-section .event-slide .mv-event-copy > .lead{margin-bottom:24px!important}
+}
+</style>
+
+<link rel="stylesheet" href="/assets/acesso-administrativo-v32.css?v=3.3">
 </head>
 <body>
 
@@ -1405,17 +2288,22 @@ footer a[href*="instagram.com/hilton.cmferreira"]:hover{color:var(--laranja)}
       <div class="mobile-menu-links">
         <a href="#sobre"><span>01</span>Sobre</a>
         <a href="#cultos"><span>02</span>Cultos</a>
-        <a href="#celulas"><span>03</span>Células</a>
-        <a href="#mensagens"><span>04</span>Mensagens</a>
-        <a href="#lideranca"><span>05</span>Liderança</a>
-        <a href="#eventos"><span>06</span>Eventos</a>
+        <a href="#jornada-dna"><span>03</span>Jornada DNA</a>
+        <a href="#celulas"><span>04</span>Células</a>
+        <a href="#mensagens"><span>05</span>Mensagens</a>
+        <a href="#lideranca"><span>06</span>Liderança</a>
+        <a href="#eventos"><span>07</span>Eventos</a>
       </div>
 
       <div class="mobile-menu-actions">
+<!-- NIB ACESSO MENU 3.3 MOBILE -->
+<a href="/inscricoes/" class="mobile-menu-cta mobile-menu-cta-admin">Área administrativa</a>
         <a href="#construcao" class="mobile-menu-cta mobile-menu-cta-alt">Construção do templo</a>
         <a href="#visite" class="mobile-menu-cta mobile-menu-cta-main btn-hero-visitar">Venha nos visitar</a>
       </div>
     </nav>
+    <!-- NIB ACESSO MENU 3.3 DESKTOP -->
+<a href="/inscricoes/" class="nav-cta nav-cta-admin">Área administrativa</a>
     <a href="#construcao" class="nav-cta nav-cta-alt">Construção do templo</a>
     <a href="#visite" class="nav-cta btn-hero-visitar">Venha nos visitar</a>
     <button class="burger" id="burger" aria-label="Abrir menu"><span></span><span></span><span></span></button>
@@ -1432,6 +2320,9 @@ footer a[href*="instagram.com/hilton.cmferreira"]:hover{color:var(--laranja)}
     <div class="hero-cta">
       <a href="#sobre" class="btn btn-ghost">Conhecer a igreja</a>
       <a href="#celulas" class="btn btn-cell btn-encontre-celula">Encontre uma célula</a>
+      <div class="hero-dna-action">
+                <a class="btn hero-dna-cta" href="https://forms.gle/JyDAsc7yhEciFcrU7" target="_blank" rel="noopener noreferrer" aria-label="Inscreva-se na jornada dna (abre em nova aba)">Inscreva-se na jornada dna</a>
+      </div>
     </div>
     <div class="hero-hours">
       <div class="hh-head"><span class="eyebrow">Venha celebrar</span></div>
@@ -1466,6 +2357,70 @@ footer a[href*="instagram.com/hilton.cmferreira"]:hover{color:var(--laranja)}
     </div>
   </div>
 </div>
+
+<section id="mulheres-virtuosas" class="mv-event-section event-carousel-section" aria-label="Eventos em destaque">
+  <div class="event-carousel-viewport" data-event-carousel tabindex="0" aria-roledescription="carrossel" aria-label="Eventos em destaque">
+    <article class="event-slide is-active" data-event-slide aria-hidden="false" aria-label="1 de 3 · NXT CAMP 2026">
+      <div class="wrap mv-event-grid">
+        <a class="nxt-event-art" href="next/camp-sbgp1-nov26/" aria-label="Conheça e inscreva-se no NXT CAMP 2026">
+          <img class="nxt-event-banner" src="img/eventos/nxt-camp-oficial-led-recorte-v85.png" alt="NXT CAMP 2026 — 21 e 22 de novembro" width="1440" height="720" loading="eager">
+        </a>
+        <div class="mv-event-copy nxt-event-copy">
+          <span class="eyebrow">Acampamento dos Adolescentes</span>
+          <h2 class="h-sec">NXT <span class="editorial">CAMP</span> · 2026</h2>
+          <p class="lead">Dois dias de palavra, worship, comunhão e experiências para adolescentes de 12 a 17 anos.</p>
+          <dl class="mv-event-details">
+            <div><dt>Data</dt><dd>21 e 22 de novembro</dd></div>
+            <div><dt>Inscrição</dt><dd>R$ 80 por participante</dd></div>
+          </dl>
+          <div class="mv-event-enrollment"><span class="mv-event-status">Inscrições abertas!</span><a class="btn mv-event-cta" href="next/camp-sbgp1-nov26/">EU VOU PRO NXT CAMP</a></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="event-slide" data-event-slide aria-hidden="true" aria-label="2 de 3 · Mulheres Virtuosas">
+      <div class="wrap mv-event-grid">
+        <a class="mv-event-art" href="mulheres-virtuosas.html" aria-label="Conheça e inscreva-se no Mulheres Virtuosas"><img src="img/eventos/mulheres-virtuosas-2026.webp" alt="Mulheres Virtuosas com Pra. Claudiany Guedes — 30 de outubro, às 19h30" width="1599" height="600" loading="lazy"></a>
+        <div class="mv-event-copy">
+          <span class="eyebrow">Encontro de mulheres</span>
+          <h2 class="h-sec">Mulheres <span class="editorial">Virtuosas</span></h2>
+          <p class="lead">Um encontro de fé e comunhão com a Pra. Claudiany Guedes, na Nova Igreja Batista.</p>
+          <dl class="mv-event-details">
+            <div><dt>Data e horário</dt><dd>30 de outubro · 19h30</dd></div>
+            <div><dt>Inscrição</dt><dd>R$ 20 por pessoa</dd></div>
+          </dl>
+          <div class="mv-event-enrollment"><span class="mv-event-status">Inscrições abertas!</span><a class="btn mv-event-cta" href="mulheres-virtuosas.html">Inscreva-se no evento</a></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="event-slide jornada-slide" data-event-slide aria-hidden="true" aria-label="3 de 3 · Jornada DNA">
+      <div class="wrap mv-event-grid">
+        <a class="mv-event-art jornada-event-art" href="#jornada-dna" aria-label="Conheça a Jornada DNA">
+          <img src="img/eventos/jornada-dna.webp" alt="Jornada DNA — Desafiar, Nutrir e Apoiar" width="1920" height="864" loading="lazy">
+        </a>
+        <div class="mv-event-copy">
+          <span class="eyebrow">Escola de Discípulos</span>
+          <h2 class="h-sec">Jornada <span class="editorial">DNA</span></h2>
+          <p class="lead">Um caminho para crescer na fé, viver em comunidade e fazer novos discípulos.</p>
+          <dl class="mv-event-details">
+            <div><dt>Início</dt><dd>25 de outubro</dd></div>
+            <div><dt>Inscrições</dt><dd>Até 23 de outubro</dd></div>
+          </dl>
+          <div class="mv-event-enrollment"><span class="mv-event-status">Novas Turmas!</span><a class="btn mv-event-cta" href="https://forms.gle/JyDAsc7yhEciFcrU7" target="_blank" rel="noopener noreferrer" aria-label="Inscreva-se na Jornada DNA (abre em nova aba)">Inscreva-se na Jornada DNA</a></div>
+        </div>
+      </div>
+    </article>
+  </div>
+
+  <div class="event-carousel-controls" aria-label="Navegação dos eventos">
+    <div class="event-carousel-dots" role="tablist" aria-label="Selecionar evento">
+      <button class="event-carousel-dot is-active" type="button" data-event-dot aria-label="NXT CAMP 2026" aria-current="true">NXT CAMP</button>
+      <button class="event-carousel-dot" type="button" data-event-dot aria-label="Mulheres Virtuosas" aria-current="false">MULHERES</button>
+      <button class="event-carousel-dot" type="button" data-event-dot aria-label="Jornada DNA" aria-current="false">JORNADA DNA</button>
+    </div>
+  </div>
+</section>
 
 <section class="pad sobre-bg" id="sobre">
   <div class="wrap">
@@ -1515,7 +2470,7 @@ footer a[href*="instagram.com/hilton.cmferreira"]:hover{color:var(--laranja)}
       <div class="gal-stage" id="galStage">
         <div class="gal-card gal-card-video">
           <video class="gal-video" playsinline muted preload="metadata" poster="img/galeria/galeria-video-29-08-01-poster.jpg">
-            <source src="video/galeria-29-08-01.mp4" type="video/mp4">
+            <source src="video/galeria-30-08-01.mp4" type="video/mp4">
           </video>
           <div class="gal-video-controls">
             <button class="gal-vc-btn gal-video-play" aria-label="Play/Pause">
@@ -1690,6 +2645,30 @@ footer a[href*="instagram.com/hilton.cmferreira"]:hover{color:var(--laranja)}
   </div>
 </section>
 
+<section class="pad" id="jornada-dna" aria-labelledby="dna-title">
+  <div class="wrap">
+    <div class="dna-grid">
+      <div>
+        <span class="eyebrow">Formação cristã</span>
+        <h2 class="display h-sec" id="dna-title">Jornada <span class="editorial">dna</span></h2>
+        <p class="lead">Nossa Escola de Discípulos é um caminho para crescer na fé, viver em comunidade e fazer novos discípulos. DNA significa <strong>Desafiar, Nutrir e Apoiar</strong>.</p>
+      </div>
+      <div class="dna-enrollment">
+        <span class="dna-status">Inscrições abertas</span>
+        <p>Dê o próximo passo na sua formação.</p>
+        <p class="dna-dates"><span>Inscrições: até o dia <strong>23/10</strong></span><span>Início das aulas: <strong>25/10</strong></span></p>
+        <a class="btn hero-dna-cta dna-cta" href="https://forms.gle/JyDAsc7yhEciFcrU7" target="_blank" rel="noopener noreferrer" aria-label="Inscreva-se na jornada dna (abre em nova aba)">Inscreva-se na jornada dna</a>
+      </div>
+    </div>
+    <ol class="dna-modules" aria-label="Módulos da Jornada DNA">
+      <li><button type="button" class="dna-module-number" aria-label="Etapa 1: Descubra">01</button><span class="dna-module-name">Descubra</span></li>
+      <li><button type="button" class="dna-module-number" aria-label="Etapa 2: Cresça 1">02</button><span class="dna-module-name">Cresça 1</span></li>
+      <li><button type="button" class="dna-module-number" aria-label="Etapa 3: Cresça 2">03</button><span class="dna-module-name">Cresça 2</span></li>
+      <li><button type="button" class="dna-module-number" aria-label="Etapa 4: Formação DNA">04</button><span class="dna-module-name">Formação DNA</span></li>
+    </ol>
+  </div>
+</section>
+
 <section class="pad" id="celulas">
   <div class="wrap">
     <div class="cel-grid2">
@@ -1699,7 +2678,7 @@ footer a[href*="instagram.com/hilton.cmferreira"]:hover{color:var(--laranja)}
       <p class="lead">A célula é parte da essência de quem somos como igreja. É nos lares que a fé encontra espaço para ser vivida de perto!<br><br>Tem uma célula perto de você. Venha viver igreja com a gente!</p>
       <div class="cel-total">
         <div class="ct-badge">
-          <span class="ct-num" data-target="26">1</span>
+          <span class="ct-num" data-target="25">1</span>
         </div>
         <div class="ct-info">
           <span class="ct-label">células ativas</span>
@@ -1728,7 +2707,7 @@ footer a[href*="instagram.com/hilton.cmferreira"]:hover{color:var(--laranja)}
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Rio Negro, Grandes Áreas</span></div>
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>19:30 às 21:30</span></div>
   </div>
-  <a href="https://wa.me/5569984190569?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Casa%20de%20Semeador." target="_blank" rel="noopener" class="mc-wpp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg>Falar no WhatsApp</a>
+  <a href="https://wa.me/5569984190569?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Casa%20de%20Semeador." target="_blank" rel="noopener" class="mc-wpp">Falar no WhatsApp</a>
 </div>
 <div class="mc">
   <span class="mc-nome">Renascer</span>
@@ -1737,7 +2716,7 @@ footer a[href*="instagram.com/hilton.cmferreira"]:hover{color:var(--laranja)}
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Machado de Assis, Setor 06</span></div>
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>19:30 às 21:30</span></div>
   </div>
-  <a href="https://wa.me/556999266763?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Renascer." target="_blank" rel="noopener" class="mc-wpp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg>Falar no WhatsApp</a>
+  <a href="https://wa.me/556999266763?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Renascer." target="_blank" rel="noopener" class="mc-wpp">Falar no WhatsApp</a>
 </div>
 <div class="mc">
   <span class="mc-nome">2 ou +</span>
@@ -1746,17 +2725,17 @@ footer a[href*="instagram.com/hilton.cmferreira"]:hover{color:var(--laranja)}
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Paraná, Setor 05, ao lado do Kumon</span></div>
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>19:40 às 21:40</span></div>
   </div>
-  <a href="https://wa.me/5569984637235?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%202%20ou%20+." target="_blank" rel="noopener" class="mc-wpp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg>Falar no WhatsApp</a>
+  <a href="https://wa.me/5569984637235?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%202%20ou%20%2B." target="_blank" rel="noopener" class="mc-wpp">Falar no WhatsApp</a>
 </div>
           
 <div class="mc">
   <span class="mc-nome">A Forja</span>
   <span class="mc-lider">Líder: Jonathan</span>
   <div class="mc-rows">
-    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Presidente Prudente, 2497 · Jardim Paulista</span></div>
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Presidente Prudente, 2497, Jardim Paulista</span></div>
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>20:00 às 22:00</span></div>
   </div>
-  <a href="https://wa.me/5569992835724?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20A%20Forja." target="_blank" rel="noopener" class="mc-wpp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg>Falar no WhatsApp</a>
+  <a href="https://wa.me/5569992835724?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20A%20Forja." target="_blank" rel="noopener" class="mc-wpp">Falar no WhatsApp</a>
 </div>
 </div>
         </div>
@@ -1765,7 +2744,7 @@ footer a[href*="instagram.com/hilton.cmferreira"]:hover{color:var(--laranja)}
       <article class="day-card sticky-day" style="--i:1">
         <div class="dc-head">
           <div class="dc-head-left">
-            <span class="dc-count">20 células</span>
+            <span class="dc-count">18 células</span>
             <h3 class="dc-dia">Terça-feira</h3>
           </div>
           <div class="dc-nav">
@@ -1782,7 +2761,7 @@ footer a[href*="instagram.com/hilton.cmferreira"]:hover{color:var(--laranja)}
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Alameda Piquia, Setor 01</span></div>
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>20:00 às 22:00</span></div>
   </div>
-  <a href="https://wa.me/5569992910380?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Ágape." target="_blank" rel="noopener" class="mc-wpp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg>Falar no WhatsApp</a>
+  <a href="https://wa.me/5569992910380?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Ágape." target="_blank" rel="noopener" class="mc-wpp">Falar no WhatsApp</a>
 </div>
 <div class="mc">
   <span class="mc-nome">Boa Semente</span>
@@ -1791,7 +2770,7 @@ footer a[href*="instagram.com/hilton.cmferreira"]:hover{color:var(--laranja)}
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>AV. Capitão Silvio, Cond. Villagio Nipote</span></div>
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>19:30 às 21:30</span></div>
   </div>
-  <a href="https://wa.me/5569984133298?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Boa%20Semente." target="_blank" rel="noopener" class="mc-wpp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg>Falar no WhatsApp</a>
+  <a href="https://wa.me/5569984133298?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Boa%20Semente." target="_blank" rel="noopener" class="mc-wpp">Falar no WhatsApp</a>
 </div>
 <div class="mc">
   <span class="mc-nome">Casa de Elohim</span>
@@ -1800,7 +2779,7 @@ footer a[href*="instagram.com/hilton.cmferreira"]:hover{color:var(--laranja)}
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Aracaju, Setor 03</span></div>
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>19:30 às 21:30</span></div>
   </div>
-  <a href="https://wa.me/556992579289?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Casa%20de%20Elohim." target="_blank" rel="noopener" class="mc-wpp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg>Falar no WhatsApp</a>
+  <a href="https://wa.me/556992579289?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Casa%20de%20Elohim." target="_blank" rel="noopener" class="mc-wpp">Falar no WhatsApp</a>
 </div>
 <div class="mc">
   <span class="mc-nome">Casa de Jetro</span>
@@ -1809,7 +2788,7 @@ footer a[href*="instagram.com/hilton.cmferreira"]:hover{color:var(--laranja)}
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Rio Negro, Jardim das Palmeiras</span></div>
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>19:30 às 21:30</span></div>
   </div>
-  <a href="https://wa.me/556993228174?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Casa%20de%20Jetro." target="_blank" rel="noopener" class="mc-wpp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg>Falar no WhatsApp</a>
+  <a href="https://wa.me/556993228174?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Casa%20de%20Jetro." target="_blank" rel="noopener" class="mc-wpp">Falar no WhatsApp</a>
 </div>
 <div class="mc">
   <span class="mc-nome">Casa Emanuel</span>
@@ -1818,26 +2797,9 @@ footer a[href*="instagram.com/hilton.cmferreira"]:hover{color:var(--laranja)}
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>AV. JK, Fundo Refrigeração São Paulo</span></div>
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>19:30 às 21:30</span></div>
   </div>
-  <a href="https://wa.me/5569999966690?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Casa%20Emanuel." target="_blank" rel="noopener" class="mc-wpp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg>Falar no WhatsApp</a>
+  <a href="https://wa.me/5569999966690?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Casa%20Emanuel." target="_blank" rel="noopener" class="mc-wpp">Falar no WhatsApp</a>
 </div>
-<div class="mc">
-  <span class="mc-nome">Casa Leão de Judá</span>
-  <span class="mc-lider">Líderes: Maycon e Thais</span>
-  <div class="mc-rows">
-    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Jânio Quadros, Setor 08</span></div>
-    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>20:00 às 22:00</span></div>
-  </div>
-  <a href="https://wa.me/556992322397?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Casa%20Leão%20de%20Judá." target="_blank" rel="noopener" class="mc-wpp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg>Falar no WhatsApp</a>
-</div>
-<div class="mc">
-  <span class="mc-nome">Efatá</span>
-  <span class="mc-lider">Líderes: Eduarda e Leandro</span>
-  <div class="mc-rows">
-    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Monte Negro, Apoio Social</span></div>
-    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>20:00 às 22:00</span></div>
-  </div>
-  <a href="https://wa.me/5569992244783?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Efatá." target="_blank" rel="noopener" class="mc-wpp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg>Falar no WhatsApp</a>
-</div>
+
 <div class="mc">
   <span class="mc-nome">Filhos de Davi</span>
   <span class="mc-lider">Líderes: Fernando e Yasmin</span>
@@ -1845,7 +2807,7 @@ footer a[href*="instagram.com/hilton.cmferreira"]:hover{color:var(--laranja)}
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Maceió, Setor 03</span></div>
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>20:30 às 22:30</span></div>
   </div>
-  <a href="https://wa.me/5569984113315?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Filhos%20de%20Davi." target="_blank" rel="noopener" class="mc-wpp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg>Falar no WhatsApp</a>
+  <a href="https://wa.me/5569984113315?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Filhos%20de%20Davi." target="_blank" rel="noopener" class="mc-wpp">Falar no WhatsApp</a>
 </div>
 <div class="mc">
   <span class="mc-nome">Gênesis</span>
@@ -1854,7 +2816,7 @@ footer a[href*="instagram.com/hilton.cmferreira"]:hover{color:var(--laranja)}
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Marabá, Jardim Jorge Teixeira</span></div>
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>19:30 às 21:30</span></div>
   </div>
-  <a href="https://wa.me/5569984813665?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Gênesis." target="_blank" rel="noopener" class="mc-wpp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg>Falar no WhatsApp</a>
+  <a href="https://wa.me/5569984813665?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Gênesis." target="_blank" rel="noopener" class="mc-wpp">Falar no WhatsApp</a>
 </div>
 <div class="mc">
   <span class="mc-nome">Gileade</span>
@@ -1863,7 +2825,7 @@ footer a[href*="instagram.com/hilton.cmferreira"]:hover{color:var(--laranja)}
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Beija Flor, Setor 02</span></div>
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>19:30 às 21:30</span></div>
   </div>
-  <a href="https://wa.me/5569984110701?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Gileade." target="_blank" rel="noopener" class="mc-wpp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg>Falar no WhatsApp</a>
+  <a href="https://wa.me/5569984110701?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Gileade." target="_blank" rel="noopener" class="mc-wpp">Falar no WhatsApp</a>
 </div>
 <div class="mc">
   <span class="mc-nome">João 20</span>
@@ -1872,16 +2834,16 @@ footer a[href*="instagram.com/hilton.cmferreira"]:hover{color:var(--laranja)}
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Matão, Jardim Paulista</span></div>
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>19:30 às 21:30</span></div>
   </div>
-  <a href="https://wa.me/5569984081528?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20João%2020." target="_blank" rel="noopener" class="mc-wpp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg>Falar no WhatsApp</a>
+  <a href="https://wa.me/5569984081528?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20João%2020." target="_blank" rel="noopener" class="mc-wpp">Falar no WhatsApp</a>
 </div>
 <div class="mc">
   <span class="mc-nome">Kairós</span>
   <span class="mc-lider">Líderes: Andréia e Filipe</span>
   <div class="mc-rows">
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Natal, Setor 03</span></div>
-    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>19:30 às 21:30</span></div>
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>20:00 às 22:00</span></div>
   </div>
-  <a href="https://wa.me/5569992593087?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Kairós." target="_blank" rel="noopener" class="mc-wpp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg>Falar no WhatsApp</a>
+  <a href="https://wa.me/5569992593087?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Kairós." target="_blank" rel="noopener" class="mc-wpp">Falar no WhatsApp</a>
 </div>
 <div class="mc">
   <span class="mc-nome">Sal da Terra</span>
@@ -1890,7 +2852,7 @@ footer a[href*="instagram.com/hilton.cmferreira"]:hover{color:var(--laranja)}
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Pimenta Bueno, Setor BNH</span></div>
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>19:30 às 21:30</span></div>
   </div>
-  <a href="https://wa.me/5569984447302?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Sal%20da%20Terra." target="_blank" rel="noopener" class="mc-wpp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg>Falar no WhatsApp</a>
+  <a href="https://wa.me/5569984447302?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Sal%20da%20Terra." target="_blank" rel="noopener" class="mc-wpp">Falar no WhatsApp</a>
 </div>
 <div class="mc">
   <span class="mc-nome">Fontes de Águas Vivas</span>
@@ -1899,7 +2861,7 @@ footer a[href*="instagram.com/hilton.cmferreira"]:hover{color:var(--laranja)}
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Milão, Jardim Alvorada</span></div>
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>20:00 às 22:00</span></div>
   </div>
-  <a href="https://wa.me/556984859950?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Fontes%20de%20Águas%20Vivas." target="_blank" rel="noopener" class="mc-wpp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg>Falar no WhatsApp</a>
+  <a href="https://wa.me/556984859950?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Fontes%20de%20Águas%20Vivas." target="_blank" rel="noopener" class="mc-wpp">Falar no WhatsApp</a>
 </div>
 <div class="mc">
   <span class="mc-nome">Jeová Jireh</span>
@@ -1908,7 +2870,7 @@ footer a[href*="instagram.com/hilton.cmferreira"]:hover{color:var(--laranja)}
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Moema, Jardim Jorge Teixeira</span></div>
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>19:30 às 21:30</span></div>
   </div>
-  <a href="https://wa.me/5569984443809?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Jeová%20Jireh." target="_blank" rel="noopener" class="mc-wpp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg>Falar no WhatsApp</a>
+  <a href="https://wa.me/5569984443809?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Jeová%20Jireh." target="_blank" rel="noopener" class="mc-wpp">Falar no WhatsApp</a>
 </div>
 <div class="mc">
   <span class="mc-nome">Monte Ararate</span>
@@ -1917,7 +2879,7 @@ footer a[href*="instagram.com/hilton.cmferreira"]:hover{color:var(--laranja)}
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Tabajara, BNH</span></div>
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>20:00 às 22:00</span></div>
   </div>
-  <a href="https://wa.me/556993532978?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Monte%20Ararate." target="_blank" rel="noopener" class="mc-wpp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg>Falar no WhatsApp</a>
+  <a href="https://wa.me/556993532978?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Monte%20Ararate." target="_blank" rel="noopener" class="mc-wpp">Falar no WhatsApp</a>
 </div>
 <div class="mc">
   <span class="mc-nome">Casa de Israel</span>
@@ -1926,7 +2888,7 @@ footer a[href*="instagram.com/hilton.cmferreira"]:hover{color:var(--laranja)}
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Moema, Jardim Jorge Teixeira</span></div>
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>19:30 às 21:30</span></div>
   </div>
-  <a href="https://wa.me/5569993691157?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Casa%20de%20Israel." target="_blank" rel="noopener" class="mc-wpp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg>Falar no WhatsApp</a>
+  <a href="https://wa.me/5569993691157?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Casa%20de%20Israel." target="_blank" rel="noopener" class="mc-wpp">Falar no WhatsApp</a>
 </div>
 <div class="mc">
   <span class="mc-nome">Moriah</span>
@@ -1935,7 +2897,7 @@ footer a[href*="instagram.com/hilton.cmferreira"]:hover{color:var(--laranja)}
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Francisco Alves Pinto, Bom Jesus</span></div>
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>19:30 às 21:30</span></div>
   </div>
-  <a href="https://wa.me/556999447006?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Moriah." target="_blank" rel="noopener" class="mc-wpp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg>Falar no WhatsApp</a>
+  <a href="https://wa.me/556999447006?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Moriah." target="_blank" rel="noopener" class="mc-wpp">Falar no WhatsApp</a>
 </div>
 <div class="mc">
   <span class="mc-nome">Filhos da Promessa</span>
@@ -1944,16 +2906,16 @@ footer a[href*="instagram.com/hilton.cmferreira"]:hover{color:var(--laranja)}
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Rio Grande do Norte, Setor 05</span></div>
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>19:30 às 21:30</span></div>
   </div>
-  <a href="https://wa.me/5569992441207?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Filhos%20da%20Promessa." target="_blank" rel="noopener" class="mc-wpp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg>Falar no WhatsApp</a>
+  <a href="https://wa.me/5569992441207?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Filhos%20da%20Promessa." target="_blank" rel="noopener" class="mc-wpp">Falar no WhatsApp</a>
 </div>
 <div class="mc">
   <span class="mc-nome">Betel</span>
   <span class="mc-lider">Líder: Wiriquis</span>
   <div class="mc-rows">
-    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Castro Alves, 3652 · Setor 6</span></div>
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Castro Alves, 3652, Setor 6</span></div>
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>20:00 às 22:00</span></div>
   </div>
-  <a href="https://wa.me/556993535305?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Betel." target="_blank" rel="noopener" class="mc-wpp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg>Falar no WhatsApp</a>
+  <a href="https://wa.me/556993535305?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Betel." target="_blank" rel="noopener" class="mc-wpp">Falar no WhatsApp</a>
 </div>
           </div>
         </div>
@@ -1962,8 +2924,12 @@ footer a[href*="instagram.com/hilton.cmferreira"]:hover{color:var(--laranja)}
       <article class="day-card sticky-day" style="--i:2">
         <div class="dc-head">
           <div class="dc-head-left">
-            <span class="dc-count">1 célula</span>
+            <span class="dc-count">2 células</span>
             <h3 class="dc-dia">Quarta-feira</h3>
+          </div>
+          <div class="dc-nav">
+            <button class="dc-arrow" data-dir="-1" aria-label="Anterior">‹</button>
+            <button class="dc-arrow" data-dir="1" aria-label="Próximo">›</button>
           </div>
           
         </div>
@@ -1973,13 +2939,23 @@ footer a[href*="instagram.com/hilton.cmferreira"]:hover{color:var(--laranja)}
   <span class="mc-nome">A Grande Comissão</span>
   <span class="mc-lider">Líder: Netão</span>
   <div class="mc-rows">
-    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>AV. Hugo Fray, Cond. residencial São Paulo</span></div>
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Avenida Corbelha, 2183, Jardim Paraná</span></div>
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>20:00 às 22:00</span></div>
   </div>
-  <a href="https://wa.me/5569999631363?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20A%20Grande%20Comissão." target="_blank" rel="noopener" class="mc-wpp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg>Falar no WhatsApp</a>
+  <a href="https://wa.me/5569999631363?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20A%20Grande%20Comissão." target="_blank" rel="noopener" class="mc-wpp">Falar no WhatsApp</a>
 </div>
 
-          </div>
+          
+<div class="mc">
+  <span class="mc-nome">Casa Leão de Judá</span>
+  <span class="mc-lider">Líderes: Maycon e Thais</span>
+  <div class="mc-rows">
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Jânio Quadros, Setor 08</span></div>
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>20:00 às 22:00</span></div>
+  </div>
+  <a href="https://wa.me/556992322397?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Casa%20Leão%20de%20Judá." target="_blank" rel="noopener" class="mc-wpp">Falar no WhatsApp</a>
+</div>
+</div>
         </div>
         <div class="dc-pagination" aria-label="Paginação das células"></div>
       </article>
@@ -1998,9 +2974,9 @@ footer a[href*="instagram.com/hilton.cmferreira"]:hover{color:var(--laranja)}
   <span class="mc-lider">Líder: Eriquis</span>
   <div class="mc-rows">
     <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg><span>Rua Santa Catarina, Setor 05</span></div>
-    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>17:30 às 19:30</span></div>
+    <div class="mc-row"><svg viewBox="0 0 24 24" class="mc-ic"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.41l4 2.3-.75 1.3L11 13V7h2z"/></svg><span>17:00 às 19:00</span></div>
   </div>
-  <a href="https://wa.me/5569984082233?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Vida%20Plena." target="_blank" rel="noopener" class="mc-wpp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg>Falar no WhatsApp</a>
+  <a href="https://wa.me/5569984082233?text=Ol%C3%A1!%20Quero%20participar%20da%20c%C3%A9lula%20Vida%20Plena." target="_blank" rel="noopener" class="mc-wpp">Falar no WhatsApp</a>
 </div>
 
           </div>
@@ -2019,7 +2995,7 @@ footer a[href*="instagram.com/hilton.cmferreira"]:hover{color:var(--laranja)}
         <span class="eyebrow">NIB TV</span>
         <h2 class="display h-sec" style="margin-top:12px">Transmissões <span class="editorial">Ao Vivo</span></h2>
       </div>
-      <a href="https://www.youtube.com/@nibcasadedeus" class="btn btn-ghost"><svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:currentColor"><path d="M8 5v14l11-7z"/></svg>Ver canal completo</a>
+      <a href="https://www.youtube.com/@nibcasadedeus" class="btn btn-ghost">Ver canal completo</a>
     </div>
     <!-- NIB TV — live/agendamento via RSS + videos.list, sem search.list; 3 últimos vídeos recentes. -->
     <div class="yt-feature" id="ytFeature" hidden aria-live="polite"></div>
@@ -2082,22 +3058,38 @@ footer a[href*="instagram.com/hilton.cmferreira"]:hover{color:var(--laranja)}
       <p class="lead">Fique por dentro do que Deus está fazendo na nossa casa.</p>
     </div>
     <div class="ev-grid">
-      <div class="evento evento-foto reveal" style="--ev-bg:url('img/eventos/oracao-bg.jpg')">
-        <div class="cont">
-          <span class="tag">Oração</span>
-          <div class="date">31/08 a 04/09</div>
-          <h3>Semana de Oração</h3>
-          <p>Cinco dias clamando a Deus pela igreja e pelas famílias. Na NIB, das 23h à meia-noite.</p>
-        </div>
-      </div>
       <div class="evento evento-foto evento-multiplicacao reveal" style="--ev-bg:url('img/eventos/festa-multiplicacao-bg.webp')">
         <div class="cont">
           <span class="tag">Celebração</span>
-          <div class="date">03 de outubro</div>
+          <div class="date">03 de outubro, 15h</div>
           <h3>Festa da Multiplicação</h3>
           <p>Celebração das células na Chácara Pizze. R$ 25 por integrante da família, em até 2x no cartão. Participe!</p>
         </div>
       </div>
+      <a class="evento evento-foto evento-dna reveal" href="#jornada-dna" style="--ev-bg:url('img/eventos/jornada-dna.webp')" aria-label="Ver detalhes da Jornada DNA">
+        <div class="cont">
+          <span class="tag">Escola de discípulos</span>
+          <div class="date">25 de outubro</div>
+          <h3>Jornada DNA</h3>
+          <p>Inscrições abertas até 23/10 para a nova turma da Escola de Discípulos.</p>
+        </div>
+      </a>
+      <a class="evento evento-foto evento-mulheres reveal" href="mulheres-virtuosas.html" style="--ev-bg:url('img/eventos/mulheres-virtuosas-2026.webp')" aria-label="Ver detalhes e inscrição do evento Mulheres Virtuosas">
+        <div class="cont">
+          <span class="tag">Encontro de mulheres</span>
+          <div class="date">30 de outubro, 19h30</div>
+          <h3>Mulheres Virtuosas</h3>
+          <p>Um encontro de fé e comunhão com a Pra. Claudiany Guedes. Inscrição: R$ 20 por pessoa.</p>
+        </div>
+      </a>
+      <a class="evento evento-foto evento-nxt reveal" href="next/camp-sbgp1-nov26/" style="--ev-bg:url('img/eventos/nxt-camp-oficial-led-recorte-v85.png')" aria-label="Ver detalhes e inscrição do evento NXT CAMP 2026">
+        <div class="cont">
+          <span class="tag">Acampamento</span>
+          <div class="date">21 e 22 de novembro</div>
+          <h3>NXT CAMP</h3>
+          <p>Dois dias de palavra, worship, gincanas e comunhão para adolescentes de 12 a 17 anos. Inscrição: R$ 80 por participante.</p>
+        </div>
+      </a>
     </div>
   </div>
 </section>
@@ -2121,7 +3113,7 @@ footer a[href*="instagram.com/hilton.cmferreira"]:hover{color:var(--laranja)}
       <div class="qr"><img src="img/pix-qrcode.png" alt="QR Code PIX - Nova Igreja Batista"></div>
       <p class="pix-qr-note">Abra o app do seu banco e escaneie o QR CODE para fazer uma transferência via PIX</p>
       <button class="pix-copy" id="pixCopy" data-code="00020126360014br.gov.bcb.pix0114405187580001305204000053039865802BR5919NOVA IGREJA BATISTA6009ARIQUEMES62070503***6304669F">
-        <svg viewBox="0 0 24 24" width="17" height="17"><path d="M16 1H4a2 2 0 00-2 2v12h2V3h12V1zm3 4H8a2 2 0 00-2 2v14a2 2 0 002 2h11a2 2 0 002-2V7a2 2 0 00-2-2zm0 16H8V7h11v14z"/></svg>
+        
         <span class="pix-copy-label">Copiar código PIX</span>
       </button>
     </div>
@@ -2173,6 +3165,10 @@ footer a[href*="instagram.com/hilton.cmferreira"]:hover{color:var(--laranja)}
     <div class="foot-col foot-dev">
       <small>Desenvolvido por <a href="https://www.instagram.com/hilton.cmferreira" target="_blank" rel="noopener noreferrer">Hilton Ferreira</a></small>
     </div>
+  </div>
+
+  <div class="footer-privacy" style="margin-top:12px;text-align:center;font-size:.78rem;opacity:.72;">
+    <a href="privacidade.html" style="color:inherit;text-decoration:none;">Política de Privacidade</a>
   </div>
 </footer>
 
@@ -2554,9 +3550,18 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
   let current=0, timer=null;
 
   const videoCards=cards.filter(card=>card.classList.contains('gal-card-video'));
+  const gallerySection=document.getElementById('galeria');
+  let galleryVisible=false;
 
   function centeredVideoCard(){
     return videoCards.find(card=>card.classList.contains('pos-center')) || null;
+  }
+
+  function pauseAllGalleryVideos(){
+    videoCards.forEach(card=>{
+      const vid=card.querySelector('.gal-video');
+      if(vid) vid.pause();
+    });
   }
 
   function syncVideos(){
@@ -2564,7 +3569,7 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
       const vid=card.querySelector('.gal-video');
       if(!vid) return;
 
-      if(card.classList.contains('pos-center')){
+      if(galleryVisible && card.classList.contains('pos-center')){
         vid.play().catch(()=>{});
       }else{
         vid.pause();
@@ -2609,6 +3614,8 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
   function startAuto(){
     stopAuto();
 
+    if(!galleryVisible) return;
+
     // Quando qualquer vídeo estiver centralizado, a galeria não avança sozinha.
     if(centeredVideoCard()) return;
 
@@ -2622,7 +3629,7 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
     if(!vid) return;
 
     vid.addEventListener('ended',()=>{
-      if(!card.classList.contains('pos-center')) return;
+      if(!galleryVisible || !card.classList.contains('pos-center')) return;
 
       vid.currentTime=0;
       next();
@@ -2660,6 +3667,25 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
   if(gallery){
     gallery.addEventListener('mouseenter',stopAuto);
     gallery.addEventListener('mouseleave',startAuto);
+  }
+
+  // Play somente enquanto a seção Galeria estiver visível.
+  if(gallerySection){
+    const galleryObserver=new IntersectionObserver(entries=>{
+      entries.forEach(entry=>{
+        galleryVisible=entry.isIntersecting;
+
+        if(galleryVisible){
+          syncVideos();
+          startAuto();
+        }else{
+          stopAuto();
+          pauseAllGalleryVideos();
+        }
+      });
+    },{threshold:0.08});
+
+    galleryObserver.observe(gallerySection);
   }
 
   // Controles independentes para todos os vídeos da galeria.
@@ -2854,7 +3880,7 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
           '<h3 class="yt-feature-title">'+title+'</h3>'+
           (desc?'<p class="yt-feature-desc">'+esc(desc)+'</p>':'')+
           (schedule?'<div class="yt-schedule">'+clockIcon+'<span>'+esc(schedule)+'</span></div>':'')+
-          '<a class="yt-open" href="'+esc(url)+'" target="_blank" rel="noopener">'+youtubeIcon+
+          '<a class="yt-open" href="'+esc(url)+'" target="_blank" rel="noopener">'+
             (live?'Assistir no YouTube':'Ver no YouTube')+
           '</a>'+
           '<span class="yt-app-note">Assista no app do YouTube</span>'+
@@ -3017,5 +4043,47 @@ document.querySelectorAll('#eventos .tag').forEach(function(tag){
   });
 });
 </script>
+
+<script id="editorial-font-test-v143">
+(function(){
+  if(location.search.indexOf('fonttest=1') === -1) return;
+  function run(){
+    var fonts=[
+      ['system-ui','system-ui,-apple-system,"Segoe UI",sans-serif'],
+      ['Arial','Arial,sans-serif'],
+      ['Helvetica Neue','"Helvetica Neue",Helvetica,Arial,sans-serif'],
+      ['Avenir Next','"Avenir Next",Avenir,Arial,sans-serif'],
+      ['Trebuchet MS','"Trebuchet MS",Arial,sans-serif'],
+      ['Georgia','Georgia,serif']
+    ];
+    var box=document.createElement('div');
+    box.className='editorial-font-test';
+    var html='<h3>v143 — escolha a que mais parece com o desktop correto</h3>';
+    fonts.forEach(function(f){
+      html+='<div class="eft-row"><span class="eft-label">'+f[0]+'</span><div class="eft-word" style="font-family:'+f[1]+'">vivemos — de casa em casa.</div></div>';
+    });
+    html+='<button type="button">Fechar</button>';
+    box.innerHTML=html;
+    box.querySelector('button').onclick=function(){box.remove()};
+    document.body.appendChild(box);
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',run);
+  else run();
+})();
+</script>
+
+<script>
+document.querySelectorAll('#jornada-dna .dna-module-number').forEach(function(button){
+  var timer;
+  button.addEventListener('click',function(){
+    clearTimeout(timer);
+    button.classList.remove('is-animated');
+    void button.offsetWidth;
+    button.classList.add('is-animated');
+    timer=setTimeout(function(){button.classList.remove('is-animated');},650);
+  });
+});
+</script>
+<script src="assets/eventos-carousel-v2.js" defer></script>
 </body>
 </html>

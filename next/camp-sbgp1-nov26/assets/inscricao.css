@@ -1,0 +1,2693 @@
+*{box-sizing:border-box}
+:root{--bg:#ebebdf;--navy:#062b55;--blue:#2a8bd8;--orange:#ff7338;--line:#c8ccc3;--muted:#53637d;--white:#fff;--error:#9e2424}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--navy);font-family:"Manrope",Arial,sans-serif}
+.event-header{width:min(1280px,calc(100% - 48px));height:98px;margin:auto;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}
+.nib-logo{width:112px;height:auto;display:block}
+.back-site{color:var(--navy);font-size:.8rem;text-decoration:none;padding:14px 0 10px;border-bottom:1px solid var(--line)}
+.registration{width:min(1216px,calc(100% - 48px));margin:30px auto 68px;display:grid;grid-template-columns:1fr 1fr;gap:72px}
+.event-summary{min-width:0}
+.event-art{position:relative;overflow:hidden;height:276px;border-radius:16px;background:#101b27;color:#fff}
+.art-top{position:absolute;left:28px;right:28px;top:26px;display:flex;justify-content:space-between;font-size:.62rem;font-weight:800}
+.art-date{position:absolute;left:28px;top:72px;display:flex;align-items:baseline;gap:10px;font-family:"Montserrat",Arial,sans-serif;z-index:2}
+.art-date strong{font-size:4.2rem;line-height:.82;letter-spacing:-.08em}
+.art-date em{font-style:normal;font-size:1.35rem;color:#66baff;font-weight:900}
+.art-month{position:absolute;left:28px;top:147px;font-family:"Montserrat",Arial,sans-serif;font-size:2.35rem;font-weight:900;letter-spacing:-.05em}
+.art-tag{position:absolute;background:#f0eee6;color:var(--navy);font-size:.55rem;font-weight:900;letter-spacing:.09em;padding:9px 12px;z-index:4}
+.tag-left{left:0;top:96px;transform:rotate(-5deg)}
+.tag-right{right:0;top:149px;transform:rotate(5deg)}
+.art-bottom{position:absolute;left:0;right:0;bottom:0;height:92px;padding:30px 28px 18px;background:var(--blue);display:flex;justify-content:space-between;align-items:flex-end;clip-path:polygon(0 25%,100% 0,100% 100%,0 100%)}
+.art-bottom small{display:block;font-size:.55rem;font-weight:800}.art-bottom strong{font-size:.75rem;line-height:1}.art-bottom>span{font-size:.6rem;font-weight:800;border:1px solid rgba(255,255,255,.5);border-radius:999px;padding:8px 11px}
+.eyebrow{display:block;margin-top:30px;color:var(--orange);font-size:.7rem;font-weight:800;letter-spacing:.18em;text-transform:uppercase}
+.event-summary h1{font-family:"Montserrat",Arial,sans-serif;font-size:3rem;letter-spacing:-.06em;margin:24px 0 8px}
+.event-summary h1 em{color:var(--blue);font-style:italic}
+.event-summary>p{color:#4c607e;margin:0 0 28px;line-height:1.55}
+.event-facts{display:grid;grid-template-columns:1fr 1fr;gap:0 28px;margin:0}
+.event-facts div{border-top:1px solid var(--line);padding:14px 0 20px}
+.event-facts dt{font-size:.68rem;color:#64728a;margin-bottom:8px}.event-facts dd{margin:0;font-size:.84rem;font-weight:800;color:#071f3b}
+.form-area{min-width:0;padding-top:6px}
+.progress{list-style:none;padding:0;margin:0 0 43px;display:grid;grid-template-columns:auto 1fr auto 1fr auto;gap:10px;align-items:start}
+.progress li{text-align:center;min-width:92px;color:#65728a;font-size:.76rem}
+.progress li span{display:flex;width:42px;height:42px;margin:0 auto 11px;align-items:center;justify-content:center;border:1px solid #aeb7c1;border-radius:50%;font-weight:800}
+.progress li[aria-current="step"]{font-weight:800;color:var(--navy)}
+.progress li[aria-current="step"] span{background:var(--orange);border-color:var(--orange);color:#fff}
+.progress:before,.progress:after{content:"";display:none}
+.progress li+li{position:relative}
+.progress li+li:before{content:"";position:absolute;right:calc(50% + 31px);top:21px;width:calc(100% - 12px);height:1px;background:#c7c9bf;transform:translateX(-50%)}
+fieldset{border:0;padding:0;margin:0;min-width:0}
+legend{padding:0;margin:0 0 10px;font-family:"Montserrat",Arial,sans-serif;font-size:1.72rem;font-weight:800;letter-spacing:-.04em}
+.step-intro{margin:0 0 28px;color:#53637d;font-size:.91rem;line-height:1.55}
+label{display:block;margin:0 0 8px;color:#071a31;font-size:.78rem;font-weight:800}
+.optional{font-weight:500;color:#7a8493}
+input,select,textarea{width:100%;border:1px solid #aeb6c2;border-radius:9px;background:#fff;color:#0b1d35;font:inherit;outline:none}
+input,select{height:52px;padding:0 14px}textarea{padding:13px 14px;resize:vertical;min-height:92px}
+input:focus,select:focus,textarea:focus{border-color:#628db8;box-shadow:0 0 0 3px rgba(42,139,216,.08)}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.field-row>div{min-width:0}
+fieldset>input,fieldset>select,fieldset>textarea,.field-row{margin-bottom:18px}
+.section-divider{display:flex;align-items:center;gap:12px;margin:25px 0 17px;color:#53637d;font-size:.68rem;font-weight:800;letter-spacing:.11em;text-transform:uppercase}
+.section-divider:after{content:"";height:1px;background:var(--line);flex:1}
+.consent{display:grid;grid-template-columns:20px 1fr;gap:12px;align-items:start;margin:23px 0;font-weight:500;font-size:.73rem;line-height:1.5}
+.consent input{width:18px;height:18px;margin:1px 0 0;accent-color:var(--navy)}
+.consent a{color:var(--orange)}
+.button{display:inline-flex;align-items:center;justify-content:center;min-height:51px;border-radius:999px;padding:0 26px;border:1px solid transparent;font:inherit;font-size:.8rem;font-weight:800;text-decoration:none;cursor:pointer}
+.button.primary{background:var(--navy);color:#fff}.button.secondary{background:transparent;color:var(--navy);border-color:#aeb6c1}
+.small-note{font-size:.71rem;color:#637087;line-height:1.5}
+.actions{display:flex;gap:12px;margin-top:22px}.actions .primary{flex:1}
+.price{border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:18px 0;margin-bottom:22px;display:flex;align-items:flex-end;justify-content:space-between}
+.price>span{font-size:.72rem;color:#637087}.price strong{font-family:"Montserrat",Arial,sans-serif;font-size:2rem}.price strong span{font-size:1rem}
+.pix-payment{display:grid;grid-template-columns:170px 1fr;gap:22px;align-items:start}
+.pix-qr img{display:block;width:100%;height:auto;border-radius:10px;background:#fff;padding:8px;border:1px solid #d4d6ce}
+.pix-code-block label{margin-top:0}.pix-code-block textarea{height:122px;font-size:.7rem;line-height:1.45;word-break:break-all;margin-bottom:12px}
+.pix-code-block .button{width:100%}
+.pix-recipient{padding-top:14px;border-top:1px solid var(--line)}
+.upload{display:flex;min-height:148px;border:1px dashed #9ca7b3;border-radius:12px;background:#f5f4ea;align-items:center;justify-content:center;flex-direction:column;text-align:center;cursor:pointer;margin-bottom:16px}
+.upload strong{font-size:.84rem}.upload span{font-size:.69rem;color:#758094;margin-top:5px}.upload input{display:none}
+.receipt-selected{display:flex;gap:14px;align-items:center;margin:0 0 16px}.receipt-selected img{width:82px;height:82px;object-fit:cover;border-radius:8px;border:1px solid #c8ccc3}
+.receipt-change{border:0;background:none;padding:0;color:var(--orange);font:inherit;font-size:.72rem;text-decoration:underline;cursor:pointer}
+.message.error{padding:12px 14px;border:1px solid #d9aaa5;background:#f7e7e4;color:var(--error);border-radius:9px;font-size:.75rem}
+#success h2{font-family:"Montserrat",Arial,sans-serif;font-size:2rem;letter-spacing:-.04em;margin:12px 0}#success p{color:#53637d;line-height:1.6}
+.event-footer{width:min(1280px,calc(100% - 48px));margin:auto;border-top:1px solid var(--line);padding:26px 0 38px;text-align:center;color:#637087;font-size:.71rem}
+@media(max-width:900px){.registration{grid-template-columns:1fr;gap:42px}.event-summary{max-width:650px;margin:auto;width:100%}}
+@media(max-width:600px){
+.event-header,.registration,.event-footer{width:calc(100% - 28px)}.event-header{height:78px}.nib-logo{width:94px}
+.registration{margin-top:20px}.event-art{height:236px}.art-date strong{font-size:3.55rem}.art-month{font-size:2rem}
+.event-facts{grid-template-columns:1fr}.progress{gap:4px}.progress li{min-width:70px;font-size:.67rem}.progress li span{width:36px;height:36px}.progress li+li:before{top:18px;right:calc(50% + 27px)}
+.field-row{grid-template-columns:1fr;gap:0}.pix-payment{grid-template-columns:1fr}.pix-qr{max-width:180px}.actions{flex-direction:column}.actions .secondary{order:2}
+}
+
+
+/* ==========================================================
+   V6.2 — alinhamento guiado pela página Mulheres Virtuosas
+   Este bloco fica por último propositalmente.
+   ========================================================== */
+
+/* Main reference:
+   left column ~552px
+   right column ~552px
+   center gap ~72px
+*/
+.registration{
+  width:min(1176px,calc(100% - 48px)) !important;
+  grid-template-columns:minmax(0,552px) minmax(0,552px) !important;
+  gap:72px !important;
+  justify-content:center !important;
+  align-items:start !important;
+  margin-top:30px !important;
+}
+
+.event-summary,
+.form-area{
+  width:100% !important;
+  max-width:552px !important;
+}
+
+.form-area{
+  padding-top:4px !important;
+}
+
+/* Event card */
+.event-art{
+  width:100% !important;
+  height:276px !important;
+  border-radius:16px !important;
+  overflow:hidden !important;
+}
+
+/* Create a clean vertical hierarchy inside the poster.
+   PALAVRA now lives in the free space ABOVE the big date. */
+.art-top{
+  top:25px !important;
+  left:28px !important;
+  right:28px !important;
+}
+
+.art-date{
+  top:79px !important;
+  left:28px !important;
+  gap:10px !important;
+}
+
+.art-date strong{
+  font-size:4.15rem !important;
+  line-height:.82 !important;
+}
+
+.art-date em{
+  font-size:1.35rem !important;
+  line-height:1 !important;
+  margin:0 1px !important;
+}
+
+.art-month{
+  top:151px !important;
+  left:28px !important;
+  font-size:2.34rem !important;
+}
+
+/* Fix the label collision with 21 */
+.art-tag{
+  padding:6px 10px !important;
+  font-size:.52rem !important;
+  line-height:1 !important;
+}
+
+.tag-left{
+  left:12px !important;
+  top:53px !important;
+  transform:rotate(-4deg) !important;
+}
+
+.tag-right{
+  right:0 !important;
+  top:145px !important;
+  transform:rotate(5deg) !important;
+}
+
+.art-bottom{
+  height:90px !important;
+  padding:28px 28px 17px !important;
+}
+
+/* Left text block mirrors the Mulheres page rhythm */
+.event-summary .eyebrow{
+  margin-top:30px !important;
+}
+
+.event-summary h1{
+  margin-top:24px !important;
+  margin-bottom:10px !important;
+  font-size:3rem !important;
+}
+
+.event-summary>p{
+  margin-bottom:28px !important;
+  line-height:1.55 !important;
+}
+
+.event-facts{
+  gap:0 28px !important;
+}
+
+.event-facts div{
+  padding-top:14px !important;
+  padding-bottom:20px !important;
+}
+
+/* Stepper: one continuous connector behind the 3 circles.
+   Removes the broken lines seen in v6.1. */
+.progress{
+  position:relative !important;
+  display:grid !important;
+  grid-template-columns:repeat(3,1fr) !important;
+  gap:0 !important;
+  align-items:start !important;
+  margin:0 0 42px !important;
+  overflow:visible !important;
+}
+
+.progress::before{
+  content:"" !important;
+  display:block !important;
+  position:absolute !important;
+  z-index:0 !important;
+  top:21px !important;
+  left:16.666% !important;
+  right:16.666% !important;
+  height:1px !important;
+  background:#c5c9c1 !important;
+}
+
+.progress::after{
+  display:none !important;
+}
+
+.progress li{
+  position:relative !important;
+  z-index:1 !important;
+  min-width:0 !important;
+  background:transparent !important;
+  padding:0 !important;
+}
+
+.progress li+li::before{
+  display:none !important;
+  content:none !important;
+}
+
+.progress li span{
+  background:var(--bg) !important;
+  width:42px !important;
+  height:42px !important;
+  margin-bottom:11px !important;
+}
+
+.progress li[aria-current="step"] span{
+  background:var(--orange) !important;
+}
+
+/* Right-side content positioning, matching reference */
+fieldset legend{
+  font-size:1.72rem !important;
+  line-height:1.1 !important;
+  margin-bottom:12px !important;
+}
+
+.step-intro{
+  margin-bottom:28px !important;
+}
+
+label{
+  margin-bottom:8px !important;
+}
+
+input,
+select{
+  height:52px !important;
+}
+
+fieldset>input,
+fieldset>select,
+fieldset>textarea,
+.field-row{
+  margin-bottom:18px !important;
+}
+
+.section-divider{
+  margin-top:25px !important;
+  margin-bottom:17px !important;
+}
+
+.consent{
+  margin-top:23px !important;
+  margin-bottom:24px !important;
+}
+
+/* Keep WhatsApp field visually consistent with the reference width */
+#phone{
+  width:100% !important;
+}
+
+/* Remove unwanted extra expansion */
+.form-area form,
+.form-area fieldset{
+  width:100% !important;
+}
+
+/* Mobile / tablet */
+@media(max-width:900px){
+  .registration{
+    width:min(552px,calc(100% - 28px)) !important;
+    grid-template-columns:1fr !important;
+    gap:42px !important;
+  }
+
+  .event-summary,
+  .form-area{
+    max-width:none !important;
+  }
+}
+
+@media(max-width:600px){
+  .registration{
+    width:calc(100% - 28px) !important;
+  }
+
+  .progress::before{
+    top:18px !important;
+  }
+
+  .progress li span{
+    width:36px !important;
+    height:36px !important;
+  }
+
+  .art-date{
+    top:78px !important;
+  }
+
+  .tag-left{
+    top:51px !important;
+  }
+}
+
+
+/* ==========================================================
+   V6.3 — MATCH FINO COM O FORMULÁRIO MULHERES VIRTUOSAS
+   Medidas, cores e alturas do stepper/colunas travadas.
+   ========================================================== */
+
+:root{
+  --bg:#EBEBDF !important;
+  --navy:#041E42 !important;
+  --orange:#FF7F40 !important;
+  --step-border:#9EA9AE !important;
+  --step-muted:#52617C !important;
+  --ref-line:#C9CBC3 !important;
+}
+
+/* Header: mesma altura e largura útil da referência */
+.event-header{
+  width:min(1280px,calc(100% - 48px)) !important;
+  height:97px !important;
+  margin:0 auto !important;
+  padding:0 !important;
+  border-bottom:1px solid var(--ref-line) !important;
+}
+
+.nib-logo{
+  width:112px !important;
+  height:auto !important;
+}
+
+.back-site{
+  color:var(--navy) !important;
+  font-size:.80rem !important;
+  line-height:1 !important;
+  padding:15px 0 11px !important;
+  border-bottom:1px solid var(--ref-line) !important;
+}
+
+/* Área principal: mesma largura e mesma origem vertical */
+.registration{
+  width:1176px !important;
+  max-width:calc(100% - 48px) !important;
+  grid-template-columns:552px 552px !important;
+  column-gap:72px !important;
+  row-gap:0 !important;
+  align-items:start !important;
+  justify-content:center !important;
+  margin:30px auto 68px !important;
+}
+
+/* As duas colunas começam exatamente na mesma linha */
+.event-summary,
+.form-area{
+  width:552px !important;
+  max-width:552px !important;
+  margin:0 !important;
+  padding:0 !important;
+}
+
+/* Card: mesma caixa da referência */
+.event-art{
+  width:552px !important;
+  height:276px !important;
+  margin:0 !important;
+  border-radius:16px !important;
+}
+
+/* Corrige definitivamente a etiqueta PALAVRA sem tocar no 21 */
+.tag-left{
+  left:12px !important;
+  top:55px !important;
+  transform:rotate(-4deg) !important;
+  z-index:5 !important;
+}
+
+.art-date{
+  left:28px !important;
+  top:82px !important;
+  gap:10px !important;
+}
+
+.art-date strong{
+  font-size:4.12rem !important;
+  line-height:.80 !important;
+}
+
+.art-date em{
+  font-size:1.30rem !important;
+  line-height:1 !important;
+  color:#67B8F3 !important;
+  margin:0 !important;
+}
+
+.art-month{
+  left:28px !important;
+  top:153px !important;
+  font-size:2.34rem !important;
+}
+
+/* STEP NAV — geometria da página Mulheres */
+.progress{
+  position:relative !important;
+  display:grid !important;
+  grid-template-columns:repeat(3,1fr) !important;
+  width:552px !important;
+  height:78px !important;
+  margin:0 0 43px !important;
+  padding:6px 0 0 !important;
+  list-style:none !important;
+  overflow:visible !important;
+  align-items:start !important;
+}
+
+/* Remove TODAS as linhas antigas */
+.progress::before,
+.progress::after,
+.progress li::before,
+.progress li::after,
+.progress li+li::before,
+.progress li+li::after{
+  content:none !important;
+  display:none !important;
+}
+
+/* Cada etapa ocupa exatamente 184px.
+   Centro dos círculos: 92 / 276 / 460px */
+.progress li{
+  position:relative !important;
+  width:184px !important;
+  min-width:184px !important;
+  height:72px !important;
+  padding:0 !important;
+  margin:0 !important;
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:center !important;
+  justify-content:flex-start !important;
+  text-align:center !important;
+  color:var(--step-muted) !important;
+  font-size:.76rem !important;
+  line-height:1.15 !important;
+  font-weight:400 !important;
+  background:transparent !important;
+}
+
+/* Conectores exatamente entre os círculos */
+.progress li:nth-child(1){
+  --connector-left:113px;
+}
+.progress li:nth-child(1) > span::after,
+.progress li:nth-child(2) > span::after{
+  content:"" !important;
+  display:block !important;
+  position:absolute !important;
+  top:20.5px !important;
+  left:calc(50% + 28px) !important;
+  width:128px !important;
+  height:1px !important;
+  background:var(--ref-line) !important;
+  z-index:-1 !important;
+}
+
+.progress li > span{
+  position:relative !important;
+  z-index:2 !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  width:42px !important;
+  height:42px !important;
+  min-width:42px !important;
+  min-height:42px !important;
+  margin:0 0 11px !important;
+  padding:0 !important;
+  border-radius:50% !important;
+  border:1px solid var(--step-border) !important;
+  background:var(--bg) !important;
+  color:var(--navy) !important;
+  font-family:"Manrope",Arial,sans-serif !important;
+  font-size:.75rem !important;
+  line-height:42px !important;
+  font-weight:700 !important;
+  box-shadow:none !important;
+}
+
+.progress li[aria-current="step"]{
+  color:var(--navy) !important;
+  font-weight:800 !important;
+}
+
+.progress li[aria-current="step"] > span{
+  background:var(--orange) !important;
+  border-color:var(--orange) !important;
+  color:#FFFFFF !important;
+}
+
+/* Rótulos 01/02/03: posição e cor equivalentes à referência */
+.progress li:not([aria-current="step"]){
+  color:#52617C !important;
+}
+.progress li:not([aria-current="step"]) > span{
+  color:var(--navy) !important;
+  background:var(--bg) !important;
+  border-color:#9EA9AE !important;
+}
+
+/* Título: distância exata após o stepper */
+fieldset[data-step="0"] legend,
+fieldset[data-step="1"] legend,
+fieldset[data-step="2"] legend{
+  margin:0 0 13px !important;
+  padding:0 !important;
+  color:var(--navy) !important;
+  font-family:"Montserrat",Arial,sans-serif !important;
+  font-size:1.72rem !important;
+  line-height:1.10 !important;
+  font-weight:800 !important;
+  letter-spacing:-.035em !important;
+}
+
+.step-intro{
+  margin:0 0 29px !important;
+  color:#52617C !important;
+  font-size:.91rem !important;
+  line-height:1.45 !important;
+}
+
+/* Campos: mesma altura/raio/tons */
+label{
+  color:#071A31 !important;
+  font-size:.78rem !important;
+  font-weight:800 !important;
+  margin-bottom:8px !important;
+}
+
+input,
+select{
+  height:52px !important;
+  border:1px solid #AEB6C1 !important;
+  border-radius:9px !important;
+  background:#FFFFFF !important;
+}
+
+textarea{
+  border:1px solid #AEB6C1 !important;
+  border-radius:9px !important;
+  background:#FFFFFF !important;
+}
+
+.field-row{
+  gap:18px !important;
+}
+
+fieldset>input,
+fieldset>select,
+fieldset>textarea,
+.field-row{
+  margin-bottom:18px !important;
+}
+
+/* Linha divisória do responsável */
+.section-divider{
+  margin:25px 0 17px !important;
+  color:#52617C !important;
+}
+.section-divider::after{
+  background:var(--ref-line) !important;
+}
+
+/* Coluna esquerda com o mesmo ritmo da referência */
+.event-summary .eyebrow{
+  margin-top:30px !important;
+}
+.event-summary h1{
+  margin:24px 0 10px !important;
+}
+.event-summary>p{
+  margin:0 0 28px !important;
+}
+.event-facts{
+  margin:0 !important;
+}
+
+/* Tablet */
+@media(max-width:1224px){
+  .registration{
+    width:calc(100% - 48px) !important;
+    grid-template-columns:minmax(0,552px) minmax(0,552px) !important;
+    gap:clamp(36px,5vw,72px) !important;
+  }
+
+  .event-summary,
+  .form-area,
+  .event-art,
+  .progress{
+    width:100% !important;
+    max-width:552px !important;
+  }
+
+  .progress li{
+    width:33.3333% !important;
+    min-width:0 !important;
+  }
+
+  .progress li:nth-child(1) > span::after,
+  .progress li:nth-child(2) > span::after{
+    width:calc(100% - 56px) !important;
+  }
+}
+
+@media(max-width:900px){
+  .registration{
+    width:min(552px,calc(100% - 28px)) !important;
+    grid-template-columns:1fr !important;
+    gap:42px !important;
+  }
+
+  .event-summary,
+  .form-area{
+    width:100% !important;
+  }
+
+  .event-art{
+    width:100% !important;
+  }
+}
+
+@media(max-width:600px){
+  .event-header{
+    width:calc(100% - 28px) !important;
+    height:78px !important;
+  }
+
+  .registration{
+    width:calc(100% - 28px) !important;
+    margin-top:20px !important;
+  }
+
+  .progress{
+    width:100% !important;
+    height:70px !important;
+    padding-top:4px !important;
+    margin-bottom:34px !important;
+  }
+
+  .progress li{
+    height:66px !important;
+    font-size:.67rem !important;
+  }
+
+  .progress li > span{
+    width:36px !important;
+    height:36px !important;
+    min-width:36px !important;
+    min-height:36px !important;
+    line-height:36px !important;
+  }
+
+  .progress li:nth-child(1) > span::after,
+  .progress li:nth-child(2) > span::after{
+    top:17.5px !important;
+    left:calc(50% + 25px) !important;
+    width:calc(100% - 50px) !important;
+  }
+}
+
+
+/* ==========================================================
+   V6.4 — estrutura-base copiada da régua visual Mulheres
+   Outer container 1240px + padding interno 32px = 1176px úteis
+   ========================================================== */
+
+:root{
+  --ref-bg:#EBEBDF;
+  --ref-navy:#062B55;
+  --ref-orange:#FF6242;
+  --ref-line:#C6CAC6;
+  --ref-step-border:#9FA9B0;
+  --ref-muted:#596498;
+}
+
+html,body{
+  background:var(--ref-bg) !important;
+}
+
+/* HEADER
+   Referência: linha externa 1240px; logo e link 32px para dentro */
+.event-header{
+  width:1240px !important;
+  max-width:calc(100% - 32px) !important;
+  height:98px !important;
+  margin:0 auto !important;
+  padding:0 32px !important;
+  box-sizing:border-box !important;
+  border-bottom:1px solid var(--ref-line) !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:space-between !important;
+}
+
+.nib-logo{
+  width:112px !important;
+  height:auto !important;
+  display:block !important;
+}
+
+.back-site{
+  margin:0 !important;
+  padding:15px 0 11px !important;
+  border-bottom:1px solid var(--ref-line) !important;
+  color:var(--ref-navy) !important;
+  font-size:.80rem !important;
+  line-height:1 !important;
+}
+
+/* MAIN
+   Mesmo eixo interno do header: 32px de inset dentro dos 1240px */
+.registration{
+  width:1240px !important;
+  max-width:calc(100% - 32px) !important;
+  padding:0 32px !important;
+  box-sizing:border-box !important;
+  margin:30px auto 68px !important;
+  display:grid !important;
+  grid-template-columns:552px 552px !important;
+  column-gap:72px !important;
+  row-gap:0 !important;
+  align-items:start !important;
+  justify-content:start !important;
+}
+
+.event-summary,
+.form-area{
+  width:552px !important;
+  max-width:552px !important;
+  padding:0 !important;
+  margin:0 !important;
+}
+
+.form-area{
+  padding-top:6px !important;
+}
+
+/* LEFT CARD */
+.event-art{
+  width:552px !important;
+  height:276px !important;
+  margin:0 !important;
+  border-radius:16px !important;
+}
+
+/* STEP NAV */
+.progress{
+  width:552px !important;
+  height:79px !important;
+  margin:0 0 42px !important;
+  padding:0 !important;
+  display:grid !important;
+  grid-template-columns:184px 184px 184px !important;
+  align-items:start !important;
+  list-style:none !important;
+  position:relative !important;
+}
+
+/* clean every old connector */
+.progress::before,
+.progress::after,
+.progress li::before,
+.progress li::after{
+  display:none !important;
+  content:none !important;
+}
+
+.progress li{
+  width:184px !important;
+  min-width:184px !important;
+  height:79px !important;
+  margin:0 !important;
+  padding:0 !important;
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:center !important;
+  justify-content:flex-start !important;
+  position:relative !important;
+  text-align:center !important;
+  color:var(--ref-muted) !important;
+  font-size:.76rem !important;
+  font-weight:400 !important;
+  line-height:1.15 !important;
+  background:transparent !important;
+}
+
+/* circles */
+.progress li>span{
+  width:42px !important;
+  height:42px !important;
+  min-width:42px !important;
+  min-height:42px !important;
+  margin:0 0 12px !important;
+  padding:0 !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  border-radius:50% !important;
+  border:1px solid var(--ref-step-border) !important;
+  background:var(--ref-bg) !important;
+  color:var(--ref-navy) !important;
+  font-size:.75rem !important;
+  font-weight:700 !important;
+  line-height:1 !important;
+  position:relative !important;
+  z-index:2 !important;
+  box-shadow:none !important;
+}
+
+/* two exact connectors, 128px each */
+.progress li:nth-child(1)>span::after,
+.progress li:nth-child(2)>span::after{
+  content:"" !important;
+  display:block !important;
+  position:absolute !important;
+  left:49px !important;
+  top:20px !important;
+  width:128px !important;
+  height:1px !important;
+  background:var(--ref-line) !important;
+  z-index:-1 !important;
+}
+
+.progress li[aria-current="step"]{
+  color:var(--ref-navy) !important;
+  font-weight:800 !important;
+}
+
+.progress li[aria-current="step"]>span{
+  background:var(--ref-orange) !important;
+  border-color:var(--ref-orange) !important;
+  color:#fff !important;
+}
+
+/* FORM POSITIONING */
+fieldset legend{
+  margin:0 0 14px !important;
+  padding:0 !important;
+  color:var(--ref-navy) !important;
+  font-family:"Montserrat",Arial,sans-serif !important;
+  font-size:1.72rem !important;
+  line-height:1.08 !important;
+  font-weight:800 !important;
+  letter-spacing:-.035em !important;
+}
+
+.step-intro{
+  margin:0 0 29px !important;
+  color:var(--ref-muted) !important;
+  font-size:.91rem !important;
+  line-height:1.45 !important;
+}
+
+label{
+  margin:0 0 9px !important;
+  color:#071A31 !important;
+  font-size:.78rem !important;
+  font-weight:800 !important;
+}
+
+input,
+select{
+  height:52px !important;
+  border:1px solid #A8B0BC !important;
+  border-radius:9px !important;
+  background:#fff !important;
+}
+
+textarea{
+  border:1px solid #A8B0BC !important;
+  border-radius:9px !important;
+  background:#fff !important;
+}
+
+fieldset>input,
+fieldset>select,
+fieldset>textarea,
+.field-row{
+  margin-bottom:18px !important;
+}
+
+.field-row{
+  gap:18px !important;
+}
+
+/* LEFT TYPOGRAPHY */
+.event-summary .eyebrow{
+  margin:30px 0 0 !important;
+  color:var(--ref-orange) !important;
+}
+
+.event-summary h1{
+  margin:24px 0 10px !important;
+  color:var(--ref-navy) !important;
+}
+
+.event-summary>p{
+  margin:0 0 28px !important;
+  color:var(--ref-muted) !important;
+}
+
+.event-facts{
+  margin:0 !important;
+}
+
+.event-facts div{
+  border-top:1px solid var(--ref-line) !important;
+}
+
+.event-facts dt{
+  color:#64728A !important;
+}
+
+/* Footer follows same 1240 outer width */
+.event-footer{
+  width:1240px !important;
+  max-width:calc(100% - 32px) !important;
+  margin:0 auto !important;
+  padding:27px 32px 38px !important;
+  box-sizing:border-box !important;
+  border-top:1px solid var(--ref-line) !important;
+}
+
+/* Keep PALAVRA clear of 21 */
+.tag-left{
+  left:12px !important;
+  top:52px !important;
+  z-index:5 !important;
+}
+
+.art-date{
+  top:80px !important;
+}
+
+/* Responsive */
+@media(max-width:1240px){
+  .event-header,
+  .registration,
+  .event-footer{
+    width:calc(100% - 32px) !important;
+  }
+
+  .registration{
+    grid-template-columns:minmax(0,552px) minmax(0,552px) !important;
+    column-gap:clamp(36px,5vw,72px) !important;
+  }
+
+  .event-summary,
+  .form-area,
+  .event-art,
+  .progress{
+    width:100% !important;
+    max-width:552px !important;
+  }
+
+  .progress{
+    grid-template-columns:repeat(3,1fr) !important;
+  }
+
+  .progress li{
+    width:100% !important;
+    min-width:0 !important;
+  }
+
+  .progress li:nth-child(1)>span::after,
+  .progress li:nth-child(2)>span::after{
+    width:calc(100% - 56px) !important;
+  }
+}
+
+@media(max-width:900px){
+  .event-header{
+    padding-left:20px !important;
+    padding-right:20px !important;
+  }
+
+  .registration{
+    width:min(616px,calc(100% - 28px)) !important;
+    max-width:none !important;
+    padding:0 32px !important;
+    grid-template-columns:1fr !important;
+    gap:42px !important;
+  }
+
+  .event-summary,
+  .form-area{
+    max-width:552px !important;
+  }
+}
+
+@media(max-width:600px){
+  .event-header,
+  .event-footer{
+    width:calc(100% - 20px) !important;
+    padding-left:14px !important;
+    padding-right:14px !important;
+  }
+
+  .registration{
+    width:100% !important;
+    padding:0 14px !important;
+    margin-top:20px !important;
+  }
+
+  .progress{
+    height:70px !important;
+    margin-bottom:34px !important;
+  }
+
+  .progress li{
+    font-size:.67rem !important;
+  }
+
+  .progress li>span{
+    width:36px !important;
+    height:36px !important;
+    min-width:36px !important;
+    min-height:36px !important;
+  }
+
+  .progress li:nth-child(1)>span::after,
+  .progress li:nth-child(2)>span::after{
+    left:43px !important;
+    top:17px !important;
+    width:calc(100% - 50px) !important;
+  }
+}
+
+
+/* ==========================================================
+   V6.5 — refinamento visual com base direta no formulário
+   Mulheres Virtuosas
+   ========================================================== */
+
+:root{
+  --mv-bg:#EBEBDF;
+  --mv-navy:#082A55;
+  --mv-copy:#56627B;
+  --mv-label:#071A31;
+  --mv-orange:#FF7342;
+  --mv-line:#C8CBC4;
+  --mv-field:#A9B2BE;
+}
+
+/* Global font feel: Mulheres page is lighter in body/copy */
+body{
+  background:var(--mv-bg) !important;
+  color:var(--mv-navy) !important;
+  font-family:"Manrope",Arial,sans-serif !important;
+}
+
+/* Header */
+.event-header{
+  height:97px !important;
+  border-bottom:1px solid var(--mv-line) !important;
+}
+
+.nib-logo{
+  width:112px !important;
+}
+
+.back-site{
+  color:var(--mv-navy) !important;
+  font-size:.79rem !important;
+  font-weight:500 !important;
+  padding-bottom:11px !important;
+}
+
+/* Main vertical rhythm */
+.registration{
+  margin-top:30px !important;
+}
+
+.event-summary,
+.form-area{
+  align-self:start !important;
+}
+
+/* ===== LEFT CARD ===== */
+.event-art{
+  height:276px !important;
+  overflow:hidden !important;
+}
+
+/* Keep all top copy safely inside card */
+.art-top{
+  top:27px !important;
+  left:28px !important;
+  right:28px !important;
+  font-size:.60rem !important;
+  line-height:1 !important;
+}
+
+/* Word PALAVRA must not touch 21 */
+.tag-left{
+  left:12px !important;
+  top:54px !important;
+  transform:rotate(-4deg) !important;
+}
+
+/* Date block clean, centered vertically in dark area */
+.art-date{
+  left:28px !important;
+  top:83px !important;
+  gap:10px !important;
+}
+
+.art-date strong{
+  font-size:4.00rem !important;
+  line-height:.80 !important;
+  letter-spacing:-.075em !important;
+}
+
+.art-date em{
+  font-size:1.25rem !important;
+  line-height:1 !important;
+  margin:0 !important;
+}
+
+/* Month leaves more room before the blue area */
+.art-month{
+  left:28px !important;
+  top:151px !important;
+  font-size:2.28rem !important;
+  line-height:.95 !important;
+}
+
+.tag-right{
+  right:0 !important;
+  top:143px !important;
+}
+
+/* New GINCANAS tag, same visual language as PALAVRA/WORSHIP */
+.tag-bottom{
+  left:18px !important;
+  bottom:11px !important;
+  top:auto !important;
+  transform:rotate(-4deg) !important;
+  z-index:6 !important;
+}
+
+/* Blue area: lower the local text so LOCAL is never clipped by the diagonal */
+.art-bottom{
+  height:88px !important;
+  padding:33px 28px 15px !important;
+  clip-path:polygon(0 24%,100% 0,100% 100%,0 100%) !important;
+}
+
+.art-local{
+  position:relative !important;
+  z-index:4 !important;
+  padding-left:0 !important;
+  padding-bottom:0 !important;
+}
+
+.art-local small{
+  display:block !important;
+  margin-bottom:5px !important;
+  font-size:.54rem !important;
+  line-height:1 !important;
+  font-weight:800 !important;
+}
+
+.art-local strong{
+  display:block !important;
+  font-size:.72rem !important;
+  line-height:1.15 !important;
+  font-weight:800 !important;
+}
+
+/* badge keeps exact visual weight */
+.art-bottom>span{
+  font-size:.58rem !important;
+  padding:8px 11px !important;
+}
+
+/* ===== LEFT TEXT BLOCK: match Mulheres typography ===== */
+.event-summary .eyebrow{
+  margin-top:31px !important;
+  color:var(--mv-orange) !important;
+  font-size:.70rem !important;
+  line-height:1 !important;
+  font-weight:700 !important;
+  letter-spacing:.18em !important;
+}
+
+.event-summary h1{
+  margin:25px 0 13px !important;
+  color:var(--mv-navy) !important;
+  font-family:"Manrope",Arial,sans-serif !important;
+  font-size:2.95rem !important;
+  line-height:1 !important;
+  font-weight:700 !important;
+  letter-spacing:-.055em !important;
+}
+
+.event-summary h1 em{
+  color:#2487D5 !important;
+  font-weight:700 !important;
+}
+
+.event-summary>p{
+  margin:0 0 30px !important;
+  color:var(--mv-copy) !important;
+  font-size:.90rem !important;
+  line-height:1.55 !important;
+  font-weight:400 !important;
+  max-width:520px !important;
+}
+
+/* Fact cards: same pattern as Mulheres */
+.event-facts{
+  gap:0 28px !important;
+}
+
+.event-facts div{
+  min-height:72px !important;
+  padding:14px 0 18px !important;
+  border-top:1px solid var(--mv-line) !important;
+}
+
+.event-facts dt{
+  margin-bottom:8px !important;
+  color:#61708A !important;
+  font-size:.69rem !important;
+  line-height:1 !important;
+  font-weight:400 !important;
+}
+
+.event-facts dd{
+  margin:0 !important;
+  color:#071A31 !important;
+  font-size:.83rem !important;
+  line-height:1.25 !important;
+  font-weight:700 !important;
+}
+
+/* ===== STEPPER ===== */
+.progress{
+  height:80px !important;
+  margin:0 0 41px !important;
+}
+
+.progress li{
+  color:#52617C !important;
+  font-size:.75rem !important;
+  line-height:1.15 !important;
+  font-weight:400 !important;
+}
+
+.progress li>span{
+  width:41px !important;
+  height:41px !important;
+  min-width:41px !important;
+  min-height:41px !important;
+  margin-bottom:12px !important;
+  background:var(--mv-bg) !important;
+  border-color:#A7B0B4 !important;
+  color:var(--mv-navy) !important;
+  font-size:.74rem !important;
+  font-weight:600 !important;
+}
+
+.progress li[aria-current="step"]{
+  color:var(--mv-navy) !important;
+  font-weight:700 !important;
+}
+
+.progress li[aria-current="step"]>span{
+  background:var(--mv-orange) !important;
+  border-color:var(--mv-orange) !important;
+  color:#fff !important;
+}
+
+/* Step connector lines same tone/thickness as reference */
+.progress li:nth-child(1)>span::after,
+.progress li:nth-child(2)>span::after{
+  height:1px !important;
+  background:#C8CBC4 !important;
+}
+
+/* ===== FORM TYPOGRAPHY ===== */
+fieldset legend{
+  margin:0 0 13px !important;
+  color:var(--mv-navy) !important;
+  font-family:"Manrope",Arial,sans-serif !important;
+  font-size:1.72rem !important;
+  line-height:1.10 !important;
+  font-weight:700 !important;
+  letter-spacing:-.045em !important;
+}
+
+.step-intro{
+  margin:0 0 29px !important;
+  color:var(--mv-copy) !important;
+  font-size:.90rem !important;
+  line-height:1.45 !important;
+  font-weight:400 !important;
+}
+
+label{
+  margin-bottom:9px !important;
+  color:var(--mv-label) !important;
+  font-size:.78rem !important;
+  line-height:1.15 !important;
+  font-weight:700 !important;
+}
+
+.optional{
+  color:#7A8493 !important;
+  font-weight:400 !important;
+}
+
+input,
+select{
+  height:51px !important;
+  border:1px solid var(--mv-field) !important;
+  border-radius:9px !important;
+  padding:0 14px !important;
+  font-size:.91rem !important;
+}
+
+textarea{
+  border:1px solid var(--mv-field) !important;
+  border-radius:9px !important;
+  padding:13px 14px !important;
+  font-size:.90rem !important;
+}
+
+fieldset>input,
+fieldset>select,
+fieldset>textarea,
+.field-row{
+  margin-bottom:18px !important;
+}
+
+.field-row{
+  gap:18px !important;
+}
+
+/* Responsibility section should feel like a subtle divider, not a new title */
+.section-divider{
+  margin:26px 0 18px !important;
+  color:#596780 !important;
+  font-size:.66rem !important;
+  font-weight:700 !important;
+  letter-spacing:.13em !important;
+}
+
+.section-divider::after{
+  background:var(--mv-line) !important;
+}
+
+/* Buttons follow Mulheres */
+.button.primary{
+  background:var(--mv-navy) !important;
+  color:#fff !important;
+  font-weight:700 !important;
+}
+
+/* Responsive safeguards */
+@media(max-width:600px){
+  .art-date strong{
+    font-size:3.45rem !important;
+  }
+
+  .art-month{
+    font-size:1.95rem !important;
+  }
+
+  .tag-bottom{
+    left:14px !important;
+    bottom:9px !important;
+  }
+}
+
+
+/* V6.6 — endereço completo do local */
+.event-facts dd{
+  overflow-wrap:anywhere;
+}
+
+.event-facts div:nth-child(3) dd{
+  max-width:240px;
+}
+
+
+/* ==========================================================
+   V6.7 — passo 2 alinhado ao padrão Mulheres Virtuosas
+   ========================================================== */
+
+/* Remove o destaque excessivo do valor antigo */
+.price{
+  display:none !important;
+}
+
+/* O passo 2 segue a mesma ordem visual do passo 1:
+   título -> descrição -> informações -> ação */
+.payment-summary{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:28px;
+  margin:0 0 28px;
+}
+
+.payment-summary>div{
+  min-height:66px;
+  padding:14px 0 16px;
+  border-top:1px solid var(--mv-line,#C8CBC4);
+  border-bottom:1px solid var(--mv-line,#C8CBC4);
+}
+
+.payment-summary span,
+.pix-details span{
+  display:block;
+  margin-bottom:7px;
+  color:#61708A;
+  font-size:.69rem;
+  line-height:1;
+  font-weight:400;
+}
+
+.payment-summary strong{
+  color:#071A31;
+  font-size:.84rem;
+  line-height:1.25;
+  font-weight:700;
+}
+
+/* QR + copia e cola: mais leve e alinhado */
+.pix-payment{
+  display:grid !important;
+  grid-template-columns:170px minmax(0,1fr) !important;
+  gap:22px !important;
+  align-items:start !important;
+  margin-top:0 !important;
+}
+
+.pix-qr img{
+  display:block !important;
+  width:170px !important;
+  height:170px !important;
+  padding:8px !important;
+  border:1px solid #D0D3CC !important;
+  border-radius:10px !important;
+  background:#fff !important;
+}
+
+.pix-qr .small-note{
+  margin:10px 0 0 !important;
+}
+
+.pix-code-block label{
+  margin-top:0 !important;
+  margin-bottom:9px !important;
+}
+
+.pix-code-block textarea{
+  width:100% !important;
+  min-height:122px !important;
+  height:122px !important;
+  margin:0 0 12px !important;
+  padding:13px 14px !important;
+  color:#17304C !important;
+  font-size:.72rem !important;
+  line-height:1.45 !important;
+  font-family:"Manrope",Arial,sans-serif !important;
+  background:#fff !important;
+}
+
+.pix-code-block .button.primary{
+  width:100% !important;
+  min-height:51px !important;
+}
+
+.pix-code-block>.small-note{
+  margin:12px 0 0 !important;
+}
+
+/* Dados do recebedor como informação secundária, igual ao ritmo da página Mulheres */
+.pix-details{
+  margin-top:26px !important;
+  padding-top:15px !important;
+  border-top:1px solid var(--mv-line,#C8CBC4) !important;
+}
+
+.pix-details>div{
+  margin-bottom:13px;
+}
+
+.pix-details strong{
+  color:#52617C;
+  font-size:.73rem;
+  font-weight:500;
+}
+
+.pix-details .small-note{
+  margin:7px 0 0 !important;
+}
+
+/* Status de cópia não cria espaço grande quando vazio */
+#copy-status:empty{
+  display:none !important;
+}
+
+/* Ações com o mesmo respiro do formulário de referência */
+fieldset[data-step="1"] .actions{
+  margin-top:25px !important;
+}
+
+/* Favicon is intentionally supplied as PNG asset:
+   img/favicon-nxt.png */
+
+@media(max-width:600px){
+  .payment-summary{
+    grid-template-columns:1fr;
+    gap:0;
+  }
+
+  .payment-summary>div+div{
+    border-top:0;
+  }
+
+  .pix-payment{
+    grid-template-columns:1fr !important;
+  }
+
+  .pix-qr{
+    width:170px;
+  }
+}
+
+
+/* ============================================
+   V6.8 — GINCANAS sem sobrepor o local
+   ============================================ */
+.tag-bottom{
+  left:148px !important;
+  bottom:10px !important;
+  top:auto !important;
+  transform:rotate(-4deg) !important;
+  z-index:6 !important;
+}
+
+@media(max-width:720px){
+  .tag-bottom{
+    left:29% !important;
+    bottom:9px !important;
+  }
+}
+
+
+/* ============================================
+   V7.0 — data do card no mesmo padrão da página do acamp
+   ============================================ */
+.art-date{
+  align-items:flex-start !important;
+  gap:10px !important;
+}
+
+.art-date em{
+  margin-top:1px !important;
+  color:#66beff !important;
+  font-family:"Montserrat",Arial,sans-serif !important;
+  font-size:2.15rem !important;
+  line-height:.82 !important;
+  font-style:normal !important;
+  font-weight:900 !important;
+}
+
+@media(max-width:720px){
+  .art-date em{
+    font-size:1.9rem !important;
+  }
+}
+
+
+/* ============================================
+   V7.1 — data do card no mesmo padrão do card principal
+   ============================================ */
+.art-date{
+  display:flex !important;
+  align-items:baseline !important;
+  gap:0 !important;
+  top:72px !important;
+  left:28px !important;
+  font-family:"Montserrat", Arial, sans-serif !important;
+}
+
+.art-date strong{
+  font-size:4.2rem !important;
+  line-height:.82 !important;
+  letter-spacing:-.08em !important;
+  font-weight:900 !important;
+}
+
+.art-date em{
+  display:inline-block !important;
+  margin:0 -.04em 0 -.02em !important;
+  align-self:baseline !important;
+  color:#fff !important;
+  font-family:"Montserrat", Arial, sans-serif !important;
+  font-size:3.05rem !important;
+  line-height:.82 !important;
+  font-style:normal !important;
+  font-weight:900 !important;
+  letter-spacing:-.08em !important;
+  transform:translateY(-0.02em) !important;
+}
+
+@media(max-width:720px){
+  .art-date{
+    gap:0 !important;
+  }
+
+  .art-date strong{
+    font-size:4.2rem !important;
+    line-height:.82 !important;
+  }
+
+  .art-date em{
+    font-size:3.05rem !important;
+    line-height:.82 !important;
+    margin:0 -.04em 0 -.02em !important;
+  }
+}
+
+
+/* ============================================
+   V7.2 — espaçamento refinado da data
+   ============================================ */
+
+/* Dá mais respiro entre 21, e e 22 */
+.art-date{
+  column-gap:10px !important;
+}
+
+/* Remove compensações agressivas entre os elementos */
+.art-date em{
+  margin:0 !important;
+  transform:translateY(-0.02em) !important;
+}
+
+/* Aproxima NOVEMBRO da linha da data */
+.art-month{
+  margin-top:6px !important;
+  top:auto !important;
+}
+
+@media(max-width:720px){
+  .art-date{
+    column-gap:7px !important;
+  }
+
+  .art-month{
+    margin-top:4px !important;
+  }
+}
+
+
+/* ============================================
+   V7.3 — correção real da composição da data
+   ============================================ */
+
+/* Linha principal: 21 e 22 */
+.art-date{
+  position:absolute !important;
+  left:28px !important;
+  top:72px !important;
+  display:flex !important;
+  align-items:baseline !important;
+  column-gap:8px !important;
+  margin:0 !important;
+}
+
+.art-date strong{
+  margin:0 !important;
+  font-size:4.2rem !important;
+  line-height:.82 !important;
+  letter-spacing:-.075em !important;
+}
+
+.art-date em{
+  margin:0 !important;
+  padding:0 !important;
+  align-self:baseline !important;
+  color:#fff !important;
+  font-size:3.05rem !important;
+  line-height:.82 !important;
+  font-weight:900 !important;
+  letter-spacing:-.06em !important;
+  transform:none !important;
+}
+
+/* NOVEMBRO volta para baixo da data, com pouco espaço vertical */
+.art-month{
+  position:absolute !important;
+  left:28px !important;
+  top:132px !important;
+  margin:0 !important;
+  font-size:2.34rem !important;
+  line-height:.90 !important;
+  letter-spacing:-.05em !important;
+}
+
+/* Mantém PALAVRA fora da data */
+.tag-left{
+  top:54px !important;
+}
+
+/* Mantém WORKSHIP sem interferir no mês */
+.tag-right{
+  top:145px !important;
+}
+
+@media(max-width:720px){
+  .art-date{
+    left:28px !important;
+    top:72px !important;
+    column-gap:7px !important;
+  }
+
+  .art-date strong{
+    font-size:4.2rem !important;
+  }
+
+  .art-date em{
+    font-size:3.05rem !important;
+  }
+
+  .art-month{
+    left:28px !important;
+    top:132px !important;
+    margin:0 !important;
+    font-size:2.34rem !important;
+  }
+}
+\n\n/* ============================================\n   V7.5 — declaração com peso regular\n   ============================================ */\n.consent,\n.consent span{\n  font-weight:400 !important;\n}\n\n.consent a{\n  font-weight:400 !important;\n}\n
+
+/* ============================================
+   V7.6 — consentimento no padrão Mulheres Virtuosas
+   ============================================ */
+label.consent,
+label.consent span,
+label.consent a{
+  font-family: Arial, Helvetica, sans-serif !important;
+  font-weight: 400 !important;
+  font-synthesis: none !important;
+}
+
+label.consent{
+  font-size: 14px !important;
+  line-height: 1.55 !important;
+  letter-spacing: 0 !important;
+  color: #071a31 !important;
+}
+
+label.consent a{
+  color: var(--orange) !important;
+  text-decoration: underline !important;
+  text-underline-offset: 2px !important;
+}
+
+
+/* ============================================
+   V7.7 — feedback do botão Pix no padrão Mulheres Virtuosas
+   ============================================ */
+#copy-pix.pix-copy-feedback{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:9px !important;
+  transition:
+    background-color .25s ease,
+    border-color .25s ease,
+    color .25s ease,
+    transform .18s ease !important;
+}
+
+#copy-pix .pix-copy-icon{
+  fill:currentColor;
+  flex:0 0 auto;
+}
+
+#copy-pix:active{
+  transform:scale(.985);
+}
+
+#copy-pix.copied{
+  background:#3ba55c !important;
+  color:#fff !important;
+  border-color:#3ba55c !important;
+}
+
+@media (prefers-reduced-motion:reduce){
+  #copy-pix.pix-copy-feedback{
+    transition:none !important;
+  }
+  #copy-pix:active{
+    transform:none;
+  }
+}
+
+
+/* ============================================
+   V7.8 — etapas no padrão Mulheres Virtuosas
+   Diferença NXT:
+   concluído = azul forte
+   atual = azul claro
+   ============================================ */
+
+.progress{
+  --step-done:#07366d;
+  --step-current:#2a8bd8;
+  --step-idle:#aeb7c1;
+  --step-line:#c7c9bf;
+}
+
+/* Base visual e animação dos três passos */
+.progress li{
+  position:relative;
+  transition:
+    color .28s ease,
+    font-weight .28s ease;
+}
+
+.progress li span{
+  position:relative;
+  z-index:2;
+  background:transparent;
+  border-color:var(--step-idle);
+  color:var(--navy);
+  transition:
+    background-color .32s ease,
+    border-color .32s ease,
+    color .32s ease,
+    transform .32s cubic-bezier(.2,.8,.2,1),
+    box-shadow .32s ease;
+}
+
+/* Passo concluído: azul forte */
+.progress li.is-complete{
+  color:var(--navy);
+  font-weight:600;
+}
+
+.progress li.is-complete span{
+  background:var(--step-done) !important;
+  border-color:var(--step-done) !important;
+  color:#fff !important;
+}
+
+/* Passo atual: azul mais leve */
+.progress li[aria-current="step"]{
+  color:var(--navy) !important;
+  font-weight:800 !important;
+}
+
+.progress li[aria-current="step"] span{
+  background:var(--step-current) !important;
+  border-color:var(--step-current) !important;
+  color:#fff !important;
+  transform:scale(1.04);
+  box-shadow:0 0 0 5px rgba(42,139,216,.09);
+}
+
+/* Linha base entre os passos */
+.progress li+li:before{
+  background:var(--step-line) !important;
+  transition:background-color .32s ease;
+}
+
+/* Linha preenchida, animada da esquerda para a direita */
+.progress li+li:after{
+  content:"";
+  position:absolute;
+  z-index:1;
+  top:21px;
+  right:calc(50% + 31px);
+  width:calc(100% - 12px);
+  height:1px;
+  background:var(--step-done);
+  transform:translateX(-50%) scaleX(0);
+  transform-origin:left center;
+  transition:transform .42s cubic-bezier(.2,.8,.2,1);
+  pointer-events:none;
+}
+
+/* A linha anterior fica preenchida quando o passo é atual ou já foi concluído */
+.progress li.is-complete+li:after,
+.progress li+li.is-complete:after,
+.progress li+li[aria-current="step"]:after{
+  transform:translateX(-50%) scaleX(1);
+}
+
+/* Pequeno pulso ao entrar no passo atual */
+@keyframes nxt-step-enter{
+  0%{transform:scale(.92)}
+  65%{transform:scale(1.08)}
+  100%{transform:scale(1.04)}
+}
+
+.progress li[aria-current="step"] span{
+  animation:nxt-step-enter .38s cubic-bezier(.2,.8,.2,1);
+}
+
+/* O primeiro passo não possui linha anterior */
+.progress li:first-child:after{
+  display:none;
+}
+
+@media (prefers-reduced-motion:reduce){
+  .progress li,
+  .progress li span,
+  .progress li+li:before,
+  .progress li+li:after{
+    transition:none !important;
+  }
+
+  .progress li[aria-current="step"] span{
+    animation:none !important;
+    transform:none;
+  }
+}
+
+
+/* ============================================
+   V7.9 — linhas entre as etapas corrigidas
+   ============================================ */
+
+/* organiza os três passos em larguras iguais */
+.progress{
+  display:flex !important;
+  align-items:flex-start !important;
+  justify-content:space-between !important;
+  gap:0 !important;
+}
+
+.progress li{
+  flex:1 1 0 !important;
+  min-width:0 !important;
+  position:relative !important;
+  text-align:center !important;
+}
+
+/* desativa as linhas antigas para evitar conflito */
+.progress li+li:before,
+.progress li+li:after,
+.progress li:nth-child(1)>span::after,
+.progress li:nth-child(2)>span::after{
+  content:none !important;
+  display:none !important;
+}
+
+/* linha-base entre um círculo e o próximo */
+.progress li:not(:last-child)::before{
+  content:"" !important;
+  display:block !important;
+  position:absolute !important;
+  z-index:0 !important;
+  top:20px !important;
+  left:calc(50% + 27px) !important;
+  width:calc(100% - 54px) !important;
+  height:1px !important;
+  background:var(--step-line) !important;
+  transform:none !important;
+  pointer-events:none !important;
+}
+
+/* preenchimento azul da linha quando a etapa anterior já foi concluída */
+.progress li:not(:last-child)::after{
+  content:"" !important;
+  display:block !important;
+  position:absolute !important;
+  z-index:1 !important;
+  top:20px !important;
+  left:calc(50% + 27px) !important;
+  width:calc(100% - 54px) !important;
+  height:1px !important;
+  background:var(--step-done) !important;
+  transform:scaleX(0) !important;
+  transform-origin:left center !important;
+  transition:transform .42s cubic-bezier(.2,.8,.2,1) !important;
+  pointer-events:none !important;
+}
+
+.progress li.is-complete:not(:last-child)::after{
+  transform:scaleX(1) !important;
+}
+
+/* círculos sempre acima das linhas */
+.progress li>span{
+  position:relative !important;
+  z-index:3 !important;
+}
+
+@media(max-width:720px){
+  .progress li:not(:last-child)::before,
+  .progress li:not(:last-child)::after{
+    top:17px !important;
+    left:calc(50% + 23px) !important;
+    width:calc(100% - 46px) !important;
+  }
+}
+
+
+/* ============================================
+   V8.0 — integração real + protocolo
+   ============================================ */
+.honeypot{position:absolute!important;left:-10000px!important;width:1px!important;height:1px!important;overflow:hidden!important}
+.confirmation{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin:28px 0}
+.confirmation div{border-top:1px solid var(--line);padding-top:14px}
+.confirmation dt{font-size:.75rem;color:var(--muted);margin-bottom:7px}
+.confirmation dd{margin:0;font-weight:700;color:var(--navy)}
+.event-footer{position:relative}
+.event-footer .admin-link{position:absolute;right:28px;color:inherit;opacity:.55;text-decoration:none}
+.event-footer .admin-link:hover{opacity:1;text-decoration:underline;text-underline-offset:4px}
+#submit-registration[disabled]{opacity:.65;cursor:wait}
+@media(max-width:700px){
+  .confirmation{grid-template-columns:1fr}
+  .event-footer .admin-link{position:static;display:block;width:max-content;margin:8px auto 0}
+}
+
+
+/* ==========================================================
+   V11.0 — formulário NXT: mobile sweep
+   ========================================================== */
+html,
+body{
+  width:100%;
+  max-width:100%;
+  overflow-x:hidden !important;
+  overscroll-behavior-x:none;
+}
+@supports (overflow:clip){
+  html,
+  body{overflow-x:clip !important;}
+}
+body{
+  position:relative;
+  touch-action:pan-y pinch-zoom;
+}
+.event-header,
+.registration,
+.event-footer{
+  max-width:100%;
+}
+
+/* Data de nascimento com a mesma proporção dos outros campos */
+input[type="date"]{
+  width:100% !important;
+  min-width:0 !important;
+  height:52px !important;
+  min-height:52px !important;
+  max-height:52px !important;
+  box-sizing:border-box !important;
+  padding:0 14px !important;
+  line-height:normal !important;
+  font-family:"Manrope",Arial,sans-serif !important;
+}
+
+input[type="date"]::-webkit-date-and-time-value{
+  min-height:50px !important;
+  display:flex;
+  align-items:center;
+  text-align:left;
+  padding:0 !important;
+  margin:0 !important;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator{
+  margin:0 !important;
+  padding:4px !important;
+}
+
+@media(max-width:600px){
+  .event-header,
+  .registration,
+  .event-footer{
+    width:calc(100% - 28px) !important;
+    max-width:calc(100% - 28px) !important;
+  }
+
+  .registration{
+    grid-template-columns:minmax(0,1fr) !important;
+    gap:36px !important;
+  }
+
+  .form-area,
+  .event-summary{
+    width:100% !important;
+    max-width:100% !important;
+    min-width:0 !important;
+  }
+
+  /* Inputs uniformes e legíveis no iPhone */
+  input:not([type="checkbox"]),
+  select,
+  textarea{
+    width:100% !important;
+    max-width:100% !important;
+    min-width:0 !important;
+    box-sizing:border-box !important;
+    font-size:16px !important;
+  }
+
+  input:not([type="checkbox"]),
+  select{
+    height:52px !important;
+    min-height:52px !important;
+  }
+
+  input[type="date"]{
+    height:52px !important;
+    min-height:52px !important;
+    max-height:52px !important;
+    padding:0 14px !important;
+    font-size:16px !important;
+  }
+
+  input[type="date"]::-webkit-date-and-time-value{
+    min-height:50px !important;
+    height:50px !important;
+    line-height:50px !important;
+  }
+
+  fieldset{
+    width:100% !important;
+    max-width:100% !important;
+    min-width:0 !important;
+  }
+
+  .field-row{
+    width:100% !important;
+    grid-template-columns:minmax(0,1fr) !important;
+  }
+
+  .actions,
+  .pix-payment,
+  .receipt-selected{
+    max-width:100% !important;
+  }
+
+  .progress{
+    width:100% !important;
+    max-width:100% !important;
+  }
+}
+
+
+/* ==========================================================
+   V11.1 — refinamento real do formulário NXT no mobile
+   ========================================================== */
+@media(max-width:600px){
+
+  /* O par Data + Idade deve continuar compacto no celular,
+     em vez de virar dois campos gigantes empilhados. */
+  .field-row:has(#birth){
+    display:grid !important;
+    grid-template-columns:minmax(0,1.65fr) minmax(92px,.75fr) !important;
+    gap:12px !important;
+    align-items:end !important;
+    margin-bottom:18px !important;
+  }
+
+  .field-row:has(#birth)>div{
+    min-width:0 !important;
+  }
+
+  /* Mantém os demais pares em uma coluna para não apertar
+     WhatsApp/Parentesco e outros campos com textos maiores. */
+  .field-row:not(:has(#birth)){
+    grid-template-columns:minmax(0,1fr) !important;
+    gap:0 !important;
+  }
+
+  /* Altura visual mais proporcional aos demais controles do site. */
+  input:not([type="checkbox"]),
+  select{
+    height:48px !important;
+    min-height:48px !important;
+  }
+
+  input[type="date"]{
+    height:48px !important;
+    min-height:48px !important;
+    max-height:48px !important;
+    padding:0 12px !important;
+    font-size:16px !important;
+  }
+
+  input[type="date"]::-webkit-date-and-time-value{
+    min-height:46px !important;
+    height:46px !important;
+    line-height:46px !important;
+    padding:0 !important;
+  }
+
+  input[type="date"]::-webkit-calendar-picker-indicator{
+    margin-left:4px !important;
+    padding:2px !important;
+  }
+
+  #age{
+    text-align:center !important;
+    padding-left:10px !important;
+    padding-right:10px !important;
+  }
+
+  /* Ritmo vertical e legibilidade */
+  fieldset>label,
+  .field-row label{
+    margin-bottom:7px !important;
+    font-size:.78rem !important;
+    line-height:1.25 !important;
+  }
+
+  fieldset>input,
+  fieldset>select,
+  fieldset>textarea,
+  .field-row{
+    margin-bottom:17px !important;
+  }
+
+  .step-intro{
+    max-width:34ch !important;
+    margin-bottom:24px !important;
+    font-size:.86rem !important;
+    line-height:1.5 !important;
+  }
+
+  fieldset legend{
+    font-size:1.55rem !important;
+    line-height:1.1 !important;
+    margin-bottom:8px !important;
+  }
+
+  .section-divider{
+    margin:26px 0 18px !important;
+  }
+
+  .section-divider span{
+    font-size:.62rem !important;
+    letter-spacing:.12em !important;
+  }
+
+  textarea{
+    min-height:104px !important;
+  }
+
+  /* evita qualquer elemento interno ultrapassar a largura útil */
+  .form-area *,
+  fieldset *{
+    max-width:100%;
+  }
+}
+
+@media(max-width:360px){
+  .field-row:has(#birth){
+    grid-template-columns:minmax(0,1.5fr) minmax(82px,.72fr) !important;
+    gap:10px !important;
+  }
+}
+
+
+/* ==========================================================
+   V11.2 — corrige sobreposição Data de nascimento x Idade no iPhone
+   ========================================================== */
+@media(max-width:600px){
+
+  /* O erro estava no input date nativo do Safari mantendo uma largura
+     intrínseca maior que a coluna do grid, invadindo o campo Idade. */
+  .field-row:has(#birth){
+    grid-template-columns:minmax(0,1fr) 76px !important;
+    gap:12px !important;
+  }
+
+  .field-row:has(#birth) > div{
+    width:auto !important;
+    min-width:0 !important;
+    max-width:none !important;
+    overflow:visible !important;
+  }
+
+  .field-row:has(#birth) > div:first-child{
+    min-width:0 !important;
+    overflow:hidden !important;
+  }
+
+  #birth{
+    display:block !important;
+    inline-size:100% !important;
+    width:100% !important;
+    min-inline-size:0 !important;
+    min-width:0 !important;
+    max-inline-size:100% !important;
+    max-width:100% !important;
+    box-sizing:border-box !important;
+    margin:0 !important;
+    -webkit-appearance:none;
+    appearance:none;
+  }
+
+  /* Mantém o seletor nativo utilizável no Safari */
+  #birth::-webkit-calendar-picker-indicator{
+    opacity:1 !important;
+    display:block !important;
+    flex:0 0 auto !important;
+  }
+
+  #age{
+    width:76px !important;
+    min-width:76px !important;
+    max-width:76px !important;
+    margin:0 !important;
+    box-sizing:border-box !important;
+  }
+}
+
+@media(max-width:360px){
+  .field-row:has(#birth){
+    grid-template-columns:minmax(0,1fr) 70px !important;
+    gap:10px !important;
+  }
+
+  #age{
+    width:70px !important;
+    min-width:70px !important;
+    max-width:70px !important;
+  }
+}
+
+
+/* ==========================================================
+   V11.3 — card do evento no mesmo padrão visual de Mulheres
+   + tags sem sobreposição
+   ========================================================== */
+
+/* Desktop/tablet: mantém o mesmo card, com proporção mais próxima
+   do bloco visual usado em Mulheres Virtuosas. */
+.event-art{
+  width:100% !important;
+  aspect-ratio:2 / 1 !important;
+  height:auto !important;
+  min-height:0 !important;
+  box-sizing:border-box !important;
+}
+
+/* Garante que as tags ocupem áreas livres, sem encostar nos textos */
+.art-tag{
+  white-space:nowrap !important;
+  line-height:1 !important;
+}
+
+.tag-left{
+  left:16px !important;
+  top:52px !important;
+}
+
+.tag-right{
+  right:16px !important;
+  top:134px !important;
+}
+
+/* GINCANAS sai da área do local e passa para a parte escura */
+.tag-bottom{
+  left:auto !important;
+  right:22px !important;
+  bottom:auto !important;
+  top:176px !important;
+  transform:rotate(-4deg) !important;
+}
+
+/* Reserva melhor a faixa azul para LOCAL + SBGP.1 */
+.art-bottom{
+  height:82px !important;
+  padding:31px 22px 13px !important;
+}
+
+.art-local{
+  max-width:58% !important;
+}
+
+.art-local strong{
+  white-space:normal !important;
+}
+
+/* ==========================================================
+   MOBILE
+   ========================================================== */
+@media(max-width:600px){
+
+  /* Mesmo comportamento de largura do card de Mulheres:
+     ocupa toda a coluna disponível, com proporção horizontal. */
+  .event-summary{
+    width:100% !important;
+    max-width:100% !important;
+  }
+
+  .event-art{
+    width:100% !important;
+    aspect-ratio:2 / 1 !important;
+    height:auto !important;
+    min-height:0 !important;
+    border-radius:15px !important;
+  }
+
+  /* Reescala todo o conteúdo interno para a nova altura do card */
+  .art-top{
+    top:16px !important;
+    left:16px !important;
+    right:16px !important;
+    font-size:.48rem !important;
+  }
+
+  .art-date{
+    left:16px !important;
+    top:50px !important;
+    column-gap:5px !important;
+  }
+
+  .art-date strong{
+    font-size:2.9rem !important;
+    line-height:.82 !important;
+  }
+
+  .art-date em{
+    font-size:1.55rem !important;
+    line-height:1 !important;
+  }
+
+  .art-month{
+    left:16px !important;
+    top:94px !important;
+    font-size:1.48rem !important;
+    line-height:.94 !important;
+  }
+
+  .art-tag{
+    padding:6px 8px !important;
+    font-size:.42rem !important;
+    letter-spacing:.07em !important;
+  }
+
+  /* PALAVRA ocupa o espaço acima da data */
+  .tag-left{
+    left:12px !important;
+    top:31px !important;
+  }
+
+  /* WORSHIP fica no canto direito, longe do mês */
+  .tag-right{
+    right:12px !important;
+    top:77px !important;
+  }
+
+  /* GINCANAS fica na área escura, acima da faixa azul,
+     sem cruzar LOCAL nem SBGP.1 */
+  .tag-bottom{
+    left:auto !important;
+    right:18px !important;
+    top:112px !important;
+    bottom:auto !important;
+  }
+
+  .art-bottom{
+    height:52px !important;
+    padding:20px 15px 9px !important;
+    clip-path:polygon(0 24%,100% 0,100% 100%,0 100%) !important;
+  }
+
+  .art-local{
+    max-width:62% !important;
+  }
+
+  .art-local small{
+    font-size:.38rem !important;
+    line-height:1 !important;
+  }
+
+  .art-local strong{
+    font-size:.56rem !important;
+    line-height:1.08 !important;
+  }
+
+  .art-bottom>span{
+    font-size:.46rem !important;
+    padding:5px 7px !important;
+  }
+}
+
+@media(max-width:360px){
+  .event-art{
+    aspect-ratio:2 / 1 !important;
+  }
+
+  .art-date strong{
+    font-size:2.65rem !important;
+  }
+
+  .art-month{
+    font-size:1.34rem !important;
+  }
+
+  .tag-bottom{
+    right:15px !important;
+  }
+}
+
+
+/* V11.4 — aproxima PALAVRA das demais tags */
+@media(max-width:600px){
+  .tag-left{
+    left:auto !important;
+    right:92px !important;
+    top:74px !important;
+    transform:rotate(-3deg) !important;
+  }
+
+  .tag-right{
+    right:12px !important;
+    top:77px !important;
+  }
+
+  .tag-bottom{
+    right:18px !important;
+    top:112px !important;
+  }
+}
+
+@media(max-width:360px){
+  .tag-left{
+    right:86px !important;
+    top:72px !important;
+  }
+}
+
+
+/* v11.5 — banner do formulário alinhado à página principal */
+.event-art.event-art-banner{
+  position:relative !important;
+  display:block !important;
+  padding:0 !important;
+  background:#0b1830 !important;
+  box-shadow:0 18px 42px rgba(6,21,46,.10) !important;
+}
+
+.event-art-image{
+  display:block !important;
+  width:100% !important;
+  height:100% !important;
+  object-fit:cover !important;
+  object-position:center center !important;
+}
+
+@media(max-width:760px){
+  .event-art.event-art-banner{
+    height:auto !important;
+    aspect-ratio: 16 / 9 !important;
+  }
+}
+
+
+/* =========================================================
+   v11.6 — paleta Mulheres Virtuosas no título e nas etapas
+   ========================================================= */
+
+/* Título: mesma lógica cromática do Mulheres Virtuosas */
+.event-summary h1{
+  color:#082A55 !important;
+}
+
+.event-summary h1 em{
+  color:#E85D16 !important;
+  font-style:italic !important;
+}
+
+/* Stepper: mesma paleta e estados do formulário Mulheres v230 */
+.progress{
+  --step-done:#E85D16;
+  --step-current:#FFA36F;
+  --step-idle:#AEB7C1;
+  --step-line:#C7C9BF;
+}
+
+.progress li{
+  color:#65728A !important;
+  font-weight:400 !important;
+}
+
+.progress li > span{
+  background:transparent !important;
+  border:1px solid var(--step-idle) !important;
+  color:#062B55 !important;
+  font-weight:700 !important;
+  box-shadow:none !important;
+  filter:none !important;
+}
+
+/* Etapa concluída */
+.progress li.is-complete{
+  color:#44566E !important;
+  font-weight:400 !important;
+}
+
+.progress li.is-complete > span{
+  background:var(--step-done) !important;
+  border-color:var(--step-done) !important;
+  color:#fff !important;
+  font-weight:700 !important;
+  transform:none !important;
+  box-shadow:none !important;
+}
+
+/* Etapa atual */
+.progress li[aria-current="step"]{
+  color:#062B55 !important;
+  font-weight:600 !important;
+}
+
+.progress li[aria-current="step"] > span{
+  background:rgba(255,127,64,.12) !important;
+  border-color:#FF7F40 !important;
+  color:#062B55 !important;
+  font-weight:700 !important;
+  transform:scale(1.04) !important;
+  box-shadow:none !important;
+  outline:0 !important;
+}
+
+/* Etapas futuras */
+.progress li:not(.is-complete):not([aria-current="step"]){
+  color:#65728A !important;
+  font-weight:400 !important;
+}
+
+.progress li:not(.is-complete):not([aria-current="step"]) > span{
+  background:transparent !important;
+  border-color:var(--step-idle) !important;
+  color:#062B55 !important;
+  font-weight:600 !important;
+  transform:none !important;
+  box-shadow:none !important;
+}
+
+/* Conectores */
+.progress li:nth-child(1) > span::after,
+.progress li:nth-child(2) > span::after{
+  background:var(--step-line) !important;
+}
+
+.progress li.is-complete:nth-child(1) > span::after,
+.progress li.is-complete:nth-child(2) > span::after{
+  background:var(--step-done) !important;
+}

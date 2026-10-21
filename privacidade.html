@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Política de Privacidade | Nova Igreja Batista - NIB</title>
+  <meta name="description" content="Política de Privacidade da Nova Igreja Batista - NIB Casa de Deus, em Ariquemes, Rondônia.">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <link rel="canonical" href="https://novaigrejabatista.com.br/privacidade.html">
+
+  <meta property="og:locale" content="pt_BR">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Nova Igreja Batista - NIB">
+  <meta property="og:title" content="Política de Privacidade | Nova Igreja Batista - NIB">
+  <meta property="og:description" content="Conheça como a Nova Igreja Batista trata dados pessoais e protege a privacidade dos visitantes do site.">
+  <meta property="og:url" content="https://novaigrejabatista.com.br/privacidade.html">
+  <meta property="og:image" content="https://novaigrejabatista.com.br/img/og-nova-igreja-batista.jpg">
+
+  <style>
+    /* ===== v155 — identidade tipográfica da página principal ===== */
+    @font-face{font-family:"NIB Acumin Mobile v124";src:url("fonts/NIB-Acumin-Light-Mobile-v124.woff2") format("woff2");font-weight:300;font-style:normal;font-display:swap}
+    @font-face{font-family:"NIB Acumin Mobile v124";src:url("fonts/NIB-Acumin-Regular-Mobile-v124.woff2") format("woff2");font-weight:400;font-style:normal;font-display:swap}
+    @font-face{font-family:"NIB Acumin Mobile v124";src:url("fonts/NIB-Acumin-Medium-Mobile-v124.woff2") format("woff2");font-weight:500;font-style:normal;font-display:swap}
+    @font-face{font-family:"NIB Acumin Mobile v124";src:url("fonts/NIB-Acumin-Semibold-Mobile-v124.woff2") format("woff2");font-weight:600;font-style:normal;font-display:swap}
+    @font-face{font-family:"NIB Acumin Mobile v124";src:url("fonts/NIB-Acumin-Bold-Mobile-v124.woff2") format("woff2");font-weight:700;font-style:normal;font-display:swap}
+
+    :root{
+      --bg:#05070d;
+      --bg-2:#0a0f1c;
+      --panel:#0e1526;
+      --ink:#eaf1ff;
+      --muted:#8b9ac0;
+      --line:rgba(255,255,255,.10);
+      --navy:#060749;
+      --marfim:#EBEBDF;
+      --azul-gray:#A8AFB7;
+      --laranja:#FF7F40;
+      --azul-luz:#7d9bd4;
+      --display:system-ui,-apple-system,"Segoe UI",sans-serif;
+      --body:system-ui,-apple-system,"Segoe UI",sans-serif;
+      --acumin:system-ui,-apple-system,"Segoe UI",sans-serif;
+      --wrap:1240px;
+    }
+
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      background:
+        radial-gradient(circle at 80% 0%,rgba(29,127,255,.12),transparent 34rem),
+        var(--bg);
+      color:var(--ink);
+      font-family:var(--body);
+      line-height:1.6;
+      -webkit-font-smoothing:antialiased;
+    }
+    a{color:inherit;text-decoration:none}
+
+    .top{
+      position:sticky;
+      top:0;
+      z-index:10;
+      backdrop-filter:blur(16px);
+      -webkit-backdrop-filter:blur(16px);
+      background:rgba(5,7,13,.82);
+      border-bottom:1px solid var(--line);
+    }
+    .top-inner,.wrap{
+      max-width:var(--wrap);
+      margin:0 auto;
+      padding:0 26px;
+    }
+    .top-inner{
+      min-height:76px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:24px;
+    }
+    .brand{
+      font-family:var(--acumin);
+      font-weight:700;
+      letter-spacing:-.01em;
+    }
+    .back{
+      font-family:var(--acumin);
+      font-size:.85rem;
+      font-weight:600;
+      border:1px solid var(--line);
+      border-radius:999px;
+      padding:10px 16px;
+      transition:.25s;
+    }
+    .back:hover{
+      background:var(--marfim);
+      color:var(--navy);
+      border-color:var(--marfim);
+    }
+
+    main{padding:72px 0 88px}
+
+    /* Chapéu — mesmo padrão da página principal */
+    .eyebrow{
+      font-family:var(--acumin);
+      font-size:.75rem;
+      font-weight:600;
+      letter-spacing:.28em;
+      text-transform:uppercase;
+      color:var(--laranja);
+    }
+
+    /* Título principal — mesmo peso, tracking e escala visual dos títulos de seção */
+    h1{
+      font-family:var(--acumin);
+      font-weight:700;
+      letter-spacing:-.01em;
+      line-height:1.06;
+      font-size:clamp(2rem,5vw,3.6rem);
+      color:var(--marfim);
+      margin:14px 0 20px;
+      max-width:850px;
+    }
+
+    /* Texto de abertura — padrão .lead da home */
+    .lead{
+      font-family:var(--acumin);
+      color:#c9cdd8;
+      font-size:1.08rem;
+      max-width:62ch;
+      margin-bottom:44px;
+    }
+
+    .card{
+      background:rgba(14,21,38,.72);
+      border:1px solid var(--line);
+      border-radius:22px;
+      padding:clamp(24px,5vw,48px);
+      box-shadow:0 22px 70px rgba(0,0,0,.18);
+    }
+
+    /* Subtítulos seguem a mesma linguagem dos títulos da home */
+    h2{
+      font-family:var(--acumin);
+      font-weight:700;
+      letter-spacing:-.01em;
+      line-height:1.15;
+      font-size:clamp(1.35rem,2.1vw,1.75rem);
+      color:var(--marfim);
+      margin:36px 0 12px;
+    }
+    h2:first-child{margin-top:0}
+
+    /* Corpo de texto coerente com a página principal */
+    p,li{
+      font-family:var(--acumin);
+      font-size:1rem;
+      font-weight:400;
+      line-height:1.7;
+      color:#c9cdd8;
+    }
+    p{margin:0 0 14px}
+    ul{padding-left:1.25rem;margin:8px 0 0}
+    li+li{margin-top:5px}
+    strong{font-weight:700;color:var(--marfim)}
+
+    .contact{
+      margin-top:32px;
+      padding:22px;
+      border-radius:16px;
+      background:rgba(6,7,73,.32);
+      border:1px solid rgba(255,255,255,.10);
+    }
+    .contact a{
+      color:var(--marfim);
+      font-weight:700;
+    }
+    .contact a:hover{color:var(--laranja)}
+
+    .updated{
+      margin-top:34px;
+      color:var(--azul-gray);
+      font-size:.9rem;
+    }
+
+    footer{
+      border-top:1px solid var(--line);
+      padding:28px 20px;
+      text-align:center;
+      color:var(--azul-gray);
+      font-family:var(--acumin);
+      font-size:.86rem;
+    }
+
+    /* Mesmo comportamento tipográfico mobile usado na página principal */
+    @media(max-width:820px){
+      html,body,body *{
+        font-family:"NIB Acumin Mobile v124",Arial,sans-serif !important;
+      }
+      .top-inner,.wrap{padding-left:18px;padding-right:18px}
+      .top-inner{min-height:66px}
+      .back{padding:8px 12px;font-size:.82rem}
+      main{padding-top:46px}
+      h1{font-size:clamp(2rem,10vw,3rem)}
+      .lead{font-size:1.02rem}
+      p,li{font-size:.98rem}
+    }
+  </style>
+</head>
+<body>
+  <header class="top">
+    <div class="top-inner">
+      <a class="brand" href="/">Nova Igreja Batista</a>
+      <a class="back" href="/">Voltar ao site</a>
+    </div>
+  </header>
+
+  <main>
+    <div class="wrap">
+      <div class="eyebrow">Privacidade e proteção de dados</div>
+      <h1>Política de Privacidade</h1>
+      <p class="lead">
+        A Nova Igreja Batista valoriza a privacidade das pessoas que visitam o nosso site e busca tratar
+        dados pessoais com transparência, responsabilidade e respeito à Lei Geral de Proteção de Dados
+        Pessoais (Lei nº 13.709/2018 — LGPD).
+      </p>
+
+      <article class="card">
+        <h2>1. Quem somos</h2>
+        <p>
+          Esta Política de Privacidade se aplica ao site da <strong>Nova Igreja Batista | NIB · A casa de Deus</strong>,
+          localizada em Rua França, 1409 — Áreas Especiais 01, Ariquemes — RO, CEP 76870-013.
+        </p>
+
+        <h2>2. Quais dados podem ser tratados</h2>
+        <p>
+          O site é predominantemente institucional e não exige cadastro para navegação. Dependendo da forma
+          como o visitante interage conosco, poderão ser tratados dados fornecidos voluntariamente, como nome,
+          telefone, e-mail, conteúdo de mensagens e outras informações necessárias para responder a um contato,
+          orientar sobre células, cultos, eventos ou outras atividades da igreja.
+        </p>
+
+        <h2>3. Para quais finalidades utilizamos os dados</h2>
+        <p>Os dados pessoais eventualmente recebidos poderão ser utilizados para:</p>
+        <ul>
+          <li>responder solicitações, dúvidas e contatos feitos pelo visitante;</li>
+          <li>fornecer informações sobre cultos, células, eventos e atividades da igreja;</li>
+          <li>viabilizar comunicação relacionada ao pedido realizado pelo próprio titular;</li>
+          <li>cumprir obrigações legais ou regulatórias quando aplicável;</li>
+          <li>proteger direitos, prevenir abusos e manter a segurança dos nossos canais digitais.</li>
+        </ul>
+
+        <h2>4. Bases legais</h2>
+        <p>
+          O tratamento de dados pessoais poderá ocorrer com fundamento nas bases legais previstas na LGPD,
+          conforme a situação concreta, incluindo consentimento, cumprimento de obrigação legal ou regulatória,
+          legítimo interesse e procedimentos relacionados a solicitações feitas pelo próprio titular.
+        </p>
+
+        <h2>5. Compartilhamento e serviços de terceiros</h2>
+        <p>
+          O site pode disponibilizar links ou incorporar conteúdos de serviços externos, como YouTube,
+          Instagram, Facebook e outros canais utilizados pela Nova Igreja Batista. Ao acessar esses serviços,
+          o visitante também estará sujeito às políticas de privacidade e aos termos definidos pelos respectivos
+          provedores.
+        </p>
+        <p>
+          A Nova Igreja Batista não comercializa dados pessoais. Informações poderão ser compartilhadas com
+          prestadores de serviço quando isso for necessário ao funcionamento dos nossos canais digitais, ou
+          quando houver obrigação legal.
+        </p>
+
+        <h2>6. Armazenamento e segurança</h2>
+        <p>
+          Adotamos medidas razoáveis de segurança para reduzir riscos de acesso não autorizado, perda,
+          alteração, divulgação indevida ou uso inadequado de informações pessoais. Os dados são mantidos
+          somente pelo período necessário ao atendimento da finalidade para a qual foram coletados ou conforme
+          exigido pela legislação aplicável.
+        </p>
+
+        <h2>7. Direitos do titular</h2>
+        <p>
+          Nos termos da LGPD, o titular poderá solicitar, conforme aplicável, confirmação da existência de
+          tratamento, acesso aos dados, correção de informações incompletas ou desatualizadas, informações
+          sobre compartilhamento, anonimização, bloqueio ou eliminação nos casos previstos em lei, além de
+          revogação do consentimento quando esta for a base utilizada.
+        </p>
+
+        <h2>8. Links externos</h2>
+        <p>
+          Nosso site pode conter links para páginas externas. A Nova Igreja Batista não controla as práticas
+          de privacidade desses terceiros e recomenda que o visitante consulte as respectivas políticas antes
+          de fornecer dados pessoais nesses ambientes.
+        </p>
+
+        <h2>9. Cookies</h2>
+        <p>
+          No momento, este site não utiliza uma política específica de cookies para finalidades publicitárias
+          ou de rastreamento comportamental. Caso ferramentas que alterem essa realidade sejam implementadas
+          futuramente, esta Política poderá ser atualizada e, quando necessário, mecanismos de consentimento
+          poderão ser adotados.
+        </p>
+
+        <h2>10. Atualizações desta Política</h2>
+        <p>
+          Esta Política poderá ser atualizada para refletir mudanças no site, nos serviços utilizados ou na
+          legislação aplicável. A versão vigente permanecerá disponível nesta página.
+        </p>
+
+        <h2>11. Contato sobre privacidade</h2>
+        <p>
+          Para solicitações relacionadas à privacidade, proteção de dados pessoais ou exercício de direitos
+          previstos na LGPD, entre em contato pelo canal abaixo.
+        </p>
+
+        <div class="contact">
+          <strong>Nova Igreja Batista | NIB · A casa de Deus</strong><br>
+          E-mail:
+          <a href="mailto:novaigrejabatistacasadedeus@gmail.com">novaigrejabatistacasadedeus@gmail.com</a>
+        </div>
+
+        <p class="updated">Última atualização: 31 de agosto de 2026.</p>
+      </article>
+    </div>
+  </main>
+
+  <footer>
+    Nova Igreja Batista | NIB · A casa de Deus · Ariquemes, Rondônia
+  </footer>
+</body>
+</html>

@@ -1,0 +1,25 @@
+{
+  "id": "/inscricoes/",
+  "name": "Gestão de Eventos · NIB",
+  "short_name": "Gestão NIB",
+  "lang": "pt-BR",
+  "start_url": "/inscricoes/",
+  "scope": "/inscricoes/",
+  "display": "standalone",
+  "background_color": "#041e42",
+  "theme_color": "#041e42",
+  "icons": [
+    {
+      "src": "/inscricoes/app-icon-192-v39.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/inscricoes/app-icon-512-v39.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+/* v200 — CTA da hero em uma linha no desktop, dentro dos 740px dos horários. */
+@media(min-width:921px){
+ #top .hero-cta{grid-template-columns:max-content max-content minmax(max-content,1fr);gap:10px;max-width:740px}
+ #top .hero-cta .btn{white-space:nowrap;font-size:.875rem;letter-spacing:.015em;padding:10px 14px}
+ #top .hero-dna-action{min-width:0}
+ #top .hero-dna-action .hero-dna-cta{white-space:nowrap}
+}

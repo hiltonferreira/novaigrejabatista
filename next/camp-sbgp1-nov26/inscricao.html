@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Inscrição · NXT CAMP</title>
+  <meta name="description" content="Inscreva-se no NXT CAMP. Dias 21 e 22 de novembro de 2026. Inscrição: R$ 80.">
+  <meta name="theme-color" content="#ebebdf">
+  <link rel="icon" type="image/png" href="/next/camp-sbgp1-nov26/img/favicon-nxt.png?v=2.6">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Montserrat:wght@600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/inscricao.css?v=11.6">
+  <script defer src="assets/inscricao.js?v=11.0"></script>
+<link rel="stylesheet" href="/consulta-inscricao/atalho.css?v=2.6">
+<link rel="stylesheet" href="/consulta-inscricao/cabecalho.css?v=2.8"></head>
+<body>
+<header class="event-header nib-public-header">
+  <a href="/" aria-label="Nova Igreja Batista — início">
+    <img class="nib-logo" src="/img/logo/logo3-azul.svg" alt="Nova Igreja Batista" width="112" height="48">
+  </a>
+  <a class="back-site" href="./index.html">Voltar ao evento</a>
+</header>
+
+<main class="registration">
+  <aside class="event-summary">
+    <div class="event-art event-art-banner">
+      <img class="event-art-image" src="img/nxt-camp-banner-form-v11.5.png" alt="Banner do NXT CAMP">
+    </div>
+
+    <span class="eyebrow">ENCONTRO DE ADOLESCENTES</span>
+    <h1>NXT <em>CAMP</em></h1>
+    <p>Um encontro de fé, palavra, worship, comunhão e experiências para adolescentes de 12 a 17 anos.</p>
+    <dl class="event-facts">
+      <div><dt>Data</dt><dd>21 e 22 de novembro de 2026</dd></div>
+      <div><dt>Inscrição</dt><dd>R$ 80 por participante</dd></div>
+      <div><dt>Local</dt><dd>Chácara Colina Verde</dd></div>
+      <div><dt>Faixa etária</dt><dd>12 a 17 anos</dd></div>
+    </dl>
+  </aside>
+
+  <section class="form-area" aria-label="Inscrição no NXT CAMP">
+<div class="nib-consulta-topo"><span>Já fez sua inscrição?</span><a href="/consulta-inscricao/?evento=nxt-camp">Consultar minha inscrição</a></div>
+    <ol class="progress" aria-label="Etapas da inscrição">
+      <li aria-current="step"><span>01</span> Seus dados</li>
+      <li><span>02</span> Pagamento</li>
+      <li><span>03</span> Comprovante</li>
+    </ol>
+
+    <p id="form-error" class="message error" role="alert" hidden></p>
+
+    <form id="event-form" novalidate>
+      <fieldset data-step="0">
+        <legend>Faça sua inscrição</legend>
+        <p class="step-intro">Informe os dados de quem participará do encontro e do responsável legal.</p>
+
+        <label for="name">Nome completo do adolescente</label>
+        <input id="name" name="name" autocomplete="name" maxlength="120" required>
+
+        <div class="field-row">
+          <div>
+            <label for="birth">Data de nascimento</label>
+            <input id="birth" name="birth" type="date" required>
+          </div>
+          <div>
+            <label for="age">Idade</label>
+            <input id="age" name="age" type="number" min="12" max="17" readonly required>
+          </div>
+        </div>
+
+        <label for="phone">WhatsApp do adolescente <span class="optional">(opcional)</span></label>
+        <input id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="(69) 99999-9999" maxlength="20">
+
+        <div class="section-divider"><span>Responsável legal</span></div>
+
+        <label for="guardian">Nome completo do responsável</label>
+        <input id="guardian" name="guardian" maxlength="120" required>
+
+        <div class="field-row">
+          <div>
+            <label for="guardian-phone">WhatsApp com DDD</label>
+            <input id="guardian-phone" name="guardian_phone" type="tel" inputmode="tel" placeholder="(69) 99999-9999" maxlength="20" required>
+          </div>
+          <div>
+            <label for="relationship">Parentesco</label>
+            <select id="relationship" name="relationship" required>
+              <option value="">Selecione</option>
+              <option>Pai</option>
+              <option>Mãe</option>
+              <option>Avô / Avó</option>
+              <option>Tio / Tia</option>
+              <option>Responsável legal</option>
+              <option>Outro</option>
+            </select>
+          </div>
+        </div>
+
+        <label for="health">Alergia, restrição alimentar, medicamento ou condição de saúde <span class="optional">(se houver)</span></label>
+        <textarea id="health" name="health" rows="3" maxlength="600" placeholder="Informe somente o que a equipe precisa saber para cuidar bem do adolescente."></textarea>
+
+        <label class="consent">
+          <input type="checkbox" id="consent" name="consent" required>
+          <span>Declaro que sou responsável legal pelo adolescente e autorizo sua participação no NXT CAMP, bem como o uso dos dados e do comprovante para organizar esta inscrição. <a href="/privacidade.html" target="_blank" rel="noopener">Política de privacidade</a>.</span>
+        </label>
+
+        <div class="honeypot" aria-hidden="true">
+          <label for="website">Deixe este campo em branco</label>
+          <input id="website" name="website" tabindex="-1" autocomplete="off">
+        </div>
+
+        <button class="button primary" id="next-data" type="button">Continuar para o Pix</button>
+        <p class="small-note">Você pode abrir o banco e voltar sem perder o preenchimento.</p>
+      </fieldset>
+
+      <fieldset data-step="1" hidden>
+        <legend>Pagamento via Pix</legend>
+        <p class="step-intro">Use o Pix Copia e Cola ou leia o QR Code no aplicativo do seu banco. Depois, volte para enviar o comprovante.</p>
+
+        <div class="payment-summary">
+          <div>
+            <span>Inscrição</span>
+            <strong>R$ 80,00</strong>
+          </div>
+          <div>
+            <span>Recebedor</span>
+            <strong>Nova Igreja Batista</strong>
+          </div>
+        </div>
+
+        <div class="pix-payment">
+          <div class="pix-qr">
+            <img src="img/pix-nxt-camp-80.png" alt="QR Code Pix de R$ 80 para Nova Igreja Batista" width="441" height="441">
+            <p class="small-note">No banco, escolha pagar com QR Code.</p>
+          </div>
+
+          <div class="pix-code-block">
+            <label for="pix-code">Pix Copia e Cola</label>
+            <textarea id="pix-code" readonly rows="5" spellcheck="false" autocomplete="off">00020126360014br.gov.bcb.pix011440518758000130520400005303986540580.005802BR5919NOVA IGREJA BATISTA6009ARIQUEMES62070503***63047D99</textarea>
+            <button class="button primary pix-copy-feedback" type="button" id="copy-pix">
+              <svg class="pix-copy-icon" viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="M16 1H4a2 2 0 00-2 2v12h2V3h12V1zm3 4H8a2 2 0 00-2 2v14a2 2 0 002 2h11a2 2 0 002-2V7a2 2 0 00-2-2zm0 16H8V7h11v14z"/></svg>
+              <span class="pix-copy-label">Copiar código PIX</span>
+            </button>
+            <p class="small-note">No celular, copie o código e cole na opção Pix Copia e Cola do seu banco.</p>
+          </div>
+        </div>
+
+        <div class="pix-details">
+          <div>
+            <span>Chave Pix</span>
+            <strong>CNPJ 40.518.758/0001-30</strong>
+          </div>
+          <p id="copy-status" class="small-note" role="status" aria-live="polite"></p>
+          <p class="small-note">Confira no aplicativo do banco se o destinatário é <strong>Nova Igreja Batista</strong> antes de concluir o pagamento. Guarde o comprovante.</p>
+        </div>
+
+        <div class="actions">
+          <button class="button secondary" type="button" data-back="0">Voltar</button>
+          <button class="button primary" id="next-pix" type="button">Já paguei. Enviar comprovante</button>
+        </div>
+      </fieldset>
+
+      <fieldset data-step="2" hidden>
+        <legend>Envie seu comprovante.</legend>
+        <p class="step-intro">Anexe a imagem ou o PDF do pagamento de R$ 80.</p>
+
+        <label class="upload" id="receipt-picker" for="receipt">
+          <strong>Escolher comprovante</strong>
+          <span>JPG, PNG, WebP ou PDF · até 6 MB</span>
+          <input id="receipt" name="receipt" type="file" accept="image/jpeg,image/png,image/webp,application/pdf" required>
+        </label>
+
+        <div id="receipt-selected" class="receipt-selected" hidden>
+          <img id="receipt-preview" alt="Prévia do comprovante selecionado" hidden>
+          <div class="receipt-file">
+            <p id="file-status" class="small-note" role="status" aria-live="polite"></p>
+            <button type="button" id="change-receipt" class="receipt-change">Trocar arquivo</button>
+          </div>
+        </div>
+
+        <label class="consent payer-toggle">
+          <input type="checkbox" id="other-payer" aria-controls="payer-field" aria-expanded="false">
+          <span>O Pix foi feito por outra pessoa?</span>
+        </label>
+
+        <div id="payer-field" hidden>
+          <label for="payer">Nome de quem fez o Pix</label>
+          <input id="payer" name="payer" autocomplete="off" maxlength="120" disabled>
+        </div>
+
+        <p class="small-note">Receberemos seus dados e o comprovante. O envio não faz uma validação bancária automática.</p>
+
+        <div class="actions">
+          <button class="button secondary" type="button" data-back="1">Voltar</button>
+          <button class="button primary" id="submit-registration" type="button">Concluir inscrição</button>
+        </div>
+      </fieldset>
+    </form>
+
+    <section id="success" hidden tabindex="-1" aria-labelledby="success-title">
+      <span class="eyebrow">NXT CAMP</span>
+      <h2 id="success-title">Inscrição feita!</h2>
+      <p>Recebemos os dados e o comprovante. Sua inscrição será conferida pela equipe do NXT.</p>
+      <dl class="confirmation">
+        <div><dt>Protocolo</dt><dd id="protocol"></dd></div>
+        <div><dt>NXT CAMP</dt><dd>21 e 22 de novembro de 2026</dd></div>
+      </dl>
+      <p class="small-note">Guarde o protocolo caso precise falar com a organização.</p>
+      <a class="button primary" href="./index.html">Voltar ao evento</a>
+    </section>
+  </section>
+</main>
+
+<footer class="event-footer">
+  <span>© 2026 Nova Igreja Batista · Um lar de fé e acolhimento.</span>
+  <a class="admin-link" href="/inscricoes/" target="_blank" rel="noopener noreferrer">Gerenciar inscrições</a>
+</footer>
+</body>
+</html>

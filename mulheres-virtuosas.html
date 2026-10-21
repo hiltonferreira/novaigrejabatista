@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Inscrição · Mulheres Virtuosas</title>
+  <meta name="description" content="Inscreva-se no Mulheres Virtuosas. Dia 30 de outubro, às 19h30, na Nova Igreja Batista. Inscrição: R$20.">
+  <meta name="theme-color" content="#ebebdf">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Montserrat:wght@600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/inscricao-mulheres-v221.css?v=230">
+  <style>
+    .event-footer{position:relative;text-align:center;padding-left:190px;padding-right:190px}
+    .event-footer .admin-link{position:absolute;right:24px;top:50%;transform:translateY(-50%);font-size:.78rem;opacity:.58;text-decoration:none;color:inherit;padding:6px 0;border:0;background:none;white-space:nowrap}
+    .event-footer .admin-link:hover,.event-footer .admin-link:focus-visible{opacity:1;text-decoration:underline;text-underline-offset:4px}
+    @media (max-width:700px){.event-footer{padding:18px 20px 16px;text-align:center}.event-footer .admin-link{position:static;transform:none;display:block;width:max-content;margin:9px 0 0 auto;font-size:.74rem;opacity:.55}}
+
+    /* =========================================================
+       v227 — stepper mais leve, visualmente igual ao NXT
+       ========================================================= */
+
+    .progress{
+      --step-done:#e85d16;
+      --step-current:#ffa36f;
+      --step-idle:#aeb7c1;
+      --step-line:#c7c9bf;
+
+      list-style:none !important;
+      padding:0 !important;
+      margin:0 0 43px !important;
+      display:flex !important;
+      align-items:flex-start !important;
+      justify-content:space-between !important;
+      gap:0 !important;
+    }
+
+    .progress,
+    .progress li,
+    .progress li > span{
+      font-family:"Manrope",Arial,sans-serif !important;
+      font-synthesis:none !important;
+    }
+
+    .progress li{
+      flex:1 1 0 !important;
+      min-width:0 !important;
+      position:relative !important;
+      text-align:center !important;
+
+      color:#65728a !important;
+      font-size:.74rem !important;
+      line-height:1.25 !important;
+      font-weight:400 !important;
+
+      transition:color .28s ease,font-weight .28s ease !important;
+    }
+
+    .progress li > span{
+      display:flex !important;
+      width:42px !important;
+      height:42px !important;
+      min-width:42px !important;
+      min-height:42px !important;
+      margin:0 auto 11px !important;
+      padding:0 !important;
+
+      align-items:center !important;
+      justify-content:center !important;
+
+      border:1px solid var(--step-idle) !important;
+      border-radius:50% !important;
+      background:transparent !important;
+
+      color:#062b55 !important;
+      font-size:.74rem !important;
+      line-height:1 !important;
+      font-weight:700 !important;
+
+      position:relative !important;
+      z-index:3 !important;
+
+      box-shadow:none !important;
+      filter:none !important;
+
+      transition:
+        background-color .32s ease,
+        border-color .32s ease,
+        color .32s ease,
+        transform .32s cubic-bezier(.2,.8,.2,1) !important;
+    }
+
+    /* Concluído: texto leve, como no NXT */
+    .progress li.is-complete{
+      color:#44566e !important;
+      font-weight:400 !important;
+    }
+
+    .progress li.is-complete > span{
+      background:var(--step-done) !important;
+      border-color:var(--step-done) !important;
+      color:#fff !important;
+      font-weight:700 !important;
+      transform:none !important;
+      box-shadow:none !important;
+    }
+
+    /* Atual: destaque moderado, sem aspecto pesado */
+    .progress li[aria-current="step"]{
+      color:#062b55 !important;
+      font-weight:600 !important;
+    }
+
+    .progress li[aria-current="step"] > span{
+      background:rgba(255,127,64,.12) !important;
+      border-color:#ff7f40 !important;
+      color:#062b55 !important;
+      font-weight:700 !important;
+      transform:scale(1.04) !important;
+      box-shadow:none !important;
+      outline:0 !important;
+      animation:mv-step-enter .38s cubic-bezier(.2,.8,.2,1);
+    }
+
+    /* Futuro */
+    .progress li:not(.is-complete):not([aria-current="step"]){
+      color:#65728a !important;
+      font-weight:400 !important;
+    }
+
+    .progress li:not(.is-complete):not([aria-current="step"]) > span{
+      background:transparent !important;
+      border-color:var(--step-idle) !important;
+      color:#062b55 !important;
+      font-weight:600 !important;
+      transform:none !important;
+      box-shadow:none !important;
+    }
+
+    @keyframes mv-step-enter{
+      0%{transform:scale(.92)}
+      65%{transform:scale(1.08)}
+      100%{transform:scale(1.04)}
+    }
+
+    .progress li + li::before,
+    .progress li + li::after,
+    .progress li:nth-child(1) > span::after,
+    .progress li:nth-child(2) > span::after{
+      content:none !important;
+      display:none !important;
+    }
+
+    .progress li:not(:last-child)::before{
+      content:"" !important;
+      display:block !important;
+      position:absolute !important;
+      z-index:0 !important;
+      top:20px !important;
+      left:calc(50% + 27px) !important;
+      width:calc(100% - 54px) !important;
+      height:1px !important;
+      background:var(--step-line) !important;
+      pointer-events:none !important;
+    }
+
+    .progress li:not(:last-child)::after{
+      content:"" !important;
+      display:block !important;
+      position:absolute !important;
+      z-index:1 !important;
+      top:20px !important;
+      left:calc(50% + 27px) !important;
+      width:calc(100% - 54px) !important;
+      height:1px !important;
+      background:var(--step-done) !important;
+      transform:scaleX(0) !important;
+      transform-origin:left center !important;
+      transition:transform .42s cubic-bezier(.2,.8,.2,1) !important;
+      pointer-events:none !important;
+    }
+
+    .progress li.is-complete:not(:last-child)::after{
+      transform:scaleX(1) !important;
+    }
+
+    @media(max-width:700px){
+      .progress li{
+        font-size:.68rem !important;
+      }
+
+      .progress li > span{
+        width:36px !important;
+        height:36px !important;
+        min-width:36px !important;
+        min-height:36px !important;
+        font-size:.7rem !important;
+      }
+
+      .progress li:not(:last-child)::before,
+      .progress li:not(:last-child)::after{
+        top:17px !important;
+        left:calc(50% + 23px) !important;
+        width:calc(100% - 46px) !important;
+      }
+    }
+
+    @media(prefers-reduced-motion:reduce){
+      .progress li,
+      .progress li > span,
+      .progress li::before,
+      .progress li::after{
+        transition:none !important;
+      }
+
+      .progress li[aria-current="step"] > span{
+        animation:none !important;
+        transform:none !important;
+      }
+    }
+
+  
+    /* V11.0 — trava horizontal */
+    html,body{width:100%;max-width:100%;overflow-x:hidden!important;overscroll-behavior-x:none}
+    @supports (overflow:clip){html,body{overflow-x:clip!important}}
+    body{position:relative;touch-action:pan-y pinch-zoom}
+    header,main,footer{max-width:100%}
+
+</style>
+  <script defer src="assets/inscricao-mulheres-v221.js?v=230"></script>
+<link rel="stylesheet" href="/consulta-inscricao/atalho.css?v=2.6">
+<link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-nib-32-v113.png?v=2.6"><link rel="apple-touch-icon" sizes="180x180" href="/img/favicon-nib-180-v113.png?v=2.6"><link rel="stylesheet" href="/consulta-inscricao/cabecalho.css?v=2.8"></head>
+<body>
+  <header class="event-header nib-public-header"><a href="./" aria-label="Nova Igreja Batista — início"><img class="logo-light" src="img/logo/logo3-azul.svg" alt="Nova Igreja Batista" width="112" height="48"></a><div class="header-actions nib-public-actions"><a class="back-site" href="./">Voltar ao site</a></div></header>
+  <main class="registration">
+    <aside class="event-summary">
+      <div class="event-art-crop"><img class="event-art" src="img/eventos/mulheres-virtuosas-2026.webp" alt="Mulheres Virtuosas com Pra. Claudiany Guedes" width="1599" height="600"></div>
+      <span class="eyebrow">Encontro de mulheres</span>
+      <h1>Mulheres <em>Virtuosas</em></h1>
+      <p>Um encontro de fé e comunhão na Nova Igreja Batista.</p>
+      <dl class="event-facts">
+        <div><dt>Data e horário</dt><dd>30 de outubro · 19h30</dd></div>
+        <div><dt>Participação</dt><dd>Pra. Claudiany Guedes</dd></div>
+        <div><dt>Local</dt><dd>Nova Igreja Batista · Ariquemes/RO</dd></div>
+        <div><dt>Inscrição</dt><dd>R$ 20 por pessoa</dd></div>
+      </dl>
+    </aside>
+    <section class="form-area" aria-label="Inscrição no evento">
+<div class="nib-consulta-topo"><span>Já fez sua inscrição?</span><a href="/consulta-inscricao/?evento=mulheres-virtuosas">Consultar minha inscrição</a></div>
+      <ol class="progress" aria-label="Etapas da inscrição"><li aria-current="step"><span>01</span> Seus dados</li><li><span>02</span> Pagamento</li><li><span>03</span> Comprovante</li></ol>
+      <p id="form-error" class="message error" role="alert" hidden></p>
+      <form id="event-form" novalidate>
+        <fieldset data-step="0">
+          <legend>Faça sua inscrição</legend><p class="step-intro">Informe o nome e o WhatsApp de quem participará do encontro.</p>
+          <label for="name">Nome completo</label><input id="name" name="name" autocomplete="name" maxlength="120" required>
+          <label for="phone">WhatsApp com DDD</label><input id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="(69) 99999-9999" maxlength="20" required>
+          <label class="consent"><input type="checkbox" id="consent" name="consent" required><span>Autorizo o uso dos meus dados e do comprovante para organizar minha inscrição neste evento. <a href="privacidade.html" target="_blank" rel="noopener">Política de privacidade</a>.</span></label>
+          <div class="honeypot" aria-hidden="true"><label for="website">Deixe em branco</label><input id="website" name="website" tabindex="-1" autocomplete="off"></div>
+          <button class="button primary" id="next-data" type="button">Continuar para o Pix</button>
+          <p class="small-note">Você pode abrir o banco e voltar sem perder o preenchimento.</p>
+        </fieldset>
+        <fieldset data-step="1" hidden>
+          <legend>Pagamento via Pix</legend>
+          <div class="price"><span>Valor da inscrição</span><strong>R$ 20<span>,00</span></strong></div>
+          <p class="step-intro">Use o Pix Copia e Cola ou leia o QR Code para pagar R$ 20 no aplicativo do seu banco. Depois, volte para enviar o comprovante.</p>
+          <div class="pix-payment">
+            <div class="pix-qr"><img src="img/eventos/pix-mulheres-20-v201.png" alt="QR Code Pix de R$ 20 para Nova Igreja Batista" width="441" height="441"><p class="small-note">No banco, escolha pagar com QR Code.</p></div>
+            <div class="pix-code-block"><label for="pix-code">Pix Copia e Cola</label><textarea id="pix-code" readonly rows="4" spellcheck="false" autocomplete="off">00020126360014br.gov.bcb.pix011440518758000130520400005303986540520.005802BR5919NOVA IGREJA BATISTA6009ARIQUEMES62070503***630464A2</textarea><button class="button primary" type="button" id="copy-pix">Copiar código PIX</button><p class="small-note">No celular, copie o código e cole na opção Pix Copia e Cola do seu banco.</p></div>
+          </div>
+          <p class="small-note pix-recipient">Recebedor: <strong>Nova Igreja Batista</strong><br>Chave CNPJ: 40.518.758/0001-30</p>
+          <p id="copy-status" class="small-note" role="status" aria-live="polite"></p>
+          <p class="small-note">Confira o destinatário da igreja no aplicativo antes de pagar e guarde o comprovante.</p>
+          <div class="actions"><button class="button secondary" type="button" data-back="0">Voltar</button><button class="button primary" id="next-pix" type="button">Já paguei. Enviar comprovante</button></div>
+        </fieldset>
+        <fieldset data-step="2" hidden>
+          <legend>Envie seu comprovante.</legend><p class="step-intro">Anexe a imagem ou o PDF do pagamento de R$ 20.</p>
+          <label class="upload" id="receipt-picker" for="receipt"><strong>Escolher comprovante</strong><span>JPG, PNG, WebP ou PDF · até 6 MB</span><input id="receipt" name="receipt" type="file" accept="image/jpeg,image/png,image/webp,application/pdf" required></label>
+          <div id="receipt-selected" class="receipt-selected" hidden>
+            <img id="receipt-preview" alt="Prévia do comprovante selecionado" hidden>
+            <div class="receipt-file"><p id="file-status" class="small-note" role="status" aria-live="polite"></p><button type="button" id="change-receipt" class="receipt-change">Trocar arquivo</button></div>
+          </div>
+          <label class="consent payer-toggle"><input type="checkbox" id="other-payer" aria-controls="payer-field" aria-expanded="false"><span>O Pix foi feito por outra pessoa?</span></label>
+          <div id="payer-field" hidden><label for="payer">Nome de quem fez o Pix</label><input id="payer" name="payer" autocomplete="off" maxlength="120" disabled></div>
+          <p class="small-note">Receberemos seus dados e o comprovante. O envio não faz uma validação bancária automática.</p>
+          <div class="actions"><button class="button secondary" type="button" data-back="1">Voltar</button><button class="button primary" id="submit-registration" type="button" disabled>Concluir inscrição</button></div>
+        </fieldset>
+      </form>
+      <section id="success" hidden tabindex="-1" aria-labelledby="success-title"><span class="eyebrow">Mulheres Virtuosas</span><h2 id="success-title">Inscrição feita!</h2><p>Sua inscrição e seu comprovante foram recebidos. Esperamos você no dia 30 de outubro, às 19h30!</p><dl class="confirmation"><div><dt>Protocolo</dt><dd class="protocol-row"><span id="protocol"></span><button type="button" class="protocol-copy" id="copy-protocol">Copiar protocolo</button></dd></div><div><dt>Nosso encontro</dt><dd>30 de outubro · 19h30</dd></div></dl><p class="small-note" id="protocol-status" role="status" aria-live="polite"></p><p class="small-note">Guarde seu protocolo para consultar a organização, se precisar.</p><a class="button primary" href="./">Voltar ao site</a><button class="new-registration" id="new-registration" type="button">Inscrever outra participante</button></section>
+      <noscript><p class="message error">Ative o JavaScript do navegador para fazer sua inscrição.</p></noscript>
+    </section>
+  </main>
+  <footer class="event-footer"><span>© 2026 Nova Igreja Batista · Um lar de fé e acolhimento.</span><a class="admin-link" href="/inscricoes/" target="_blank" rel="noopener noreferrer">Gerenciar inscrições</a></footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const steps = Array.from(document.querySelectorAll('.progress li'));
+      if (!steps.length) return;
+
+      function syncSteps() {
+        let current = steps.findIndex(step => step.getAttribute('aria-current') === 'step');
+        if (current < 0) current = 0;
+        steps.forEach((step,index)=>{
+          step.classList.toggle('is-complete', index < current);
+        });
+      }
+
+      const observer = new MutationObserver(syncSteps);
+      steps.forEach(step => observer.observe(step,{
+        attributes:true,
+        attributeFilter:['aria-current']
+      }));
+
+      syncSteps();
+    });
+  </script>
+
+</body></html>

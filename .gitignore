@@ -1,0 +1,18 @@
+# Dados operacionais e credenciais fora do controle de versão
+.env
+.env.*
+!.env.example
+/nib-inscricoes-privado/
+/nib-manutencao/
+**/ACESSO-*.txt
+**/administracao-*.json
+**/.catalog-login-*.json
+**/error_log
+*.log
+*.zip
+*.tar
+*.tar.gz
+/.well-known/acme-challenge/
+/cgi-bin/
+.DS_Store
+Thumbs.db

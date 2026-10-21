@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nova Igreja Batista · Links</title>
+<meta name="description" content="Nova Igreja Batista - A Casa de Deus. Acesse nossos canais: site, Instagram, YouTube, contato, dízimos e ofertas, e a construção do novo templo.">
+<meta property="og:title" content="Nova Igreja Batista · Links">
+<meta property="og:description" content="Um lar de fé e acolhimento. Todos os nossos canais em um só lugar.">
+<meta property="og:image" content="img/capa.jpg">
+<meta name="theme-color" content="#041e42">
+<link rel="icon" href="img/simbolo.png">
+<style>
+:root{
+  --navy:#041e42;
+  --navy-2:#03152f;
+  --navy-3:#020c1e;
+  --marfim:#EBEBDF;
+  --laranja:#FF7F40;
+  --azul-luz:#0d3a7a;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{
+  font-family:"Acumin Pro",system-ui,-apple-system,"Segoe UI",sans-serif;
+  color:#fff;line-height:1.5;min-height:100vh;
+  background:var(--navy-3);
+  -webkit-font-smoothing:antialiased;
+}
+img{display:block;max-width:100%}
+a{text-decoration:none;color:inherit}
+
+/* fundo fixo com foto + overlay */
+.bg{position:fixed;inset:0;z-index:-2;
+  background:#05070d url('img/fundo.jpg') center center/cover no-repeat}
+.bg::after{content:"";position:absolute;inset:0;
+  background:
+    radial-gradient(120% 80% at 50% 0%,rgba(13,58,122,.4) 0%,transparent 55%),
+    linear-gradient(180deg,rgba(4,30,66,.82) 0%,rgba(4,30,66,.9) 35%,rgba(2,12,30,.96) 100%)}
+
+/* container central */
+.wrap{max-width:560px;margin:0 auto;padding:0 20px 50px;position:relative}
+
+/* ===== topo: capa + logo ===== */
+.header{padding-top:28px;text-align:center}
+.cover{position:relative;border-radius:22px;overflow:hidden;
+  box-shadow:0 24px 60px -24px rgba(0,0,0,.7);border:1px solid rgba(255,255,255,.12)}
+.cover img{width:100%;height:170px;object-fit:cover;object-position:center 30%}
+.cover::after{content:"";position:absolute;inset:0;
+  background:linear-gradient(to top,rgba(2,12,30,.72),transparent 60%)}
+/* logo sobreposta */
+.brand{margin-top:-52px;position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:14px}
+.brand-badge{width:96px;height:96px;border-radius:50%;flex:0 0 auto;
+  background:var(--navy);border:3px solid var(--marfim);
+  display:grid;place-items:center;padding:16px;
+  box-shadow:0 16px 40px -12px rgba(0,0,0,.7)}
+.brand-badge img{width:100%;height:100%;object-fit:contain}
+.brand h1{font-size:1.5rem;font-weight:700;letter-spacing:-.01em;line-height:1.1}
+.brand .sub{font-size:.72rem;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--laranja);margin-top:5px}
+.brand .tag{font-size:.92rem;color:#c9d2e4;margin-top:8px;font-weight:400}
+
+/* mini redes (linha de ícones rápidos) */
+.mini-social{display:flex;justify-content:center;gap:14px;margin-top:20px}
+.mini-social a{width:44px;height:44px;border-radius:50%;flex:0 0 auto;
+  display:grid;place-items:center;color:#fff;
+  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);transition:.25s}
+.mini-social a svg{width:20px;height:20px;fill:currentColor}
+.mini-social a:hover{background:var(--laranja);border-color:var(--laranja);color:var(--navy);transform:translateY(-3px)}
+
+/* ===== banners (links) ===== */
+.links{margin-top:26px;display:flex;flex-direction:column;gap:15px}
+.link-banner{position:relative;display:block;border-radius:18px;overflow:hidden;
+  min-height:92px;border:1px solid rgba(255,255,255,.14);
+  box-shadow:0 14px 34px -18px rgba(0,0,0,.8);
+  transition:transform .3s cubic-bezier(.2,.7,.2,1),box-shadow .3s,border-color .3s;
+  isolation:isolate}
+.link-banner .lb-bg{position:absolute;inset:0;z-index:-2;
+  background-size:cover;background-position:center;transition:transform .5s cubic-bezier(.2,.7,.2,1)}
+.link-banner::after{content:"";position:absolute;inset:0;z-index:-1;
+  background:linear-gradient(90deg,rgba(4,30,66,.9) 0%,rgba(4,30,66,.68) 45%,rgba(4,30,66,.28) 100%)}
+.link-banner:hover{transform:translateY(-4px) scale(1.01);border-color:rgba(255,127,64,.55);
+  box-shadow:0 22px 44px -18px rgba(255,127,64,.4)}
+.link-banner:hover .lb-bg{transform:scale(1.08)}
+.link-banner:active{transform:translateY(-1px) scale(.997)}
+/* barra laranja no topo (hover) */
+.link-banner .lb-top{position:absolute;top:0;left:0;height:3px;width:0;background:var(--laranja);z-index:3;transition:.4s}
+.link-banner:hover .lb-top{width:100%}
+.lb-content{position:relative;z-index:2;display:flex;align-items:center;gap:16px;padding:20px 22px;min-height:92px}
+.lb-icon{width:44px;height:44px;border-radius:12px;flex:0 0 auto;display:grid;place-items:center;
+  background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);backdrop-filter:blur(6px)}
+.lb-icon svg{width:24px;height:24px;fill:#fff}
+.lb-text{flex:1;min-width:0}
+.lb-text .lb-title{font-size:1.08rem;font-weight:700;letter-spacing:-.01em;line-height:1.15}
+.lb-text .lb-desc{font-size:.82rem;color:#cdd6e8;margin-top:2px;font-weight:400}
+.lb-arrow{flex:0 0 auto;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;
+  background:rgba(255,255,255,.12);transition:.3s}
+.lb-arrow svg{width:16px;height:16px;fill:none;stroke:#fff;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;transition:.3s}
+.link-banner:hover .lb-arrow{background:var(--laranja)}
+.link-banner:hover .lb-arrow svg{stroke:var(--navy);transform:translateX(2px)}
+
+/* destaque: dízimos e construção */
+.link-banner.is-featured .lb-icon{background:var(--laranja);border-color:var(--laranja)}
+.link-banner.is-featured .lb-icon svg{fill:var(--navy)}
+
+/* ===== rodapé ===== */
+.foot{margin-top:34px;text-align:center}
+.foot .addr{font-size:.8rem;color:#aab4c9;line-height:1.6}
+.foot .copy{font-size:.72rem;color:#6b7690;margin-top:14px}
+.foot .copy a{color:var(--laranja)}
+
+/* animação de entrada */
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.anim{opacity:0;animation:fadeUp .55s cubic-bezier(.2,.7,.2,1) forwards}
+.anim:nth-child(1){animation-delay:.05s}
+.anim:nth-child(2){animation-delay:.12s}
+.anim:nth-child(3){animation-delay:.19s}
+.anim:nth-child(4){animation-delay:.26s}
+.anim:nth-child(5){animation-delay:.33s}
+.anim:nth-child(6){animation-delay:.40s}
+@media(prefers-reduced-motion:reduce){.anim{animation:none;opacity:1}}
+
+@media(max-width:420px){
+  .cover img{height:140px}
+  .brand h1{font-size:1.35rem}
+  .lb-content{padding:18px 18px}
+  .lb-text .lb-title{font-size:1rem}
+}
+</style>
+</head>
+<body>
+<div class="bg"></div>
+
+<main class="wrap">
+  <!-- topo: capa + logo -->
+  <header class="header">
+    <div class="cover anim"><img src="img/capa.jpg" alt="Nova Igreja Batista"></div>
+    <div class="brand anim">
+      <div class="brand-badge"><img src="img/brasao.png" alt="Nib"></div>
+      <div>
+        <div class="sub">A Casa de Deus</div>
+        <h1>Nova Igreja Batista</h1>
+        <p class="tag">Um lar de fé e acolhimento · Ariquemes-RO</p>
+      </div>
+    </div>
+
+    <!-- mini redes -->
+    <div class="mini-social anim">
+      <a href="https://www.instagram.com/nibcasadedeus/" target="_blank" rel="noopener" aria-label="Instagram">
+        <svg viewBox="0 0 24 24"><path d="M7.75 2h8.5A5.76 5.76 0 0 1 22 7.75v8.5A5.76 5.76 0 0 1 16.25 22h-8.5A5.76 5.76 0 0 1 2 16.25v-8.5A5.76 5.76 0 0 1 7.75 2Zm0 2A3.75 3.75 0 0 0 4 7.75v8.5A3.75 3.75 0 0 0 7.75 20h8.5A3.75 3.75 0 0 0 20 16.25v-8.5A3.75 3.75 0 0 0 16.25 4h-8.5ZM17.5 5.5a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5ZM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6Z"/></svg>
+      </a>
+      <a href="https://www.facebook.com/nibcasadedeus" target="_blank" rel="noopener" aria-label="Facebook">
+        <svg viewBox="0 0 24 24"><path d="M24 12.07C24 5.4 18.63 0 12 0S0 5.4 0 12.07C0 18.1 4.39 23.1 10.13 24v-8.44H7.08v-3.49h3.05V9.41c0-3.03 1.79-4.7 4.53-4.7 1.31 0 2.69.24 2.69.24v2.97h-1.51c-1.49 0-1.95.93-1.95 1.89v2.26h3.32l-.53 3.49h-2.79V24C19.61 23.1 24 18.1 24 12.07Z"/></svg>
+      </a>
+      <a href="https://www.youtube.com/@nibcasadedeus" target="_blank" rel="noopener" aria-label="YouTube">
+        <svg viewBox="0 0 24 24"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31.6 31.6 0 0 0 0 12a31.6 31.6 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31.6 31.6 0 0 0 24 12a31.6 31.6 0 0 0-.5-5.8ZM9.6 15.6V8.4l6.3 3.6-6.3 3.6Z"/></svg>
+      </a>
+    </div>
+  </header>
+
+  <!-- banners de links -->
+  <nav class="links">
+    <!-- Site -->
+    <a class="link-banner anim" href="https://novaigrejabatista.com.br" target="_blank" rel="noopener">
+      <div class="lb-bg" style="background-image:url('img/site.jpg')"></div>
+      <span class="lb-top"></span>
+      <div class="lb-content">
+        <span class="lb-icon"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm6.9 6h-2.6a15.5 15.5 0 00-1.3-3.4A8 8 0 0118.9 8zM12 4c.8 1.2 1.4 2.5 1.8 4h-3.6c.4-1.5 1-2.8 1.8-4zM4.3 14a8 8 0 010-4h3a17.7 17.7 0 000 4h-3zm.8 2h2.6a15.5 15.5 0 001.3 3.4A8 8 0 015.1 16zm2.6-8H5.1a8 8 0 013.9-3.4A15.5 15.5 0 007.7 8zM12 20c-.8-1.2-1.4-2.5-1.8-4h3.6c-.4 1.5-1 2.8-1.8 4zm2.2-6H9.8a15.6 15.6 0 010-4h4.4a15.6 15.6 0 010 4zm.8 5.4a15.5 15.5 0 001.3-3.4h2.6a8 8 0 01-3.9 3.4zM16.9 14a17.7 17.7 0 000-4h3a8 8 0 010 4h-3z"/></svg></span>
+        <div class="lb-text">
+          <div class="lb-title">Nosso Site</div>
+          <div class="lb-desc">Conheça a igreja, células e cultos</div>
+        </div>
+        <span class="lb-arrow"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span>
+      </div>
+    </a>
+
+    <!-- Células -->
+    <a class="link-banner anim" href="https://novaigrejabatista.com.br/#celulas" target="_blank" rel="noopener">
+      <div class="lb-bg" style="background-image:url('img/instagram.jpg')"></div>
+      <span class="lb-top"></span>
+      <div class="lb-content">
+        <span class="lb-icon"><svg viewBox="0 0 24 24"><path d="M12 2a5 5 0 015 5c0 2.5-2 5.5-5 9-3-3.5-5-6.5-5-9a5 5 0 015-5zm0 3a2 2 0 100 4 2 2 0 000-4zM5 20a7 7 0 0114 0v1H5v-1z"/></svg></span>
+        <div class="lb-text">
+          <div class="lb-title">Encontre uma Célula</div>
+          <div class="lb-desc">Viva igreja perto de você</div>
+        </div>
+        <span class="lb-arrow"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span>
+      </div>
+    </a>
+
+    <!-- Instagram -->
+    <a class="link-banner anim" href="https://www.instagram.com/nibcasadedeus/" target="_blank" rel="noopener">
+      <div class="lb-bg" style="background-image:url('img/contato.jpg')"></div>
+      <span class="lb-top"></span>
+      <div class="lb-content">
+        <span class="lb-icon"><svg viewBox="0 0 24 24"><path d="M7.75 2h8.5A5.76 5.76 0 0 1 22 7.75v8.5A5.76 5.76 0 0 1 16.25 22h-8.5A5.76 5.76 0 0 1 2 16.25v-8.5A5.76 5.76 0 0 1 7.75 2Zm0 2A3.75 3.75 0 0 0 4 7.75v8.5A3.75 3.75 0 0 0 7.75 20h8.5A3.75 3.75 0 0 0 20 16.25v-8.5A3.75 3.75 0 0 0 16.25 4h-8.5ZM17.5 5.5a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5ZM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6Z"/></svg></span>
+        <div class="lb-text">
+          <div class="lb-title">Instagram</div>
+          <div class="lb-desc">@nibcasadedeus · nosso dia a dia</div>
+        </div>
+        <span class="lb-arrow"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span>
+      </div>
+    </a>
+
+    <!-- YouTube -->
+    <a class="link-banner anim" href="https://www.youtube.com/@nibcasadedeus" target="_blank" rel="noopener">
+      <div class="lb-bg" style="background-image:url('img/youtube.jpg')"></div>
+      <span class="lb-top"></span>
+      <div class="lb-content">
+        <span class="lb-icon"><svg viewBox="0 0 24 24"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31.6 31.6 0 0 0 0 12a31.6 31.6 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31.6 31.6 0 0 0 24 12a31.6 31.6 0 0 0-.5-5.8ZM9.6 15.6V8.4l6.3 3.6-6.3 3.6Z"/></svg></span>
+        <div class="lb-text">
+          <div class="lb-title">YouTube · NIB TV</div>
+          <div class="lb-desc">Assista aos cultos e mensagens</div>
+        </div>
+        <span class="lb-arrow"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span>
+      </div>
+    </a>
+
+    <!-- Fale conosco (WhatsApp) -->
+    <a class="link-banner anim" href="https://wa.me/5569000000000?text=Ol%C3%A1!%20Vim%20pelo%20Instagram%20e%20gostaria%20de%20falar%20com%20a%20igreja." target="_blank" rel="noopener">
+      <div class="lb-bg" style="background-image:url('img/site.jpg')"></div>
+      <span class="lb-top"></span>
+      <div class="lb-content">
+        <span class="lb-icon"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm5.5 14.2c-.2.6-1.2 1.1-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.3.7 1.1 1.4 1.7.9.8 1.6 1 .9.6.2-.1.4-.1.5 0l1.3 1.3c.4.4.5.5.5.9z"/></svg></span>
+        <div class="lb-text">
+          <div class="lb-title">Fale Conosco</div>
+          <div class="lb-desc">Estamos aqui para te ouvir</div>
+        </div>
+        <span class="lb-arrow"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span>
+      </div>
+    </a>
+
+    <!-- Dízimos e Ofertas (destaque) -->
+    <a class="link-banner is-featured anim" href="https://novaigrejabatista.com.br/#contribuicoes" target="_blank" rel="noopener">
+      <div class="lb-bg" style="background-image:url('img/dizimo.jpg')"></div>
+      <span class="lb-top"></span>
+      <div class="lb-content">
+        <span class="lb-icon"><svg viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm.9 15.5v1.2h-1.6v-1.2c-1.4-.2-2.6-.9-2.9-2.5l1.6-.5c.2.9.9 1.4 1.9 1.4.9 0 1.5-.4 1.5-1.1 0-.6-.4-1-1.6-1.3l-.9-.2c-1.7-.4-2.6-1.3-2.6-2.7 0-1.3 1-2.3 2.5-2.6V7.3h1.6v1.2c1.3.2 2.2.9 2.6 2.2l-1.6.6c-.2-.7-.7-1.1-1.5-1.1-.8 0-1.3.4-1.3 1 0 .5.4.9 1.4 1.1l.9.2c1.9.4 2.8 1.3 2.8 2.8 0 1.4-1 2.5-2.7 2.9z"/></svg></span>
+        <div class="lb-text">
+          <div class="lb-title">Dízimos e Ofertas</div>
+          <div class="lb-desc">Contribua com PIX · seja generoso</div>
+        </div>
+        <span class="lb-arrow"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span>
+      </div>
+    </a>
+
+    <!-- Construção do Templo (destaque) -->
+    <a class="link-banner is-featured anim" href="https://novaigrejabatista.com.br/#construcao" target="_blank" rel="noopener">
+      <div class="lb-bg" style="background-image:url('img/construcao.jpg')"></div>
+      <span class="lb-top"></span>
+      <div class="lb-content">
+        <span class="lb-icon"><svg viewBox="0 0 24 24"><path d="M12 3L2 9v12h6v-6h8v6h6V9L12 3zm0 2.3l6 3.6V19h-2v-6H8v6H6V8.9l6-3.6z"/></svg></span>
+        <div class="lb-text">
+          <div class="lb-title">Construção do Templo</div>
+          <div class="lb-desc">Faça parte dessa história</div>
+        </div>
+        <span class="lb-arrow"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span>
+      </div>
+    </a>
+  </nav>
+
+  <!-- rodapé -->
+  <footer class="foot anim">
+    <p class="addr">Rua França, 1409 — Áreas Especiais 01<br>Ariquemes-RO · Quinta 19h30 · Domingo 9h30 e 19h</p>
+    <p class="copy">© 2026 Nova Igreja Batista</p>
+  </footer>
+</main>
+</body>
+</html>

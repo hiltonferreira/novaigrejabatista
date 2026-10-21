@@ -1,0 +1,36 @@
+# BEGIN NIB API LEGADA
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteRule ^(?:camp-sbgp1-nov26|public_html/next/camp-sbgp1-nov26)/api-inscricao\.php$ /next/camp-sbgp1-nov26/api-inscricao.php [L]
+</IfModule>
+# END NIB API LEGADA
+
+# BEGIN NIB ROTAS LEGADAS
+<IfModule mod_rewrite.c>
+RewriteEngine On
+
+RewriteCond %{REQUEST_METHOD} ^(GET|HEAD)$
+RewriteRule ^public_html/(index\.html)?$ / [R=302,L]
+
+RewriteCond %{REQUEST_METHOD} ^(GET|HEAD)$
+RewriteRule ^(camp-sbgp1-nov26|public_html/next/camp-sbgp1-nov26)/?(index\.html)?$ /next/camp-sbgp1-nov26/ [R=302,L]
+
+RewriteCond %{REQUEST_METHOD} ^(GET|HEAD)$
+RewriteRule ^(camp-sbgp1-nov26|public_html/next/camp-sbgp1-nov26)/inscricao\.html$ /next/camp-sbgp1-nov26/inscricao.html [R=302,L]
+</IfModule>
+# END NIB ROTAS LEGADAS
+
+
+# BEGIN cPanel-generated php ini directives, do not edit
+# Manual editing of this file may result in unexpected behavior.
+# To make changes to this file, use the cPanel MultiPHP INI Editor (Home >> Software >> MultiPHP INI Editor)
+# For more information, read our documentation (https://go.cpanel.net/EA4ModifyINI)
+<IfModule php8_module>
+   php_value error_log "/home/novaigre/logs/php.error.log"
+   php_flag log_errors On
+</IfModule>
+<IfModule lsapi_module>
+   php_value error_log "/home/novaigre/logs/php.error.log"
+   php_flag log_errors On
+</IfModule>
+# END cPanel-generated php ini directives, do not edit
