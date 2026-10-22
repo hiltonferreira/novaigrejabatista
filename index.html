@@ -2246,6 +2246,23 @@ html{overflow-x:hidden}
 /* último card ímpar ocupa a linha inteira na grade de eventos */
 @media(min-width:921px){.ev-grid>:not([data-expirado]):last-child:nth-child(odd){grid-column:1/-1}}
 [data-a-partir][hidden],[data-expirado]{display:none!important}
+
+/* contador de páginas das células quando há muitas páginas */
+.dc-page-count{display:inline-block;min-width:64px;padding:4px 12px;border-radius:999px;background:rgba(235,235,223,.12);color:var(--marfim);font-family:var(--acumin);font-size:.85rem;font-weight:600;letter-spacing:.02em;text-align:center}
+/* ajustes de layout no celular */
+@media(max-width:640px){
+  .hero .eyebrow{display:inline-block;padding:5px 12px;border-radius:999px;background:rgba(5,7,13,.62);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+  .hero .hero-hours .eyebrow{display:block;padding:0;background:none;-webkit-backdrop-filter:none;backdrop-filter:none}
+  #cultos .culto{min-height:0!important;padding:56px 22px 22px!important}
+  #cultos .culto .badge{top:18px;left:22px}
+  #lideranca .lid-grid .lid{min-height:360px!important;height:360px!important}
+  .event-carousel-dot{font-size:.72rem!important;padding:0 12px!important;height:40px!important}
+  .gal-vc-btn{min-width:44px!important;min-height:44px!important}
+  .gal-unmute,.constr-unmute{min-height:36px!important;padding-left:12px!important;padding-right:12px!important;font-size:.8rem!important}
+  #eventos .evento-foto{background-blend-mode:normal}
+  #eventos .evento-foto::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(to top,rgba(5,7,13,.96) 0%,rgba(5,7,13,.88) 45%,rgba(5,7,13,.35) 75%,transparent 100%)}
+  #eventos .evento{min-height:300px}
+}
 </style>
 
 <link rel="stylesheet" href="/assets/acesso-administrativo-v32.css?v=3.3">
@@ -3291,6 +3308,14 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
       const totalPages=pageCount();
       pagination.hidden=totalPages<=1;
       if(totalPages<=1) return;
+      // Com muitas páginas, um contador é mais legível e fácil de usar no toque do que dezenas de pontos.
+      if(totalPages>6){
+        const counter=document.createElement('span');
+        counter.className='dc-page-count';
+        counter.setAttribute('aria-live','polite');
+        pagination.appendChild(counter);
+        return;
+      }
       for(let page=0;page<totalPages;page++){
         const dot=document.createElement('button');
         dot.type='button';
@@ -3315,7 +3340,9 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
         const page=(idx>=last && last>0)
           ? pageCount()-1
           : Math.min(pageCount()-1,Math.floor(idx/pv));
-        [...pagination.children].forEach((dot,i)=>{
+        const counter=pagination.querySelector('.dc-page-count');
+        if(counter) counter.textContent=`${page+1} de ${pageCount()}`;
+        [...pagination.querySelectorAll('.dc-page-dot')].forEach((dot,i)=>{
           const active=i===page;
           dot.classList.toggle('active',active);
           dot.setAttribute('aria-current',active?'page':'false');
