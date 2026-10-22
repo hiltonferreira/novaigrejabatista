@@ -28,7 +28,17 @@ function atomic_json(string $path,array $data):void{
     if(file_put_contents($tmp,$json,LOCK_EX)===false || !rename($tmp,$path))throw new RuntimeException('save failed');
 }
 
+// Inscrições aceitas até o início do acampamento (horário de Rondônia).
+const NXT_CLOSES_AT='2026-11-21T00:00:00-04:00';
+const NXT_EVENT_DATE='2026-11-21';
+function registrations_open():bool{return time()<strtotime(NXT_CLOSES_AT);}
+
+if($_SERVER['REQUEST_METHOD']==='GET'){
+    if(!registrations_open())respond(410,['ok'=>false,'open'=>false,'message'=>'As inscrições do NXT CAMP foram encerradas.']);
+    respond(200,['ok'=>true,'open'=>true]);
+}
 if($_SERVER['REQUEST_METHOD']!=='POST')respond(405,['ok'=>false,'message'=>'Método não permitido.']);
+if(!registrations_open())respond(410,['ok'=>false,'message'=>'As inscrições do NXT CAMP foram encerradas.']);
 
 try{
     $contentLength=(int)($_SERVER['CONTENT_LENGTH']??0);
@@ -39,7 +49,8 @@ try{
 
     $name=clean_text($_POST['name']??'',120);
     $birth=clean_text($_POST['birth']??'',10);
-    $age=(int)($_POST['age']??0);
+    $requestId=$_POST['request_id']??'';
+    if(!is_string($requestId)||!preg_match('/^[a-f0-9]{32}$/D',$requestId))respond(422,['ok'=>false,'message'=>'Recarregue a página e tente novamente.']);
     $phone=digits($_POST['phone']??'',13);
     $guardian=clean_text($_POST['guardian']??'',120);
     $guardianPhone=digits($_POST['guardian_phone']??'',13);
@@ -50,7 +61,15 @@ try{
     if($name===''||$guardian===''||$guardianPhone===''||$relationship===''||$birth===''){
         respond(422,['ok'=>false,'message'=>'Revise os dados obrigatórios antes de concluir.']);
     }
-    if(!preg_match('/^\d{4}-\d{2}-\d{2}$/D',$birth))respond(422,['ok'=>false,'message'=>'Data de nascimento inválida.']);
+    if(!preg_match('/^(\d{4})-(\d{2})-(\d{2})$/D',$birth,$parts)||!checkdate((int)$parts[2],(int)$parts[3],(int)$parts[1])){
+        respond(422,['ok'=>false,'message'=>'Data de nascimento inválida.']);
+    }
+    // A idade é calculada aqui, na data de hoje, e não vem do navegador.
+    $today=new DateTimeImmutable('now',new DateTimeZone('America/Porto_Velho'));
+    $born=DateTimeImmutable::createFromFormat('!Y-m-d',$birth,new DateTimeZone('America/Porto_Velho'));
+    if(!$born||$born>$today)respond(422,['ok'=>false,'message'=>'Data de nascimento inválida.']);
+    $age=$born->diff($today)->y;
+    if(($_POST['consent']??'')!=='on')respond(422,['ok'=>false,'message'=>'Confirme a autorização do responsável legal.']);
     if($age<12||$age>17)respond(422,['ok'=>false,'message'=>'A inscrição é destinada a adolescentes de 12 a 17 anos.']);
     if(strlen($guardianPhone)<10)respond(422,['ok'=>false,'message'=>'Informe um WhatsApp válido do responsável.']);
 
@@ -98,7 +117,19 @@ try{
     $state['count']++;
     rewind($rate);ftruncate($rate,0);fwrite($rate,json_encode($state));flock($rate,LOCK_UN);fclose($rate);
 
-    $id=bin2hex(random_bytes(16));
+    // Reenvio do mesmo formulário (duplo clique, rede instável) devolve o protocolo já gerado.
+    $lock=fopen($folder.'/.lock','c');
+    if(!$lock||!flock($lock,LOCK_EX))throw new RuntimeException('lock unavailable');
+    $id=$requestId;
+    $fingerprint=hash('sha256',$name.'|'.$birth.'|'.$guardianPhone);
+    $existingPath=$folder.'/'.$id.'.json';
+    if(is_file($existingPath)){
+        $existing=json_decode((string)file_get_contents($existingPath),true);
+        if(!is_array($existing)||!hash_equals((string)($existing['fingerprint']??''),$fingerprint)){
+            respond(409,['ok'=>false,'message'=>'Os dados mudaram após o envio. Recarregue a página para fazer outra inscrição.']);
+        }
+        respond(200,['ok'=>true,'protocol'=>$existing['protocol']]);
+    }
     $ext=$allowed[$mime];
     $receiptName=$id.'.'.$ext;
     $receiptPath=$folder.'/'.$receiptName;
@@ -123,7 +154,9 @@ try{
         'receipt'=>$receiptName,
         'receipt_mime'=>$mime,
         'reviewed'=>false,
-        'reviewed_at'=>null
+        'reviewed_at'=>null,
+        'consent'=>true,
+        'fingerprint'=>$fingerprint
     ];
 
     try{
