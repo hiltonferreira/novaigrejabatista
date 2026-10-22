@@ -15,6 +15,8 @@ function fail(int $status, string $message): void { respond($status, ['ok'=>fals
 if (!in_array($_SERVER['REQUEST_METHOD'], ['GET','POST'], true)) {
     header('Allow: GET, POST'); fail(405, 'Método não permitido.');
 }
+// Inscrições aceitas até o início do encontro (30/10/2026, 19h30, horário de Rondônia).
+if (time() >= strtotime('2026-10-30T19:30:00-04:00')) fail(410, 'As inscrições do Mulheres Virtuosas foram encerradas.');
 $secure = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off';
 session_name('nib_eventos');
 session_set_cookie_params(['lifetime'=>0, 'path'=>'/', 'secure'=>$secure, 'httponly'=>true, 'samesite'=>'Lax']);

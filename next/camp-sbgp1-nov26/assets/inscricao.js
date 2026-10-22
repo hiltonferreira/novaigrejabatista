@@ -20,7 +20,27 @@
 
   function go(step) {
     fieldsets.forEach((fs,i)=>fs.hidden=i!==step);
-    progress.forEach((li,i)=>{
+    const requestId=document.createElement("input");
+  requestId.type="hidden";
+  requestId.name="request_id";
+  const newRequestId=()=>[...crypto.getRandomValues(new Uint8Array(16))].map(b=>b.toString(16).padStart(2,"0")).join("");
+  requestId.value=newRequestId();
+  form.appendChild(requestId);
+
+  async function checkOpen(){
+    try{
+      const response=await fetch("api-inscricao.php",{credentials:"same-origin",cache:"no-store",headers:{"Accept":"application/json"}});
+      if(response.status===410){
+        const data=await response.json().catch(()=>({}));
+        throw new Error(data.message||"As inscrições foram encerradas.");
+      }
+    }catch(err){
+      if(err instanceof TypeError) return;
+      throw err;
+    }
+  }
+
+  progress.forEach((li,i)=>{
       li.classList.toggle("is-complete", i < step);
       if(i===step) li.setAttribute("aria-current","step");
       else li.removeAttribute("aria-current");
@@ -45,13 +65,14 @@
     age.value=n;
   });
 
-  document.getElementById("next-data").addEventListener("click",()=>{
+  document.getElementById("next-data").addEventListener("click",async()=>{
     const fs=fieldsets[0];
     for(const el of fs.querySelectorAll("[required]")){
       if(!el.checkValidity()){el.reportValidity();return;}
     }
     const n=Number(age.value);
     if(n<12||n>17){setError("A inscrição é destinada a adolescentes de 12 a 17 anos.");age.focus();return;}
+    try{await checkOpen();}catch(err){setError(err.message);return;}
     go(1);
   });
 
@@ -146,6 +167,7 @@
       success.hidden=false;
       success.focus();
       form.reset();
+      requestId.value=newRequestId();
     }catch(err){
       setError(err&&err.message?err.message:"Não foi possível concluir a inscrição.");
       btn.disabled=false;
