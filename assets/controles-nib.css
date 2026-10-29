@@ -1,0 +1,44 @@
+/* Shared NIB form controls. Keep page fonts and approved navigation. */
+:root{--nib-control-ink:#041e42;--nib-control-ivory:#f5f3eb;--nib-control-border:#7d8896;--nib-control-radius:8px}
+form :is(input:not([type=checkbox]):not([type=radio]):not([type=hidden]):not([type=submit]):not([type=button]),select,textarea){box-sizing:border-box;max-width:100%;border:1px solid var(--nib-control-border);border-radius:var(--nib-control-radius);color:var(--nib-control-ink);background-color:#fff;font-family:inherit;font-size:1rem;line-height:1.5;padding:11px 13px;min-height:46px}
+form select:not([multiple]){padding-right:36px}
+form select[multiple]{min-height:132px;padding:8px}
+form select[multiple] option{padding:8px 10px;border-radius:4px}
+form textarea{resize:vertical}
+form input::placeholder,form textarea::placeholder{color:#657286;opacity:1}
+:root body input:is([type=checkbox],[type=radio]){appearance:none;-webkit-appearance:none;display:inline-block;vertical-align:middle;box-sizing:border-box;flex:0 0 22px;width:22px;height:22px;min-height:22px;padding:0;margin:0;border:1px solid var(--nib-control-border);border-radius:5px;background:#fff;background-position:center;background-repeat:no-repeat;cursor:pointer;accent-color:var(--nib-control-ink)}
+:root body input[type=radio]{border-radius:50%}
+:root body input:is([type=checkbox],[type=radio]):checked{border-color:var(--nib-control-ink);background-color:var(--nib-control-ink)}
+:root body input[type=checkbox]:checked{background-image:url("/assets/controle-marcado.svg");background-size:19px}
+:root body input[type=checkbox]:indeterminate{background-color:var(--nib-control-ink);background-image:linear-gradient(var(--nib-control-ivory),var(--nib-control-ivory));background-size:12px 2px}
+:root body input[type=radio]:checked{box-shadow:inset 0 0 0 5px #fff}
+form label:has(>input:is([type=checkbox],[type=radio])){display:flex;align-items:flex-start;gap:10px;min-height:44px;line-height:1.5;cursor:pointer;padding-block:9px}
+form :is(input,select,textarea,button,a.button):focus-visible{outline:2px solid var(--nib-control-ink);outline-offset:3px;box-shadow:0 0 0 5px var(--nib-control-ivory)}
+form :is(input,select,textarea)[aria-invalid=true]{border-color:#9a4035}
+form :is(input,select,textarea):user-invalid{border-color:#9a4035}
+form :is(input,select,textarea):disabled{cursor:not-allowed;background-color:#eef1f5;color:#536176;opacity:1}
+:root body input:is([type=checkbox],[type=radio]):disabled{opacity:.55;cursor:not-allowed}
+form .button{border-radius:999px;min-height:44px}
+form .button:disabled{opacity:1;background:#eef1f5;color:#657286;border-color:#cbd3dd;box-shadow:none;cursor:not-allowed}
+form input[type=file]::file-selector-button{border:1px solid var(--nib-control-border);border-radius:999px;background:var(--nib-control-ivory);color:var(--nib-control-ink);font:inherit;padding:7px 12px;margin-right:12px;cursor:pointer}
+@media(hover:hover){form :is(input,select,textarea):not(:disabled):hover{border-color:var(--nib-control-ink)}}
+@media(forced-colors:active){:root body input:is([type=checkbox],[type=radio]){appearance:auto;-webkit-appearance:auto;background-image:none;box-shadow:none}form :is(input,select,textarea,button,a.button):focus-visible{outline:2px solid Highlight}}
+
+/* 5.4 — one selection style, including legacy event stylesheets. */
+:root body form select{box-sizing:border-box;max-width:100%;border:1px solid var(--nib-control-border)!important;border-radius:var(--nib-control-radius)!important;background-color:#fff!important;color:var(--nib-control-ink);font-family:inherit;line-height:1.5!important}
+:root body form select:not([multiple]){appearance:none;-webkit-appearance:none;min-height:48px;padding:11px 42px 11px 13px!important;background-image:url('/assets/controle-selecao.svg')!important;background-repeat:no-repeat!important;background-position:right 14px center!important;background-size:12px 8px!important;cursor:pointer}
+:root body form select[multiple]{height:auto!important;min-height:132px;padding:8px!important;background-image:none!important}
+:root body form select:disabled{background-color:#eef1f5!important;color:#536176;cursor:not-allowed}
+:root body form select:focus-visible{outline:2px solid var(--nib-control-ink);outline-offset:3px;box-shadow:0 0 0 5px var(--nib-control-ivory)}
+:root body form select[aria-invalid=true],:root body form select:user-invalid{border-color:#9a4035!important}
+:root body form select option{background:#fff;color:var(--nib-control-ink)}
+:root body form select option:checked{background:var(--nib-control-ivory);color:var(--nib-control-ink)}
+@media(forced-colors:active){:root body form select:not([multiple]){appearance:auto;-webkit-appearance:auto;background-image:none!important}:root body form select{border-color:ButtonText!important;background-color:Canvas!important;color:CanvasText}}
+
+/* 5.5 — isolate checkbox/radio geometry from legacy text-field rules. */
+:root body input:is([type=checkbox],[type=radio]){box-sizing:border-box!important;display:inline-block!important;flex:0 0 22px!important;width:22px!important;min-width:22px!important;max-width:22px!important;height:22px!important;min-height:22px!important;max-height:22px!important;padding:0!important;border:1px solid var(--nib-control-border)!important;border-radius:5px!important;background-color:#fff!important;align-self:flex-start!important}
+:root body input[type=radio]{border-radius:50%!important}
+:root body input:is([type=checkbox],[type=radio]):checked,:root body input[type=checkbox]:indeterminate{background-color:var(--nib-control-ink)!important;border-color:var(--nib-control-ink)!important}
+:root body form label.consent{align-items:flex-start!important;column-gap:12px!important;grid-template-columns:22px minmax(0,1fr)!important}
+:root body form label.consent>input:is([type=checkbox],[type=radio]){margin:2px 0 0!important}
+@media(forced-colors:active){:root body input:is([type=checkbox],[type=radio]){background-color:Canvas!important;border-color:ButtonText!important}}
