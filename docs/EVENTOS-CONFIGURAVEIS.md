@@ -27,3 +27,7 @@ Com Git e PHP 8.3+ disponíveis, faça um clone separado da branch `codex/evento
 Acesse `http://127.0.0.1:8088/inscricoes/`, senha de demonstração `NIB-TESTE-LOCAL-2026`. Use os dois eventos DEMONSTRAÇÃO (pago e gratuito), sem efetuar Pix, ou crie um novo. O cartão do evento pago usa chave explicitamente fictícia. Os três cartões legados podem aparecer indisponíveis porque não importamos seus dados. Para encerrar use Ctrl+C; uma nova execução cria outra cópia temporária, preservando a anterior.
 
 Roteiro: adicionar pergunta obrigatória, selecionar turmas, ordenar, abrir prévia, publicar o evento fictício, preencher o formulário público, conferir dados no painel, testar seleção de superfícies e encerramento. Os bloqueadores documentados no PR #8 continuam pendentes: isto é uma prévia de avaliação, não uma versão pronta para produção.
+
+## Controles visuais compartilhados (5.1)
+
+`assets/controles-nib.css` reutiliza azul #041e42 e marfim #f5f3eb, preservando a fonte herdada de cada página. Aplicado ao painel, gestão, consulta e formulários nativo, Mulheres e NXT. Campos têm raio de 8 px; botões de formulário mantêm o formato arredondado aprovado; checkboxes usam marca clara no azul, foco visível e alternativa nativa em alto contraste. O editor agrupa as opções de campo e divulgação com bordas finas e seleção em marfim. A alteração não modifica regras, textos dos eventos, menus ou registros. Validar visualmente desktop/mobile e navegação por teclado na prévia; ainda não publicado em produção.
