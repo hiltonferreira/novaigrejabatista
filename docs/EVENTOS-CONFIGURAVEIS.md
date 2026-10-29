@@ -35,3 +35,13 @@ Roteiro: adicionar pergunta obrigatória, selecionar turmas, ordenar, abrir pré
 ## Página pública de novos eventos (5.2)
 
 O template segue a composição dos formulários existentes: fundo marfim, banner e informações à esquerda, formulário sem cartão branco à direita, cabeçalho público compartilhado e botão de consulta. Fonte Acumin local, títulos bold e demais destaques semibold, botões arredondados e resumo em duas colunas no mobile. Mensagem de prévia tem apresentação informativa, sem parecer erro. O banner fictício da prévia agora é visível e identificado; não substitui banners aprovados. Esta mudança não altera etapas, validação, pagamento, disponibilidade nem formulários legados.
+
+## Comparação com eventos reais (5.3)
+
+Medições no navegador de produção confirmaram diferenças entre os próprios legados: Mulheres usa system-ui no desktop e Acumin no mobile; NXT usa Manrope e ainda tem legendas Montserrat 800. A página nova adota a referência consolidada de Mulheres: system-ui no desktop, Acumin no mobile, resumo em duas colunas, legendas semibold e campos de 52 px. Não afirma identidade tipográfica total com o NXT. Os títulos são o texto cadastrado; não há recorte automático do nome em um destaque em itálico.
+
+A prévia administrativa agora mostra os campos desativados e não aceita envios. Nos eventos pagos publicados, JS progressivo divide Dados, Pagamento e Comprovante, valida cada etapa e mantém os valores ao voltar; sem JS todos os campos ficam visíveis com validação nativa. O servidor continua responsável pela validação final e disponibilidade.
+
+O retorno NXT estava com padding horizontal zero por declarações antigas `!important`. Foram removidas as regras antigas `.back-site` do CSS NXT, deixando o cabeçalho compartilhado controlar o botão e evitando novos `!important`. Destino, texto, conteúdo e regras do evento permanecem preservados. A prévia copia também páginas públicas legadas para comparação, sem dados privados. Produção não foi atualizada por este PR.
+
+Revisão independente do Claude confirmou a causa do botão e recomendou remover as declarações antigas. Em erros de POST, todas as etapas ficam visíveis e a mensagem recebe foco; a opção de consentimento é preservada. Arquivos de comprovante precisam ser selecionados novamente por limitação do navegador.

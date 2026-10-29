@@ -4,7 +4,6 @@ html{scroll-behavior:smooth}
 body{margin:0;background:var(--bg);color:var(--navy);font-family:"Manrope",Arial,sans-serif}
 .event-header{width:min(1280px,calc(100% - 48px));height:98px;margin:auto;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}
 .nib-logo{width:112px;height:auto;display:block}
-.back-site{color:var(--navy);font-size:.8rem;text-decoration:none;padding:14px 0 10px;border-bottom:1px solid var(--line)}
 .registration{width:min(1216px,calc(100% - 48px));margin:30px auto 68px;display:grid;grid-template-columns:1fr 1fr;gap:72px}
 .event-summary{min-width:0}
 .event-art{position:relative;overflow:hidden;height:276px;border-radius:16px;background:#101b27;color:#fff}
@@ -360,13 +359,6 @@ fieldset>textarea,
   height:auto !important;
 }
 
-.back-site{
-  color:var(--navy) !important;
-  font-size:.80rem !important;
-  line-height:1 !important;
-  padding:15px 0 11px !important;
-  border-bottom:1px solid var(--ref-line) !important;
-}
 
 /* Área principal: mesma largura e mesma origem vertical */
 .registration{
@@ -736,14 +728,6 @@ html,body{
   display:block !important;
 }
 
-.back-site{
-  margin:0 !important;
-  padding:15px 0 11px !important;
-  border-bottom:1px solid var(--ref-line) !important;
-  color:var(--ref-navy) !important;
-  font-size:.80rem !important;
-  line-height:1 !important;
-}
 
 /* MAIN
    Mesmo eixo interno do header: 32px de inset dentro dos 1240px */
@@ -1097,12 +1081,6 @@ body{
   width:112px !important;
 }
 
-.back-site{
-  color:var(--mv-navy) !important;
-  font-size:.79rem !important;
-  font-weight:500 !important;
-  padding-bottom:11px !important;
-}
 
 /* Main vertical rhythm */
 .registration{

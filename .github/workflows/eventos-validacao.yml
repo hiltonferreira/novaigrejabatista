@@ -24,6 +24,8 @@ jobs:
           node --check inscricoes/gestao-eventos.js
           node --check assets/eventos-divulgacao.js
           node --check assets/eventos-carousel-v2.js
+          node --check eventos/formulario.js
+          node tests/eventos-etapas.cjs
       - name: Regras e preservação com dados fictícios
         run: php tests/eventos-configuraveis.php
       - name: Prévia isolada e fluxo HTTP com dados fictícios

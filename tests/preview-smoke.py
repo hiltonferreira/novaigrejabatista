@@ -21,7 +21,18 @@ try:
  editor=request('/inscricoes/eventos.php?novo=1')
  assert 'data-field-list' in editor and 'show_hero' in editor,'Editor configurável ausente'
  form=request('/eventos/?evento=demonstracao-gratuito')
+ preview=request('/eventos/?evento=demonstracao-gratuito&preview=1')
+ assert 'class="preview-fields" disabled' in preview and 'Nome completo' in preview,'Prévia não mostra campos desativados'
+ paid=request('/eventos/?evento=demonstracao-pago')
+ assert paid.count('data-event-step>')==3 and 'eventos/formulario.js?v=5.3' in paid,'Etapas pagas ausentes'
+ assert 'Voltar ao evento' in request('/next/camp-sbgp1-nov26/inscricao.html'),'Formulário legado não está disponível na cópia local'
  ticket=re.search(r'name="ticket" value="([^"]+)"',form).group(1)
+ try:
+  request('/eventos/?evento=demonstracao-gratuito&preview=1',{'ticket':ticket,'name':'Teste bloqueado','phone':'69999990000','consent':'yes','answers[f_turma]':'Turma A'})
+  raise AssertionError('Prévia aceitou POST')
+ except urllib.error.HTTPError as error:
+  assert error.code==409,'Prévia retornou status inesperado'
+ assert not list(pathlib.Path(manifest['private'],'evento-demonstracao-gratuito').glob('*.json')),'Prévia gravou inscrição'
  done=request('/eventos/?evento=demonstracao-gratuito',{'ticket':ticket,'name':'Pessoa Fictícia','phone':'69999990000','consent':'yes','answers[f_turma]':'Turma A'})
  assert 'INSCRIÇÃO RECEBIDA' in done,'Inscrição fictícia não concluída'
  files=list(pathlib.Path(manifest['private'],'evento-demonstracao-gratuito').glob('*.json'))
