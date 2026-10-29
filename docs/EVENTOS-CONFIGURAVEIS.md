@@ -57,3 +57,9 @@ O consentimento do NXT ainda podia receber altura e padding das regras legadas. 
 ## Hierarquia tipográfica comum (5.6)
 
 Após a comparação visual, Hilton pediu igualar os tamanhos e pesos dos formulários reais. `assets/tipografia-eventos.css` centraliza a hierarquia de Mulheres, NXT e novos eventos: corpo/campos 16 px regular, labels 16 px semibold, legendas 28 px semibold (25,6 px mobile), título principal bold responsivo, destaque em itálico medium, resumo 14/16 px e notas/consentimento 14 px regular. A família segue Mulheres: system-ui no desktop e Acumin local no mobile. A folha é restrita a `body.nib-event-form`; vence apenas os estilos tipográficos legados e não altera banners, textos, regras, dados ou a tipografia do painel administrativo.
+
+## Família única e etapas (5.7)
+
+A comparação posterior das etapas revelou que alternar system-ui/Acumin e herdar pesos do legado não atendia à uniformidade solicitada. Substituído por Acumin Pro local em todas as larguras. Metadados dos arquivos conferidos com fontTools: Acumin Pro Regular, Medium, Semibold e Bold; incluída face MediumItalic real para o destaque do título. Etapas usam uma regra compartilhada para contêiner, rótulos, números e estados: regular400, atual600, números600, 12 px e entrelinha1,25; círculos42 px desktop/36 px mobile. Não dependem de Manrope, Montserrat ou fonte do sistema.
+
+Limitação: a inspeção de produção foi possível anteriormente, mas a cópia local deste ambiente não é acessível pelo navegador em nuvem (conexão recusada); os valores finais ainda devem ser conferidos no navegador local do usuário. Testes de sintaxe/fluxo não comprovam renderização visual.
