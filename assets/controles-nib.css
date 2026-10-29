@@ -34,3 +34,11 @@ form input[type=file]::file-selector-button{border:1px solid var(--nib-control-b
 :root body form select option{background:#fff;color:var(--nib-control-ink)}
 :root body form select option:checked{background:var(--nib-control-ivory);color:var(--nib-control-ink)}
 @media(forced-colors:active){:root body form select:not([multiple]){appearance:auto;-webkit-appearance:auto;background-image:none!important}:root body form select{border-color:ButtonText!important;background-color:Canvas!important;color:CanvasText}}
+
+/* 5.5 — isolate checkbox/radio geometry from legacy text-field rules. */
+:root body input:is([type=checkbox],[type=radio]){box-sizing:border-box!important;display:inline-block!important;flex:0 0 22px!important;width:22px!important;min-width:22px!important;max-width:22px!important;height:22px!important;min-height:22px!important;max-height:22px!important;padding:0!important;border:1px solid var(--nib-control-border)!important;border-radius:5px!important;background-color:#fff!important;align-self:flex-start!important}
+:root body input[type=radio]{border-radius:50%!important}
+:root body input:is([type=checkbox],[type=radio]):checked,:root body input[type=checkbox]:indeterminate{background-color:var(--nib-control-ink)!important;border-color:var(--nib-control-ink)!important}
+:root body form label.consent{align-items:flex-start!important;column-gap:12px!important;grid-template-columns:22px minmax(0,1fr)!important}
+:root body form label.consent>input:is([type=checkbox],[type=radio]){margin:2px 0 0!important}
+@media(forced-colors:active){:root body input:is([type=checkbox],[type=radio]){background-color:Canvas!important;border-color:ButtonText!important}}

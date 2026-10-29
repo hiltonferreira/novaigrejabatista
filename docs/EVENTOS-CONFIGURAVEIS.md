@@ -49,3 +49,7 @@ Revisão independente do Claude confirmou a causa do botão e recomendou remover
 ## Seleções compartilhadas (5.4)
 
 Caixas de marcar, radios e listas de seleção usam o mesmo CSS no painel, consulta e formulários. Bordas #7d8896, raio 8 px nos selects, indicador azul, fundo branco, seleção marfim e foco visível. Mantêm controles HTML nativos, teclado e suporte de alto contraste; o menu aberto pode seguir a apresentação do sistema operacional. Regras antigas do NXT que aplicavam altura de campo de texto em qualquer input agora excluem checkbox e radio. Cache atualizado nos seis pontos de entrada. Sem alteração de opções, valores, dados ou regras de inscrição.
+
+## Ajuste de checkbox (5.5)
+
+O consentimento do NXT ainda podia receber altura e padding das regras legadas. As caixas de marcar e radios têm agora limites explícitos de 22 × 22 px na folha compartilhada, incluindo mínimos, máximos e flex-basis; o consentimento alinha pela primeira linha. Nenhum conteúdo ou opção foi alterado. Corrigido também o achado do Claude: Enter no primeiro passo pago avança somente ao Pix, sem saltar para o comprovante; cenário incluído no teste de etapas.

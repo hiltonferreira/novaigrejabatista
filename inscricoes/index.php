@@ -203,7 +203,7 @@ if(!$ev&&$base!=='')foreach($events as $summaryKey=>$summaryEvent){
 <meta name="twitter:description" content="Acesse o painel administrativo da Nova Igreja Batista para gerenciar eventos, inscrições e pagamentos em um só lugar.">
 <meta name="twitter:image" content="https://novaigrejabatista.com.br/assets/gestao-inscricoes-compartilhar-v416.png">
 <!-- FIM NIB COMPARTILHAMENTO -->
-<link rel="stylesheet" href="/assets/controles-nib.css?v=5.4"></head><body>
+<link rel="stylesheet" href="/assets/controles-nib.css?v=5.5"></head><body>
 <header><?php if($ev||in_array($filter,['ativo','encerrado'],true)):$backUrl=$ev&&$view!=='inscritos'?'/inscricoes/?evento='.rawurlencode($id):'/inscricoes/';?><nav class="mobile-backbar" aria-label="Retornar"><a href="<?=h($backUrl)?>">VOLTAR</a></nav><?php endif;?><a class="brand" href="/inscricoes/"><img class="brand-logo" src="/img/logo/logo3-azul.svg" alt="Nova Igreja Batista"><span>Inscrições<small>Nova Igreja Batista</small></span></a><div class="header-right"><span class="workspace">Administração de eventos</span><a class="site-link" href="/">Visitar o site</a></div></header>
 <details class="mobile-menu">
  <summary><span class="mobile-location"><span>Navegação</span><strong><?=h($ev['name']??($filter==='ativo'?'Eventos ativos':($filter==='encerrado'?'Eventos encerrados':'Visão geral')))?></strong></span><span class="mobile-menu-button"><span class="open-label">Menu</span><span class="close-label">Fechar</span></span></summary>
