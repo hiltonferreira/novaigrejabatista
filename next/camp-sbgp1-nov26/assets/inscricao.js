@@ -18,9 +18,7 @@
     errorBox.hidden = !msg;
   }
 
-  function go(step) {
-    fieldsets.forEach((fs,i)=>fs.hidden=i!==step);
-    const requestId=document.createElement("input");
+  const requestId=document.createElement("input");
   requestId.type="hidden";
   requestId.name="request_id";
   const newRequestId=()=>[...crypto.getRandomValues(new Uint8Array(16))].map(b=>b.toString(16).padStart(2,"0")).join("");
@@ -40,7 +38,9 @@
     }
   }
 
-  progress.forEach((li,i)=>{
+  function go(step) {
+    fieldsets.forEach((fs,i)=>fs.hidden=i!==step);
+    progress.forEach((li,i)=>{
       li.classList.toggle("is-complete", i < step);
       if(i===step) li.setAttribute("aria-current","step");
       else li.removeAttribute("aria-current");
