@@ -26,3 +26,5 @@ jobs:
           node --check assets/eventos-carousel-v2.js
       - name: Regras e preservação com dados fictícios
         run: php tests/eventos-configuraveis.php
+      - name: Prévia isolada e fluxo HTTP com dados fictícios
+        run: python3 tests/preview-smoke.py

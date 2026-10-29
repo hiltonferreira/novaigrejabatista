@@ -19,3 +19,11 @@ Alterar o cadastro durante um preenchimento continua exigindo recarga pela verif
 
 ## Validação
 Workflow de PR sem segredos: sintaxe PHP/JS e testes com catálogo, arquivos e home fictícios em pasta temporária. Testes de navegador e envio HTTP real são necessários antes de produção, especialmente pagamentos, CSV, campos personalizados, múltipla escolha e hero/carrossel em celular. O fluxo de publicação de um evento livre/pago completo não deve ser declarado validado somente pelos testes de funções.
+
+## Como experimentar localmente (rascunho)
+
+Com Git e PHP 8.3+ disponíveis, faça um clone separado da branch `codex/eventos-configuraveis-5-0` e execute `php tests/preview.php`. O script aceita somente CLI, prepara uma cópia temporária dos arquivos públicos e um armazenamento privado fictício, depois abre um servidor preso a `127.0.0.1:8088`. Não lê credenciais, catálogo ou registros do cPanel. Não instalar `tests/` no servidor de produção.
+
+Acesse `http://127.0.0.1:8088/inscricoes/`, senha de demonstração `NIB-TESTE-LOCAL-2026`. Use os dois eventos DEMONSTRAÇÃO (pago e gratuito), sem efetuar Pix, ou crie um novo. O cartão do evento pago usa chave explicitamente fictícia. Os três cartões legados podem aparecer indisponíveis porque não importamos seus dados. Para encerrar use Ctrl+C; uma nova execução cria outra cópia temporária, preservando a anterior.
+
+Roteiro: adicionar pergunta obrigatória, selecionar turmas, ordenar, abrir prévia, publicar o evento fictício, preencher o formulário público, conferir dados no painel, testar seleção de superfícies e encerramento. Os bloqueadores documentados no PR #8 continuam pendentes: isto é uma prévia de avaliação, não uma versão pronta para produção.
