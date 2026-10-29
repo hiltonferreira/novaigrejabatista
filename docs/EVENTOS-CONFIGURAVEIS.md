@@ -53,3 +53,7 @@ Caixas de marcar, radios e listas de seleção usam o mesmo CSS no painel, consu
 ## Ajuste de checkbox (5.5)
 
 O consentimento do NXT ainda podia receber altura e padding das regras legadas. As caixas de marcar e radios têm agora limites explícitos de 22 × 22 px na folha compartilhada, incluindo mínimos, máximos e flex-basis; o consentimento alinha pela primeira linha. Nenhum conteúdo ou opção foi alterado. Corrigido também o achado do Claude: Enter no primeiro passo pago avança somente ao Pix, sem saltar para o comprovante; cenário incluído no teste de etapas.
+
+## Hierarquia tipográfica comum (5.6)
+
+Após a comparação visual, Hilton pediu igualar os tamanhos e pesos dos formulários reais. `assets/tipografia-eventos.css` centraliza a hierarquia de Mulheres, NXT e novos eventos: corpo/campos 16 px regular, labels 16 px semibold, legendas 28 px semibold (25,6 px mobile), título principal bold responsivo, destaque em itálico medium, resumo 14/16 px e notas/consentimento 14 px regular. A família segue Mulheres: system-ui no desktop e Acumin local no mobile. A folha é restrita a `body.nib-event-form`; vence apenas os estilos tipográficos legados e não altera banners, textos, regras, dados ou a tipografia do painel administrativo.
