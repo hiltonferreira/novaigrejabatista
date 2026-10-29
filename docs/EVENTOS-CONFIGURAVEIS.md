@@ -45,3 +45,7 @@ A prévia administrativa agora mostra os campos desativados e não aceita envios
 O retorno NXT estava com padding horizontal zero por declarações antigas `!important`. Foram removidas as regras antigas `.back-site` do CSS NXT, deixando o cabeçalho compartilhado controlar o botão e evitando novos `!important`. Destino, texto, conteúdo e regras do evento permanecem preservados. A prévia copia também páginas públicas legadas para comparação, sem dados privados. Produção não foi atualizada por este PR.
 
 Revisão independente do Claude confirmou a causa do botão e recomendou remover as declarações antigas. Em erros de POST, todas as etapas ficam visíveis e a mensagem recebe foco; a opção de consentimento é preservada. Arquivos de comprovante precisam ser selecionados novamente por limitação do navegador.
+
+## Seleções compartilhadas (5.4)
+
+Caixas de marcar, radios e listas de seleção usam o mesmo CSS no painel, consulta e formulários. Bordas #7d8896, raio 8 px nos selects, indicador azul, fundo branco, seleção marfim e foco visível. Mantêm controles HTML nativos, teclado e suporte de alto contraste; o menu aberto pode seguir a apresentação do sistema operacional. Regras antigas do NXT que aplicavam altura de campo de texto em qualquer input agora excluem checkbox e radio. Cache atualizado nos seis pontos de entrada. Sem alteração de opções, valores, dados ou regras de inscrição.

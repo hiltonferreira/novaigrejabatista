@@ -1,5 +1,5 @@
 /* Shared NIB form controls. Keep page fonts and approved navigation. */
-:root{--nib-control-ink:#041e42;--nib-control-ivory:#f5f3eb;--nib-control-border:#a4b0c0;--nib-control-radius:8px}
+:root{--nib-control-ink:#041e42;--nib-control-ivory:#f5f3eb;--nib-control-border:#7d8896;--nib-control-radius:8px}
 form :is(input:not([type=checkbox]):not([type=radio]):not([type=hidden]):not([type=submit]):not([type=button]),select,textarea){box-sizing:border-box;max-width:100%;border:1px solid var(--nib-control-border);border-radius:var(--nib-control-radius);color:var(--nib-control-ink);background-color:#fff;font-family:inherit;font-size:1rem;line-height:1.5;padding:11px 13px;min-height:46px}
 form select:not([multiple]){padding-right:36px}
 form select[multiple]{min-height:132px;padding:8px}
@@ -23,3 +23,14 @@ form .button:disabled{opacity:1;background:#eef1f5;color:#657286;border-color:#c
 form input[type=file]::file-selector-button{border:1px solid var(--nib-control-border);border-radius:999px;background:var(--nib-control-ivory);color:var(--nib-control-ink);font:inherit;padding:7px 12px;margin-right:12px;cursor:pointer}
 @media(hover:hover){form :is(input,select,textarea):not(:disabled):hover{border-color:var(--nib-control-ink)}}
 @media(forced-colors:active){:root body input:is([type=checkbox],[type=radio]){appearance:auto;-webkit-appearance:auto;background-image:none;box-shadow:none}form :is(input,select,textarea,button,a.button):focus-visible{outline:2px solid Highlight}}
+
+/* 5.4 — one selection style, including legacy event stylesheets. */
+:root body form select{box-sizing:border-box;max-width:100%;border:1px solid var(--nib-control-border)!important;border-radius:var(--nib-control-radius)!important;background-color:#fff!important;color:var(--nib-control-ink);font-family:inherit;line-height:1.5!important}
+:root body form select:not([multiple]){appearance:none;-webkit-appearance:none;min-height:48px;padding:11px 42px 11px 13px!important;background-image:url('/assets/controle-selecao.svg')!important;background-repeat:no-repeat!important;background-position:right 14px center!important;background-size:12px 8px!important;cursor:pointer}
+:root body form select[multiple]{height:auto!important;min-height:132px;padding:8px!important;background-image:none!important}
+:root body form select:disabled{background-color:#eef1f5!important;color:#536176;cursor:not-allowed}
+:root body form select:focus-visible{outline:2px solid var(--nib-control-ink);outline-offset:3px;box-shadow:0 0 0 5px var(--nib-control-ivory)}
+:root body form select[aria-invalid=true],:root body form select:user-invalid{border-color:#9a4035!important}
+:root body form select option{background:#fff;color:var(--nib-control-ink)}
+:root body form select option:checked{background:var(--nib-control-ivory);color:var(--nib-control-ink)}
+@media(forced-colors:active){:root body form select:not([multiple]){appearance:auto;-webkit-appearance:auto;background-image:none!important}:root body form select{border-color:ButtonText!important;background-color:Canvas!important;color:CanvasText}}
