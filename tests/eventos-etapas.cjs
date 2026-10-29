@@ -13,7 +13,7 @@ const t=fixture();assert.equal(t.steps[0].hidden,false);assert.equal(t.steps[1].
 t.fields[0].valid=false;t.next[0].click();assert.equal(t.steps[0].hidden,false);assert.equal(t.fields[0].reported,true);
 t.fields[0].valid=true;t.next[0].click();assert.equal(t.steps[1].hidden,false);t.next[1].click();assert.equal(t.steps[2].hidden,false);
 t.back[1].click();assert.equal(t.steps[1].hidden,false);assert.equal(t.fields[0].value,'preservado');
-t.fields[2].valid=false;let prevented=false;t.form.submit({preventDefault(){prevented=true;}});assert.equal(prevented,true);assert.equal(t.steps[2].hidden,false);assert.equal(t.fields[2].reported,true);
+t.next[1].click();t.fields[2].valid=false;let prevented=false;t.form.submit({preventDefault(){prevented=true;}});assert.equal(prevented,true);assert.equal(t.steps[2].hidden,false);assert.equal(t.fields[2].reported,true);
 t.fields[2].valid=true;prevented=false;t.form.submit({preventDefault(){prevented=true;}});assert.equal(prevented,false);
 const enter=fixture();enter.fields[2].valid=false;let enterPrevented=false;enter.form.submit({preventDefault(){enterPrevented=true;}});assert.equal(enterPrevented,true);assert.equal(enter.steps[1].hidden,false);assert.equal(enter.steps[2].hidden,true);
 const preview=fixture(true);assert.equal(preview.form.noValidate,undefined);assert.equal(preview.progress.hidden,true);assert.equal(preview.steps.every(s=>!s.hidden),true);
