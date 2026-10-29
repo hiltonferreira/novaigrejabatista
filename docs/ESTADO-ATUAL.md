@@ -31,4 +31,14 @@ Head analisado: `1c88531a9b77e61e03b4596b1ef7a7227797ebf8`.
 - Datas fixas nas APIs de Mulheres e NXT foram propostas pelo executor e precisam de validação de negócio antes de publicar.
 - Melhorias úteis propostas: validar nascimento e idade no servidor, exigir consentimento e consolidar painéis antigos. Ainda não publicadas.
 
-Não aprovar nem publicar o PR #1 antes de corrigir e testar esses pontos.
+## Correção entregue e revisão independente
+
+O Claude entregou a correção de escopo em `c4fb08e218d725de9c14557eb0fb4dca3f40a15a`, alterando o JS e apenas o cache (`v=11.2`) na página do formulário. A resposta de revisão e os testes relatados estão no PR #1.
+
+O Codex verificou a sintaxe e executou uma simulação JS independente com DOM e API fictícios: avanço ao Pix; uma única chave estável ao voltar/avançar; sucesso com protocolo sem mensagem de erro; renovação da chave após sucesso; bloqueio no passo 1 ao receber HTTP 410. Esses testes não verificam upload real nem armazenamento PHP. O Claude relatou separadamente testes Playwright/Chromium com `php -S`, dados fictícios, upload, persistência e reenvio, com suas limitações registradas nos comentários do PR.
+
+A correção de escopo foi confirmada. O PR #1 completo continua pendente de reconciliação da home com a produção e validação dos horários de encerramento. Não foi integrado nem publicado.
+
+## Comunicação entre executores
+
+A primeira revisão enviada por Codex e a resposta do Claude foram confirmadas nos comentários do PR #1. O modelo de automação fica em `docs/integracoes/claude-nib.yml.example`, inativo. A integração automática não tem execução validada; faltam ativação, instalação/autenticação e teste ponta a ponta.

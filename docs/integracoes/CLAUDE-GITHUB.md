@@ -2,9 +2,9 @@
 
 ## O que está preparado
 
-Workflow `.github/workflows/claude-nib.yml` usando `anthropics/claude-code-action@v1`. Recebe comentários novos de `hiltonferreira` iniciados por `@claude /nib ` e solicita resposta em português no mesmo PR/issue. Execução limitada a 10 minutos e 6 turnos. Não há deploy, acesso ao cPanel, segredos de produção ou envio de dados de inscritos.
+Modelo `docs/integracoes/claude-nib.yml.example`, que só será um workflow ao ser instalado em `.github/workflows/claude-nib.yml`, usando `anthropics/claude-code-action@v1`. Recebe comentários novos de `hiltonferreira` iniciados por `@claude /nib ` e solicita resposta em português no mesmo PR/issue. Execução limitada a 10 minutos e 6 turnos. Não há deploy, acesso ao cPanel, segredos de produção ou envio de dados de inscritos.
 
-O workflow em PR ainda não está instalado na branch principal e não representa uma conexão em funcionamento.
+O arquivo está guardado como exemplo de configuração, fora de `.github/workflows/`. Ele não executa no GitHub Actions e não representa uma conexão automática em funcionamento. A primeira troca de revisão foi registrada nos comentários do PR #1 por uma sessão Claude Code já existente, não por este workflow.
 
 ## Autenticação — escolha uma rota
 
@@ -21,7 +21,7 @@ Documentação: https://code.claude.com/docs/en/github-actions
 
 A configuração guiada oficial é `/install-github-app` no Claude Code local. Ela pode gerar outro PR de workflow; compare-o com este para não criar duas automações que respondam à mesma menção.
 
-Alternativamente, siga a configuração manual oficial: instalar o Claude GitHub App apenas no repositório necessário, cadastrar a credencial em Settings → Secrets and variables → Actions e integrar o workflow revisado.
+Alternativamente, siga a configuração manual oficial: instalar o Claude GitHub App apenas no repositório necessário, cadastrar a credencial em Settings → Secrets and variables → Actions e copiar o modelo revisado para `.github/workflows/claude-nib.yml` em uma tarefa de ativação separada.
 
 ## Teste de aceite
 
@@ -35,3 +35,7 @@ Depois do teste, enviar a revisão do PR #1 e confrontar a resposta com a reprod
 ## Limitações
 
 A ação GitHub é uma execução do Claude com o contexto do repositório e da discussão, não a sessão web anterior. Não há sincronização automática da memória entre os produtos. Mensagens/arquivos públicos não podem conter dados pessoais dos inscritos. O responsável pode desativar o workflow e revogar App/credencial nas configurações das contas.
+
+## Contexto de revisão
+
+O checkout de main preserva instruções confiáveis. Em uma revisão, consultar o SHA atual do head do PR e seus arquivos/diff explicitamente pela API GitHub; informar base e head na resposta. Não executar código da branch revisada com credenciais. A cópia de main não representa automaticamente o código do PR.

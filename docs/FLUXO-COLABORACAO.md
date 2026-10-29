@@ -27,6 +27,8 @@ A primeira integração é somente análise e resposta; não publica no cPanel e
 
 ## Estado da integração
 
-Preparada nesta proposta, ainda NÃO ativada. Exige integrar o workflow à branch principal, instalar o Claude GitHub App no repositório e configurar uma credencial em GitHub Actions Secrets. Depois é obrigatório um teste com mensagem enviada e resposta recebida.
+Modelo preparado em docs/integracoes/claude-nib.yml.example, ainda NÃO ativado. A troca de comentários do PR #1 foi confirmada com uma sessão Claude Code existente; não prova acionamento automático. Para ativar, instalar o modelo como workflow na branch principal, instalar o Claude GitHub App e configurar uma credencial em Actions Secrets. Depois é obrigatório um teste de acionamento automático com mensagem enviada e resposta recebida.
+
+Em revisão de PR, o executor consulta explicitamente o SHA do head e seus arquivos/diff pela API GitHub. O checkout de main é base confiável de instruções, não evidência da versão revisada. Não executar código da branch do PR com credenciais.
 
 Detalhes: `docs/integracoes/CLAUDE-GITHUB.md`.
