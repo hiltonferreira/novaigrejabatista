@@ -31,3 +31,7 @@ Roteiro: adicionar pergunta obrigatória, selecionar turmas, ordenar, abrir pré
 ## Controles visuais compartilhados (5.1)
 
 `assets/controles-nib.css` reutiliza azul #041e42 e marfim #f5f3eb, preservando a fonte herdada de cada página. Aplicado ao painel, gestão, consulta e formulários nativo, Mulheres e NXT. Campos têm raio de 8 px; botões de formulário mantêm o formato arredondado aprovado; checkboxes usam marca clara no azul, foco visível e alternativa nativa em alto contraste. O editor agrupa as opções de campo e divulgação com bordas finas e seleção em marfim. A alteração não modifica regras, textos dos eventos, menus ou registros. Validar visualmente desktop/mobile e navegação por teclado na prévia; ainda não publicado em produção.
+
+## Página pública de novos eventos (5.2)
+
+O template segue a composição dos formulários existentes: fundo marfim, banner e informações à esquerda, formulário sem cartão branco à direita, cabeçalho público compartilhado e botão de consulta. Fonte Acumin local, títulos bold e demais destaques semibold, botões arredondados e resumo em duas colunas no mobile. Mensagem de prévia tem apresentação informativa, sem parecer erro. O banner fictício da prévia agora é visível e identificado; não substitui banners aprovados. Esta mudança não altera etapas, validação, pagamento, disponibilidade nem formulários legados.
