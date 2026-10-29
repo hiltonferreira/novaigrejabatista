@@ -1488,23 +1488,6 @@ footer a[href*="instagram.com/hilton.cmferreira"]:hover{color:var(--laranja)}
 
 
 
-/* ===== v143 — comparador editorial multiplataforma ===== */
-.editorial-font-test{
-  position:fixed;left:10px;right:10px;bottom:10px;z-index:999999;
-  max-height:72vh;overflow:auto;padding:12px;border-radius:12px;
-  background:rgba(5,7,14,.96);color:#fff;
-  box-shadow:0 12px 40px rgba(0,0,0,.4);
-  font-family:Arial,sans-serif;
-}
-.editorial-font-test[hidden]{display:none}
-.editorial-font-test h3{margin:0 0 8px;font:700 13px/1.2 Arial,sans-serif;color:#ff7f40}
-.editorial-font-test .eft-row{margin:7px 0;padding:8px 10px;background:#efefe7;color:#ff7f40;border-radius:7px}
-.editorial-font-test .eft-label{display:block;margin-bottom:3px;font:700 10px/1 Arial,sans-serif;color:#333}
-.editorial-font-test .eft-word{font-size:36px;line-height:1;font-weight:500;font-style:italic;letter-spacing:-.01em}
-.editorial-font-test button{margin-top:8px;padding:7px 12px;border:0;border-radius:7px;font:700 12px Arial,sans-serif;cursor:pointer}
-
-
-
 /* ===== v147 — reenquadramento responsivo real do header =====
    Em telas intermediárias, mantém o menu desktop, mas reduz
    proporcionalmente o menu central e os dois botões laterais. */
@@ -2255,6 +2238,26 @@ footer a[href*="instagram.com/hilton.cmferreira"]:hover{color:var(--laranja)}
   .mv-event-section .event-slide .mv-event-copy .h-sec{margin-bottom:12px!important}
   .mv-event-section .event-slide .mv-event-copy > .lead{margin-bottom:24px!important}
 }
+
+/* ===== v200 — correções da auditoria (22/10/2026) ===== */
+/* impede rolagem lateral causada pelo menu mobile fechado e pela faixa animada */
+html{overflow-x:hidden}
+@supports (overflow:clip){html{overflow-x:clip}}
+/* último card ímpar ocupa a linha inteira na grade de eventos */
+@media(min-width:921px){.ev-grid>:not([data-expirado]):last-child:nth-child(odd){grid-column:1/-1}}
+[data-a-partir][hidden],[data-expirado]{display:none!important}
+
+/* contador de páginas das células quando há muitas páginas */
+.dc-page-count{display:inline-block;min-width:64px;padding:4px 12px;border-radius:999px;background:rgba(235,235,223,.12);color:var(--marfim);font-family:var(--acumin);font-size:.85rem;font-weight:600;letter-spacing:.02em;text-align:center}
+/* ajustes de layout no celular */
+@media(max-width:640px){
+  #cultos .culto{min-height:0!important;padding:56px 22px 22px!important}
+  #cultos .culto .badge{top:18px;left:22px}
+  #lideranca .lid-grid .lid{min-height:360px!important;height:360px!important}
+  .event-carousel-dot{font-size:.72rem!important;padding:0 12px!important;height:40px!important}
+  .gal-vc-btn{min-width:44px!important;min-height:44px!important}
+  .gal-unmute,.constr-unmute{min-height:36px!important;padding-left:12px!important;padding-right:12px!important;font-size:.8rem!important}
+}
 </style>
 
 <link rel="stylesheet" href="/assets/acesso-administrativo-v32.css?v=3.3">
@@ -2433,7 +2436,7 @@ footer a[href*="instagram.com/hilton.cmferreira"]:hover{color:var(--laranja)}
         </div>
         <img class="la-resto" src="img/logo/anim/so-textos.png" alt="Nova Igreja Batista - A Casa de Deus">
       </div>
-      <p class="lead">Uma igreja <b>em células</b>, cheia da presença de&nbsp;Deus.<br>Uma família que acolhe, discipula e multiplica.</p>
+      <p class="lead">Uma igreja <b>em células</b>, cheia da presença de&nbsp;Deus. <br>Uma família que acolhe, discipula e multiplica.</p>
     </div>
     <div class="pillars">
       <div class="pillar reveal">
@@ -2574,7 +2577,7 @@ footer a[href*="instagram.com/hilton.cmferreira"]:hover{color:var(--laranja)}
         <div class="constr-progress">
           <div class="cp-head">
             <span class="cp-label">Andamento da obra</span>
-            <span class="cp-pct" data-target="30">0%</span>
+            <span class="cp-pct" data-target="30">30%</span>
           </div>
           <div class="cp-bar"><div class="cp-fill" data-width="30%"></div></div>
         </div>
@@ -2624,15 +2627,15 @@ footer a[href*="instagram.com/hilton.cmferreira"]:hover{color:var(--laranja)}
     </div>
     <div class="cultos-grid">
       <div class="culto reveal">
-        <span class="badge">thursday</span>
+        <span class="badge">noite</span>
         <div><div class="d">Quinta</div><div class="t">19h30</div><div class="n">Culto da Fé</div></div>
       </div>
       <div class="culto reveal">
-        <span class="badge">sunday</span>
+        <span class="badge">manhã</span>
         <div><div class="d">Domingo</div><div class="t">9h30</div><div class="n">EBS · Escola Bíblica de Sabedoria</div></div>
       </div>
       <div class="culto reveal">
-        <span class="badge">sunday</span>
+        <span class="badge">noite</span>
         <div><div class="d">Domingo</div><div class="t">19h</div><div class="n">Noite de Glória</div></div>
       </div>
       <div class="culto reveal">
@@ -2676,7 +2679,7 @@ footer a[href*="instagram.com/hilton.cmferreira"]:hover{color:var(--laranja)}
       <p class="lead">A célula é parte da essência de quem somos como igreja. É nos lares que a fé encontra espaço para ser vivida de perto!<br><br>Tem uma célula perto de você. Venha viver igreja com a gente!</p>
       <div class="cel-total">
         <div class="ct-badge">
-          <span class="ct-num" data-target="25">1</span>
+          <span class="ct-num" data-target="25">25</span>
         </div>
         <div class="ct-info">
           <span class="ct-label">células ativas</span>
@@ -3056,14 +3059,6 @@ footer a[href*="instagram.com/hilton.cmferreira"]:hover{color:var(--laranja)}
       <p class="lead">Fique por dentro do que Deus está fazendo na nossa casa.</p>
     </div>
     <div class="ev-grid">
-      <div class="evento evento-foto evento-multiplicacao reveal" style="--ev-bg:url('img/eventos/festa-multiplicacao-bg.webp')">
-        <div class="cont">
-          <span class="tag">Celebração</span>
-          <div class="date">03 de outubro, 15h</div>
-          <h3>Festa da Multiplicação</h3>
-          <p>Celebração das células na Chácara Pizze. R$ 25 por integrante da família, em até 2x no cartão. Participe!</p>
-        </div>
-      </div>
       <a class="evento evento-foto evento-dna reveal" href="#jornada-dna" style="--ev-bg:url('img/eventos/jornada-dna.webp')" aria-label="Ver detalhes da Jornada DNA">
         <div class="cont">
           <span class="tag">Escola de discípulos</span>
@@ -3072,7 +3067,7 @@ footer a[href*="instagram.com/hilton.cmferreira"]:hover{color:var(--laranja)}
           <p>Inscrições encerradas para esta turma da Escola de Discípulos.</p>
         </div>
       </a>
-      <a class="evento evento-foto evento-mulheres reveal" href="mulheres-virtuosas.html" style="--ev-bg:url('img/eventos/mulheres-virtuosas-2026.webp')" aria-label="Ver detalhes e inscrição do evento Mulheres Virtuosas">
+      <a class="evento evento-foto evento-mulheres reveal" data-expira="2026-10-31" href="mulheres-virtuosas.html" style="--ev-bg:url('img/eventos/mulheres-virtuosas-2026.webp')" aria-label="Ver detalhes e inscrição do evento Mulheres Virtuosas">
         <div class="cont">
           <span class="tag">Encontro de mulheres</span>
           <div class="date">30 de outubro, 19h30</div>
@@ -3080,7 +3075,7 @@ footer a[href*="instagram.com/hilton.cmferreira"]:hover{color:var(--laranja)}
           <p>Um encontro de fé e comunhão com a Pra. Claudiany Guedes. Inscrição: R$ 20 por pessoa.</p>
         </div>
       </a>
-      <a class="evento evento-foto evento-nxt reveal" href="next/camp-sbgp1-nov26/" style="--ev-bg:url('img/eventos/nxt-camp-oficial-led-recorte-v85.png')" aria-label="Ver detalhes e inscrição do evento NXT CAMP 2026">
+      <a class="evento evento-foto evento-nxt reveal" data-expira="2026-11-23" href="next/camp-sbgp1-nov26/" style="--ev-bg:url('img/eventos/nxt-camp-oficial-led-recorte-v85.png')" aria-label="Ver detalhes e inscrição do evento NXT CAMP 2026">
         <div class="cont">
           <span class="tag">Acampamento</span>
           <div class="date">21 e 22 de novembro</div>
@@ -3237,7 +3232,7 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 
   function reset(){
     cancelAnimationFrame(raf);
-    el.textContent='1';
+    el.textContent=String(target);
   }
 
   function animate(){
@@ -3306,6 +3301,14 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
       const totalPages=pageCount();
       pagination.hidden=totalPages<=1;
       if(totalPages<=1) return;
+      // Com muitas páginas, um contador é mais legível e fácil de usar no toque do que dezenas de pontos.
+      if(totalPages>6){
+        const counter=document.createElement('span');
+        counter.className='dc-page-count';
+        counter.setAttribute('aria-live','polite');
+        pagination.appendChild(counter);
+        return;
+      }
       for(let page=0;page<totalPages;page++){
         const dot=document.createElement('button');
         dot.type='button';
@@ -3330,7 +3333,9 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
         const page=(idx>=last && last>0)
           ? pageCount()-1
           : Math.min(pageCount()-1,Math.floor(idx/pv));
-        [...pagination.children].forEach((dot,i)=>{
+        const counter=pagination.querySelector('.dc-page-count');
+        if(counter) counter.textContent=`${page+1} de ${pageCount()}`;
+        [...pagination.querySelectorAll('.dc-page-dot')].forEach((dot,i)=>{
           const active=i===page;
           dot.classList.toggle('active',active);
           dot.setAttribute('aria-current',active?'page':'false');
@@ -3360,8 +3365,8 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 
   function reset(){
     cancelAnimationFrame(raf);
-    pct.textContent='0%';
-    fill.style.width='0%';
+    pct.textContent=target+'%';
+    fill.style.width=target+'%';
   }
 
   function animate(){
@@ -4042,34 +4047,6 @@ document.querySelectorAll('#eventos .tag').forEach(function(tag){
 });
 </script>
 
-<script id="editorial-font-test-v143">
-(function(){
-  if(location.search.indexOf('fonttest=1') === -1) return;
-  function run(){
-    var fonts=[
-      ['system-ui','system-ui,-apple-system,"Segoe UI",sans-serif'],
-      ['Arial','Arial,sans-serif'],
-      ['Helvetica Neue','"Helvetica Neue",Helvetica,Arial,sans-serif'],
-      ['Avenir Next','"Avenir Next",Avenir,Arial,sans-serif'],
-      ['Trebuchet MS','"Trebuchet MS",Arial,sans-serif'],
-      ['Georgia','Georgia,serif']
-    ];
-    var box=document.createElement('div');
-    box.className='editorial-font-test';
-    var html='<h3>v143 — escolha a que mais parece com o desktop correto</h3>';
-    fonts.forEach(function(f){
-      html+='<div class="eft-row"><span class="eft-label">'+f[0]+'</span><div class="eft-word" style="font-family:'+f[1]+'">vivemos — de casa em casa.</div></div>';
-    });
-    html+='<button type="button">Fechar</button>';
-    box.innerHTML=html;
-    box.querySelector('button').onclick=function(){box.remove()};
-    document.body.appendChild(box);
-  }
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',run);
-  else run();
-})();
-</script>
-
 <script>
 document.querySelectorAll('#jornada-dna .dna-module-number').forEach(function(button){
   var timer;
@@ -4083,5 +4060,15 @@ document.querySelectorAll('#jornada-dna .dna-module-number').forEach(function(bu
 });
 </script>
 <script src="assets/eventos-carousel-v2.js" defer></script>
+<script id="nib-expiracao-eventos">
+/* Oculta chamadas de eventos vencidos e mostra os avisos de encerramento, pela data de Rondônia. */
+(function(){
+  var hoje;
+  try{hoje=new Intl.DateTimeFormat('en-CA',{timeZone:'America/Porto_Velho',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());}
+  catch(e){var d=new Date();hoje=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+  document.querySelectorAll('[data-expira]').forEach(function(el){if(hoje>=el.getAttribute('data-expira'))el.setAttribute('data-expirado','');});
+  document.querySelectorAll('[data-a-partir]').forEach(function(el){if(hoje>=el.getAttribute('data-a-partir'))el.hidden=false;});
+})();
+</script>
 </body>
 </html>
