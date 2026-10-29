@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 if(!defined('NIB_EVENTOS_RUNTIME')){http_response_code(404);exit;}
+require_once __DIR__.'/formulario-lib.php';
 function nibe_private():string{
  $web=realpath($_SERVER['DOCUMENT_ROOT']??'');if(!$web||$web==='/')throw new RuntimeException('Raiz indisponível.');
  $base=realpath(dirname($web).'/nib-inscricoes-privado');if(!$base||str_starts_with($base.'/',$web.'/'))throw new RuntimeException('Armazenamento indisponível.');return $base;
@@ -39,12 +40,15 @@ function nibe_validate(array $p,?array $old):array{
  $e['time_unconfirmed']=!empty($old['time_unconfirmed'])&&$e['start']===($old['start']??'');
  $e['birth_required']=isset($p['birth_required'])||$e['min_age']>0||$e['max_age']>0;$e['guardian_required']=isset($p['guardian_required']);$e['health_field']=isset($p['health_field']);
  $e['crop']=in_array($p['crop']??'',['cover','contain','mulheres'],true)?$p['crop']:'cover';$e['position_x']=max(0,min(100,(int)($p['position_x']??50)));$e['position_y']=max(0,min(100,(int)($p['position_y']??50)));$e['order']=max(0,min(999,(int)($p['order']??10)));
+ $schema=$p['form_schema_json']??null;if($schema!==null){if(!is_string($schema)||strlen($schema)>60000)throw new RuntimeException('Formulário inválido.');$e['form_schema']=nibf_schema(json_decode($schema,true,64,JSON_THROW_ON_ERROR));}
+ $e['registration_closed']=!empty($p['registration_closed']);
+ $e['promotion']=[];foreach(['hero','carousel','events'] as $place){$e['promotion'][$place]=isset($p['show_'.$place]);$e['promotion']['remove_'.$place]=isset($p['remove_'.$place]);}
  $e['publication']=in_array($p['publication']??'',['rascunho','publicado','encerrado'],true)?$p['publication']:'rascunho';
  if(!empty($old['legacy'])){foreach(['mode','amount_cents','pix_key','pix_receiver','pix_code','external_url','capacity','min_age','max_age','birth_required','guardian_required','health_field'] as $k)$e[$k]=$old[$k]??null;}
  return $e;
 }
 function nibe_open(array $e):bool{
- if(($e['publication']??'')!=='publicado')return false;$now=(new DateTimeImmutable('now',new DateTimeZone('America/Porto_Velho')))->format('Y-m-d\TH:i');return (empty($e['registration_start'])||$now>=$e['registration_start'])&&(empty($e['registration_end'])||$now<=$e['registration_end']);
+ if(($e['publication']??'')!=='publicado'||!empty($e['registration_closed']))return false;$now=(new DateTimeImmutable('now',new DateTimeZone('America/Porto_Velho')))->format('Y-m-d\TH:i');return (empty($e['registration_start'])||$now>=$e['registration_start'])&&(empty($e['registration_end'])||$now<=$e['registration_end']);
 }
 function nibe_page(array $e):string{return !empty($e['legacy'])?$e['legacy_page']:'/eventos/?evento='.rawurlencode($e['slug']);}
 function nibe_image(array $e):string{
@@ -78,15 +82,15 @@ function nibe_merge_carousel(string $home,array $catalog):string{
   if($nb!==$ne||$nb>1)throw new RuntimeException('Marcadores inconsistentes. A home foi preservada.');
   if($nb===1){$a=strpos($section,$begin);$b=strpos($section,$end);if($b<$a)throw new RuntimeException('Marcadores inválidos. A home foi preservada.');$section=substr_replace($section,'',$a,$b+strlen($end)-$a);}
  }
- $managed=array_filter($catalog,static fn($e)=>empty($e['legacy'])&&($e['publication']??'')==='publicado');
+ $managed=array_filter($catalog,static fn($e)=>empty($e['legacy'])&&($e['publication']??'')==='publicado'&&($e['promotion']['carousel']??true));
  // Legacy events are never regenerated or removed, regardless of catalog metadata.
  $slides='';$dots='';
  if($managed){
   $generated=nibe_carousel($managed);preg_match_all('~<article\b[^>]*>.*?</article>~s',$generated,$articles);preg_match_all('~<button\b[^>]*data-event-dot[^>]*>.*?</button>~s',$generated,$buttons);
   if(count($articles[0])!==count($managed)||count($buttons[0])!==count($managed))throw new RuntimeException('Falha ao preparar o evento. A home foi preservada.');
   preg_match_all('~<article\b[^>]*\bdata-event-slide\b~',$section,$legacySlides);$baseCount=count($legacySlides[0]);$newNumber=0;
-  foreach($articles[0] as $article){$newNumber++;$article=preg_replace('~aria-label="\d+ de \d+ · ~','aria-label="'.($baseCount+$newNumber).' de '.($baseCount+count($managed)).' · ',$article,1);$article=preg_replace('~class="event-slide is-active"~','class="event-slide"',$article,1);$article=preg_replace('~aria-hidden="false"~','aria-hidden="true"',$article,1);$slides.=$article;}
-  foreach($buttons[0] as $button){$button=str_replace('class="event-carousel-dot is-active"','class="event-carousel-dot"',$button);$button=str_replace('aria-current="true"','aria-current="false"',$button);$dots.=$button;}
+  foreach($articles[0] as $article){$newNumber++;$managedEvent=array_values($managed)[$newNumber-1];$article=preg_replace('~<article\b~','<article data-managed-event="'.nibe_h($managedEvent['slug']).'"',$article,1);$article=preg_replace('~aria-label="\d+ de \d+ · ~','aria-label="'.($baseCount+$newNumber).' de '.($baseCount+count($managed)).' · ',$article,1);$article=preg_replace('~class="event-slide is-active"~','class="event-slide"',$article,1);$article=preg_replace('~aria-hidden="false"~','aria-hidden="true"',$article,1);$slides.=$article;}
+  foreach($buttons[0] as $buttonIndex=>$button){$button=preg_replace('~<button\b~','<button data-managed-dot="'.nibe_h(array_values($managed)[$buttonIndex]['slug']).'"',$button,1);$button=str_replace('class="event-carousel-dot is-active"','class="event-carousel-dot"',$button);$button=str_replace('aria-current="true"','aria-current="false"',$button);$dots.=$button;}
  }
  if(!preg_match('~<div\b[^>]*\bdata-event-carousel(?=[\s=>])[^>]*>~s',$section,$viewport,PREG_OFFSET_CAPTURE))throw new RuntimeException('Área dos slides não encontrada. A home foi preservada.');
  $slideClose=nibe_div_close($section,$viewport[0][1]);
@@ -94,7 +98,7 @@ function nibe_merge_carousel(string $home,array $catalog):string{
  if(!preg_match('~<div\b[^>]*class="[^"]*\bevent-carousel-dots\b[^"]*"[^>]*>~s',$section,$controls,PREG_OFFSET_CAPTURE))throw new RuntimeException('Controles não encontrados. A home foi preservada.');
  $dotsClose=nibe_div_close($section,$controls[0][1]);
  if($dots!=='')$section=substr_replace($section,'<!-- NIB-MANAGED-DOTS-BEGIN -->'.$dots.'<!-- NIB-MANAGED-DOTS-END -->',$dotsClose,0);
- return substr_replace($home,$section,$sectionOffset,strlen($sections[0][0][0]));
+ $result=substr_replace($home,$section,$sectionOffset,strlen($sections[0][0][0]));if(!str_contains($result,'/assets/eventos-divulgacao.js'))$result=str_replace('</body>','<script src="/assets/eventos-divulgacao.js?v=5.0" defer></script></body>',$result);return $result;
 }
 
 function nibe_save(array $e,?string $eventPassword=null):void{
@@ -106,6 +110,7 @@ function nibe_save(array $e,?string $eventPassword=null):void{
   $e['updated_at']=bin2hex(random_bytes(12));
   if($new){$e['legacy']=false;$e['folder']='evento-'.$slug;$e['config']='administracao-evento-'.$slug.'.json';if(is_dir($base.'/'.$e['folder'])||is_file($base.'/'.$e['config']))throw new RuntimeException('Endereço já utilizado.');if(in_array($e['mode'],['pago','gratuito'],true)){if(!is_string($eventPassword)||strlen($eventPassword)<12||strlen($eventPassword)>72)throw new RuntimeException('Defina uma senha do evento com 12 a 72 caracteres.');}}
   if(!nibe_asset($e['banner']))throw new RuntimeException('Escolha uma imagem de banner válida.');
+  if($e['publication']==='publicado'&&!empty($e['promotion']['hero']))foreach($cat as $otherSlug=>$other)if($otherSlug!==$slug&&empty($other['legacy'])&&($other['publication']??'')==='publicado'&&!empty($other['promotion']['hero']))throw new RuntimeException('Outro evento já ocupa a hero. Desative o destaque dele antes de publicar este.');
   $cat[$slug]=$e;
   $home=($_SERVER['DOCUMENT_ROOT']??'').'/index.html';$original=(string)file_get_contents($home);$pattern='~<section\b[^>]*\bid="mulheres-virtuosas"[^>]*>.*?</section>~s';
   if(preg_match_all($pattern,$original)!==1)throw new RuntimeException('Não foi possível identificar o carrossel. Nada publicado.');
@@ -121,3 +126,4 @@ function nibe_save(array $e,?string $eventPassword=null):void{
   $committed=true;
  }finally{if(!$committed&&$createdFolder!==''){if($createdConfig!==''&&is_file($createdConfig))unlink($createdConfig);if(is_dir($createdFolder)&&count(scandir($createdFolder)?:[])===2)rmdir($createdFolder);}flock($lock,LOCK_UN);fclose($lock);}
 }
+

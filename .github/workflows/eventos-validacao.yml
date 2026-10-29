@@ -1,0 +1,28 @@
+name: Validar eventos configuráveis
+on:
+  pull_request:
+    paths:
+      - 'inscricoes/**'
+      - 'eventos/**'
+      - 'assets/eventos-*.js'
+      - 'tests/**'
+      - '.github/workflows/eventos-validacao.yml'
+permissions:
+  contents: read
+jobs:
+  validar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Sintaxe PHP e JavaScript
+        run: |
+          find inscricoes eventos tests -name '*.php' -print0 | xargs -0 -n1 php -l
+          node --check inscricoes/formulario-editor.js
+          node --check inscricoes/gestao-eventos.js
+          node --check assets/eventos-divulgacao.js
+          node --check assets/eventos-carousel-v2.js
+      - name: Regras e preservação com dados fictícios
+        run: php tests/eventos-configuraveis.php
