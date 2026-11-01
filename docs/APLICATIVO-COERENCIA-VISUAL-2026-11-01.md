@@ -61,3 +61,13 @@ Aplicação em Membros: retirados atalhos inferiores; retorno VOLTAR no cabeçal
 Revisão anterior de Claude (9ffc1bc) considerada nos pontos confirmados: foco preservado ao trocar finalidade de contribuição, mensagens roladas para visualização, aviso global distingue cadastros fictícios de dados bancários reais, atalhos em duas colunas intermediárias. Voltar usa histórico interno de telas, não intercepta o botão do navegador.
 
 Verificação: sintaxe dos dois scripts, 29 testes incluindo igualdade do controlador mobile com o original, menu em iframe360px com drawer fixo abaixo de76+66px, backdrop/trava ativos, seleção de cadastro fecha menu e libera página, retorno de44px, sem overflow horizontal. Ambiente de teste; sem alteração na produção. Codex implementa, Claude revisa no PR12, Hilton valida visualmente.
+
+## Proposta de Claude aplicada — barra flutuante e acabamento mobile
+
+Hilton autorizou implementar a proposta em 01/11. Base544a01b, PR12. Autor do design: Claude, comentário6564102092; Codex revisou/corrigiu snippets e implementou; Hilton valida visualmente. Nenhuma mudança em produção.
+
+Barra flutuante de5posições em até820px: Início, Eventos, Contribuir central com coração, Cadastro, Mais. Superfície branca, recuos12px e safe-area, raio28px, altura72px, alvos56px, íconesSVG22px, círculo60px com borda branca, sombra navy suave. Atual indicado por aria-current, peso e fundo de ícone. Links usam data-view; ícones outline não são preenchidos indiscriminadamente. Mais abre o drawer original com foco no destino atual; fecha Teste em toda abertura e restaura foco sem roubar foco do título após navegar. Gestão não mostra barra. Barra some ao focar inputs/textarea/select. Reserva de rolagem evita cobrir ações/rodapé. Voltar permanece no cabeçalho.
+
+Blocos e cards mobile com raio18px, padding20px e sombra discreta; Eventos e inscrições recebe destaque navy/branco na inicial. Tipografia/logo e fundo claro NIB mantidos; desktop preservado. Nenhum sino, notificação ou dado inventado. Os cinco CSS-base e o controlador original continuam sem edição.
+
+Verificação: sintaxe e30 testes passaram, incluindo novo contraste navy/eef1f4. Navegador360px validou Eventos, Mais→Células, Cadastro e ocultação da barra ao focar campo. Conferência adicional320/390px para dimensões/ausência de overflow. Limites: sem aparelho físico ou teste de pagamento; QR oficial real continua explicitamente identificado e não deve ser usado durante o teste.

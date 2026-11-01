@@ -20,6 +20,25 @@
   ];
   const eventCards = (compact = false) => `<div class="cards ${compact ? 'home-events' : ''}">${[...events].sort((a,b) => Number(b.active) - Number(a.active)).map(e => `<article class="event ${e.name === 'Mulheres Virtuosas' ? 'event-mulheres-virtuosas' : ''} ${e.active ? '' : 'event-ended'}"><div class="event-cover"><img src="${e.image}" alt="${e.name}" width="800" height="400"></div><div class="event-content"><div class="event-top"><span class="tag ${e.active ? 'status-active' : 'status-ended'}">${e.active ? 'Ativo' : 'Encerrado'}</span><time class="event-date">${e.date}</time></div><${compact ? 'h3' : 'h2'}>${e.name}</${compact ? 'h3' : 'h2'}><p>${e.active ? 'Conheça o encontro e as informações do evento.' : 'Evento realizado. Consulte as informações.'}</p><button type="button" class="button primary" aria-label="Ver informações: ${e.name}" data-message="${e.name}: catálogo demonstrativo. A integração com as inscrições ainda será conectada; nenhum cadastro ou pagamento é realizado aqui.">Ver informações</button></div></article>`).join('')}</div>`;
   const isManagement = () => ['secretaria', 'pastoral'].includes(state.context);
+  const barPaths = {
+    inicio: 'M3 11l9-8 9 8 M5 10v10h5v-6h4v6h5V10',
+    eventos: iconPaths.calendar,
+    generosidade: 'M12 20s-8-4.7-8-10a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 5.3-8 10-8 10z',
+    cadastro: 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8z M4 21c0-4 4-6 8-6s8 2 8 6',
+    mais: 'M4 7h16 M4 12h16 M4 17h16'
+  };
+  const barIcon = key => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${barPaths[key]}"/></svg>`;
+  function renderBar() {
+    const bar = document.getElementById('bottom-nav');
+    bar.hidden = isManagement();
+    if (bar.hidden) return;
+    if (!bar.children.length) bar.innerHTML = [['inicio','Início'],['eventos','Eventos'],['generosidade','Contribuir'],['cadastro','Cadastro']].map(([view,label]) => `<a href="#${view}" data-view="${view}" class="${view === 'generosidade' ? 'bar-main' : ''}"><span class="bar-icon">${barIcon(view)}</span><span>${label}</span></a>`).join('') + `<button type="button" id="bar-more" aria-controls="nib-navigation-content" aria-expanded="false"><span class="bar-icon">${barIcon('mais')}</span><span>Mais</span></button>`;
+    bar.querySelectorAll('a').forEach(a => {
+      const active = a.dataset.view === state.view;
+      if (active) a.setAttribute('aria-current','page'); else a.removeAttribute('aria-current');
+    });
+    document.getElementById('bar-more').classList.toggle('selected', ['celulas','informacoes'].includes(state.view));
+  }
   function announce(message) { feedback.textContent = message; feedback.scrollIntoView({block:"nearest",behavior:"instant"}); }
   function renderNavigation() {
     const items = isManagement() ? [['gestao', 'Membresia'], ['informacoes', 'Informações']] : navigation;
@@ -39,6 +58,7 @@
     }
     document.getElementById('mobile-title').textContent = items.find(([key]) => key === state.view)?.[1] || 'Membresia';
     document.getElementById('member-shortcuts').hidden = isManagement();
+    renderBar();
   }
   function show(view, focus = true, record = true) {
     if (['gestao', 'confirmar'].includes(view) && !isManagement()) view = 'inicio';
@@ -77,6 +97,7 @@
   root.addEventListener('click', event => {
     const action = event.target.closest('button,a[data-view],a[data-back]');
     if (!action || action.disabled) return;
+    if (action.id === 'bar-more') { document.querySelector('.test-options').open = false; openedFromBar = true; document.getElementById('mobile-menu').open = true; return; }
     if (action.id === 'mobile-back') { event.preventDefault(); show(viewHistory.pop() || (isManagement() ? 'gestao' : 'inicio'), true, false); return; }
     if (action.dataset.view) { event.preventDefault(); show(action.dataset.view); }
     if (action.dataset.message) announce(action.dataset.message);
@@ -125,6 +146,22 @@
     if (event.key !== 'Escape') return;
     const openMenu = event.target.closest('details[open]');
     if (openMenu) { openMenu.open = false; openMenu.querySelector('summary').focus(); }
+  });
+  let openedFromBar = false;
+  const mobileMenu = document.getElementById('mobile-menu');
+  mobileMenu.addEventListener('toggle', () => {
+    const more = document.getElementById('bar-more');
+    if (more) more.setAttribute('aria-expanded', String(mobileMenu.open));
+    if (mobileMenu.open) {
+      document.querySelector('.test-options').open = false;
+      if (openedFromBar) (mobileMenu.querySelector('a[aria-current=page]') || mobileMenu.querySelector('a'))?.focus();
+    } else if (openedFromBar) {
+      openedFromBar = false;
+      setTimeout(() => {
+        const active = document.activeElement;
+        if (more && !more.closest('[inert]') && (active === document.body || active === mobileMenu.querySelector('summary'))) more.focus();
+      }, 0);
+    }
   });
   document.getElementById('demo-context').value = 'membro';
   show('inicio', false);

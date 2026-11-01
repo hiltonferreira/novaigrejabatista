@@ -42,3 +42,5 @@ Revisão no PR #12: comentário 6563071101. O Claude leu o checkout, mas não co
 O primeiro Preview foi rejeitado por Hilton. A revisão atual reaproveita os CSS originais do painel, estrutura de header/sidebar/main, dimensões e pesos reais; campos seguem referência marfim do NXT. Detalhes em docs/APLICATIVO-COERENCIA-VISUAL-2026-11-01.md. O seletor está no botão Versão de teste. Navegação principal e catálogo são demonstrativos.
 
 Mobile segue o módulo de Eventos/Inscrições (menu superior/drawer e retorno no cabeçalho); a barra inferior experimental foi retirada. Voltar é histórico interno da demonstração e não intercepta o botão de voltar do navegador.
+
+Atualização mais recente: a pedido de Hilton, aplicada a proposta de Claude para barra flutuante mobile de5acessos (Início/Eventos/Contribuir/Cadastro/Mais), preservando drawer e controlador do módulo de Eventos. Esta decisão supera o registro anterior de barra retirada. Gestão usa só o menu; campos focados ocultam a barra.

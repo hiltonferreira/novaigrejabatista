@@ -35,6 +35,7 @@ const pairs = [
   ['Campo: contorno real', token('nib-control-outline'), token('nib-field-surface'), 3],
   ['Botão: contorno em hover real', token('nib-control-outline'), token('nib-control-hover'), 3],
   ['Botão: desabilitado em hover real', token('nib-placeholder'), token('nib-control-disabled'), 4.5],
+  ['Seleção da barra flutuante', '#041e42', '#eef1f4', 4.5],
   ['Tag ativo', '#ffffff', '#245c45', 4.5],
   ['Tag encerrado', '#43516a', '#eef1f4', 4.5],
   ['Contorno do recolhimento da lateral', '#aebfd4', '#041e42', 3],
