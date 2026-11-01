@@ -34,7 +34,7 @@
       if (active) item.setAttribute('aria-current', 'page'); else item.removeAttribute('aria-current');
       });
     }
-    document.getElementById('mobile-title').textContent = labels[state.view][1];
+    document.getElementById('mobile-title').textContent = items.find(([key]) => key === state.view)?.[1] || 'Membresia';
   }
   function show(view, focus = true) {
     if (['gestao', 'confirmar'].includes(view) && !isManagement()) view = 'inicio';

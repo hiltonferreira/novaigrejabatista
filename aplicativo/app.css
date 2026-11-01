@@ -84,3 +84,4 @@
 #nib-proposta[data-view=cadastro] .profile dd{padding-top:5px}
 #nib-proposta[data-view=confirmar] #content{max-width:640px}
 @media(max-width:820px){#nib-proposta[data-view=cadastro] #content{display:block}#nib-proposta[data-view=cadastro] #content>.box{margin-bottom:36px}}
+@media(max-width:820px){#nib-proposta .header-right .test-options>.site-link{display:inline-flex}#nib-proposta .header-right{gap:10px}#nib-proposta .brand{font-size:14px;gap:10px}#nib-proposta .brand-logo{width:62px;height:32px}#nib-proposta .brand>span{padding-left:10px}#nib-proposta .brand small{font-size:10px}#nib-proposta .site-link{padding:9px 12px;font-size:11px;min-height:44px}}
