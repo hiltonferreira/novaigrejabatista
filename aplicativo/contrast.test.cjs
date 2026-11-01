@@ -1,5 +1,11 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
+const css = require('node:fs').readFileSync(require('node:path').join(__dirname, 'app.css'), 'utf8');
+const token = name => {
+  const value = css.match(new RegExp(`--${name}:(#[0-9a-fA-F]{6})`));
+  assert.ok(value, `Token ${name} ausente`);
+  return value[1];
+};
 function luminance(hex) {
   const values = [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16) / 255)
     .map(v => v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4);
@@ -24,6 +30,11 @@ const pairs = [
   ['Contorno no fundo', '#65768e', '#f4f6f8', 3],
   ['Foco no fundo claro', '#041e42', '#f4f6f8', 3],
   ['Foco no menu', '#ebebdf', '#041e42', 3],
+  ['Campo: texto real', token('nib-field-text'), token('nib-field-surface'), 4.5],
+  ['Campo: placeholder real', token('nib-placeholder'), token('nib-field-surface'), 4.5],
+  ['Campo: contorno real', token('nib-control-outline'), token('nib-field-surface'), 3],
+  ['Botão: contorno em hover real', token('nib-control-outline'), token('nib-control-hover'), 3],
+  ['Botão: desabilitado em hover real', token('nib-placeholder'), token('nib-control-disabled'), 4.5],
 ];
 for (const [name, foreground, background, minimum] of pairs) {
   test(name, () => {
@@ -33,3 +44,7 @@ for (const [name, foreground, background, minimum] of pairs) {
     console.log(`${name}: ${ratio.toFixed(2)}:1`);
   });
 }
+test('Campos e atalhos usam o contorno verificado no CSS', () => {
+  assert.match(css, /input,#nib-proposta textarea,#nib-proposta select,#nib-proposta \.grid button\{border-color:var\(--nib-control-outline\)\}/);
+  assert.match(css, /input::placeholder,#nib-proposta textarea::placeholder\{color:var\(--nib-placeholder\);opacity:1\}/);
+});

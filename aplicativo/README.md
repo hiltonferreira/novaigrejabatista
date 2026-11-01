@@ -27,6 +27,11 @@ Não subir esta pasta ao cPanel nesta etapa. Nenhum arquivo de home, APIs ou ins
 
 `node --check aplicativo/app.js` e `node --test aplicativo/contrast.test.cjs`.
 
-A verificação calcula luminância relativa para 18 pares de cores (texto >=4,5:1, contornos/foco >=3:1). Não equivale a auditoria completa de acessibilidade. Textos secundários foram escurecidos; laranja claro é destaque sobre azul, não texto pequeno sobre branco. Foco azul em superfície clara e marfim na navegação azul.
+A verificação calcula luminância relativa para 23 pares de cores (texto >=4,5:1, contornos/foco >=3:1). Não equivale a auditoria completa de acessibilidade. Textos secundários foram escurecidos; laranja claro é destaque sobre azul, não texto pequeno sobre branco. Foco azul em superfície clara e marfim na navegação azul.
 
 Roteiro: navegar pelas áreas; enviar contato/observação fictícios e consultar na gestão; rejeitar apresentação futura; registrar apresentação passada como Secretaria e como Pastoral em sessões separadas; confirmar ausência de pagamento e integrações reais. Conferir teclado, foco, largura estreita e desktop.
+
+
+## Revisão Claude e correções
+
+Revisão no PR #12: comentário 6563071101. O Claude leu o checkout, mas não confirmou SHAs completos via API nem executou testes; workflow terminou com erro após publicar análise, portanto revisão parcial. Codex verificou e corrigiu foco de navegação, contornos reais de inputs/atalhos, placeholder, seletor restaurado, estado vivo de mensagens, semântica do menu e tamanho de campos mobile. Testes finais: 24 verificações passaram, incluindo 23 pares de cores e ligação dos controles aos tokens CSS. Navegador confirmou foco no título e cores computadas de borda/placeholder. Sem auditoria completa de leitores de tela. Fuso dos registros demonstrativos: America/Manaus; política temporal definitiva do produto ainda não aprovada.
