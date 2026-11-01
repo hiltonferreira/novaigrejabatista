@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Inscrição · Mulheres Virtuosas</title>
-  <meta name="description" content="Inscreva-se no Mulheres Virtuosas. Dia 30 de outubro, às 19h30, na Nova Igreja Batista. Inscrição: R$20.">
+  <title>Mulheres Virtuosas · Inscrições encerradas</title>
+  <meta name="description" content="O encontro Mulheres Virtuosas foi realizado em 30 de outubro de 2026. Inscrições encerradas.">
   <meta name="theme-color" content="#ebebdf">
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -228,7 +228,6 @@
     header,main,footer{max-width:100%}
 
 </style>
-  <script defer src="assets/inscricao-mulheres-v221.js?v=230"></script>
 <link rel="stylesheet" href="/consulta-inscricao/atalho.css?v=2.6">
 <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-nib-32-v113.png?v=2.6"><link rel="apple-touch-icon" sizes="180x180" href="/img/favicon-nib-180-v113.png?v=2.6"><link rel="stylesheet" href="/consulta-inscricao/cabecalho.css?v=2.8"></head>
 <body>
@@ -246,48 +245,13 @@
         <div><dt>Inscrição</dt><dd>R$ 20 por pessoa</dd></div>
       </dl>
     </aside>
-    <section class="form-area" aria-label="Inscrição no evento">
-<div class="nib-consulta-topo"><span>Já fez sua inscrição?</span><a href="/consulta-inscricao/?evento=mulheres-virtuosas">Consultar minha inscrição</a></div>
-      <ol class="progress" aria-label="Etapas da inscrição"><li aria-current="step"><span>01</span> Seus dados</li><li><span>02</span> Pagamento</li><li><span>03</span> Comprovante</li></ol>
-      <p id="form-error" class="message error" role="alert" hidden></p>
-      <form id="event-form" novalidate>
-        <fieldset data-step="0">
-          <legend>Faça sua inscrição</legend><p class="step-intro">Informe o nome e o WhatsApp de quem participará do encontro.</p>
-          <label for="name">Nome completo</label><input id="name" name="name" autocomplete="name" maxlength="120" required>
-          <label for="phone">WhatsApp com DDD</label><input id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="(69) 99999-9999" maxlength="20" required>
-          <label class="consent"><input type="checkbox" id="consent" name="consent" required><span>Autorizo o uso dos meus dados e do comprovante para organizar minha inscrição neste evento. <a href="privacidade.html" target="_blank" rel="noopener">Política de privacidade</a>.</span></label>
-          <div class="honeypot" aria-hidden="true"><label for="website">Deixe em branco</label><input id="website" name="website" tabindex="-1" autocomplete="off"></div>
-          <button class="button primary" id="next-data" type="button">Continuar para o Pix</button>
-          <p class="small-note">Você pode abrir o banco e voltar sem perder o preenchimento.</p>
-        </fieldset>
-        <fieldset data-step="1" hidden>
-          <legend>Pagamento via Pix</legend>
-          <div class="price"><span>Valor da inscrição</span><strong>R$ 20<span>,00</span></strong></div>
-          <p class="step-intro">Use o Pix Copia e Cola ou leia o QR Code para pagar R$ 20 no aplicativo do seu banco. Depois, volte para enviar o comprovante.</p>
-          <div class="pix-payment">
-            <div class="pix-qr"><img src="img/eventos/pix-mulheres-20-v201.png" alt="QR Code Pix de R$ 20 para Nova Igreja Batista" width="441" height="441"><p class="small-note">No banco, escolha pagar com QR Code.</p></div>
-            <div class="pix-code-block"><label for="pix-code">Pix Copia e Cola</label><textarea id="pix-code" readonly rows="4" spellcheck="false" autocomplete="off">00020126360014br.gov.bcb.pix011440518758000130520400005303986540520.005802BR5919NOVA IGREJA BATISTA6009ARIQUEMES62070503***630464A2</textarea><button class="button primary" type="button" id="copy-pix">Copiar código PIX</button><p class="small-note">No celular, copie o código e cole na opção Pix Copia e Cola do seu banco.</p></div>
-          </div>
-          <p class="small-note pix-recipient">Recebedor: <strong>Nova Igreja Batista</strong><br>Chave CNPJ: 40.518.758/0001-30</p>
-          <p id="copy-status" class="small-note" role="status" aria-live="polite"></p>
-          <p class="small-note">Confira o destinatário da igreja no aplicativo antes de pagar e guarde o comprovante.</p>
-          <div class="actions"><button class="button secondary" type="button" data-back="0">Voltar</button><button class="button primary" id="next-pix" type="button">Já paguei. Enviar comprovante</button></div>
-        </fieldset>
-        <fieldset data-step="2" hidden>
-          <legend>Envie seu comprovante.</legend><p class="step-intro">Anexe a imagem ou o PDF do pagamento de R$ 20.</p>
-          <label class="upload" id="receipt-picker" for="receipt"><strong>Escolher comprovante</strong><span>JPG, PNG, WebP ou PDF · até 6 MB</span><input id="receipt" name="receipt" type="file" accept="image/jpeg,image/png,image/webp,application/pdf" required></label>
-          <div id="receipt-selected" class="receipt-selected" hidden>
-            <img id="receipt-preview" alt="Prévia do comprovante selecionado" hidden>
-            <div class="receipt-file"><p id="file-status" class="small-note" role="status" aria-live="polite"></p><button type="button" id="change-receipt" class="receipt-change">Trocar arquivo</button></div>
-          </div>
-          <label class="consent payer-toggle"><input type="checkbox" id="other-payer" aria-controls="payer-field" aria-expanded="false"><span>O Pix foi feito por outra pessoa?</span></label>
-          <div id="payer-field" hidden><label for="payer">Nome de quem fez o Pix</label><input id="payer" name="payer" autocomplete="off" maxlength="120" disabled></div>
-          <p class="small-note">Receberemos seus dados e o comprovante. O envio não faz uma validação bancária automática.</p>
-          <div class="actions"><button class="button secondary" type="button" data-back="1">Voltar</button><button class="button primary" id="submit-registration" type="button" disabled>Concluir inscrição</button></div>
-        </fieldset>
-      </form>
-      <section id="success" hidden tabindex="-1" aria-labelledby="success-title"><span class="eyebrow">Mulheres Virtuosas</span><h2 id="success-title">Inscrição feita!</h2><p>Sua inscrição e seu comprovante foram recebidos. Esperamos você no dia 30 de outubro, às 19h30!</p><dl class="confirmation"><div><dt>Protocolo</dt><dd class="protocol-row"><span id="protocol"></span><button type="button" class="protocol-copy" id="copy-protocol">Copiar protocolo</button></dd></div><div><dt>Nosso encontro</dt><dd>30 de outubro · 19h30</dd></div></dl><p class="small-note" id="protocol-status" role="status" aria-live="polite"></p><p class="small-note">Guarde seu protocolo para consultar a organização, se precisar.</p><a class="button primary" href="./">Voltar ao site</a><button class="new-registration" id="new-registration" type="button">Inscrever outra participante</button></section>
-      <noscript><p class="message error">Ative o JavaScript do navegador para fazer sua inscrição.</p></noscript>
+    <section class="form-area" aria-label="Inscrições encerradas">
+      <div class="nib-consulta-topo"><span>Já fez sua inscrição?</span><a href="/consulta-inscricao/?evento=mulheres-virtuosas">Consultar minha inscrição</a></div>
+      <span class="eyebrow">Evento encerrado</span>
+      <h2>Inscrições encerradas</h2>
+      <p class="step-intro">O encontro Mulheres Virtuosas foi realizado em 30 de outubro de 2026. Agradecemos a todas que participaram.</p>
+      <p class="small-note">As inscrições já realizadas continuam disponíveis para consulta.</p>
+      <a class="button primary" href="./">Voltar ao site</a>
     </section>
   </main>
   <footer class="event-footer"><span>© 2026 Nova Igreja Batista · Um lar de fé e acolhimento.</span><a class="admin-link" href="/inscricoes/" target="_blank" rel="noopener noreferrer">Gerenciar inscrições</a></footer>
