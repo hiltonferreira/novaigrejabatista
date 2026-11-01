@@ -2691,3 +2691,36 @@ input[type="date"]::-webkit-calendar-picker-indicator{
 .progress li.is-complete:nth-child(2) > span::after{
   background:var(--step-done) !important;
 }
+
+/* NIB 11.7 — botão de retorno igual ao cabeçalho do formulário Mulheres.
+   Escopo exclusivo do link no topo; preserva os demais botões e o formulário. */
+header.event-header.nib-public-header>a.back-site{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:44px;
+  padding:10px 22px!important;
+  border:1px solid #a5b5c7;
+  border-radius:999px;
+  background:#fff;
+  color:#041e42!important;
+  font-size:14px!important;
+  font-weight:600!important;
+  line-height:1.4;
+  text-decoration:none;
+}
+header.event-header.nib-public-header>a.back-site:hover{
+  background:#ebebdf;
+  color:#041e42!important;
+  border-color:#8d9eb2;
+}
+header.event-header.nib-public-header>a.back-site:focus-visible{
+  outline:3px solid #041e42;
+  outline-offset:3px;
+}
+@media(max-width:820px){
+  header.event-header.nib-public-header>a.back-site{
+    padding:11px 18px!important;
+    font-size:13px!important;
+  }
+}
