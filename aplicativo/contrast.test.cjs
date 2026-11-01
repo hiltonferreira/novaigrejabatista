@@ -45,6 +45,15 @@ for (const [name, foreground, background, minimum] of pairs) {
   });
 }
 test('Campos e atalhos usam o contorno verificado no CSS', () => {
-  assert.match(css, /input,#nib-proposta textarea,#nib-proposta select,#nib-proposta \.grid button\{border-color:var\(--nib-control-outline\)\}/);
+  assert.match(css, /input,#nib-proposta textarea,#nib-proposta select\{border:1px solid var\(--nib-control-outline\)/);
   assert.match(css, /input::placeholder,#nib-proposta textarea::placeholder\{color:var\(--nib-placeholder\);opacity:1\}/);
+});
+
+test('Base visual do painel preservada sem alterações', () => {
+  const fs = require('node:fs');
+  const path = require('node:path');
+  const base = path.resolve(__dirname, '..');
+  for (const [source, copy] of [['painel.css','painel-base.css'],['navegacao-painel.css','navegacao-base.css'],['refino-mobile.css','refino-mobile-base.css'],['layout-mobile.css','layout-mobile-base.css'],['resumo-eventos.css','resumo-base.css']]) {
+    assert.deepEqual(fs.readFileSync(path.join(base,'inscricoes',source)),fs.readFileSync(path.join(__dirname,'assets',copy)));
+  }
 });

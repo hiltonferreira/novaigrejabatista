@@ -35,3 +35,8 @@ Roteiro: navegar pelas áreas; enviar contato/observação fictícios e consulta
 ## Revisão Claude e correções
 
 Revisão no PR #12: comentário 6563071101. O Claude leu o checkout, mas não confirmou SHAs completos via API nem executou testes; workflow terminou com erro após publicar análise, portanto revisão parcial. Codex verificou e corrigiu foco de navegação, contornos reais de inputs/atalhos, placeholder, seletor restaurado, estado vivo de mensagens, semântica do menu e tamanho de campos mobile. Testes finais: 24 verificações passaram, incluindo 23 pares de cores e ligação dos controles aos tokens CSS. Navegador confirmou foco no título e cores computadas de borda/placeholder. Sem auditoria completa de leitores de tela. Fuso dos registros demonstrativos: America/Manaus; política temporal definitiva do produto ainda não aprovada.
+
+
+## Revisão visual posterior
+
+O primeiro Preview foi rejeitado por Hilton. A revisão atual reaproveita os CSS originais do painel, estrutura de header/sidebar/main, dimensões e pesos reais; campos seguem referência marfim do NXT. Detalhes em docs/APLICATIVO-COERENCIA-VISUAL-2026-11-01.md. O seletor está no botão Versão de teste. Navegação principal e catálogo são demonstrativos.

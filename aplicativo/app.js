@@ -8,35 +8,47 @@
   const navigation = [['inicio', 'Início'], ['cadastro', 'Meu cadastro'], ['eventos', 'Eventos'], ['celulas', 'Células'], ['generosidade', 'Generosidade'], ['informacoes', 'Informações']];
   const labels = { inicio: ['SEJA BEM-VINDA', 'Sua igreja, perto de você.', 'Seu cadastro, encontros e próximos passos na comunidade.'], cadastro: ['MINHAS INFORMAÇÕES', 'Meu cadastro', 'Consulte seus dados e encaminhe uma atualização à equipe.'], eventos: ['VIDA EM COMUNIDADE', 'Eventos e inscrições', 'Encontre os próximos encontros da igreja.'], celulas: ['CAMINHAR JUNTOS', 'Células', 'Acesse a plataforma de células adotada pela igreja.'], generosidade: ['CONTRIBUIR', 'Generosidade', 'Dízimos, ofertas e campanhas em um só lugar.'], informacoes: ['FIQUE POR PERTO', 'Informações da igreja', 'Programação, endereço e canais da comunidade.'], gestao: ['ADMINISTRAÇÃO', 'Integração e membresia', 'Acompanhe o formulário, a reunião e a apresentação no culto.'], confirmar: ['MEMBRESIA', 'Registrar apresentação', 'O registro documenta a apresentação já realizada no culto.'] };
   const escape = value => String(value).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-  const button = (text, view, primary = false) => `<button type="button" class="${primary ? 'action' : ''}" data-view="${view}">${text}</button>`;
+  const button = (text, view, primary = false) => `<button type="button" class="button ${primary ? 'action primary' : ''}" data-view="${view}">${text}</button>`;
+  // Ícones reaproveitados da função icon() do painel; sem ícones nas ações.
+  const iconPaths = { grid: 'M3 3h7v7H3z M14 3h7v7h-7z M3 14h7v7H3z M14 14h7v7h-7z', calendar: 'M4 5h16v16H4z M8 3v4 M16 3v4 M4 11h16', receipt: 'M6 3h12v18l-3-2-3 2-3-2-3 2z M9 8h6 M9 12h6', archive: 'M3 4h18v5H3z M5 9v12h14V9 M10 13h4' };
+  const navIcon = key => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${iconPaths[({ inicio: 'grid', cadastro: 'receipt', eventos: 'calendar', celulas: 'grid', generosidade: 'receipt', informacoes: 'archive', gestao: 'grid' })[key]]}"/></svg>`;
+  const events = [
+    { name: 'Mulheres Virtuosas', image: 'assets/mulheres.webp', date: '30/10/2026', active: false },
+    { name: 'NXT CAMP', image: 'assets/nxt.png', date: '21/11/2026', active: true },
+    { name: 'Jornada DNA', image: 'assets/jornada.webp', date: '25/10/2026', active: false }
+  ];
+  const eventCards = () => `<div class="cards">${events.map(e => `<article class="event"><div class="event-cover"><img src="${e.image}" alt="${e.name}" width="800" height="400"></div><div class="event-content"><div class="event-top"><span class="tag ${e.active ? 'status-active' : 'status-ended'}">${e.active ? 'Ativo' : 'Encerrado'}</span><time class="event-date">${e.date}</time></div><h2>${e.name}</h2><p>${e.active ? 'Conheça o encontro e as informações do evento.' : 'Evento realizado. Consulte as informações.'}</p><button type="button" class="button primary" data-message="${e.name}: catálogo demonstrativo. A integração com as inscrições ainda será conectada; nenhum cadastro ou pagamento é realizado aqui.">Ver informações</button></div></article>`).join('')}</div>`;
   const isManagement = () => ['secretaria', 'pastoral'].includes(state.context);
   function announce(message) { feedback.textContent = message; }
   function renderNavigation() {
     const items = isManagement() ? [['gestao', 'Membresia'], ['informacoes', 'Informações']] : navigation;
-    const nav = document.getElementById('navigation');
     const context = isManagement() ? 'gestao' : 'membro';
-    if (nav.dataset.context !== context) {
-      nav.innerHTML = items.map(([key, label]) => `<button type="button" data-view="${key}">${label}</button>`).join('');
-      nav.dataset.context = context;
-    }
-    nav.querySelectorAll('button').forEach(item => {
+    for (const nav of [document.getElementById('navigation'), document.getElementById('mobile-navigation')]) {
+      if (nav.dataset.context !== context) {
+        nav.innerHTML = items.map(([key, label]) => `<a href="#${key}" data-view="${key}" aria-label="${label}">${navIcon(key)}<span>${label}</span></a>`).join('');
+        nav.dataset.context = context;
+      }
+      nav.querySelectorAll('a').forEach(item => {
       const active = state.view === item.dataset.view || (item.dataset.view === 'gestao' && state.view === 'confirmar');
-      if (active) item.setAttribute('aria-current', 'page');
-      else item.removeAttribute('aria-current');
-    });
+      item.classList.toggle('selected', active);
+      if (active) item.setAttribute('aria-current', 'page'); else item.removeAttribute('aria-current');
+      });
+    }
+    document.getElementById('mobile-title').textContent = labels[state.view][1];
   }
   function show(view, focus = true) {
     if (['gestao', 'confirmar'].includes(view) && !isManagement()) view = 'inicio';
     state.view = labels[view] ? view : 'inicio';
+    root.dataset.view = state.view;
     const [eyebrow, title, description] = labels[state.view];
     document.getElementById('eyebrow').textContent = eyebrow;
     document.getElementById('heading').textContent = title;
     document.getElementById('description').textContent = description;
     feedback.textContent = '';
     const pages = {
-      inicio: () => `<div class="grid">${button('Ver eventos', 'eventos')}${button('Contribuir', 'generosidade')}${button('Meu cadastro', 'cadastro')}${button('Acessar células', 'celulas')}</div><section class="feature"><span class="label">VIDA EM COMUNIDADE</span><h2>Uma igreja para caminhar junto.</h2><p>Acompanhe a programação e os avisos da Nova Igreja Batista.</p>${button('Ver informações', 'informacoes')}</section>`,
+      inicio: () => `<div class="member-strip"><div><strong>Ana Exemplo</strong><span>Cadastro demonstrativo</span></div><div><strong>Membro</strong><span>Vínculo com a igreja</span></div><div><strong>Minha igreja</strong><span>Seu espaço na comunidade</span></div></div><div class="catalog-toolbar">${button('Ver meu cadastro', 'cadastro', true)}${button('Contribuir', 'generosidade')}</div><div class="section-heading"><h2>Eventos da igreja</h2><span>Encontros e programação</span></div>${eventCards()}`,
       cadastro: () => `<section class="box"><span class="tag">Membro · exemplo</span><h2>Ana Exemplo</h2><dl class="profile"><dt>E-mail</dt><dd>ana@example.com</dd><dt>Telefone</dt><dd>Não informado</dd><dt>Apresentação no culto</dt><dd>Apresentação registrada · exemplo</dd></dl></section><section class="box"><h2>Solicitar atualização</h2><p>Os campos são provisórios até conferirmos o formulário da igreja.</p><form id="profile-form"><label for="contact-email">E-mail de contato</label><input id="contact-email" name="email" type="email" autocomplete="off" placeholder="exemplo@example.com" maxlength="160" required><label for="contact-note">O que precisa ser atualizado?</label><textarea id="contact-note" name="note" maxlength="500" required></textarea><button class="action" type="submit">Enviar solicitação de teste</button></form><p class="note">A solicitação fica somente nesta sessão e não é enviada à Secretaria.</p></section>`,
-      eventos: () => `<section class="box"><span class="label">INTEGRAÇÃO EM PREPARAÇÃO</span><h2>Eventos da igreja</h2><p>O catálogo será conectado ao sistema de eventos existente.</p><button type="button" data-message="Nesta versão, as inscrições reais não estão conectadas. Nenhum cadastro será enviado.">Conhecer eventos</button></section><section class="box"><h2>Minhas inscrições</h2><p>Nenhuma inscrição vinculada nesta demonstração.</p><p class="note">Inscrições anteriores não serão vinculadas automaticamente por nome ou telefone.</p></section>`,
+      eventos: () => `${eventCards()}<section class="box event-follow-up"><h2>Minhas inscrições</h2><p>Nenhuma inscrição vinculada nesta demonstração.</p><p class="note">Inscrições anteriores não serão vinculadas automaticamente por nome ou telefone.</p></section>`,
       celulas: () => `<section class="box"><span class="label">PLATAFORMA EXTERNA</span><h2>Encontre sua comunidade</h2><p>A igreja utilizará uma plataforma de células pronta. O endereço de acesso será configurado após a definição da integração.</p><button type="button" disabled>Acesso em preparação</button><p class="note">A entrada sem um novo login depende do serviço externo.</p></section>`,
       generosidade: () => `<div class="gift-options" role="group" aria-label="Finalidade da contribuição">${['Dízimo', 'Oferta', 'Campanha'].map(name => `<button type="button" data-gift="${name}" aria-pressed="${state.gift === name}">${name === 'Campanha' ? 'Campanhas' : name + 's'}</button>`).join('')}</div><section class="box"><h2>${state.gift === 'Campanha' ? 'Campanhas da igreja' : state.gift}</h2>${state.gift === 'Campanha' ? '<p>Nenhuma campanha cadastrada nesta versão de teste.</p>' : '<form id="gift-form"><label for="gift-value">Valor da contribuição (R$)</label><input id="gift-value" name="amount" type="number" inputmode="decimal" min="0.01" max="1000000" step="0.01" placeholder="0,00" required><button class="action" type="submit">Simular próximo passo</button></form>'}<p class="note">Sem Pix, cobrança ou movimentação financeira. Pagamento e confirmação de recebimento ainda serão definidos.</p></section>`,
       informacoes: () => `<section class="box"><h2>Programação e avisos</h2><p>Os horários e conteúdos oficiais serão incluídos pela igreja.</p></section><section class="box"><h2>Endereço e contato</h2><p>Os canais de atendimento serão configurados nesta área.</p></section>`,
@@ -45,14 +57,15 @@
     };
     content.innerHTML = pages[state.view]();
     renderNavigation();
+    document.getElementById('mobile-menu').open = false;
     const dateField = document.getElementById('presented-date');
     if (dateField) dateField.max = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Manaus', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
     if (focus) document.getElementById('heading').focus();
   }
   root.addEventListener('click', event => {
-    const action = event.target.closest('button');
+    const action = event.target.closest('button,a[data-view]');
     if (!action || action.disabled) return;
-    if (action.dataset.view) show(action.dataset.view);
+    if (action.dataset.view) { event.preventDefault(); show(action.dataset.view); }
     if (action.dataset.message) announce(action.dataset.message);
     if (action.dataset.gift) { state.gift = action.dataset.gift; show('generosidade'); }
   });
@@ -84,6 +97,12 @@
     state.context = event.target.value;
     document.getElementById('account').textContent = state.context === 'membro' ? 'Ana Exemplo · Membro' : (state.context === 'secretaria' ? 'Secretaria da igreja · Teste' : 'Liderança Pastoral · Teste');
     show(isManagement() ? 'gestao' : 'inicio');
+    document.querySelector('.test-options').open = false;
+  });
+  document.getElementById('sidebar-toggle').addEventListener('click', event => {
+    const collapsed = root.classList.toggle('nib-sidebar-collapsed');
+    event.currentTarget.setAttribute('aria-expanded', String(!collapsed));
+    event.currentTarget.setAttribute('aria-label', collapsed ? 'Expandir menu lateral' : 'Recolher menu lateral');
   });
   document.getElementById('demo-context').value = 'membro';
   show('inicio', false);
