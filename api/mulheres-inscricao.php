@@ -1,5 +1,15 @@
 <?php
 declare(strict_types=1);
+// NIB_MULHERES_ENCERRADO_20261101
+if (in_array($_SERVER['REQUEST_METHOD'] ?? '', ['GET', 'POST'], true)) {
+    http_response_code(410);
+    header('Content-Type: application/json; charset=utf-8');
+    header('Cache-Control: no-store');
+    header('X-Content-Type-Options: nosniff');
+    echo json_encode(['ok'=>false, 'message'=>'As inscrições para Mulheres Virtuosas foram encerradas. O evento foi realizado em 30 de outubro de 2026.'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    exit;
+}
+
 // PHP 7.4+ / Fileinfo. All participant data lives outside the public document root.
 ini_set('display_errors', '0');
 header('Content-Type: application/json; charset=utf-8');
