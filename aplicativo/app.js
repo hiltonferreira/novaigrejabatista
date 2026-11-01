@@ -28,7 +28,16 @@
     cadastro: 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8z M4 21c0-4 4-6 8-6s8 2 8 6',
     mais: 'M4 7h16 M4 12h16 M4 17h16'
   };
-  const barIcon = key => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${barPaths[key]}"/></svg>`;
+  const barFilledPaths = {
+    inicio: 'M12 3 2 11h3v10h5v-7h4v7h5V11h3Z',
+    eventos: 'M7 2h2v3h6V2h2v3h2a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h2Zm-2 9v9h14v-9Zm2 2h3v3H7Zm5 0h3v3h-3Z',
+    generosidade: barPaths.generosidade,
+    cadastro: 'M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm-9 9a9 7 0 0 1 18 0v1H3Z',
+    celulas: 'M3 3h8v8H3Zm10 0h8v8h-8ZM3 13h8v8H3Zm10 0h8v8h-8Z'
+  };
+  const barIcon = (key, selected = false) => selected
+    ? `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="${barFilledPaths[key]}"/></svg>`
+    : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${barPaths[key]}"/></svg>`;
   function renderBar() {
     const bar = document.getElementById('bottom-nav');
     bar.hidden = isManagement();
@@ -37,6 +46,7 @@
     bar.querySelectorAll('a').forEach(a => {
       const active = a.dataset.view === state.view;
       if (active) a.setAttribute('aria-current','page'); else a.removeAttribute('aria-current');
+      a.querySelector('.bar-icon').innerHTML = barIcon(a.dataset.view, active);
     });
   }
   function announce(message) { feedback.textContent = message; feedback.scrollIntoView({block:"nearest",behavior:"instant"}); }

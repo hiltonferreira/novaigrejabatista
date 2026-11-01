@@ -65,7 +65,7 @@
 #nib-proposta main button:disabled,#nib-proposta main button:disabled:hover{background:var(--nib-control-disabled);color:var(--nib-placeholder);border-color:var(--nib-control-outline);cursor:not-allowed}
 #nib-proposta .message{border:1px solid #65768e;background:#ebebdf;color:#041e42;border-radius:8px;padding:14px 18px}
 #nib-proposta .message:empty{border:0;padding:0;margin:0}
-#nib-proposta :is(button,a,input,textarea,select,summary):focus-visible,#nib-proposta h1:focus-visible{outline:3px solid #041e42;outline-offset:4px}
+#nib-proposta :is(button,a,input,textarea,select,summary):focus-visible{outline:3px solid #041e42;outline-offset:4px}
 #nib-proposta aside :is(button,a):focus-visible{outline-color:#ebebdf}
 #nib-proposta [hidden]{display:none!important}
 #nib-proposta.nib-sidebar-collapsed .layout{grid-template-columns:60px minmax(0,1fr)}
@@ -161,7 +161,6 @@ html{scrollbar-gutter:stable}
  #nib-proposta .bottom-bar .bar-main{align-self:start;position:relative;gap:5px;margin-top:-16px;color:#041e42}
  #nib-proposta .bottom-bar .bar-main .bar-icon{box-sizing:border-box;width:60px;height:60px;border:4px solid #fff;background:#041e42;color:#fff;border-radius:50%;box-shadow:0 6px 16px #041e4240}
  #nib-proposta .bottom-bar .bar-main svg{width:24px;height:24px}
- #nib-proposta .bottom-bar .bar-main[aria-current=page] svg{fill:currentColor}
  #nib-proposta .bottom-bar :is(a,button):focus-visible{outline:3px solid #041e42;outline-offset:2px}
  #nib-proposta .layout>main{padding-bottom:calc(125px + env(safe-area-inset-bottom))}
  #nib-proposta :is(#feedback,.preview-note){scroll-margin-bottom:125px}
@@ -236,3 +235,6 @@ html{scrollbar-gutter:stable}
 #nib-proposta #mobile-navigation .mobile-current{position:absolute;top:14px;right:12px;font-size:10px;line-height:1.4}
 #nib-proposta .drawer-test{padding:20px;margin-top:28px;border:1px solid #dce3eb;border-radius:18px;background:#fff}
 @media(max-width:350px){#nib-proposta #mobile-drawer{padding-left:16px;padding-right:16px}#nib-proposta .menu-brand img{width:48px}#nib-proposta .menu-brand{gap:8px}#nib-proposta .menu-brand h2{font-size:16px}#nib-proposta .menu-grid{gap:10px}#nib-proposta #mobile-navigation .menu-grid a{padding:16px 12px}#nib-proposta .menu-grid strong{font-size:15px}}
+
+/* Título recebe foco para anunciar a tela, sem aparência de seleção. */
+#nib-proposta #heading:focus,#nib-proposta #heading:focus-visible{outline:none;box-shadow:none}
