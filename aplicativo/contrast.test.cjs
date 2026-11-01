@@ -35,6 +35,8 @@ const pairs = [
   ['Campo: contorno real', token('nib-control-outline'), token('nib-field-surface'), 3],
   ['Botão: contorno em hover real', token('nib-control-outline'), token('nib-control-hover'), 3],
   ['Botão: desabilitado em hover real', token('nib-placeholder'), token('nib-control-disabled'), 4.5],
+  ['Texto secundário no formulário marfim', '#536176', '#ebebdf', 4.5],
+  ['Contorno do recolhimento da lateral', '#aebfd4', '#041e42', 3],
 ];
 for (const [name, foreground, background, minimum] of pairs) {
   test(name, () => {

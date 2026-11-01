@@ -4,6 +4,7 @@
 @font-face{font-family:"NIB Acumin Mobile";src:url("assets/acumin-medium.woff2") format("woff2");font-weight:500;font-display:swap}
 @font-face{font-family:"NIB Acumin Mobile";src:url("assets/acumin-semibold.woff2") format("woff2");font-weight:600;font-display:swap}
 @font-face{font-family:"NIB Acumin Mobile";src:url("assets/acumin-bold.woff2") format("woff2");font-weight:700;font-display:swap}
+@font-face{font-family:"NIB Acumin Mobile";src:url("assets/acumin-black.woff2") format("woff2");font-weight:800;font-display:swap}
 #nib-proposta{--nib-control-outline:#65768e;--nib-field-text:#041e42;--nib-field-surface:#ffffff;--nib-placeholder:#536176;--nib-control-hover:#ebebdf;--nib-control-disabled:#eef1f4;--nib-header-height:78px}
 #nib-proposta>header{height:78px;min-height:78px;padding:14px 28px;top:0}
 #nib-proposta .brand{font-size:18px;font-weight:600;text-decoration:none;color:#041e42}
@@ -76,6 +77,8 @@
 @media(prefers-reduced-motion:reduce){#nib-proposta *{scroll-behavior:auto;transition:none;animation:none}}
 
 #nib-proposta .event-follow-up{margin-top:24px}
+#nib-proposta .layout>aside>.nib-sidebar-toggle{border-color:#aebfd4;color:#ebebdf}
+#nib-proposta .layout>aside>.nib-sidebar-toggle:hover{background:#ebebdf;color:#041e42;border-color:#ebebdf}
 #nib-proposta[data-view=cadastro],#nib-proposta[data-view=confirmar]{background:#ebebdf}
 #nib-proposta[data-view=cadastro] #content{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:52px}
 #nib-proposta[data-view=cadastro] #content>.box,#nib-proposta[data-view=confirmar] #content>.box{border:0;background:transparent;padding:0;margin-top:8px}

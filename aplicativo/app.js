@@ -35,6 +35,7 @@
       });
     }
     document.getElementById('mobile-title').textContent = items.find(([key]) => key === state.view)?.[1] || 'Membresia';
+    document.getElementById('member-shortcuts').hidden = isManagement();
   }
   function show(view, focus = true) {
     if (['gestao', 'confirmar'].includes(view) && !isManagement()) view = 'inicio';
@@ -103,6 +104,11 @@
     const collapsed = root.classList.toggle('nib-sidebar-collapsed');
     event.currentTarget.setAttribute('aria-expanded', String(!collapsed));
     event.currentTarget.setAttribute('aria-label', collapsed ? 'Expandir menu lateral' : 'Recolher menu lateral');
+  });
+  root.addEventListener('keydown', event => {
+    if (event.key !== 'Escape') return;
+    const openMenu = event.target.closest('details[open]');
+    if (openMenu) { openMenu.open = false; openMenu.querySelector('summary').focus(); }
   });
   document.getElementById('demo-context').value = 'membro';
   show('inicio', false);
