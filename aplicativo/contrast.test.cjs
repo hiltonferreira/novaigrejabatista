@@ -60,3 +60,11 @@ test('Base visual do painel preservada sem alterações', () => {
     assert.deepEqual(fs.readFileSync(path.join(base,'inscricoes',source)),fs.readFileSync(path.join(__dirname,'assets',copy)));
   }
 });
+
+// A navegação mobile compartilha exatamente o comportamento já usado nos eventos.
+test('Controlador mobile original do painel preservado', () => {
+  const fs = require('node:fs');
+  const path = require('node:path');
+  const original = fs.readFileSync(path.join(__dirname,'..','inscricoes','navegacao-painel.js'),'utf8');
+  assert.equal(fs.readFileSync(path.join(__dirname,'assets','navegacao-mobile-base.js'),'utf8'), original.slice(0,original.indexOf('/* NIB 4.9')));
+});

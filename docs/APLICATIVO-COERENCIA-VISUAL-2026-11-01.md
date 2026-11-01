@@ -48,3 +48,16 @@ Base `5e667af89d4348857d4becdbdda4f451e77439ee`; Codex implementa, Claude revisa
 - Generosidade reutiliza dados públicos do site: Nova Igreja Batista, Ariquemes/RO, CNPJ 40.518.758/0001-30, Sicoob, agência3315/conta51.404-7 e arquivo original img/pix-qrcode.png. Não inventar chave ou QR. Aviso explícito: são dados reais, não realizar transferências no teste. Valor simulado não modifica QR nem gera cobrança; sem confirmação de pagamento.
 - Referência mobile Ordem Leve analisada somente por leitura de HTML/CSS do projeto indicado, sem alterar esse projeto ou copiar seus dados/assets. Princípios adotados: navegação inferior fixa, safe-area e controles de toque amplos, mantendo visual NIB. Quatro atalhos inferiores, menu para demais seções e botão Voltar com histórico de telas da sessão. Campos reorganizam em coluna em telas estreitas.
 - Validação: sintaxe JS; 28 testes de cores/base (tag ativo7,80:1, encerrado7,06:1); navegador com solicitação vazia recusada, telefone fictício aceito, QR carregado, atalho e Voltar em iframe de360px sem overflow horizontal. Não substitui teste em aparelho físico.
+
+
+## Referência mobile corrigida por Hilton — módulo de eventos
+
+A orientação mais recente substitui a referência Ordem Leve. Não usar barra inferior: o módulo Membros deve seguir os padrões existentes de Eventos/Inscrições.
+
+Codex navegou nas páginas públicas NXT (formulário), consulta de inscrição e Mulheres (encerrado), sem preencher/enviar inscrições. O painel privado redirecionou ao login; suas telas internas não foram acessadas. Para navegação de gestão, a verificação foi pelo código existente: inscricoes/index.php, painel.css, refino-mobile.css, layout-mobile.css, navegacao-painel.css e o primeiro controlador de navegacao-painel.js.
+
+Aplicação em Membros: retirados atalhos inferiores; retorno VOLTAR no cabeçalho com a classe mobile-backbar; faixa Navegação com tela atual, Menu/Fechar e drawer lateral original, seleção/indicador Atual, backdrop, trava de rolagem, inert, Escape, foco contido e medidas reais do cabeçalho. Reutilizado o controlador mobile original, sem seu controlador desktop separado; snapshots CSS mantidos. Botão Teste abre as experiências fictícias; rótulo compacto evita cortar cabeçalho. Tipografia, margens e campos seguem os CSS existentes. Não copiar conteúdo privado ou totais de participantes.
+
+Revisão anterior de Claude (9ffc1bc) considerada nos pontos confirmados: foco preservado ao trocar finalidade de contribuição, mensagens roladas para visualização, aviso global distingue cadastros fictícios de dados bancários reais, atalhos em duas colunas intermediárias. Voltar usa histórico interno de telas, não intercepta o botão do navegador.
+
+Verificação: sintaxe dos dois scripts, 29 testes incluindo igualdade do controlador mobile com o original, menu em iframe360px com drawer fixo abaixo de76+66px, backdrop/trava ativos, seleção de cadastro fecha menu e libera página, retorno de44px, sem overflow horizontal. Ambiente de teste; sem alteração na produção. Codex implementa, Claude revisa no PR12, Hilton valida visualmente.

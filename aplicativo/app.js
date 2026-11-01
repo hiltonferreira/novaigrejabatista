@@ -4,7 +4,7 @@
   const content = document.getElementById('content');
   const feedback = document.getElementById('feedback');
   // Estado fictício em memória: nunca importar participantes ou dados reais aqui.
-  const history = [];
+  const viewHistory = [];
   const state = { context: 'membro', view: 'inicio', request: null, presented: null, gift: 'Dízimo' };
   const navigation = [['inicio', 'Início'], ['cadastro', 'Meu cadastro'], ['eventos', 'Eventos'], ['celulas', 'Células'], ['generosidade', 'Generosidade'], ['informacoes', 'Informações']];
   const labels = { inicio: ['SEJA BEM-VINDA', 'Olá, Ana. Como você quer participar hoje?', 'Acesse seu cadastro, encontre eventos, contribua e acompanhe a vida da igreja.'], cadastro: ['MINHAS INFORMAÇÕES', 'Meu cadastro', 'Consulte seus dados e encaminhe uma atualização à equipe.'], eventos: ['VIDA EM COMUNIDADE', 'Eventos e inscrições', 'Encontre os próximos encontros da igreja.'], celulas: ['CAMINHAR JUNTOS', 'Células', 'Acesse a plataforma de células adotada pela igreja.'], generosidade: ['CONTRIBUIR', 'Generosidade', 'Dízimos, ofertas e campanhas em um só lugar.'], informacoes: ['FIQUE POR PERTO', 'Informações da igreja', 'Programação, endereço e canais da comunidade.'], gestao: ['ADMINISTRAÇÃO', 'Integração e membresia', 'Acompanhe o formulário, a reunião e a apresentação no culto.'], confirmar: ['MEMBRESIA', 'Registrar apresentação', 'O registro documenta a apresentação já realizada no culto.'] };
@@ -20,19 +20,20 @@
   ];
   const eventCards = (compact = false) => `<div class="cards ${compact ? 'home-events' : ''}">${[...events].sort((a,b) => Number(b.active) - Number(a.active)).map(e => `<article class="event ${e.name === 'Mulheres Virtuosas' ? 'event-mulheres-virtuosas' : ''} ${e.active ? '' : 'event-ended'}"><div class="event-cover"><img src="${e.image}" alt="${e.name}" width="800" height="400"></div><div class="event-content"><div class="event-top"><span class="tag ${e.active ? 'status-active' : 'status-ended'}">${e.active ? 'Ativo' : 'Encerrado'}</span><time class="event-date">${e.date}</time></div><${compact ? 'h3' : 'h2'}>${e.name}</${compact ? 'h3' : 'h2'}><p>${e.active ? 'Conheça o encontro e as informações do evento.' : 'Evento realizado. Consulte as informações.'}</p><button type="button" class="button primary" aria-label="Ver informações: ${e.name}" data-message="${e.name}: catálogo demonstrativo. A integração com as inscrições ainda será conectada; nenhum cadastro ou pagamento é realizado aqui.">Ver informações</button></div></article>`).join('')}</div>`;
   const isManagement = () => ['secretaria', 'pastoral'].includes(state.context);
-  function announce(message) { feedback.textContent = message; }
+  function announce(message) { feedback.textContent = message; feedback.scrollIntoView({block:"nearest",behavior:"instant"}); }
   function renderNavigation() {
     const items = isManagement() ? [['gestao', 'Membresia'], ['informacoes', 'Informações']] : navigation;
     const context = isManagement() ? 'gestao' : 'membro';
-    for (const nav of [document.getElementById('navigation'), document.getElementById('mobile-navigation'), document.getElementById('mobile-bottom')]) {
+    for (const nav of [document.getElementById('navigation'), document.getElementById('mobile-navigation')]) {
       if (nav.dataset.context !== context) {
-        const navItems = nav.id === 'mobile-bottom' && !isManagement() ? items.filter(([key]) => ['inicio','eventos','generosidade','cadastro'].includes(key)) : items;
-        nav.innerHTML = navItems.map(([key, label]) => `<a href="#${key}" data-view="${key}" aria-label="${label}">${navIcon(key)}<span>${label}</span></a>`).join('');
+        nav.innerHTML = items.map(([key, label]) => `<a href="#${key}" data-view="${key}" aria-label="${label}">${nav.id === 'navigation' ? navIcon(key) : ''}<span>${label}</span>${nav.id === 'mobile-navigation' ? '<span class="mobile-current" hidden>Atual</span>' : ''}</a>`).join('');
         nav.dataset.context = context;
       }
       nav.querySelectorAll('a').forEach(item => {
       const active = state.view === item.dataset.view || (item.dataset.view === 'gestao' && state.view === 'confirmar');
       item.classList.toggle('selected', active);
+      const current = item.querySelector('.mobile-current');
+      if (current) current.hidden = !active;
       if (active) item.setAttribute('aria-current', 'page'); else item.removeAttribute('aria-current');
       });
     }
@@ -41,10 +42,10 @@
   }
   function show(view, focus = true, record = true) {
     if (['gestao', 'confirmar'].includes(view) && !isManagement()) view = 'inicio';
-    if (record && focus && view !== state.view) history.push(state.view);
+    if (record && focus && view !== state.view) viewHistory.push(state.view);
     state.view = labels[view] ? view : 'inicio';
     root.dataset.view = state.view;
-    document.getElementById('mobile-back').hidden = state.view === 'inicio' || (isManagement() && state.view === 'gestao');
+    document.getElementById('mobile-return').hidden = state.view === 'inicio' || (isManagement() && state.view === 'gestao');
     const [eyebrow, title, description] = labels[state.view];
     document.getElementById('eyebrow').textContent = eyebrow;
     document.getElementById('heading').textContent = title;
@@ -74,12 +75,12 @@
     if (focus) { document.getElementById('heading').focus({preventScroll:true}); window.scrollTo({top:0,behavior:'instant'}); }
   }
   root.addEventListener('click', event => {
-    const action = event.target.closest('button,a[data-view]');
+    const action = event.target.closest('button,a[data-view],a[data-back]');
     if (!action || action.disabled) return;
-    if (action.id === 'mobile-back') { show(history.pop() || (isManagement() ? 'gestao' : 'inicio'), true, false); return; }
+    if (action.id === 'mobile-back') { event.preventDefault(); show(viewHistory.pop() || (isManagement() ? 'gestao' : 'inicio'), true, false); return; }
     if (action.dataset.view) { event.preventDefault(); show(action.dataset.view); }
     if (action.dataset.message) announce(action.dataset.message);
-    if (action.dataset.gift) { state.gift = action.dataset.gift; show('generosidade'); }
+    if (action.dataset.gift) { state.gift = action.dataset.gift; show('generosidade', false); content.querySelector('[data-gift="' + state.gift + '"]').focus({preventScroll:true}); }
   });
   root.addEventListener('submit', event => {
     event.preventDefault();
@@ -109,7 +110,7 @@
     }
   });
   document.getElementById('demo-context').addEventListener('change', event => {
-    history.length = 0;
+    viewHistory.length = 0;
     state.context = event.target.value;
     document.getElementById('account').textContent = state.context === 'membro' ? 'Ana Exemplo · Membro' : (state.context === 'secretaria' ? 'Secretaria da igreja · Teste' : 'Liderança Pastoral · Teste');
     show(isManagement() ? 'gestao' : 'inicio');
