@@ -44,3 +44,5 @@ O primeiro Preview foi rejeitado por Hilton. A revisão atual reaproveita os CSS
 Mobile segue o módulo de Eventos/Inscrições (menu superior/drawer e retorno no cabeçalho); a barra inferior experimental foi retirada. Voltar é histórico interno da demonstração e não intercepta o botão de voltar do navegador.
 
 Atualização mais recente: a pedido de Hilton, aplicada a proposta de Claude para barra flutuante mobile de5acessos (Início/Eventos/Contribuir/Cadastro/Mais), preservando drawer e controlador do módulo de Eventos. Esta decisão supera o registro anterior de barra retirada. Gestão usa só o menu; campos focados ocultam a barra.
+
+Refinamento atual: mobile tem cabeçalho único com avisos/menu, sem breadcrumb nem faixa Navegação; menu em tela inteira com cards agrupados em duas colunas e seletor de teste. Dialog nativo substitui o details e seu controlador; o arquivo do controlador anterior é apenas snapshot preservado. Barra inferior: Início/Eventos/Contribuir/Cadastro/Células. Mais foi removido para não duplicar o menu superior.

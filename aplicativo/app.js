@@ -24,6 +24,7 @@
     inicio: 'M3 11l9-8 9 8 M5 10v10h5v-6h4v6h5V10',
     eventos: iconPaths.calendar,
     generosidade: 'M12 20s-8-4.7-8-10a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 5.3-8 10-8 10z',
+    celulas: iconPaths.grid,
     cadastro: 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8z M4 21c0-4 4-6 8-6s8 2 8 6',
     mais: 'M4 7h16 M4 12h16 M4 17h16'
   };
@@ -32,12 +33,11 @@
     const bar = document.getElementById('bottom-nav');
     bar.hidden = isManagement();
     if (bar.hidden) return;
-    if (!bar.children.length) bar.innerHTML = [['inicio','Início'],['eventos','Eventos'],['generosidade','Contribuir'],['cadastro','Cadastro']].map(([view,label]) => `<a href="#${view}" data-view="${view}" class="${view === 'generosidade' ? 'bar-main' : ''}"><span class="bar-icon">${barIcon(view)}</span><span>${label}</span></a>`).join('') + `<button type="button" id="bar-more" aria-controls="nib-navigation-content" aria-expanded="false"><span class="bar-icon">${barIcon('mais')}</span><span>Mais</span></button>`;
+    if (!bar.children.length) bar.innerHTML = [['inicio','Início'],['eventos','Eventos'],['generosidade','Contribuir'],['cadastro','Cadastro'],['celulas','Células']].map(([view,label]) => `<a href="#${view}" data-view="${view}" class="${view === 'generosidade' ? 'bar-main' : ''}"><span class="bar-icon">${barIcon(view)}</span><span>${label}</span></a>`).join('');
     bar.querySelectorAll('a').forEach(a => {
       const active = a.dataset.view === state.view;
       if (active) a.setAttribute('aria-current','page'); else a.removeAttribute('aria-current');
     });
-    document.getElementById('bar-more').classList.toggle('selected', ['celulas','informacoes'].includes(state.view));
   }
   function announce(message) { feedback.textContent = message; feedback.scrollIntoView({block:"nearest",behavior:"instant"}); }
   function renderNavigation() {
@@ -45,7 +45,12 @@
     const context = isManagement() ? 'gestao' : 'membro';
     for (const nav of [document.getElementById('navigation'), document.getElementById('mobile-navigation')]) {
       if (nav.dataset.context !== context) {
-        nav.innerHTML = items.map(([key, label]) => `<a href="#${key}" data-view="${key}" aria-label="${label}">${nav.id === 'navigation' ? navIcon(key) : ''}<span>${label}</span>${nav.id === 'mobile-navigation' ? '<span class="mobile-current" hidden>Atual</span>' : ''}</a>`).join('');
+        if (nav.id === 'navigation') nav.innerHTML = items.map(([key,label]) => `<a href="#${key}" data-view="${key}" aria-label="${label}">${navIcon(key)}<span>${label}</span></a>`).join('');
+        else {
+          const descriptions = {inicio:'Seu ponto de partida',cadastro:'Dados e atualizações',eventos:'Encontros e inscrições',generosidade:'Dízimos, ofertas e campanhas',celulas:'Acesso à plataforma',informacoes:'Programação e avisos',gestao:'Integração e apresentações'};
+          const groups = isManagement() ? [['Gestão',items]] : [['Seu acesso',items.filter(([key])=>['inicio','cadastro'].includes(key))],['Vida na igreja',items.filter(([key])=>['eventos','generosidade','celulas','informacoes'].includes(key))]];
+          nav.innerHTML = groups.map(([label,links],index) => `<section class="menu-group" aria-labelledby="menu-group-${index}"><h3 id="menu-group-${index}">${label}</h3><div class="menu-grid">${links.map(([key,title])=>`<a href="#${key}" data-view="${key}" aria-label="${title}"><span class="menu-icon">${navIcon(key)}</span><strong>${title}</strong><span class="menu-description">${descriptions[key]}</span><span class="mobile-current" hidden>Atual</span></a>`).join('')}</div></section>`).join('');
+        }
         nav.dataset.context = context;
       }
       nav.querySelectorAll('a').forEach(item => {
@@ -56,7 +61,6 @@
       if (active) item.setAttribute('aria-current', 'page'); else item.removeAttribute('aria-current');
       });
     }
-    document.getElementById('mobile-title').textContent = items.find(([key]) => key === state.view)?.[1] || 'Membresia';
     document.getElementById('member-shortcuts').hidden = isManagement();
     renderBar();
   }
@@ -89,7 +93,7 @@
     };
     content.innerHTML = pages[state.view]();
     renderNavigation();
-    document.getElementById('mobile-menu').open = false;
+    closeDrawer();
     const dateField = document.getElementById('presented-date');
     if (dateField) dateField.max = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Manaus', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
     if (focus) { document.getElementById('heading').focus({preventScroll:true}); window.scrollTo({top:0,behavior:'instant'}); }
@@ -97,7 +101,8 @@
   root.addEventListener('click', event => {
     const action = event.target.closest('button,a[data-view],a[data-back]');
     if (!action || action.disabled) return;
-    if (action.id === 'bar-more') { document.querySelector('.test-options').open = false; openedFromBar = true; document.getElementById('mobile-menu').open = true; return; }
+    if (action.id === 'header-menu') { document.querySelector('.test-options').open = false; drawer.showModal(); root.classList.add('nib-dialog-open'); action.setAttribute('aria-expanded','true'); (drawer.querySelector('a[aria-current=page]') || drawer.querySelector('button')).focus(); return; }
+    if (action.id === 'drawer-close') { closeDrawer(); return; }
     if (action.id === 'mobile-back') { event.preventDefault(); show(viewHistory.pop() || (isManagement() ? 'gestao' : 'inicio'), true, false); return; }
     if (action.dataset.view) { event.preventDefault(); show(action.dataset.view); }
     if (action.dataset.message) announce(action.dataset.message);
@@ -130,13 +135,17 @@
       announce('Apresentação registrada na demonstração. Nenhum membro real foi alterado.');
     }
   });
-  document.getElementById('demo-context').addEventListener('change', event => {
+  function changeContext(event) {
     viewHistory.length = 0;
     state.context = event.target.value;
     document.getElementById('account').textContent = state.context === 'membro' ? 'Ana Exemplo · Membro' : (state.context === 'secretaria' ? 'Secretaria da igreja · Teste' : 'Liderança Pastoral · Teste');
     show(isManagement() ? 'gestao' : 'inicio');
     document.querySelector('.test-options').open = false;
-  });
+    document.getElementById('demo-context').value = state.context;
+    document.getElementById('demo-context-mobile').value = state.context;
+  }
+  document.getElementById('demo-context').addEventListener('change', changeContext);
+  document.getElementById('demo-context-mobile').addEventListener('change', changeContext);
   document.getElementById('sidebar-toggle').addEventListener('click', event => {
     const collapsed = root.classList.toggle('nib-sidebar-collapsed');
     event.currentTarget.setAttribute('aria-expanded', String(!collapsed));
@@ -147,22 +156,11 @@
     const openMenu = event.target.closest('details[open]');
     if (openMenu) { openMenu.open = false; openMenu.querySelector('summary').focus(); }
   });
-  let openedFromBar = false;
-  const mobileMenu = document.getElementById('mobile-menu');
-  mobileMenu.addEventListener('toggle', () => {
-    const more = document.getElementById('bar-more');
-    if (more) more.setAttribute('aria-expanded', String(mobileMenu.open));
-    if (mobileMenu.open) {
-      document.querySelector('.test-options').open = false;
-      if (openedFromBar) (mobileMenu.querySelector('a[aria-current=page]') || mobileMenu.querySelector('a'))?.focus();
-    } else if (openedFromBar) {
-      openedFromBar = false;
-      setTimeout(() => {
-        const active = document.activeElement;
-        if (more && !more.closest('[inert]') && (active === document.body || active === mobileMenu.querySelector('summary'))) more.focus();
-      }, 0);
-    }
-  });
+  const drawer = document.getElementById('mobile-drawer');
+  function closeDrawer() { if (drawer.open) drawer.close(); root.classList.remove('nib-dialog-open'); document.getElementById('header-menu').setAttribute('aria-expanded','false'); }
+  drawer.addEventListener('close', () => { root.classList.remove('nib-dialog-open'); document.getElementById('header-menu').setAttribute('aria-expanded','false'); });
+  drawer.addEventListener('click', e => { if (e.target === drawer) { const r = drawer.getBoundingClientRect(); if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) closeDrawer(); } });
+  matchMedia('(min-width:821px)').addEventListener('change', e => { if (e.matches) closeDrawer(); });
   document.getElementById('demo-context').value = 'membro';
   show('inicio', false);
 })();

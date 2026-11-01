@@ -174,3 +174,65 @@ html{scrollbar-gutter:stable}
 }
 @media(max-width:350px){#nib-proposta .bottom-bar:not([hidden]){left:8px;right:8px;padding:0 3px;grid-template-columns:minmax(0,1fr) minmax(0,1fr) 66px minmax(0,1fr) minmax(0,1fr)}}
 @media(hover:hover){#nib-proposta .bottom-bar :is(a,button):hover{color:#041e42;background:#eef1f4}}
+
+/* Cabeçalho único: marca à esquerda, avisos e menu à direita. */
+#nib-proposta .mobile-header-actions{display:none}
+#nib-proposta #mobile-return{display:none}
+#nib-proposta #mobile-drawer{box-sizing:border-box;position:fixed;inset:0 0 0 auto;margin:0;width:min(360px,calc(100% - 24px));height:100dvh;max-height:100dvh;max-width:100%;padding:24px 20px;border:0;border-left:1px solid #dce3eb;background:#fff;color:#041e42;overflow-y:auto;overscroll-behavior:contain}
+#nib-proposta #mobile-drawer::backdrop{background:#041e427a}
+#nib-proposta .drawer-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px}
+#nib-proposta .drawer-heading h2{margin:0;font-size:20px}
+#nib-proposta .drawer-heading button{min-height:44px;padding:10px 16px;border:1px solid #65768e;border-radius:999px;background:#fff;color:#041e42;font:600 14px var(--nib-font)}
+#nib-proposta #mobile-navigation{display:grid;gap:6px;margin:0;padding:0}
+#nib-proposta #mobile-navigation a{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:50px;padding:12px 16px;border-radius:999px;color:#041e42;text-decoration:none;line-height:1.4}
+#nib-proposta #mobile-navigation a[aria-current=page]{background:#041e42;color:#fff;font-weight:600}
+#nib-proposta #mobile-navigation .mobile-current{font-size:12px;color:inherit}
+#nib-proposta .drawer-test{margin-top:24px;padding-top:24px;border-top:1px solid #dce3eb}
+#nib-proposta .drawer-test label{display:block;margin-bottom:10px}
+#nib-proposta .drawer-test p{font-size:12px;color:#536176;line-height:1.6}
+#nib-proposta.nib-dialog-open{overflow:hidden}
+@media(max-width:820px){
+ #nib-proposta>header{position:sticky;top:0;z-index:130;display:flex;justify-content:space-between;height:76px;min-height:76px;padding:12px 18px;gap:12px;background:#fff}
+ #nib-proposta>header .brand{margin:0;gap:10px;min-width:0;flex:1 1 auto;font-size:14px}
+ #nib-proposta>header .brand-logo{width:54px;height:36px;flex-shrink:0}
+ #nib-proposta>header .brand>span{padding-left:10px;line-height:1.35}
+ #nib-proposta>header .brand small{font-size:10px;line-height:1.5}
+ #nib-proposta>header .header-right{display:none}
+ #nib-proposta .mobile-header-actions{display:flex;gap:8px;flex-shrink:0}
+ #nib-proposta .header-icon{display:grid;place-items:center;width:44px;height:44px;padding:10px;border-radius:50%;border:1px solid #65768e;color:#041e42;background:#fff;cursor:pointer}
+ #nib-proposta .header-icon svg{width:22px;height:22px}
+ #nib-proposta .layout>main{padding-top:24px;padding-bottom:calc(140px + env(safe-area-inset-bottom))}
+ #nib-proposta main #mobile-return:not([hidden]){display:flex;margin:0 0 20px;padding:0}
+ #nib-proposta #mobile-back{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:10px 18px;border:1px solid #65768e;border-radius:999px;background:#fff;color:#041e42;text-decoration:none;font-size:13px;font-weight:600}
+ #nib-proposta .bottom-bar .bar-main{margin-top:-12px}
+ #nib-proposta .box h2{margin-bottom:16px;line-height:1.35}
+ #nib-proposta .box>.tag+h2{margin-top:12px}
+ #nib-proposta .form-actions{gap:12px;margin-top:24px;align-items:stretch}
+ #nib-proposta .form-actions button{min-height:48px}
+ #nib-proposta :is(input,textarea,select,button,a){scroll-margin-top:96px;scroll-margin-bottom:145px}
+ #nib-proposta .preview-note{margin-bottom:12px}
+ #nib-proposta #feedback{scroll-margin-top:96px}
+ html{scroll-padding-top:96px;scroll-padding-bottom:145px}
+}
+@media(max-width:350px){#nib-proposta>header{padding:12px;gap:8px}#nib-proposta>header .brand-logo{width:44px}#nib-proposta>header .brand{gap:8px;font-size:13px}#nib-proposta>header .brand>span{padding-left:8px}#nib-proposta>header .brand small{font-size:9px}#nib-proposta .mobile-header-actions{gap:6px}}
+
+/* Menu mobile em tela inteira: acessos agrupados e distribuídos. */
+#nib-proposta #mobile-drawer{inset:0;width:100%;max-width:100%;height:100dvh;max-height:100dvh;padding:calc(20px + env(safe-area-inset-top)) max(20px,env(safe-area-inset-right)) calc(28px + env(safe-area-inset-bottom)) max(20px,env(safe-area-inset-left));border:0;background:#f4f6f8}
+#nib-proposta .drawer-heading{padding-bottom:20px;margin-bottom:24px;border-bottom:1px solid #dce3eb;align-items:flex-start}
+#nib-proposta .menu-brand{display:flex;align-items:center;gap:12px;min-width:0}
+#nib-proposta .menu-brand img{width:64px;height:34px;object-fit:contain}
+#nib-proposta .menu-brand h2{font-size:18px;line-height:1.4}
+#nib-proposta .menu-brand p{font-size:12px;color:#536176;margin:4px 0 0;line-height:1.5}
+#nib-proposta .menu-group+ .menu-group{margin-top:28px}
+#nib-proposta .menu-group h3{font-size:12px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:#536176;margin:0 0 14px}
+#nib-proposta .menu-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+#nib-proposta #mobile-navigation .menu-grid a{position:relative;display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:10px;min-height:152px;padding:18px 16px;border:1px solid #65768e;border-radius:18px;background:#fff;color:#041e42;box-shadow:0 2px 10px #041e4214;text-align:left}
+#nib-proposta #mobile-navigation .menu-grid a[aria-current=page]{background:#041e42;border-color:#041e42;color:#fff}
+#nib-proposta .menu-icon{display:grid;place-items:center;width:38px;height:38px;border-radius:12px;background:#eef1f4;color:#041e42}
+#nib-proposta .menu-icon svg{width:22px;height:22px}
+#nib-proposta .menu-grid strong{font-size:16px;font-weight:600;line-height:1.3;overflow-wrap:anywhere}
+#nib-proposta .menu-description{font-size:12px;line-height:1.5;color:#536176;overflow-wrap:anywhere}
+#nib-proposta #mobile-navigation .menu-grid a[aria-current=page] .menu-description{color:#fff}
+#nib-proposta #mobile-navigation .mobile-current{position:absolute;top:14px;right:12px;font-size:10px;line-height:1.4}
+#nib-proposta .drawer-test{padding:20px;margin-top:28px;border:1px solid #dce3eb;border-radius:18px;background:#fff}
+@media(max-width:350px){#nib-proposta #mobile-drawer{padding-left:16px;padding-right:16px}#nib-proposta .menu-brand img{width:48px}#nib-proposta .menu-brand{gap:8px}#nib-proposta .menu-brand h2{font-size:16px}#nib-proposta .menu-grid{gap:10px}#nib-proposta #mobile-navigation .menu-grid a{padding:16px 12px}#nib-proposta .menu-grid strong{font-size:15px}}
