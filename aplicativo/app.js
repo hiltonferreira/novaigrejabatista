@@ -4,6 +4,7 @@
   const content = document.getElementById('content');
   const feedback = document.getElementById('feedback');
   // Estado fictício em memória: nunca importar participantes ou dados reais aqui.
+  const history = [];
   const state = { context: 'membro', view: 'inicio', request: null, presented: null, gift: 'Dízimo' };
   const navigation = [['inicio', 'Início'], ['cadastro', 'Meu cadastro'], ['eventos', 'Eventos'], ['celulas', 'Células'], ['generosidade', 'Generosidade'], ['informacoes', 'Informações']];
   const labels = { inicio: ['SEJA BEM-VINDA', 'Olá, Ana. Como você quer participar hoje?', 'Acesse seu cadastro, encontre eventos, contribua e acompanhe a vida da igreja.'], cadastro: ['MINHAS INFORMAÇÕES', 'Meu cadastro', 'Consulte seus dados e encaminhe uma atualização à equipe.'], eventos: ['VIDA EM COMUNIDADE', 'Eventos e inscrições', 'Encontre os próximos encontros da igreja.'], celulas: ['CAMINHAR JUNTOS', 'Células', 'Acesse a plataforma de células adotada pela igreja.'], generosidade: ['CONTRIBUIR', 'Generosidade', 'Dízimos, ofertas e campanhas em um só lugar.'], informacoes: ['FIQUE POR PERTO', 'Informações da igreja', 'Programação, endereço e canais da comunidade.'], gestao: ['ADMINISTRAÇÃO', 'Integração e membresia', 'Acompanhe o formulário, a reunião e a apresentação no culto.'], confirmar: ['MEMBRESIA', 'Registrar apresentação', 'O registro documenta a apresentação já realizada no culto.'] };
@@ -17,15 +18,16 @@
     { name: 'NXT CAMP', image: 'assets/nxt.png', date: '21/11/2026', active: true },
     { name: 'Jornada DNA', image: 'assets/jornada.webp', date: '25/10/2026', active: false }
   ];
-  const eventCards = (compact = false) => `<div class="cards ${compact ? 'home-events' : ''}">${events.map(e => `<article class="event ${e.name === 'Mulheres Virtuosas' ? 'event-mulheres-virtuosas' : ''} ${e.active ? '' : 'event-ended'}"><div class="event-cover"><img src="${e.image}" alt="${e.name}" width="800" height="400"></div><div class="event-content"><div class="event-top"><span class="tag ${e.active ? 'status-active' : 'status-ended'}">${e.active ? 'Ativo' : 'Encerrado'}</span><time class="event-date">${e.date}</time></div><h2>${e.name}</h2><p>${e.active ? 'Conheça o encontro e as informações do evento.' : 'Evento realizado. Consulte as informações.'}</p><button type="button" class="button primary" data-message="${e.name}: catálogo demonstrativo. A integração com as inscrições ainda será conectada; nenhum cadastro ou pagamento é realizado aqui.">Ver informações</button></div></article>`).join('')}</div>`;
+  const eventCards = (compact = false) => `<div class="cards ${compact ? 'home-events' : ''}">${[...events].sort((a,b) => Number(b.active) - Number(a.active)).map(e => `<article class="event ${e.name === 'Mulheres Virtuosas' ? 'event-mulheres-virtuosas' : ''} ${e.active ? '' : 'event-ended'}"><div class="event-cover"><img src="${e.image}" alt="${e.name}" width="800" height="400"></div><div class="event-content"><div class="event-top"><span class="tag ${e.active ? 'status-active' : 'status-ended'}">${e.active ? 'Ativo' : 'Encerrado'}</span><time class="event-date">${e.date}</time></div><${compact ? 'h3' : 'h2'}>${e.name}</${compact ? 'h3' : 'h2'}><p>${e.active ? 'Conheça o encontro e as informações do evento.' : 'Evento realizado. Consulte as informações.'}</p><button type="button" class="button primary" aria-label="Ver informações: ${e.name}" data-message="${e.name}: catálogo demonstrativo. A integração com as inscrições ainda será conectada; nenhum cadastro ou pagamento é realizado aqui.">Ver informações</button></div></article>`).join('')}</div>`;
   const isManagement = () => ['secretaria', 'pastoral'].includes(state.context);
   function announce(message) { feedback.textContent = message; }
   function renderNavigation() {
     const items = isManagement() ? [['gestao', 'Membresia'], ['informacoes', 'Informações']] : navigation;
     const context = isManagement() ? 'gestao' : 'membro';
-    for (const nav of [document.getElementById('navigation'), document.getElementById('mobile-navigation')]) {
+    for (const nav of [document.getElementById('navigation'), document.getElementById('mobile-navigation'), document.getElementById('mobile-bottom')]) {
       if (nav.dataset.context !== context) {
-        nav.innerHTML = items.map(([key, label]) => `<a href="#${key}" data-view="${key}" aria-label="${label}">${navIcon(key)}<span>${label}</span></a>`).join('');
+        const navItems = nav.id === 'mobile-bottom' && !isManagement() ? items.filter(([key]) => ['inicio','eventos','generosidade','cadastro'].includes(key)) : items;
+        nav.innerHTML = navItems.map(([key, label]) => `<a href="#${key}" data-view="${key}" aria-label="${label}">${navIcon(key)}<span>${label}</span></a>`).join('');
         nav.dataset.context = context;
       }
       nav.querySelectorAll('a').forEach(item => {
@@ -37,10 +39,12 @@
     document.getElementById('mobile-title').textContent = items.find(([key]) => key === state.view)?.[1] || 'Membresia';
     document.getElementById('member-shortcuts').hidden = isManagement();
   }
-  function show(view, focus = true) {
+  function show(view, focus = true, record = true) {
     if (['gestao', 'confirmar'].includes(view) && !isManagement()) view = 'inicio';
+    if (record && focus && view !== state.view) history.push(state.view);
     state.view = labels[view] ? view : 'inicio';
     root.dataset.view = state.view;
+    document.getElementById('mobile-back').hidden = state.view === 'inicio' || (isManagement() && state.view === 'gestao');
     const [eyebrow, title, description] = labels[state.view];
     document.getElementById('eyebrow').textContent = eyebrow;
     document.getElementById('heading').textContent = title;
@@ -54,10 +58,10 @@
         ['celulas', 'Células', 'Saiba como acessar a plataforma de células.'],
         ['informacoes', 'Programação e avisos', 'Consulte as informações e os canais da igreja.']
       ].map(([view, title, text]) => `<button type="button" class="quick-action" data-view="${view}"><strong>${title}</strong><span>${text}</span></button>`).join('')}</div></section><section aria-labelledby="home-events-title"><div class="section-heading"><h2 id="home-events-title">Eventos da igreja</h2>${button('Ver todos', 'eventos')}</div>${eventCards(true)}</section>`,
-      cadastro: () => `<section class="box"><span class="tag">Membro · exemplo</span><h2>Ana Exemplo</h2><dl class="profile"><dt>E-mail</dt><dd>ana@example.com</dd><dt>Telefone</dt><dd>Não informado</dd><dt>Apresentação no culto</dt><dd>Apresentação registrada · exemplo</dd></dl></section><section class="box"><h2>Solicitar atualização</h2><p>Os campos são provisórios até conferirmos o formulário da igreja.</p><form id="profile-form"><label for="contact-email">E-mail de contato</label><input id="contact-email" name="email" type="email" autocomplete="off" placeholder="exemplo@example.com" maxlength="160" required><label for="contact-note">O que precisa ser atualizado?</label><textarea id="contact-note" name="note" maxlength="500" required></textarea><button class="action" type="submit">Enviar solicitação de teste</button></form><p class="note">A solicitação fica somente nesta sessão e não é enviada à Secretaria.</p></section>`,
+      cadastro: () => `<div class="profile-layout"><section class="box profile-summary"><span class="tag">Membro · exemplo</span><h2>Ana Exemplo</h2><p>Confira seu cadastro na igreja.</p><dl class="profile"><dt>E-mail</dt><dd>ana@example.com</dd><dt>Telefone</dt><dd>Não informado</dd><dt>Endereço</dt><dd>Não informado</dd><dt>Apresentação no culto</dt><dd>Apresentação registrada · exemplo</dd></dl><p class="note">As alterações são encaminhadas para conferência da Secretaria.</p></section><section class="box profile-edit"><h2>O que você deseja atualizar?</h2><p>Preencha somente os dados que precisam mudar.</p><form id="profile-form"><fieldset><legend>Dados para atualização</legend><div class="form-grid"><div><label for="new-name">Nome completo</label><input id="new-name" name="newName" autocomplete="off" placeholder="Informe o nome corrigido" maxlength="160"></div><div><label for="new-email">Novo e-mail</label><input id="new-email" name="newEmail" type="email" autocomplete="off" placeholder="nome@exemplo.com" maxlength="160"></div><div><label for="new-phone">Novo telefone / WhatsApp</label><input id="new-phone" name="newPhone" type="tel" inputmode="tel" autocomplete="off" placeholder="(69) 99999-9999" maxlength="25"></div><div><label for="new-address">Endereço</label><input id="new-address" name="newAddress" autocomplete="off" placeholder="Rua, número, bairro e cidade" maxlength="250"></div></div></fieldset><fieldset><legend>Contato e observações</legend><label for="contact-email">E-mail para retorno</label><input id="contact-email" name="email" type="email" autocomplete="off" placeholder="exemplo@example.com" maxlength="160" required><label for="contact-note">Outra alteração ou observação (opcional)</label><textarea id="contact-note" name="note" placeholder="Descreva o que a Secretaria precisa conferir." maxlength="500"></textarea></fieldset><div class="form-actions"><button class="action" type="submit">Enviar solicitação de teste</button><button type="reset">Limpar alterações</button></div></form><p class="note">Use dados fictícios. A solicitação fica nesta sessão; nenhum cadastro real é alterado.</p></section></div>`,
       eventos: () => `${eventCards()}<section class="box event-follow-up"><h2>Minhas inscrições</h2><p>Nenhuma inscrição vinculada nesta demonstração.</p><p class="note">Inscrições anteriores não serão vinculadas automaticamente por nome ou telefone.</p></section>`,
       celulas: () => `<section class="box"><span class="label">PLATAFORMA EXTERNA</span><h2>Encontre sua comunidade</h2><p>A igreja utilizará uma plataforma de células pronta. O endereço de acesso será configurado após a definição da integração.</p><button type="button" disabled>Acesso em preparação</button><p class="note">A entrada sem um novo login depende do serviço externo.</p></section>`,
-      generosidade: () => `<div class="gift-options" role="group" aria-label="Finalidade da contribuição">${['Dízimo', 'Oferta', 'Campanha'].map(name => `<button type="button" data-gift="${name}" aria-pressed="${state.gift === name}">${name === 'Campanha' ? 'Campanhas' : name + 's'}</button>`).join('')}</div><section class="box"><h2>${state.gift === 'Campanha' ? 'Campanhas da igreja' : state.gift}</h2>${state.gift === 'Campanha' ? '<p>Nenhuma campanha cadastrada nesta versão de teste.</p>' : '<form id="gift-form"><label for="gift-value">Valor da contribuição (R$)</label><input id="gift-value" name="amount" type="number" inputmode="decimal" min="0.01" max="1000000" step="0.01" placeholder="0,00" required><button class="action" type="submit">Simular próximo passo</button></form>'}<p class="note">Sem Pix, cobrança ou movimentação financeira. Pagamento e confirmação de recebimento ainda serão definidos.</p></section>`,
+      generosidade: () => `<div class="gift-options" role="group" aria-label="Finalidade da contribuição">${['Dízimo', 'Oferta', 'Campanha'].map(name => `<button type="button" data-gift="${name}" aria-pressed="${state.gift === name}">${name === 'Campanha' ? 'Campanhas' : name + 's'}</button>`).join('')}</div><div class="giving-layout"><section class="box"><h2>${state.gift === 'Campanha' ? 'Campanhas da igreja' : state.gift}</h2>${state.gift === 'Campanha' ? '<p>Nenhuma campanha cadastrada nesta versão de teste.</p>' : '<p>Experimente a escolha do valor nesta demonstração.</p><form id="gift-form"><label for="gift-value">Valor da contribuição (R$)</label><input id="gift-value" name="amount" type="number" inputmode="decimal" min="0.01" max="1000000" step="0.01" placeholder="0,00" required><div class="form-actions"><button class="action" type="submit">Simular próximo passo</button></div></form>'}<p class="note">A simulação não gera cobrança, não confirma recebimento e não altera o QR Code ao lado.</p></section><section class="box giving-details"><h2>Dados da igreja</h2><p>Nova Igreja Batista · Ariquemes/RO</p><dl class="bank-details"><div><dt>Pix (CNPJ)</dt><dd>40.518.758/0001-30</dd></div><div><dt>Banco</dt><dd>Sicoob</dd></div><div><dt>Agência / Conta</dt><dd>3315 / 51.404-7</dd></div></dl><figure class="church-qr"><img src="assets/pix-qrcode.png" alt="QR Code Pix oficial da Nova Igreja Batista" width="220" height="220"><figcaption>O mesmo QR Code disponível no site da igreja.</figcaption></figure><p class="qr-warning">Dados e QR Code reais, exibidos como referência. Não efetue transferências durante os testes.</p></section></div>`,
       informacoes: () => `<section class="box"><h2>Programação e avisos</h2><p>Os horários e conteúdos oficiais serão incluídos pela igreja.</p></section><section class="box"><h2>Endereço e contato</h2><p>Os canais de atendimento serão configurados nesta área.</p></section>`,
       gestao: () => `<section class="box"><span class="label">PESSOA FICTÍCIA · NOVA INTEGRAÇÃO</span><h2>João Exemplo</h2><ul><li>Formulário de membros: registrado</li><li>Reunião de integração: registrada</li><li>Apresentação no culto: ${state.presented ? escape(state.presented.dateLabel) : 'a registrar'}</li></ul>${state.presented ? '<span class="tag">Membro · exemplo</span><p>Registro efetuado por ' + escape(state.presented.actor) + '.</p><p class="note">Registrado em ' + escape(state.presented.registeredAt) + ' · somente nesta sessão.</p>' : button('Revisar apresentação', 'confirmar', true)}</section><section class="box"><h2>Solicitações de atualização</h2>${state.request ? '<p>Solicitação demonstrativa de Ana Exemplo.</p><dl class="profile"><dt>Contato</dt><dd>' + escape(state.request.email) + '</dd><dt>Atualização solicitada</dt><dd>' + escape(state.request.note) + '</dd></dl>' : '<p>Nenhuma solicitação nesta sessão.</p>'}</section><p class="note">Secretaria da igreja e Liderança Pastoral podem confirmar o reconhecimento. Este seletor de demonstração não é autenticação ou controle de permissões.</p>`,
       confirmar: () => `<section class="box"><h2>João Exemplo</h2><p>Formulário e reunião de integração já registrados neste exemplo.</p><form id="membership-form"><label for="presented-date">Data da apresentação no culto</label><input id="presented-date" name="date" type="date" required><label class="check"><input name="confirm" type="checkbox" required><span>Confirmo que a pessoa foi apresentada à igreja no culto.</span></label><button type="submit" class="action">Confirmar registro de teste</button></form><p class="note">O reconhecimento decorre da apresentação. Esta confirmação registra o fato e seu responsável.</p>${button('Voltar à gestão', 'gestao')}</section>`
@@ -67,11 +71,12 @@
     document.getElementById('mobile-menu').open = false;
     const dateField = document.getElementById('presented-date');
     if (dateField) dateField.max = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Manaus', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
-    if (focus) document.getElementById('heading').focus();
+    if (focus) { document.getElementById('heading').focus({preventScroll:true}); window.scrollTo({top:0,behavior:'instant'}); }
   }
   root.addEventListener('click', event => {
     const action = event.target.closest('button,a[data-view]');
     if (!action || action.disabled) return;
+    if (action.id === 'mobile-back') { show(history.pop() || (isManagement() ? 'gestao' : 'inicio'), true, false); return; }
     if (action.dataset.view) { event.preventDefault(); show(action.dataset.view); }
     if (action.dataset.message) announce(action.dataset.message);
     if (action.dataset.gift) { state.gift = action.dataset.gift; show('generosidade'); }
@@ -83,8 +88,11 @@
     const values = new FormData(form);
     if (form.id === 'profile-form') {
       const email = String(values.get('email')).trim();
-      const note = String(values.get('note')).trim();
-      if (!note) return announce('Descreva a atualização solicitada.');
+      const changes = [['Nome', 'newName'], ['E-mail', 'newEmail'], ['Telefone', 'newPhone'], ['Endereço', 'newAddress']].map(([label,key]) => { const value = String(values.get(key) || '').trim(); return value ? label + ': ' + value : ''; }).filter(Boolean);
+      const observation = String(values.get('note')).trim();
+      if (observation) changes.push('Observação: ' + observation);
+      const note = changes.join(' · ');
+      if (!note) return announce('Preencha ao menos um dado para atualização ou descreva outra alteração.');
       state.request = { email, note };
       announce('Solicitação fictícia registrada nesta sessão. Você pode consultá-la na experiência de gestão.');
       form.reset();
@@ -101,6 +109,7 @@
     }
   });
   document.getElementById('demo-context').addEventListener('change', event => {
+    history.length = 0;
     state.context = event.target.value;
     document.getElementById('account').textContent = state.context === 'membro' ? 'Ana Exemplo · Membro' : (state.context === 'secretaria' ? 'Secretaria da igreja · Teste' : 'Liderança Pastoral · Teste');
     show(isManagement() ? 'gestao' : 'inicio');
