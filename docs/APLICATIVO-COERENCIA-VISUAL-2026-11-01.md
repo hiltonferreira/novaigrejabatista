@@ -179,3 +179,11 @@ Referência do versículo(cite) alinhada à direita. Entre atalhos e agenda incl
 Cabeçalho da agenda reorganizado em grid: rótulo à esquerda e botãoVer calendário completo no canto superior direito, título na linha seguinte em largura total. Mantém destinoagenda e alvo44px, sem sobreposição nas larguras estreitas.
 
 Codex verificou sintaxe e53testes de cores/integridade/data/calendário(2novos pares para vidro sobre pior fundo composto). Navegador320/390: cite text-alignright; atalho abreCaderno/formnotebook1/prayer-form0; menuCaderno1/Pedidodeoração0; botãoagenda23pxdastop/rightdo bloco390;320semoverflow(client305/scroll305). Captura visual conferida com banner original carregado. Sem teste físico. Claude solicitado para revisão; Hilton valida Preview. Produção e dados reais preservados.
+
+## Banner limpo e cabeçalho externo da agenda — 02/11/2026
+
+Base286ff6b. Pedido novo de Hilton substitui o tratamento anterior do banner: somente imagem originalhero-nib.webp, inteira em2048/861, sem blur, painel, texto acrescentado, gradiente ou pseudo-elementos. Figure comimgalt, width100%/heightauto, borda/radius do aplicativo preservados. Imagem não editada.
+
+Agenda agora segue o cabeçalho deCaderno: título e ação fora do card que contém encontros, comVer calendário completo alinhado à direita e white-spacenowrap. Flexwrap permite que o botão vá para linha própria em telas estreitas, conservando o texto em uma única linha e evitando overflow. Destino calendário completo preservado.
+
+Codex verificou sintaxe e51testes(removidos2pares de contraste do painelvidro que deixou de existir). Navegador320/390: imagem carregada2048px, filter:none, texto vazio, before/after:none; botão fora do card, nowrap,18px acima do card em320; semoverflow(client305/scroll305). Captura conferida. Claude solicitado para revisão; somente Preview/staging, produção preservada.

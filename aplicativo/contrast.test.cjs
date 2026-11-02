@@ -12,8 +12,6 @@ function luminance(hex) {
   return values.reduce((n, v, i) => n + v * [0.2126, 0.7152, 0.0722][i], 0);
 }
 const pairs = [
-  ['Banner vidro: texto branco sobre pior fundo composto', '#ffffff', '#3c506b', 4.5],
-  ['Banner vidro: identificação sobre pior fundo composto', '#d2ddeb', '#3c506b', 4.5],
   ['Informação: texto', '#163e68', '#eaf2fb', 4.5],
   ['Informação: contorno', '#57789f', '#eaf2fb', 3],
   ['Confirmação: texto', '#1f513c', '#e9f3ed', 4.5],
