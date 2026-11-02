@@ -157,9 +157,8 @@ html{scrollbar-gutter:stable}
  #nib-proposta .bottom-bar .bar-icon{display:grid;place-items:center;width:44px;height:28px;border-radius:12px}
  #nib-proposta .bottom-bar svg{width:22px;height:22px}
  #nib-proposta .bottom-bar :is([aria-current=page],.selected){color:#041e42;font-weight:700}
- #nib-proposta .bottom-bar :is([aria-current=page],.selected):not(.bar-main) .bar-icon{background:#eef1f4}
  #nib-proposta .bottom-bar .bar-main{align-self:start;position:relative;gap:5px;margin-top:-16px;color:#041e42}
- #nib-proposta .bottom-bar .bar-main .bar-icon{box-sizing:border-box;width:60px;height:60px;border:4px solid #fff;background:#041e42;color:#fff;border-radius:50%;box-shadow:0 6px 16px #041e4240}
+ #nib-proposta .bottom-bar .bar-main .bar-icon{box-sizing:border-box;width:60px;height:60px;border:0;background:#041e42;color:#fff;border-radius:50%;box-shadow:0 6px 16px #041e4240}
  #nib-proposta .bottom-bar .bar-main svg{width:24px;height:24px}
  #nib-proposta .bottom-bar :is(a,button):focus-visible{outline:3px solid #041e42;outline-offset:2px}
  #nib-proposta .layout>main{padding-bottom:calc(125px + env(safe-area-inset-bottom))}
@@ -170,7 +169,7 @@ html{scrollbar-gutter:stable}
  #nib-proposta main .quick-action::after{content:'›';position:absolute;right:20px;top:22px;font:400 25px/1 var(--nib-font);color:inherit}
 }
 @media(max-width:350px){#nib-proposta .bottom-bar:not([hidden]){left:8px;right:8px;padding:0 3px;grid-template-columns:minmax(0,1fr) minmax(0,1fr) 66px minmax(0,1fr) minmax(0,1fr)}}
-@media(hover:hover){#nib-proposta .bottom-bar :is(a,button):hover{color:#041e42;background:#eef1f4}}
+@media(hover:hover){#nib-proposta .bottom-bar :is(a,button):hover{color:#041e42;background:transparent}}
 
 /* Cabeçalho único: marca à esquerda, avisos e menu à direita. */
 #nib-proposta .mobile-header-actions{display:none}
@@ -319,3 +318,26 @@ html{scrollbar-gutter:stable}
 @media(prefers-reduced-motion:reduce){#nib-proposta #notices-dialog{animation:none}#nib-proposta main .quick-action{transition:none;transform:none}}
 @media(hover:hover){#nib-proposta main .quick-action:hover .home-action-icon{color:#041e42}}
 @media(prefers-reduced-transparency:reduce){#nib-proposta>header,#nib-proposta .bottom-bar:not([hidden]),#nib-proposta .drawer-heading{background:#fff;backdrop-filter:none;-webkit-backdrop-filter:none}#nib-proposta #notices-dialog::backdrop{backdrop-filter:none;-webkit-backdrop-filter:none}}
+
+/* Seleção uniforme: ícone sólido e rótulo, sem anéis ou cápsulas extras. */
+#nib-proposta{--nib-nav-active:#041e42;--nib-nav-idle:#536176}
+@media(max-width:820px){
+ #nib-proposta .bottom-bar a{color:var(--nib-nav-idle);background:transparent;border:0;box-shadow:none;outline:none;-webkit-tap-highlight-color:transparent;transition:color .16s ease}
+ #nib-proposta .bottom-bar a[aria-current=page]{color:var(--nib-nav-active);font-weight:700;background:transparent;border:0;box-shadow:none;outline:none}
+ #nib-proposta .bottom-bar a:not(.bar-main) .bar-icon{background:transparent;border:0;box-shadow:none;color:inherit;transition:transform .16s ease}
+ #nib-proposta .bottom-bar a[aria-current=page]:not(.bar-main) .bar-icon{transform:translateY(-1px)}
+ #nib-proposta .bottom-bar a svg{color:inherit}
+ #nib-proposta .bottom-bar .bar-main{color:var(--nib-nav-idle)}
+ #nib-proposta .bottom-bar .bar-main[aria-current=page]{color:var(--nib-nav-active)}
+ #nib-proposta .bottom-bar .bar-main .bar-icon{border:0;background:#041e42;color:#fff;box-shadow:0 6px 16px #041e4230}
+ #nib-proposta .bottom-bar a:active{background:transparent;box-shadow:none}
+ #nib-proposta .bottom-bar a:focus-visible{outline:3px solid #041e42;outline-offset:2px}
+}
+@supports ((backdrop-filter:blur(20px)) or (-webkit-backdrop-filter:blur(20px))){
+ #nib-proposta #mobile-drawer{background:#f4f6f8f2;backdrop-filter:blur(24px) saturate(125%);-webkit-backdrop-filter:blur(24px) saturate(125%)}
+ #nib-proposta #mobile-drawer::backdrop{background:#041e423d;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+ #nib-proposta .test-options-panel{background:#fffffff5;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);box-shadow:var(--nib-shadow-float)}
+}
+@media(prefers-reduced-transparency:reduce){#nib-proposta #mobile-drawer,#nib-proposta .test-options-panel{background:#fff;backdrop-filter:none;-webkit-backdrop-filter:none}#nib-proposta #mobile-drawer::backdrop{backdrop-filter:none;-webkit-backdrop-filter:none}}
+@media(prefers-reduced-motion:reduce){#nib-proposta .bottom-bar a,#nib-proposta .bottom-bar .bar-icon{transition:none;transform:none}}
+@media(max-width:820px){#nib-proposta .bottom-bar a,#nib-proposta .bottom-bar a[aria-current=page],#nib-proposta .bottom-bar a svg{transition:none}}
