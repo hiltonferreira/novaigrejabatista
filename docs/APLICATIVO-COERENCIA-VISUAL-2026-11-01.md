@@ -259,3 +259,5 @@ Ajuste seguinte, comparando com capturas da referência enviadas por Hilton:
 A pedido de Hilton, o bloco do versículo saiu do vidro claro e virou um cartão azul NIB, na mesma linguagem dos banners: degradê radial do azul médio ao navy, brasão branco em marca d'água (7%, `assets/brasao-branco.png`, recortado do último quadro da logo animada), ícone de livro, rótulo "Palavra para o seu dia", aspas grandes em laranja NIB e texto branco de 20 px no celular e 24 px no computador. No rodapé, separado por uma linha fina, ficam a referência e o botão "Compartilhar", que usa o compartilhamento nativo do aparelho (Web Share) e, sem ele, copia o versículo com a referência e avisa no status. A atualização diária do texto continua funcionando.
 
 Verificado: 51 testes aprovados, sem erros de console; botão com alvo de 44 px e foco visível em laranja.
+
+Ajuste seguinte: o brasão ao fundo ficou maior (270 px no celular, 320 px no computador), levemente girado (-8°), com desfoque de 3 px e opacidade de 12%.
