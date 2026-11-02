@@ -95,9 +95,9 @@
   }
   // Banners das redes oficiais: foto da igreja, chapéu, título e caixa azul translúcida.
   const socialLinks = [
-    ['Instagram','Acompanhe a NIB no dia a dia','Fotos, avisos e bastidores dos cultos em @nibcasadedeus.','https://www.instagram.com/nibcasadedeus/','assets/social-instagram.webp'],
-    ['YouTube','Cultos e mensagens na íntegra','Assista ao vivo e reveja as pregações no canal @nibcasadedeus.','https://www.youtube.com/@nibcasadedeus','assets/social-youtube.webp'],
-    ['Facebook','A comunidade NIB reunida','Siga a página nibcasadedeus e compartilhe com quem você ama.','https://www.facebook.com/nibcasadedeus','assets/social-facebook.webp']
+    ['Instagram','Acompanhe a NIB no dia a dia','Fotos dos cultos, avisos da semana e os bastidores da nossa família.','https://www.instagram.com/nibcasadedeus/','assets/social-instagram.webp'],
+    ['YouTube','Cultos e mensagens na íntegra','Assista aos cultos ao vivo e reveja as pregações quando quiser.','https://www.youtube.com/@nibcasadedeus','assets/social-youtube.webp'],
+    ['Facebook','A comunidade NIB reunida','Compartilhe a programação e convide quem você ama para a igreja.','https://www.facebook.com/nibcasadedeus','assets/social-facebook.webp']
   ];
   function socialBanners() {
     return `<section class="social-banners" aria-labelledby="social-title"><div class="section-heading"><h2 id="social-title">A NIB nas redes</h2></div><div class="social-track">${socialLinks.map(([network,title,text,url,image]) => `<a class="social-card" href="${url}" target="_blank" rel="noopener noreferrer" aria-label="${network}: ${title}. ${text} Abre em nova aba."><img src="${image}" alt="" width="640" height="768" loading="lazy"><span class="social-kicker">${network}</span><strong class="social-title">${title}</strong><span class="social-box"><span>${text}</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></span></a>`).join('')}</div><div class="social-dots" aria-hidden="true">${socialLinks.map((_,i)=>`<span${i?'':' class="is-active"'}></span>`).join('')}</div></section>`;

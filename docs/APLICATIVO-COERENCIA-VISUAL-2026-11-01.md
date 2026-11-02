@@ -240,3 +240,5 @@ Ajuste seguinte, a pedido de Hilton: a barra de carregamento voltou a ser um cí
 - **Banners:** proporções medidas no vídeo de referência: card com cerca de 78% da largura no celular e formato 8:9, chapéu em peso regular de 15 px, título em negrito de 30 px com entrelinha 1,13, caixa azul com texto regular de 14 px, padding de 16 px e cantos de 10 px. Fonte Acumin da NIB em todas as larguras. Novas fotos da galeria do site: celebração com confete (Instagram), louvor com mãos levantadas (YouTube) e crianças da igreja (Facebook).
 
 Verificado: 51 testes aprovados, sem erros de console; abertura cabe em 320 e 390 px e some em cerca de 5 s.
+
+Ajuste seguinte: o carregamento passou a seguir o vídeo de referência. É um arco branco sólido em SVG, com 44 px, traço de 4 px e pontas arredondadas, que cresce e encolhe enquanto gira (1,4 s e 1,6 s). Os textos da caixa azul dos banners deixaram de repetir o @ e agora descrevem o que cada rede oferece.
