@@ -12,6 +12,9 @@ function luminance(hex) {
   return values.reduce((n, v, i) => n + v * [0.2126, 0.7152, 0.0722][i], 0);
 }
 const pairs = [
+  ['Versículo: texto branco no fim do degradê azul', '#ffffff', '#0c3158', 4.5],
+  ['Versículo: referência no fim do degradê azul', '#d2ddeb', '#0c3158', 4.5],
+  ['Versículo: destaque no fim do degradê azul', '#ffb38a', '#0c3158', 4.5],
   ['Menu de vidro: texto no pior fundo', '#536176', '#e6e8eb', 4.5],
   ['Vidro: texto secundário sobre pior fundo escuro', '#536176', '#f0f0f0', 4.5],
   ['Popup: texto no degradê claro', '#536176', '#eef2f7', 4.5],

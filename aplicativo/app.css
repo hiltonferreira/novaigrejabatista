@@ -437,3 +437,8 @@ html{scrollbar-gutter:stable}
 #nib-proposta .calendar-toolbar h2{text-align:center}
 
 @media(min-width:821px){#nib-proposta>header{position:sticky;top:0;height:100px;min-height:100px;display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:42px 20px;gap:8px 24px;padding:14px 28px}#nib-proposta>header .brand{grid-column:1;grid-row:1}#nib-proposta>header .header-right{grid-column:2;grid-row:1/3}#nib-proposta>header .header-date{grid-column:1;grid-row:2;font-size:13px}#nib-proposta .layout>aside{top:100px;height:calc(100svh - 100px);min-height:calc(100svh - 100px)}}
+/* Palavra do dia: destaque NIB com contraste alto em toda a superfície. */
+#nib-proposta .daily-verse{background:linear-gradient(135deg,#041e42,#0c3158);border-color:#0c3158;color:#fff;box-shadow:0 10px 26px #041e421a}
+#nib-proposta .daily-verse blockquote{color:#fff}
+#nib-proposta .daily-verse .label{color:#ffb38a}
+#nib-proposta .daily-verse cite{color:#d2ddeb}
