@@ -5,14 +5,15 @@
   const feedback = document.getElementById('feedback');
   // Estado fictício em memória: nunca importar participantes ou dados reais aqui.
   const viewHistory = [];
-  const state = { context: 'membro', view: 'inicio', request: null, presented: null, gift: 'Dízimo' };
-  const navigation = [['inicio', 'Início'], ['cadastro', 'Meu cadastro'], ['eventos', 'Eventos'], ['celulas', 'Células'], ['generosidade', 'Generosidade'], ['informacoes', 'Informações'], ['agenda', 'Agenda'], ['oracao', 'Pedido de oração']];
-  const labels = { oracao: ['CUIDADO E COMUNHÃO', 'Pedido de oração', 'Um espaço para compartilhar o que está no seu coração.'], agenda: ['VIDA NA IGREJA', 'Agenda da igreja', 'Cultos, encontros e próximos eventos em um só lugar.'], inicio: ['SEJA BEM-VINDA', 'Olá, Ana. Como você quer participar hoje?', 'Acesse seu cadastro, encontre eventos, contribua e acompanhe a vida da igreja.'], cadastro: ['MINHAS INFORMAÇÕES', 'Meu cadastro', 'Consulte seus dados e encaminhe uma atualização à equipe.'], eventos: ['VIDA EM COMUNIDADE', 'Eventos e inscrições', 'Encontre os próximos encontros da igreja.'], celulas: ['CAMINHAR JUNTOS', 'Células', 'Acesse a plataforma de células adotada pela igreja.'], generosidade: ['CONTRIBUIR', 'Generosidade', 'Dízimos, ofertas e campanhas em um só lugar.'], informacoes: ['FIQUE POR PERTO', 'Informações da igreja', 'Programação, endereço e canais da comunidade.'], gestao: ['ADMINISTRAÇÃO', 'Integração e membresia', 'Acompanhe o formulário, a reunião e a apresentação no culto.'], confirmar: ['MEMBRESIA', 'Registrar apresentação', 'O registro documenta a apresentação já realizada no culto.'] };
+  let notebookSequence = 0;
+  const state = { context: 'membro', view: 'inicio', request: null, presented: null, gift: 'Dízimo', calendarMonth: NibDaily.dayKey(new Date()).slice(0,7), calendarDay: NibDaily.dayKey(new Date()), prayers: [] };
+  const navigation = [['inicio', 'Início'], ['cadastro', 'Meu cadastro'], ['eventos', 'Eventos'], ['celulas', 'Células'], ['generosidade', 'Generosidade'], ['informacoes', 'Informações'], ['agenda', 'Agenda'], ['oracao', 'Pedido de oração'], ['caderno', 'Caderno de oração']];
+  const labels = { caderno: ['VIDA DE ORAÇÃO', 'Caderno de oração', 'Pessoas, motivos e respostas que você deseja acompanhar.'], oracao: ['CUIDADO E COMUNHÃO', 'Pedido de oração', 'Um espaço para compartilhar o que está no seu coração.'], agenda: ['VIDA NA IGREJA', 'Agenda da igreja', 'Cultos, encontros e próximos eventos em um só lugar.'], inicio: ['SEJA BEM-VINDA', 'Olá, Ana. Você está na plataforma NIB.', 'Acesse seu cadastro, encontre eventos, contribua e acompanhe a vida da igreja.'], cadastro: ['MINHAS INFORMAÇÕES', 'Meu cadastro', 'Consulte seus dados e encaminhe uma atualização à equipe.'], eventos: ['VIDA EM COMUNIDADE', 'Eventos e inscrições', 'Encontre os próximos encontros da igreja.'], celulas: ['CAMINHAR JUNTOS', 'Células', 'Acesse a plataforma de células adotada pela igreja.'], generosidade: ['CONTRIBUIR', 'Generosidade', 'Dízimos, ofertas e campanhas em um só lugar.'], informacoes: ['FIQUE POR PERTO', 'Informações da igreja', 'Programação, endereço e canais da comunidade.'], gestao: ['ADMINISTRAÇÃO', 'Integração e membresia', 'Acompanhe o formulário, a reunião e a apresentação no culto.'], confirmar: ['MEMBRESIA', 'Registrar apresentação', 'O registro documenta a apresentação já realizada no culto.'] };
   const escape = value => String(value).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const button = (text, view, primary = false) => `<button type="button" class="button ${primary ? 'action primary' : ''}" data-view="${view}">${text}</button>`;
   // Ícones reaproveitados da função icon() do painel; sem ícones nas ações.
   const iconPaths = { heart: 'M12 20s-8-4.7-8-10a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 5.3-8 10-8 10z', user: 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8z M4 21c0-4 4-6 8-6s8 2 8 6', grid: 'M3 3h7v7H3z M14 3h7v7h-7z M3 14h7v7H3z M14 14h7v7h-7z', calendar: 'M4 5h16v16H4z M8 3v4 M16 3v4 M4 11h16', receipt: 'M6 3h12v18l-3-2-3 2-3-2-3 2z M9 8h6 M9 12h6', archive: 'M3 4h18v5H3z M5 9v12h14V9 M10 13h4' };
-  const navIcon = key => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${iconPaths[({ inicio: 'grid', cadastro: 'user', eventos: 'calendar', celulas: 'grid', generosidade: 'heart', informacoes: 'archive', gestao: 'grid', agenda: 'calendar', oracao: 'heart' })[key]]}"/></svg>`;
+  const navIcon = key => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${iconPaths[({ inicio: 'grid', cadastro: 'user', eventos: 'calendar', celulas: 'grid', generosidade: 'heart', informacoes: 'archive', gestao: 'grid', agenda: 'calendar', oracao: 'heart', caderno: 'receipt' })[key]]}"/></svg>`;
   const events = [
     { name: 'Mulheres Virtuosas', image: 'assets/mulheres.webp', date: '30/10/2026', active: false },
     { name: 'NXT CAMP', image: 'assets/nxt.png', date: '21/11/2026', active: true },
@@ -60,9 +61,29 @@
       const month = new Intl.DateTimeFormat('pt-BR',{month:'short',timeZone:'America/Porto_Velho'}).format(date);
       return `<li><span class="agenda-date"><strong>${day}</strong><small>${month}</small></span><div><span class="agenda-type">${item.type}</span><h3>${item.name}</h3><p>${new Intl.DateTimeFormat('pt-BR',{weekday:'long',timeZone:'America/Porto_Velho'}).format(date)}${item.time ? ' · '+item.time : ' · horário a confirmar'}</p></div></li>`;
     }).join('');
-    const agenda = `<section class="home-agenda box" aria-labelledby="agenda-title"><div class="agenda-heading"><div><span class="label">CAMINHE COM A GENTE</span><h2 id="agenda-title">${full ? 'Próximos encontros' : 'Na agenda da igreja'}</h2></div>${full ? '' : button('Ver agenda','agenda')}</div><ul class="agenda-list">${list}</ul><p class="note">Programação de referência do site da igreja, ainda sem sincronização. Confirme mudanças com a igreja.${full ? ' Novas festividades aparecerão após o cadastro pela equipe.' : ''}</p></section>`;
+    const agenda = `<section class="home-agenda box" aria-labelledby="agenda-title"><div class="agenda-heading"><div><span class="label">CAMINHE COM A GENTE</span><h2 id="agenda-title">${full ? 'Próximos encontros' : 'Na agenda da igreja'}</h2></div>${full ? '' : button('Ver calendário completo','agenda')}</div><ul class="agenda-list">${list}</ul><p class="note">Programação de referência do site da igreja, ainda sem sincronização. Confirme mudanças com a igreja.${full ? ' Novas festividades aparecerão após o cadastro pela equipe.' : ''}</p></section>`;
     const verseBlock = `<section class="daily-verse" aria-label="Versículo do dia"><span class="label">PALAVRA PARA O SEU DIA</span><blockquote>“${verse[0]}”</blockquote><cite>${verse[1]}</cite></section>`;
     return full || part === 'agenda' ? agenda : part === 'verse' ? verseBlock : verseBlock + agenda;
+  }
+  const fullDate = key => new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Porto_Velho',weekday:'long',day:'2-digit',month:'long',year:'numeric'}).format(new Date(key+'T12:00:00-04:00'));
+  function calendarPage() {
+    const month = state.calendarMonth;
+    const {count,offset} = NibDaily.monthInfo(month);
+    const items = NibDaily.monthAgenda(month);
+    const today = NibDaily.dayKey(new Date());
+    const title = new Intl.DateTimeFormat('pt-BR',{month:'long',year:'numeric',timeZone:'America/Porto_Velho'}).format(new Date(month+'-01T12:00:00-04:00'));
+    const cells = Array.from({length:offset},()=>'<span aria-hidden="true"></span>').join('') + Array.from({length:count},(_,i)=>{
+      const day = month+'-'+String(i+1).padStart(2,'0');
+      const entries = items.filter(x=>x.day===day);
+      return `<button type="button" class="calendar-day" data-day="${day}" aria-pressed="${day===state.calendarDay}" ${day===today?'aria-current="date"':''} aria-label="${fullDate(day)} · ${entries.length ? entries.length+' encontro(s)' : 'Sem encontros'}"><span>${i+1}</span>${entries.length?'<span class="calendar-dot" aria-hidden="true"></span>':''}</button>`;
+    }).join('');
+    const selected = items.filter(x=>x.day===state.calendarDay);
+    return `<section class="box calendar-box" aria-label="Calendário mensal"><div class="calendar-toolbar"><button type="button" data-month="-1" aria-label="Mês anterior">‹</button><div><h2>${title.charAt(0).toUpperCase()+title.slice(1)}</h2><p>Toque em uma data para ver os encontros</p></div><button type="button" data-month="1" aria-label="Próximo mês">›</button></div><div class="calendar-week" aria-hidden="true">${['S','T','Q','Q','S','S','D'].map(x=>'<span>'+x+'</span>').join('')}</div><div class="calendar-grid">${cells}</div><div class="calendar-legend"><span><i class="calendar-dot"></i>Há encontros</span><span>Contorno: hoje</span><button type="button" id="calendar-today">Hoje</button></div></section><section class="box calendar-selection" aria-live="polite"><span class="label">${state.calendarDay===today?'HOJE':'DIA SELECIONADO'}</span><h2>${fullDate(state.calendarDay)}</h2>${selected.length?'<ul class="day-entries">'+selected.map(x=>`<li><time>${x.time||'A confirmar'}</time><div><strong>${x.name}</strong><p>${x.type}</p></div></li>`).join('')+'</ul>':'<p>Nenhum encontro de referência para esta data.</p>'}</section><p class="note">Programação de referência do site da igreja, ainda sem sincronização. Confirme mudanças com a igreja. Festividades aparecerão após o cadastro pela equipe.</p>`;
+  }
+  function notebookPage() {
+    const rows = answered => state.prayers.filter(x=>x.answered===answered).map(p=>`<article class="prayer-entry ${answered?'answered':''}"><div class="prayer-entry-heading"><h3>${escape(p.name)}</h3><span class="tag">${answered?'Respondida':'Em oração'}</span></div><p class="prayer-reason">${escape(p.reason)}</p>${p.date?'<p class="note">Data para orar: '+escape(fullDate(p.date))+(p.time?' · '+escape(p.time):'')+'</p>':''}<div class="form-actions"><button type="button" data-prayer-toggle="${p.id}">${answered?'Voltar para em oração':'Marcar respondida'}</button><button type="button" data-prayer-delete="${p.id}">Excluir</button></div></article>`).join('');
+    const pending = state.prayers.filter(x=>!x.answered).length;
+    return `<section class="box prayer-box"><h2>Um espaço para suas orações</h2><p>Registre por quem ou pelo que deseja orar e acompanhe as respostas.</p><p class="note">Demonstração: use nomes e motivos fictícios. Os registros ficam somente nesta aba e são apagados ao recarregar ou trocar o perfil. Não são enviados à igreja. A data é uma anotação, sem notificações.</p><form id="notebook-form"><label for="notebook-name">Pessoa ou título do pedido</label><input id="notebook-name" name="name" maxlength="120" required placeholder="Ex.: Família Exemplo" autocomplete="off"><label for="notebook-reason">Motivo da oração</label><textarea id="notebook-reason" name="reason" maxlength="1000" required placeholder="Escreva um motivo fictício para testar."></textarea><div class="form-grid"><div><label for="notebook-date">Data para orar (opcional)</label><input id="notebook-date" name="date" type="date"></div><div><label for="notebook-time">Horário (opcional)</label><input id="notebook-time" name="time" type="time"></div></div><div class="form-actions"><button type="submit" class="action">Adicionar ao caderno de teste</button><button type="reset">Limpar</button></div></form></section><section class="box prayer-box"><h2>Em oração (${pending})</h2>${rows(false)||'<p>Seu caderno começa aqui. Adicione um pedido fictício acima.</p>'}</section><section class="box prayer-box"><h2>Respondidas (${state.prayers.length-pending})</h2>${rows(true)||'<p>As orações marcadas como respondidas aparecerão aqui.</p>'}</section>`;
   }
   function announce(message) { feedback.textContent = message; feedback.scrollIntoView({block:"nearest",behavior:"instant"}); }
   function renderNavigation() {
@@ -72,8 +93,8 @@
       if (nav.dataset.context !== context) {
         if (nav.id === 'navigation') nav.innerHTML = items.map(([key,label]) => `<a href="#${key}" data-view="${key}" aria-label="${label}">${navIcon(key)}<span>${label}</span></a>`).join('');
         else {
-          const descriptions = {inicio:'Seu ponto de partida',cadastro:'Dados e atualizações',eventos:'Encontros e inscrições',generosidade:'Dízimos, ofertas e campanhas',celulas:'Acesso à plataforma',informacoes:'Programação e avisos',gestao:'Integração e apresentações',agenda:'Cultos, eventos e festividades',oracao:'Compartilhe seu pedido'};
-          const groups = isManagement() ? [['Gestão',items]] : [['Seu acesso',items.filter(([key])=>['inicio','cadastro'].includes(key))],['Vida na igreja',items.filter(([key])=>['agenda','eventos','generosidade','celulas','informacoes','oracao'].includes(key))]];
+          const descriptions = {inicio:'Seu ponto de partida',cadastro:'Dados e atualizações',eventos:'Encontros e inscrições',generosidade:'Dízimos, ofertas e campanhas',celulas:'Acesso à plataforma',informacoes:'Programação e avisos',gestao:'Integração e apresentações',agenda:'Cultos, eventos e festividades',oracao:'Compartilhe seu pedido',caderno:'Seus motivos e respostas'};
+          const groups = isManagement() ? [['Gestão',items]] : [['Seu acesso',items.filter(([key])=>['inicio','cadastro'].includes(key))],['Vida na igreja',items.filter(([key])=>['agenda','eventos','generosidade','celulas','informacoes','oracao','caderno'].includes(key))]];
           nav.innerHTML = groups.map(([label,links],index) => `<section class="menu-group" aria-labelledby="menu-group-${index}"><h3 id="menu-group-${index}">${label}</h3><div class="menu-grid">${links.map(([key,title])=>`<a href="#${key}" data-view="${key}" aria-label="${title}"><span class="menu-icon">${navIcon(key)}</span><strong>${title}</strong><span class="menu-description">${descriptions[key]}</span><span class="mobile-current" hidden>Atual</span></a>`).join('')}</div></section>`).join('');
         }
         nav.dataset.context = context;
@@ -91,6 +112,7 @@
     renderBar();
   }
   function show(view, focus = true, record = true) {
+    if (view === 'caderno' && isManagement()) view = 'gestao';
     if (['gestao', 'confirmar'].includes(view) && !isManagement()) view = 'inicio';
     if (record && focus && view !== state.view) viewHistory.push(state.view);
     state.view = labels[view] ? view : 'inicio';
@@ -110,8 +132,9 @@
         ['informacoes', 'Programação e avisos', 'Consulte as informações e os canais da igreja.'],
         ['oracao', 'Pedido de oração', 'Um espaço de cuidado e oração.']
       ].map(([view, title, text]) => `<button type="button" class="quick-action" data-view="${view}"><span class="home-action-icon" aria-hidden="true">${navIcon(view)}</span><strong>${title}</strong><span class="home-action-description">${text}</span></button>`).join('')}</div></section>${dailyBlocks(false,'agenda')}<section aria-labelledby="home-events-title"><div class="section-heading"><h2 id="home-events-title">Eventos da igreja</h2>${button('Ver todos', 'eventos')}</div>${eventCards(true)}</section>`,
-      oracao: () => `<section class="box prayer-box"><h2>Como podemos orar por você?</h2><p>Esta tela demonstra o pedido de oração. Use apenas um exemplo fictício.</p><form id="prayer-form"><label for="prayer-note">Seu pedido</label><textarea id="prayer-note" name="prayer" placeholder="Escreva um pedido fictício para experimentar." maxlength="1000" required></textarea><div class="form-actions"><button type="submit" class="action">Enviar pedido de teste</button><button type="reset">Limpar</button></div></form><p class="note">O teste não envia o pedido à igreja e não o salva. O canal de recebimento e quem poderá ler os pedidos ainda serão definidos.</p></section>`,
-      agenda: () => dailyBlocks(true),
+      oracao: () => `<section class="box prayer-box"><div class="section-heading"><h2>Como podemos orar por você?</h2>${button('Meu caderno de oração','caderno')}</div><p>Esta tela demonstra o pedido de oração. Use apenas um exemplo fictício.</p><form id="prayer-form"><label for="prayer-note">Seu pedido</label><textarea id="prayer-note" name="prayer" placeholder="Escreva um pedido fictício para experimentar." maxlength="1000" required></textarea><div class="form-actions"><button type="submit" class="action">Enviar pedido de teste</button><button type="reset">Limpar</button></div></form><p class="note">O teste não envia o pedido à igreja e não o salva. O canal de recebimento e quem poderá ler os pedidos ainda serão definidos.</p></section>`,
+      agenda: () => calendarPage(),
+      caderno: () => notebookPage(),
       cadastro: () => `<div class="profile-layout"><section class="box profile-summary"><span class="tag">Membro · exemplo</span><h2>Ana Exemplo</h2><p>Confira seu cadastro na igreja.</p><dl class="profile"><dt>E-mail</dt><dd>ana@example.com</dd><dt>Telefone</dt><dd>Não informado</dd><dt>Endereço</dt><dd>Não informado</dd><dt>Apresentação no culto</dt><dd>Apresentação registrada · exemplo</dd></dl><p class="note">As alterações são encaminhadas para conferência da Secretaria.</p></section><section class="box profile-edit"><h2>O que você deseja atualizar?</h2><p>Preencha somente os dados que precisam mudar.</p><form id="profile-form"><fieldset><legend>Dados para atualização</legend><div class="form-grid"><div><label for="new-name">Nome completo</label><input id="new-name" name="newName" autocomplete="off" placeholder="Informe o nome corrigido" maxlength="160"></div><div><label for="new-email">Novo e-mail</label><input id="new-email" name="newEmail" type="email" autocomplete="off" placeholder="nome@exemplo.com" maxlength="160"></div><div><label for="new-phone">Novo telefone / WhatsApp</label><input id="new-phone" name="newPhone" type="tel" inputmode="tel" autocomplete="off" placeholder="(69) 99999-9999" maxlength="25"></div><div><label for="new-address">Endereço</label><input id="new-address" name="newAddress" autocomplete="off" placeholder="Rua, número, bairro e cidade" maxlength="250"></div></div></fieldset><fieldset><legend>Contato e observações</legend><label for="contact-email">E-mail para retorno</label><input id="contact-email" name="email" type="email" autocomplete="off" placeholder="exemplo@example.com" maxlength="160" required><label for="contact-note">Outra alteração ou observação (opcional)</label><textarea id="contact-note" name="note" placeholder="Descreva o que a Secretaria precisa conferir." maxlength="500"></textarea></fieldset><div class="form-actions"><button class="action" type="submit">Enviar solicitação de teste</button><button type="reset">Limpar alterações</button></div></form><p class="note">Use dados fictícios. A solicitação fica nesta sessão; nenhum cadastro real é alterado.</p></section></div>`,
       eventos: () => `${eventCards()}<section class="box event-follow-up"><h2>Minhas inscrições</h2><p>Nenhuma inscrição vinculada nesta demonstração.</p><p class="note">Inscrições anteriores não serão vinculadas automaticamente por nome ou telefone.</p></section>`,
       celulas: () => `<section class="box"><span class="label">PLATAFORMA EXTERNA</span><h2>Encontre sua comunidade</h2><p>A igreja utilizará uma plataforma de células pronta. O endereço de acesso será configurado após a definição da integração.</p><button type="button" disabled>Acesso em preparação</button><p class="note">A entrada sem um novo login depende do serviço externo.</p></section>`,
@@ -133,9 +156,14 @@
     if (!action || action.disabled) return;
     if (action.id === 'header-notices') { notices.showModal(); root.classList.add('nib-dialog-open'); document.getElementById('notices-close').focus(); return; }
     if (action.id === 'notices-close') { notices.close(); return; }
-    if (action.id === 'header-menu') { document.querySelector('.test-options').open = false; drawer.showModal(); root.classList.add('nib-dialog-open'); action.setAttribute('aria-expanded','true'); (drawer.querySelector('a[aria-current=page]') || drawer.querySelector('button')).focus(); return; }
+    if (action.id === 'header-menu') { document.querySelector('.test-options').open = false; drawer.showModal(); root.classList.add('nib-dialog-open'); action.setAttribute('aria-expanded','true'); document.getElementById('drawer-close').focus({preventScroll:true}); return; }
     if (action.id === 'drawer-close') { closeDrawer(); return; }
     if (action.id === 'mobile-back') { event.preventDefault(); show(viewHistory.pop() || (isManagement() ? 'gestao' : 'inicio'), true, false); return; }
+    if (action.dataset.month) { state.calendarMonth=NibDaily.moveMonth(state.calendarMonth,Number(action.dataset.month)); state.calendarDay=state.calendarMonth+'-01'; show('agenda',false,false); content.querySelector('[data-month="'+action.dataset.month+'"]').focus({preventScroll:true}); return; }
+    if (action.dataset.day) { state.calendarDay=action.dataset.day; show('agenda',false,false); content.querySelector('[data-day="'+state.calendarDay+'"]').focus({preventScroll:true}); return; }
+    if (action.id==='calendar-today') { state.calendarDay=NibDaily.dayKey(new Date()); state.calendarMonth=state.calendarDay.slice(0,7); show('agenda',false,false); content.querySelector('#calendar-today').focus({preventScroll:true}); return; }
+    if (action.dataset.prayerToggle) { const p=state.prayers.find(x=>x.id===action.dataset.prayerToggle); if(p) p.answered=!p.answered; show('caderno',false,false); content.querySelector('[data-prayer-toggle="'+p.id+'"]').focus({preventScroll:true}); return; }
+    if (action.dataset.prayerDelete) { state.prayers=state.prayers.filter(x=>x.id!==action.dataset.prayerDelete); show('caderno',false,false); content.querySelector('#notebook-name').focus({preventScroll:true}); announce('Pedido removido do caderno de teste.'); return; }
     if (action.dataset.view) { event.preventDefault(); show(action.dataset.view); }
     if (action.dataset.message) announce(action.dataset.message);
     if (action.dataset.gift) { state.gift = action.dataset.gift; show('generosidade', false); content.querySelector('[data-gift="' + state.gift + '"]').focus({preventScroll:true}); }
@@ -156,6 +184,12 @@
       announce('Solicitação fictícia registrada nesta sessão. Você pode consultá-la na experiência de gestão.');
       form.reset();
     }
+    if (form.id === 'notebook-form') {
+      const name=String(values.get('name')||'').trim(); const reason=String(values.get('reason')||'').trim();
+      if(!name||!reason) return announce('Informe a pessoa ou título e o motivo da oração.');
+      state.prayers.push({id:String(++notebookSequence),name:name.slice(0,120),reason:reason.slice(0,1000),date:String(values.get('date')||''),time:String(values.get('time')||''),answered:false});
+      show('caderno',false,false); content.querySelector('#notebook-name').focus({preventScroll:true}); announce('Pedido adicionado somente ao caderno de teste desta aba.');
+    }
     if (form.id === 'prayer-form') { if (!String(values.get('prayer') || '').trim()) return announce('Escreva um pedido fictício para testar.'); form.reset(); announce('Teste concluído. Nenhum pedido foi enviado ou salvo.'); }
     if (form.id === 'gift-form') announce('Simulação concluída. Nenhuma cobrança foi criada ou contribuição recebida.');
     if (form.id === 'membership-form' && isManagement()) {
@@ -171,6 +205,7 @@
   function changeContext(event) {
     viewHistory.length = 0;
     state.context = event.target.value;
+    state.prayers = []; // Caderno demonstrativo não é compartilhado entre experiências.
     document.getElementById('account').textContent = state.context === 'membro' ? 'Ana Exemplo · Membro' : (state.context === 'secretaria' ? 'Secretaria da igreja · Teste' : 'Liderança Pastoral · Teste');
     show(isManagement() ? 'gestao' : 'inicio');
     document.querySelector('.test-options').open = false;
@@ -189,6 +224,8 @@
     const openMenu = event.target.closest('details[open]');
     if (openMenu) { openMenu.open = false; openMenu.querySelector('summary').focus(); }
   });
+  root.addEventListener('pointerdown',()=>root.classList.remove('keyboard-navigation'));
+  root.addEventListener('keydown',e=>{if(e.key==='Tab') root.classList.add('keyboard-navigation');});
   const drawer = document.getElementById('mobile-drawer');
   const notices = document.getElementById('notices-dialog');
   notices.addEventListener('close', () => { if (!drawer.open) root.classList.remove('nib-dialog-open'); });
@@ -202,7 +239,8 @@
     const key = NibDaily.dayKey(now);
     const dateLabel = document.getElementById('header-date');
     dateLabel.dateTime = key;
-    dateLabel.textContent = new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Porto_Velho',weekday:'short',day:'numeric',month:'short'}).format(now);
+    dateLabel.textContent = new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Porto_Velho',weekday:'long',day:'2-digit',month:'long',year:'numeric'}).format(now);
+    dateLabel.textContent = dateLabel.textContent.charAt(0).toUpperCase()+dateLabel.textContent.slice(1);
     dateLabel.setAttribute('aria-label',new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Porto_Velho',dateStyle:'full'}).format(now));
     const verse = NibDaily.verseForDay(key);
     const quote = content.querySelector('.daily-verse blockquote');
