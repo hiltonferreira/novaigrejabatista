@@ -1,0 +1,90 @@
+/* NIB 4.5 — navegação com altura real do cabeçalho. */
+:root{--nib-header-height:88px;--nib-menu-height:66px}
+body:has(>.mobile-menu)>header{position:sticky;top:0;z-index:130}
+.nib-menu-backdrop{display:none}
+@media(min-width:821px){
+ body>.layout{align-items:start}
+ body>.layout>aside{position:sticky;top:var(--nib-header-height);height:auto;min-height:0;max-height:calc(100dvh - var(--nib-header-height));overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#72849b #041e42;align-self:start}
+ body>.management-nav{position:sticky;top:var(--nib-header-height);z-index:100}
+ body>.layout>main{min-width:0}
+}
+@media(max-width:820px){
+ body>.mobile-menu{position:sticky;top:var(--nib-header-height);z-index:120;margin:0;border-bottom:1px solid #dce3eb}
+ body>.mobile-menu>summary{position:relative;z-index:2;background:#fff;list-style:none}
+ body>.mobile-menu>summary::-webkit-details-marker{display:none}
+ body>.mobile-menu>summary::marker{content:''}
+ body>.mobile-menu[open]>.mobile-menu-content{position:fixed;top:calc(var(--nib-header-height) + var(--nib-menu-height));right:0;bottom:0;width:min(360px,calc(100% - 24px));max-height:none;margin:0;padding:8px 18px max(22px,env(safe-area-inset-bottom));overflow:auto;overscroll-behavior:contain;background:#fff;box-shadow:-12px 12px 32px #041e4226;border-left:1px solid #dce3eb;border-radius:0;animation:nib-drawer-in .18s ease-out}
+ body>.mobile-menu nav a{border-radius:999px}
+ .nib-menu-backdrop:not([hidden]){display:block;position:fixed;inset:calc(var(--nib-header-height) + var(--nib-menu-height)) 0 0;z-index:110;background:rgba(4,30,66,.48);border:0;border-radius:0;margin:0;padding:0;width:100%;height:auto;cursor:pointer}
+ body.nib-navigation-open{position:fixed;left:0;right:0;width:100%;overflow:hidden}
+ body>.mobile-menu .mobile-location{min-width:0}
+ body>.mobile-menu .mobile-location strong{overflow-wrap:anywhere}
+ body>.mobile-menu .mobile-menu-button{flex-shrink:0}
+ body>.mobile-menu .mobile-menu-content:focus-visible{outline:3px solid #8cb7dc;outline-offset:-3px}
+}
+@keyframes nib-drawer-in{from{transform:translateX(18px);opacity:.7}to{transform:translateX(0);opacity:1}}
+@media(prefers-reduced-motion:reduce){body>.mobile-menu[open]>.mobile-menu-content{animation:none}}
+/* NIB 4.6 — contorno fino nos estados azul e marfim. */
+body :is(.button:not(.danger),.primary,.site-link,.quiet,.mobile-backbar>a):is(:hover,:active,[aria-pressed=true],.selected,.active):not(:focus-visible),
+body .tabs a:is(:hover,:active,.selected,.active,[aria-current=page]):not(:focus-visible),
+body .layout>aside :is(nav a,.sidebar-events>a,.create-event-nav):is(:hover,:active,.selected,.current,[aria-current=page]):not(:focus-visible),
+body .management-nav>a:is(:hover,:active,[aria-current=page]):not(:focus-visible),
+body>.mobile-menu nav a:is(:hover,:active,[aria-current=page]):not(:focus-visible),
+body>.mobile-menu>summary:is(:hover,:active):not(:focus-visible) .mobile-menu-button,
+body>.mobile-menu[open]>summary:not(:focus-visible) .mobile-menu-button{
+ outline:1px solid #8394ab;outline-offset:-1px;
+}
+/* NIB 4.7 — recolhimento com conteúdo ocupando o espaço disponível. */
+body>header>.nib-sidebar-toggle{display:none}
+@media(min-width:821px){
+ body>header>.nib-sidebar-toggle{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;min-height:40px;padding:9px 16px;margin-left:auto;border:1px solid #8394ab;border-radius:999px;background:#fff;color:#041e42;font-size:.8125rem;line-height:1.3;white-space:nowrap;cursor:pointer}
+ body>header>.nib-sidebar-toggle:hover{background:#ebebdf;color:#041e42}
+ body>header>.nib-sidebar-toggle:focus-visible{outline:3px solid #8cb7dc;outline-offset:3px}
+ body.nib-sidebar-collapsed>.layout{grid-template-columns:minmax(0,1fr)}
+ body.nib-sidebar-collapsed>.layout>aside,body.nib-sidebar-collapsed>.management-nav{display:none}
+ body.nib-sidebar-collapsed>.layout>main{grid-column:1;min-width:0;width:100%}
+}
+/* NIB 4.8 — lateral com altura completa e controle junto a marca. */
+@media(min-width:821px){
+ body>header{justify-content:flex-start}
+ body>header>.nib-sidebar-toggle{display:inline-flex;margin-left:0;margin-right:4px;order:-1;flex-shrink:0}
+ body>header>.header-right,body>header>.site-link{margin-left:auto}
+ body>.layout>aside{height:calc(100vh - var(--nib-header-height));height:calc(100dvh - var(--nib-header-height));min-height:calc(100vh - var(--nib-header-height));min-height:calc(100dvh - var(--nib-header-height));max-height:calc(100dvh - var(--nib-header-height));align-self:start;overflow-y:auto;box-sizing:border-box}
+}
+/* NIB 4.9 — controle discreto junto a ADMINISTRACAO. */
+.nib-sidebar-toggle{display:none}
+@media(min-width:821px){
+ body>.layout>aside>.nib-sidebar-toggle{display:inline-flex;position:absolute;top:23px;right:14px;align-items:center;justify-content:center;width:32px;height:32px;min-height:32px;min-width:32px;margin:0;padding:0;border:1px solid #ebebdf45;border-radius:999px;background:transparent;color:#ebebdf;cursor:pointer;box-shadow:none;z-index:2}
+ body>.layout>aside>.nib-sidebar-toggle::before{content:'';display:block;width:7px;height:7px;border-top:1.5px solid currentColor;border-right:1.5px solid currentColor;transform:translateX(2px) rotate(-135deg)}
+ body>.layout>aside>.nib-sidebar-toggle:hover{background:#ebebdf;color:#041e42;border-color:#ebebdf}
+ body>.layout>aside>.nib-sidebar-toggle:focus-visible{outline:2px solid #ebebdf;outline-offset:3px}
+ body>.layout>aside>.sidebar-label{padding-right:38px}
+ body.nib-sidebar-collapsed>.layout{grid-template-columns:60px minmax(0,1fr)}
+ body.nib-sidebar-collapsed>.layout>aside{display:flex;padding:24px 0;border-right:1px solid #ffffff12}
+ body.nib-sidebar-collapsed>.layout>aside>:not(.nib-sidebar-toggle){display:none}
+ body.nib-sidebar-collapsed>.layout>aside>.nib-sidebar-toggle{right:14px}
+ body.nib-sidebar-collapsed>.layout>aside>.nib-sidebar-toggle::before{transform:translateX(-2px) rotate(45deg)}
+ body.nib-sidebar-collapsed>.layout>main{grid-column:2;width:100%;min-width:0}
+}
+/* NIB 4.10 — trilho com icones, eventos e nomes acessiveis. */
+.nib-rail-icon{display:none}
+@media(min-width:821px){
+ body.nib-sidebar-collapsed>.layout>aside{padding:24px 8px 18px;gap:0}
+ body.nib-sidebar-collapsed>.layout>aside>nav{display:grid;gap:6px;margin:44px 0 0;padding:0;flex:none}
+ body.nib-sidebar-collapsed>.layout>aside>.create-event-nav{display:flex;margin:14px auto 0}
+ body.nib-sidebar-collapsed>.layout>aside>.sidebar-events{display:grid;gap:7px;margin:16px 0 0;padding:16px 0 0;border-top:1px solid #ebebdf30}
+ body.nib-sidebar-collapsed>.layout>aside>.sidebar-events>.sidebar-label{display:none}
+ body.nib-sidebar-collapsed>.layout>aside>form{display:block;margin: auto 0 0;padding:18px 0 0;border:0}
+ body.nib-sidebar-collapsed>.layout>aside :is(nav a,.sidebar-events>a,.create-event-nav,.quiet){display:flex;align-items:center;justify-content:center;gap:0;width:40px;min-width:40px;height:40px;min-height:40px;padding:0;margin-left:auto;margin-right:auto;font-size:0;line-height:0;border-radius:999px;overflow:visible;flex:none}
+ body.nib-sidebar-collapsed>.layout>aside :is(nav a,.sidebar-events>a,.create-event-nav,.quiet)>svg{display:block;width:19px;height:19px;min-width:19px;flex:0 0 19px;opacity:1;margin:0}
+ body.nib-sidebar-collapsed>.layout>aside .sidebar-events>a>.nav-dot{display:flex;align-items:center;justify-content:center;width:26px;height:26px;min-width:26px;flex:0 0 26px;border:0;box-shadow:none;background:#283f60;color:#ebebdf;margin:0;border-radius:50%}
+ body.nib-sidebar-collapsed>.layout>aside .sidebar-events>a>.nav-dot::after{content:attr(data-rail-label);font:600 9px/1 system-ui,sans-serif;letter-spacing:.01em}
+ body.nib-sidebar-collapsed>.layout>aside .sidebar-events>a>.nav-dot.mulheres-virtuosas{background:#eec8d6;color:#74304a}
+ body.nib-sidebar-collapsed>.layout>aside .sidebar-events>a>.nav-dot.nxt-camp{background:#ffd1b1;color:#79350d}
+ body.nib-sidebar-collapsed>.layout>aside .sidebar-events>a>.nav-dot.jornada-dna{background:#bfdfce;color:#20513a}
+ body.nib-sidebar-collapsed>.layout>aside :is(a,button):focus-visible{outline:2px solid #ebebdf;outline-offset:2px}
+}
+@media(min-width:821px){
+ body.nib-sidebar-collapsed>.layout>aside>nav:not(.nib-sidebar-toggle){display:grid}
+ body.nib-sidebar-collapsed>.layout>aside>form:not(.nib-sidebar-toggle){display:block}
+}
