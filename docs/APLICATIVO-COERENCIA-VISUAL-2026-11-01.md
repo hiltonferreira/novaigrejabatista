@@ -253,3 +253,9 @@ Ajuste seguinte, após teste de Hilton no iPhone:
 Ajuste seguinte, comparando com capturas da referência enviadas por Hilton:
 - Banners mais próximos da referência: card com 84% da largura no celular, foto clara (só um leve escurecimento no topo, sem o véu azul), chapéu de 16 px, título de 32 px em três linhas ("Acompanhe a NIB no dia a dia", "Cultos e mensagens na íntegra", "Uma família que acolhe você"), caixa em azul vivo translúcido com texto de 16 px e chamada em negrito com exclamação ("Siga agora!", "Assista agora!", "Convide alguém!"). Recortes refeitos com os rostos abaixo do título e acima da caixa; o Facebook passou a usar a foto da equipe de recepção.
 - Abertura: conjunto logo e texto menor (logo até 156 px, título até 25 px), com mais distância das bordas.
+
+## Versículo do dia redesenhado — 02/11/2026
+
+A pedido de Hilton, o bloco do versículo saiu do vidro claro e virou um cartão azul NIB, na mesma linguagem dos banners: degradê radial do azul médio ao navy, brasão branco em marca d'água (7%, `assets/brasao-branco.png`, recortado do último quadro da logo animada), ícone de livro, rótulo "Palavra para o seu dia", aspas grandes em laranja NIB e texto branco de 20 px no celular e 24 px no computador. No rodapé, separado por uma linha fina, ficam a referência e o botão "Compartilhar", que usa o compartilhamento nativo do aparelho (Web Share) e, sem ele, copia o versículo com a referência e avisa no status. A atualização diária do texto continua funcionando.
+
+Verificado: 51 testes aprovados, sem erros de console; botão com alvo de 44 px e foco visível em laranja.

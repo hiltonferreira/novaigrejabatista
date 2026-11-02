@@ -68,7 +68,7 @@
       return `<li><span class="agenda-date"><strong>${day}</strong><small>${month}</small></span><div><span class="agenda-type">${item.type}</span><h3>${item.name}</h3><p>${new Intl.DateTimeFormat('pt-BR',{weekday:'long',timeZone:'America/Porto_Velho'}).format(date)}${item.time ? ' · '+item.time : ' · horário a confirmar'}</p></div></li>`;
     }).join('');
     const agenda = `<section class="home-agenda" aria-labelledby="agenda-title"><div class="section-heading"><div><span class="label">CAMINHE COM A GENTE</span><h2 id="agenda-title">${full ? 'Próximos encontros' : 'Na agenda da igreja'}</h2></div>${full ? '' : button('Ver calendário completo','agenda')}</div><div class="box agenda-content"><ul class="agenda-list">${list}</ul><p class="note">Programação de referência do site da igreja, ainda sem sincronização. Confirme mudanças com a igreja.${full ? ' Novas festividades aparecerão após o cadastro pela equipe.' : ''}</p></div></section>`;
-    const verseBlock = `<section class="daily-verse" aria-label="Versículo do dia"><span class="label">PALAVRA PARA O SEU DIA</span><blockquote>“${verse[0]}”</blockquote><cite>${verse[1]}</cite></section>`;
+    const verseBlock = `<section class="daily-verse" aria-labelledby="verse-label"><div class="verse-top"><span class="verse-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.5C10.2 5 7.6 4.5 4 4.5v13c3.6 0 6.2.5 8 2 1.8-1.5 4.4-2 8-2v-13c-3.6 0-6.2.5-8 2Z"/><path d="M12 6.5v13"/></svg></span><span class="label" id="verse-label">Palavra para o seu dia</span></div><blockquote><span class="verse-mark" aria-hidden="true">“</span>${verse[0]}</blockquote><div class="verse-foot"><cite>${verse[1]}</cite><button type="button" class="verse-share" id="verse-share"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3 M7.5 7.5 12 3l4.5 4.5 M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg><span>Compartilhar</span></button></div></section>`;
     return full || part === 'agenda' ? agenda : part === 'verse' ? verseBlock : verseBlock + agenda;
   }
   const fullDate = key => new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Porto_Velho',weekday:'long',day:'2-digit',month:'long',year:'numeric'}).format(new Date(key+'T12:00:00-04:00'));
@@ -206,6 +206,12 @@
     if (action.id === 'notices-close') { notices.close(); return; }
     if (action.id === 'header-menu') { document.querySelector('.test-options').open = false; drawer.showModal(); root.classList.add('nib-dialog-open'); action.setAttribute('aria-expanded','true'); document.getElementById('drawer-close').focus({preventScroll:true}); return; }
     if (action.id === 'drawer-close') { closeDrawer(); return; }
+    if (action.id === 'verse-share') {
+      const text = '“' + content.querySelector('.daily-verse blockquote').lastChild.textContent.trim() + '” ' + content.querySelector('.daily-verse cite').textContent + ' · Nova Igreja Batista';
+      if (navigator.share) { navigator.share({ text }).catch(() => {}); return; }
+      if (navigator.clipboard) { navigator.clipboard.writeText(text).then(() => announce('Versículo copiado. É só colar onde quiser compartilhar.', 'success', false), () => announce('Não foi possível copiar o versículo neste navegador.', 'info', false)); return; }
+      announce('Compartilhamento indisponível neste navegador.', 'info', false); return;
+    }
     if (action.id === 'mobile-back') { event.preventDefault(); show(viewHistory.pop() || (isManagement() ? 'gestao' : 'inicio'), true, false); return; }
     if (action.dataset.month) { state.calendarMonth=NibDaily.moveMonth(state.calendarMonth,Number(action.dataset.month)); state.calendarDay=state.calendarMonth+'-01'; show('agenda',false,false); content.querySelector('[data-month="'+action.dataset.month+'"]').focus({preventScroll:true}); feedback.textContent=content.querySelector('.calendar-toolbar h2').textContent; return; }
     if (action.dataset.day) { state.calendarDay=action.dataset.day; show('agenda',false,false); content.querySelector('[data-day="'+state.calendarDay+'"]').focus({preventScroll:true}); feedback.textContent=calendarAnnouncement(); return; }
@@ -299,7 +305,7 @@
     dateLabel.setAttribute('aria-label',new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Porto_Velho',dateStyle:'full'}).format(now));
     const verse = NibDaily.verseForDay(key);
     const quote = content.querySelector('.daily-verse blockquote');
-    if (quote) { quote.textContent = '“'+verse[0]+'”'; content.querySelector('.daily-verse cite').textContent = verse[1]; }
+    if (quote) { quote.lastChild.textContent = verse[0]; content.querySelector('.daily-verse cite').textContent = verse[1]; }
   }
   refreshDailyDate();
   setInterval(refreshDailyDate, 60000);
