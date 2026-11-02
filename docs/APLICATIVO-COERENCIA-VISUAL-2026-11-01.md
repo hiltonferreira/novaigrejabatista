@@ -263,3 +263,5 @@ Verificado: 51 testes aprovados, sem erros de console; botão com alvo de 44 px 
 Ajuste seguinte: o brasão ao fundo ficou maior (270 px no celular, 320 px no computador), levemente girado (-8°), com desfoque de 3 px e opacidade de 12%.
 
 Ajuste seguinte da abertura: logo maior (até 180 px, 32% da largura) e o bloco de texto alinhado ao centro óptico da palavra Nib da logo, e não ao centro da imagem. A palavra fica cerca de 5% abaixo do centro do arquivo, então o texto desce na mesma proporção do tamanho da logo. Medido em 414 px: centro do Nib em 348 px e do texto em 348,5 px.
+
+Ajuste seguinte: o círculo de carregamento fica centralizado entre a base da logo e a borda inferior da tela, calculado a partir da posição e do tamanho da logo. Medido: 390×844 (logo termina em 407, círculo em 626, ponto médio 626) e 320×560 (417 e 417).
