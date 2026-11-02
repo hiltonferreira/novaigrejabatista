@@ -95,24 +95,36 @@
   }
   // Banners das redes oficiais: foto da igreja, chapéu, título e caixa azul translúcida.
   const socialLinks = [
-    ['Instagram','Acompanhe a NIB no dia a dia','Fotos dos cultos, avisos da semana e os bastidores da nossa família.','https://www.instagram.com/nibcasadedeus/','assets/social-instagram.webp'],
-    ['YouTube','Cultos e mensagens na íntegra','Assista aos cultos ao vivo e reveja as pregações quando quiser.','https://www.youtube.com/@nibcasadedeus','assets/social-youtube.webp'],
-    ['Facebook','A comunidade NIB reunida','Compartilhe a programação e convide quem você ama para a igreja.','https://www.facebook.com/nibcasadedeus','assets/social-facebook.webp']
+    ['Instagram','Acompanhe a NIB no dia a dia','Fotos, avisos e bastidores da nossa semana.','Seguir','https://www.instagram.com/nibcasadedeus/','assets/social-instagram.webp'],
+    ['YouTube','Cultos e mensagens na íntegra','Cultos ao vivo e pregações completas.','Assistir','https://www.youtube.com/@nibcasadedeus','assets/social-youtube.webp'],
+    ['Facebook','A comunidade NIB reunida','Convide quem você ama para a igreja.','Compartilhar','https://www.facebook.com/nibcasadedeus','assets/social-facebook.webp']
   ];
   function socialBanners() {
-    return `<section class="social-banners" aria-labelledby="social-title"><div class="section-heading"><h2 id="social-title">A NIB nas redes</h2></div><div class="social-track">${socialLinks.map(([network,title,text,url,image]) => `<a class="social-card" href="${url}" target="_blank" rel="noopener noreferrer" aria-label="${network}: ${title}. ${text} Abre em nova aba."><img src="${image}" alt="" width="640" height="768" loading="lazy"><span class="social-kicker">${network}</span><strong class="social-title">${title}</strong><span class="social-box"><span>${text}</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></span></a>`).join('')}</div><div class="social-dots" aria-hidden="true">${socialLinks.map((_,i)=>`<span${i?'':' class="is-active"'}></span>`).join('')}</div></section>`;
+    return `<section class="social-banners" aria-labelledby="social-title"><div class="section-heading"><h2 id="social-title">A NIB nas redes</h2></div><div class="social-track">${socialLinks.map(([network,title,text,action,url,image]) => `<a class="social-card" href="${url}" target="_blank" rel="noopener noreferrer" aria-label="${network}: ${title}. ${text} ${action}. Abre em nova aba."><img src="${image}" alt="" width="640" height="768" loading="lazy"><span class="social-kicker">${network}</span><strong class="social-title">${title}</strong><span class="social-box"><span>${text} <b>${action}</b></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></span></a>`).join('')}</div><div class="social-dots" aria-hidden="true">${socialLinks.map((_,i)=>`<span${i?'':' class="is-active"'}></span>`).join('')}</div></section>`;
   }
   function bindSocialBanners() {
     const track = content.querySelector('.social-track');
     if (!track) return;
     const dots = [...content.querySelectorAll('.social-dots span')];
     const cards = [...track.children];
-    track.addEventListener('scroll', () => {
+    const images = cards.map(card => card.querySelector('img'));
+    const still = matchMedia('(prefers-reduced-motion: reduce)');
+    let frame = 0;
+    const update = () => {
+      frame = 0;
       const left = track.scrollLeft;
       let index = 0;
       cards.forEach((card,i) => { if (Math.abs(card.offsetLeft - track.offsetLeft - left) < Math.abs(cards[index].offsetLeft - track.offsetLeft - left)) index = i; });
       dots.forEach((dot,i) => dot.classList.toggle('is-active', i === index));
-    }, {passive:true});
+      // Paralaxe: a foto anda mais devagar que o card ao deslizar.
+      cards.forEach((card,i) => {
+        const offset = (card.offsetLeft - track.offsetLeft - left) / card.offsetWidth;
+        images[i].style.transform = (still.matches || track.scrollWidth <= track.clientWidth + 1) ? '' : `translate3d(${(Math.max(-1.2, Math.min(1.2, offset)) * -10).toFixed(2)}%,0,0) scale(1.04)`;
+      });
+    };
+    track.addEventListener('scroll', () => { if (!frame) frame = requestAnimationFrame(update); }, {passive:true});
+    addEventListener('resize', () => { if (!frame) frame = requestAnimationFrame(update); });
+    update();
   }
   function communityBlock() {
     return `<section class="community-prayer" aria-labelledby="community-prayer-title"><div class="section-heading"><div><span class="label">CUIDADO EM COMUNIDADE</span><h2 id="community-prayer-title">Caderno de oração</h2></div>${button('Ver caderno','caderno')}</div><p>Vamos orar uns pelos outros.</p><div class="prayer-feed">${prayerCards(true)}</div><p class="note">Mural demonstrativo com pedidos fictícios. O contador representa pessoas orando. Ainda sem compartilhamento entre usuários.</p></section>`;
