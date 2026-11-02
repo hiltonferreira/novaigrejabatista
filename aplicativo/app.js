@@ -97,7 +97,7 @@
   const socialLinks = [
     ['Instagram','Acompanhe a NIB no dia a dia','Fotos, avisos e bastidores dos cultos em @nibcasadedeus.','https://www.instagram.com/nibcasadedeus/','assets/social-instagram.webp'],
     ['YouTube','Cultos e mensagens na íntegra','Assista ao vivo e reveja as pregações no canal @nibcasadedeus.','https://www.youtube.com/@nibcasadedeus','assets/social-youtube.webp'],
-    ['Facebook','Nossa comunidade também está aqui','Siga a página nibcasadedeus e compartilhe com quem você ama.','https://www.facebook.com/nibcasadedeus','assets/social-facebook.webp']
+    ['Facebook','A comunidade NIB reunida','Siga a página nibcasadedeus e compartilhe com quem você ama.','https://www.facebook.com/nibcasadedeus','assets/social-facebook.webp']
   ];
   function socialBanners() {
     return `<section class="social-banners" aria-labelledby="social-title"><div class="section-heading"><h2 id="social-title">A NIB nas redes</h2></div><div class="social-track">${socialLinks.map(([network,title,text,url,image]) => `<a class="social-card" href="${url}" target="_blank" rel="noopener noreferrer" aria-label="${network}: ${title}. ${text} Abre em nova aba."><img src="${image}" alt="" width="640" height="768" loading="lazy"><span class="social-kicker">${network}</span><strong class="social-title">${title}</strong><span class="social-box"><span>${text}</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></span></a>`).join('')}</div><div class="social-dots" aria-hidden="true">${socialLinks.map((_,i)=>`<span${i?'':' class="is-active"'}></span>`).join('')}</div></section>`;
@@ -305,7 +305,7 @@
     else {
       splash.querySelectorAll('[data-letters]').forEach(el => { const chars = [...el.textContent]; el.textContent = ''; chars.forEach((c,i) => { const ch = document.createElement('span'); ch.className = 'ch'; ch.textContent = c; ch.style.setProperty('--i', i); el.append(ch); }); });
       if (reduced) splash.querySelector('.splash-logo').src = 'assets/splash-logo-final.png';
-      splash.classList.add('is-playing'); splash.addEventListener('click', finish); setTimeout(finish, reduced ? 900 : 3500);
+      splash.classList.add('is-playing'); splash.addEventListener('click', finish); setTimeout(finish, reduced ? 1200 : 4500);
     }
   }
 })();

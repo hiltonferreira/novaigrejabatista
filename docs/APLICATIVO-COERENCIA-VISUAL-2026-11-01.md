@@ -233,3 +233,10 @@ Hilton pediu a animação da logo usada no site (`video/brasao-nib-alpha.webm`, 
 Verificado: 51 testes aprovados, sem erros de console, capturas em 390 px a 0,15, 0,7, 1,4, 1,9, 2,6 e 3,3 s conferidas. Sem teste em iPhone físico.
 
 Ajuste seguinte, a pedido de Hilton: a barra de carregamento voltou a ser um círculo. Agora é um arco com degradê do azul claro ao branco, ponta arredondada e brilho leve, girando em 0,85 s. Com movimento reduzido, o círculo não aparece.
+
+## Abertura de 5 s e banners na proporção da referência — 02/11/2026
+
+- **Abertura:** conjunto maior (logo até 200 px, título até 32 px), logo animada mais lenta (62 ms por quadro, cerca de 3 s), zoom out em 3,4 s, texto a partir de 2,3 s e saída em 4,5 s com fade de 0,5 s, total de cerca de 5 s. Em telas até 350 px o conjunto reduz para caber em 320 px.
+- **Banners:** proporções medidas no vídeo de referência: card com cerca de 78% da largura no celular e formato 8:9, chapéu em peso regular de 15 px, título em negrito de 30 px com entrelinha 1,13, caixa azul com texto regular de 14 px, padding de 16 px e cantos de 10 px. Fonte Acumin da NIB em todas as larguras. Novas fotos da galeria do site: celebração com confete (Instagram), louvor com mãos levantadas (YouTube) e crianças da igreja (Facebook).
+
+Verificado: 51 testes aprovados, sem erros de console; abertura cabe em 320 e 390 px e some em cerca de 5 s.
