@@ -211,3 +211,12 @@ Base 7853ad1. Claude aplicou os pontos menores da revisão delimitada do mesmo h
 - Toque: em `hover:none`, os atalhos da inicial recebem pressão (`scale(.98)`, 160 ms). A regra de movimento reduzido também zera `transform` dos atalhos.
 
 Verificado: 51 testes existentes aprovados; Chromium sem erros de console, sem overflow em 390 e 1280 px; dia selecionado sob hover mantém fundo navy e sombra com halo; transição de toque aplicada em 390 px com toque emulado. Sem teste em aparelho físico. Produção preservada.
+
+## Abertura animada e banners das redes — 02/11/2026
+
+Pedido de Hilton, com vídeo de referência de outro aplicativo (padrões genéricos: tela de abertura azul com marca e carregamento; carrossel de banners com foto, chapéu, título forte e caixa azul translúcida com seta).
+
+- **Abertura:** `#app-splash` em `index.html`, fundo azul NIB em degradê radial, logo branca (`assets/logo-branco.svg`, cópia da logo com preenchimento branco) que sobe e cresce levemente, rótulo "Plataforma NIB" e indicador de carregamento. Some sozinha em cerca de 2,3 s ou ao toque, com fade de 450 ms. Aparece uma vez por aba (`sessionStorage`, com try/catch). Com movimento reduzido não há animação e some em 0,7 s. Quando houver login, a abertura fica antes dele.
+- **Banners das redes:** o banner único da hero foi substituído por "A NIB nas redes", com três cards (Instagram, YouTube e Facebook @nibcasadedeus, links oficiais já usados no site). Fotos da galeria do site recortadas em 5:6 e convertidas para WebP 640×768 (`assets/social-*.webp`). No celular, carrossel com snap, próximo card aparecendo e indicadores; no desktop, três cards lado a lado. Links abrem em nova aba e têm `aria-label` completo.
+
+Verificado: 51 testes existentes aprovados, sintaxe do `app.js` válida. Chromium sem erros de console; sem overflow em 390 px; indicadores acompanham a rolagem; abertura some e não reaparece ao recarregar a mesma aba. Sem teste em aparelho físico.

@@ -93,6 +93,27 @@
   function prayerCards(compact=false) {
     return [...state.prayers].reverse().slice(0,compact?2:state.prayers.length).map(p=>`<article class="prayer-post" data-post="${p.id}"><div class="prayer-post-author"><span class="profile-avatar" aria-hidden="true">${escape(p.author.charAt(0))}</span><div><strong>${escape(p.author)}</strong><small>Pedido fictício · Demonstração</small></div>${p.answered?'<span class="tag">Oração atendida</span>':''}</div><h3>${escape(p.name)}</h3><p class="prayer-reason">${escape(p.reason)}</p><div class="prayer-post-footer"><button type="button" class="prayer-support" data-prayer-support="${p.id}" aria-pressed="${p.supported}" aria-label="Estou orando por: ${escape(p.name)}">${navIcon('oracao')}<span>Estou orando</span><strong class="support-count" aria-live="polite">${p.supporters}</strong></button><span class="prayer-support-caption">${p.supporters===1?'pessoa orando':'pessoas orando'}</span></div>${!compact&&p.own?'<div class="form-actions prayer-own-actions"><button type="button" data-prayer-toggle="'+p.id+'" aria-label="'+(p.answered?'Marcar em oração':'Marcar como atendida')+': '+escape(p.name)+'">'+(p.answered?'Marcar em oração':'Oração atendida')+'</button><button type="button" data-prayer-delete="'+p.id+'" aria-label="Excluir pedido: '+escape(p.name)+'">Excluir</button></div>':''}</article>`).join('');
   }
+  // Banners das redes oficiais: foto da igreja, chapéu, título e caixa azul translúcida.
+  const socialLinks = [
+    ['Instagram','Acompanhe a NIB no dia a dia','Fotos, avisos e bastidores dos cultos em @nibcasadedeus.','https://www.instagram.com/nibcasadedeus/','assets/social-instagram.webp'],
+    ['YouTube','Cultos e mensagens na íntegra','Assista ao vivo e reveja as pregações no canal @nibcasadedeus.','https://www.youtube.com/@nibcasadedeus','assets/social-youtube.webp'],
+    ['Facebook','Nossa comunidade também está aqui','Siga a página nibcasadedeus e compartilhe com quem você ama.','https://www.facebook.com/nibcasadedeus','assets/social-facebook.webp']
+  ];
+  function socialBanners() {
+    return `<section class="social-banners" aria-labelledby="social-title"><div class="section-heading"><h2 id="social-title">A NIB nas redes</h2></div><div class="social-track">${socialLinks.map(([network,title,text,url,image]) => `<a class="social-card" href="${url}" target="_blank" rel="noopener noreferrer" aria-label="${network}: ${title}. ${text} Abre em nova aba."><img src="${image}" alt="" width="640" height="768" loading="lazy"><span class="social-kicker">${network}</span><strong class="social-title">${title}</strong><span class="social-box"><span>${text}</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></span></a>`).join('')}</div><div class="social-dots" aria-hidden="true">${socialLinks.map((_,i)=>`<span${i?'':' class="is-active"'}></span>`).join('')}</div></section>`;
+  }
+  function bindSocialBanners() {
+    const track = content.querySelector('.social-track');
+    if (!track) return;
+    const dots = [...content.querySelectorAll('.social-dots span')];
+    const cards = [...track.children];
+    track.addEventListener('scroll', () => {
+      const left = track.scrollLeft;
+      let index = 0;
+      cards.forEach((card,i) => { if (Math.abs(card.offsetLeft - track.offsetLeft - left) < Math.abs(cards[index].offsetLeft - track.offsetLeft - left)) index = i; });
+      dots.forEach((dot,i) => dot.classList.toggle('is-active', i === index));
+    }, {passive:true});
+  }
   function communityBlock() {
     return `<section class="community-prayer" aria-labelledby="community-prayer-title"><div class="section-heading"><div><span class="label">CUIDADO EM COMUNIDADE</span><h2 id="community-prayer-title">Caderno de oração</h2></div>${button('Ver caderno','caderno')}</div><p>Vamos orar uns pelos outros.</p><div class="prayer-feed">${prayerCards(true)}</div><p class="note">Mural demonstrativo com pedidos fictícios. O contador representa pessoas orando. Ainda sem compartilhamento entre usuários.</p></section>`;
   }
@@ -146,7 +167,7 @@
         ['celulas', 'Células', 'Saiba como acessar a plataforma de células.'],
         ['informacoes', 'Programação e avisos', 'Consulte as informações e os canais da igreja.'],
         ['caderno', 'Caderno de oração', 'Compartilhe seus pedidos e ore com a comunidade.']
-      ].map(([view, title, text]) => `<button type="button" class="quick-action" data-view="${view}"><span class="home-action-icon" aria-hidden="true">${navIcon(view)}</span><strong>${title}</strong><span class="home-action-description">${text}</span></button>`).join('')}</div></section><figure class="church-banner"><img src="assets/hero-nib.webp" alt="Nova Igreja Batista" width="2048" height="861" loading="lazy"></figure>${dailyBlocks(false,'agenda')}${communityBlock()}<section aria-labelledby="home-events-title"><div class="section-heading"><h2 id="home-events-title">Eventos da igreja</h2>${button('Ver todos', 'eventos')}</div>${eventCards(true)}</section>`,
+      ].map(([view, title, text]) => `<button type="button" class="quick-action" data-view="${view}"><span class="home-action-icon" aria-hidden="true">${navIcon(view)}</span><strong>${title}</strong><span class="home-action-description">${text}</span></button>`).join('')}</div></section>${socialBanners()}${dailyBlocks(false,'agenda')}${communityBlock()}<section aria-labelledby="home-events-title"><div class="section-heading"><h2 id="home-events-title">Eventos da igreja</h2>${button('Ver todos', 'eventos')}</div>${eventCards(true)}</section>`,
       agenda: () => calendarPage(),
       caderno: () => notebookPage(),
       cadastro: () => `<div class="profile-layout"><section class="box profile-summary"><span class="tag">Membro · exemplo</span><h2>Ana Exemplo</h2><p>Confira seu cadastro na igreja.</p><dl class="profile"><dt>E-mail</dt><dd>ana@example.com</dd><dt>Telefone</dt><dd>Não informado</dd><dt>Endereço</dt><dd>Não informado</dd><dt>Apresentação no culto</dt><dd>Apresentação registrada · exemplo</dd></dl><p class="note">As alterações são encaminhadas para conferência da Secretaria.</p></section><section class="box profile-edit"><h2>O que você deseja atualizar?</h2><p>Preencha somente os dados que precisam mudar.</p><form id="profile-form"><fieldset><legend>Dados para atualização</legend><div class="form-grid"><div><label for="new-name">Nome completo</label><input id="new-name" name="newName" autocomplete="off" placeholder="Informe o nome corrigido" maxlength="160"></div><div><label for="new-email">Novo e-mail</label><input id="new-email" name="newEmail" type="email" autocomplete="off" placeholder="nome@exemplo.com" maxlength="160"></div><div><label for="new-phone">Novo telefone / WhatsApp</label><input id="new-phone" name="newPhone" type="tel" inputmode="tel" autocomplete="off" placeholder="(69) 99999-9999" maxlength="25"></div><div><label for="new-address">Endereço</label><input id="new-address" name="newAddress" autocomplete="off" placeholder="Rua, número, bairro e cidade" maxlength="250"></div></div></fieldset><fieldset><legend>Contato e observações</legend><label for="contact-email">E-mail para retorno</label><input id="contact-email" name="email" type="email" autocomplete="off" placeholder="exemplo@example.com" maxlength="160" required><label for="contact-note">Outra alteração ou observação (opcional)</label><textarea id="contact-note" name="note" placeholder="Descreva o que a Secretaria precisa conferir." maxlength="500"></textarea></fieldset><div class="form-actions"><button class="action" type="submit">Enviar solicitação de teste</button><button type="reset">Limpar alterações</button></div></form><p class="note">Use dados fictícios. A solicitação fica nesta sessão; nenhum cadastro real é alterado.</p></section></div>`,
@@ -158,6 +179,7 @@
       confirmar: () => `<section class="box"><h2>João Exemplo</h2><p>Formulário e reunião de integração já registrados neste exemplo.</p><form id="membership-form"><label for="presented-date">Data da apresentação no culto</label><input id="presented-date" name="date" type="date" required><label class="check"><input name="confirm" type="checkbox" required><span>Confirmo que a pessoa foi apresentada à igreja no culto.</span></label><button type="submit" class="action">Confirmar registro de teste</button></form><p class="note">O reconhecimento decorre da apresentação. Esta confirmação registra o fato e seu responsável.</p>${button('Voltar à gestão', 'gestao')}</section>`
     };
     content.innerHTML = pages[state.view]();
+    bindSocialBanners();
     renderNavigation();
     closeDrawer();
     if (notices.open) notices.close();
@@ -272,4 +294,14 @@
   document.addEventListener('visibilitychange', () => { if (!document.hidden) refreshDailyDate(); });
   document.getElementById('demo-context').value = 'membro';
   show('inicio', false);
+  // Abertura: aparece ao abrir o aplicativo, antes do acesso; some sozinha ou ao toque.
+  const splash = document.getElementById('app-splash');
+  if (splash) {
+    let seen = false;
+    try { seen = sessionStorage.getItem('nib-splash') === '1'; sessionStorage.setItem('nib-splash','1'); } catch (_) {}
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const finish = () => { if (splash.hidden) return; splash.classList.add('is-leaving'); setTimeout(() => { splash.hidden = true; }, reduced ? 0 : 450); };
+    if (seen) splash.hidden = true;
+    else { splash.classList.add('is-playing'); splash.addEventListener('click', finish); setTimeout(finish, reduced ? 700 : 2300); }
+  }
 })();
