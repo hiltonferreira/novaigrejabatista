@@ -231,3 +231,5 @@ Hilton pediu a animação da logo usada no site (`video/brasao-nib-alpha.webm`, 
 - Duração total de cerca de 3,5 s, com saída em fade de 0,5 s. Toque encerra antes. Uma vez por aba. Removida a `logo-branco.svg` da versão anterior.
 
 Verificado: 51 testes aprovados, sem erros de console, capturas em 390 px a 0,15, 0,7, 1,4, 1,9, 2,6 e 3,3 s conferidas. Sem teste em iPhone físico.
+
+Ajuste seguinte, a pedido de Hilton: a barra de carregamento voltou a ser um círculo. Agora é um arco com degradê do azul claro ao branco, ponta arredondada e brilho leve, girando em 0,85 s. Com movimento reduzido, o círculo não aparece.
