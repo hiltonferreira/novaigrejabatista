@@ -244,3 +244,8 @@ Verificado: 51 testes aprovados, sem erros de console; abertura cabe em 320 e 39
 Ajuste seguinte: o carregamento passou a seguir o vídeo de referência. É um arco branco sólido em SVG, com 44 px, traço de 4 px e pontas arredondadas, que cresce e encolhe enquanto gira (1,4 s e 1,6 s). Os textos da caixa azul dos banners deixaram de repetir o @ e agora descrevem o que cada rede oferece.
 
 Ajuste seguinte: o carregamento ficou maior (54 px) e mais lento (giro de 2,4 s e arco de 2 s). A caixa azul agora tem uma frase curta em duas linhas, terminada em ponto, seguida da ação em negrito (Seguir, Assistir, Compartilhar). As fotos ganharam paralaxe no carrossel do celular: a imagem tem 132% da largura do card e se desloca até 12% em sentido contrário ao deslizar, com `requestAnimationFrame`. A paralaxe fica desligada quando não há rolagem (desktop) e com movimento reduzido.
+
+Ajuste seguinte, após teste de Hilton no iPhone:
+- A foto não preenchia o lado direito porque a regra base de imagens limita `max-width` a 100%. O fundo do card agora usa `max-width:none`, e as fotos foram recortadas já na proporção da área de paralaxe (132% da largura do card em 8:9), com os rostos abaixo da área do título.
+- Títulos mais curtos e maiores, como na referência (32 px, até 10 caracteres por linha): "A NIB no dia a dia", "Cultos e mensagens", "Nossa família reunida".
+- Abertura: o conjunto subiu para o centro óptico (cerca de 45% da altura) e ficou um pouco menor, com mais respiro nas laterais. Logo e texto têm o mesmo centro vertical.
