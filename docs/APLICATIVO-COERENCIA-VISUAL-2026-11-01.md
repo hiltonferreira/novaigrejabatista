@@ -85,3 +85,8 @@ Espaçamentos: tag/nome com12px, h2 com16px, ações24px acima e12px entre, alvo
 Base17e0257. Removido somente o contorno visual do h1 focado programaticamente: o foco permanece no título para anunciar a tela a leitores de tela; links, botões e campos continuam com foco visível por teclado. Não usar blur indiscriminado nem desativar seleção de texto globalmente.
 
 Cada um dos5ícones da barra tem variante SVG sólida própria quando selecionado, sem preencher indiscriminadamente paths outline; o item atual mantém aria-current e rótulo em destaque, os demais ficam outline. Casa preserva recorte da porta, calendário preserva área/data, cadastro usa cabeça/corpo sólidos; coração e células têm formas sólidas.30 verificações passaram; navegador percorreu5destinos e confirmou sempre1aria-current, SVGselecionado currentColor e outline do título none. Sem alterar layout, dados ou produção.
+
+
+## Cards na inicial e menu compacto — preferência mais recente de Hilton
+
+Base2614813. Os cards detalhados com ícone, título e descrição passam para a inicial mobile, em duas colunas e último acesso em largura total. O menu em tela inteira mantém grupos, mas usa blocos compactos com ícone e nome, sem descrição/sombra, em duas colunas ou uma em até350px. Estado Atual/aria-current preservado. Desktop e regras/dados inalterados. Codex implementa e verifica; Claude revisa no PR12; Hilton valida visualmente. Sintaxe e30 verificações passaram; conferir navegação no browser antes de entregar Preview.

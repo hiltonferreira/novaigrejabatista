@@ -238,3 +238,25 @@ html{scrollbar-gutter:stable}
 
 /* Título recebe foco para anunciar a tela, sem aparência de seleção. */
 #nib-proposta #heading:focus,#nib-proposta #heading:focus-visible{outline:none;box-shadow:none}
+
+/* Cards completos na inicial; navegação compacta no menu. */
+#nib-proposta .home-action-icon{display:none}
+#nib-proposta #mobile-navigation .menu-grid a{flex-direction:row;align-items:center;justify-content:flex-start;min-height:76px;gap:12px;padding:14px 12px;border-radius:14px;box-shadow:none}
+#nib-proposta #mobile-navigation .menu-description{display:none}
+#nib-proposta #mobile-navigation .menu-grid strong{font-size:14px;line-height:1.4}
+#nib-proposta #mobile-navigation .menu-icon{width:32px;height:32px;flex:0 0 32px;border-radius:9px}
+#nib-proposta #mobile-navigation .menu-icon svg{width:20px;height:20px}
+#nib-proposta #mobile-navigation .mobile-current{position:static;font-size:10px;margin-left:auto}
+#nib-proposta #mobile-navigation .menu-grid a[aria-current=page]{padding-bottom:14px}
+@media(max-width:820px){
+ #nib-proposta .quick-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+ #nib-proposta main .quick-action{min-height:166px;border-radius:18px;padding:18px 16px;gap:12px;box-shadow:0 2px 10px #041e4214;justify-content:flex-start}
+ #nib-proposta main .quick-action::after{content:none}
+ #nib-proposta main .quick-action .home-action-icon{display:grid;place-items:center;flex-shrink:0;width:40px;height:40px;border-radius:12px;background:#eef1f4;color:#041e42}
+ #nib-proposta .home-action-icon svg{width:23px;height:23px}
+ #nib-proposta main .quick-action strong{font-size:16px;line-height:1.35}
+ #nib-proposta main .quick-action .home-action-description{font-size:13px;line-height:1.5}
+ #nib-proposta main .quick-action[data-view=eventos] .home-action-icon{background:#ffffff26;color:#fff}
+ #nib-proposta main .quick-action:last-child{grid-column:1/-1}
+}
+@media(max-width:350px){#nib-proposta main .quick-action{padding:16px 12px}#nib-proposta main .quick-action strong{font-size:15px}#nib-proposta #mobile-navigation .menu-grid{grid-template-columns:1fr}#nib-proposta #mobile-navigation .menu-grid a{min-height:60px}}
