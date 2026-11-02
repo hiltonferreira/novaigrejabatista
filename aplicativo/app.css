@@ -308,13 +308,12 @@ html{scrollbar-gutter:stable}
  #nib-proposta .drawer-heading{position:sticky;top:0;z-index:1;background:#f6f8fb;padding-top:4px}
  #nib-proposta #mobile-navigation .menu-grid a{transition:background-color .18s ease}
  #nib-proposta #mobile-navigation .menu-grid a[aria-current=page]{box-shadow:0 4px 12px #041e421a}
- #nib-proposta #notices-dialog{inset:auto 0 0;margin:0 auto calc(12px + env(safe-area-inset-bottom));width:calc(100% - 24px);max-width:460px;max-height:calc(100dvh - 32px - env(safe-area-inset-top) - env(safe-area-inset-bottom));border-radius:28px;animation:nib-popup-in .2s ease-out}
+ #nib-proposta #notices-dialog{inset:auto 0 0;margin:0 auto calc(12px + env(safe-area-inset-bottom));width:calc(100% - 24px);max-width:460px;max-height:calc(100dvh - 32px - env(safe-area-inset-top) - env(safe-area-inset-bottom));border-radius:28px}
 }
 @supports ((backdrop-filter:blur(20px)) or (-webkit-backdrop-filter:blur(20px))){
  @media(max-width:820px){#nib-proposta>header,#nib-proposta .bottom-bar:not([hidden]){background:var(--nib-glass);backdrop-filter:blur(20px) saturate(135%);-webkit-backdrop-filter:blur(20px) saturate(135%)}#nib-proposta .drawer-heading{background:#f6f8fbf2;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}}
 }
 @media(hover:hover){#nib-proposta main .quick-action:hover{background:#fff;color:#041e42;box-shadow:0 8px 22px #041e4214;transform:translateY(-2px)}#nib-proposta main .quick-action:hover .home-action-description{color:#536176}}
-@keyframes nib-popup-in{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 @media(prefers-reduced-motion:reduce){#nib-proposta #notices-dialog{animation:none}#nib-proposta main .quick-action{transition:none;transform:none}}
 @media(hover:hover){#nib-proposta main .quick-action:hover .home-action-icon{color:#041e42}}
 @media(prefers-reduced-transparency:reduce){#nib-proposta>header,#nib-proposta .bottom-bar:not([hidden]),#nib-proposta .drawer-heading{background:#fff;backdrop-filter:none;-webkit-backdrop-filter:none}#nib-proposta #notices-dialog::backdrop{backdrop-filter:none;-webkit-backdrop-filter:none}}
@@ -550,23 +549,25 @@ html{scrollbar-gutter:stable}
 /* Movimento coerente: respostas curtas, sem deslocar o conteúdo da tela. */
 #nib-proposta{--nib-motion-fast:160ms;--nib-motion-surface:200ms;--nib-motion-ease:cubic-bezier(.2,.7,.2,1)}
 #nib-proposta :is(.header-icon,.popup-close,#drawer-close,#mobile-back,.bottom-bar a){transition:background-color var(--nib-motion-fast) ease,border-color var(--nib-motion-fast) ease,box-shadow var(--nib-motion-fast) ease}
-#nib-proposta main button:enabled:not(.quick-action){transition:background-color var(--nib-motion-fast) ease,color var(--nib-motion-fast) ease,border-color var(--nib-motion-fast) ease,box-shadow var(--nib-motion-fast) ease,transform var(--nib-motion-fast) ease}
+#nib-proposta main button:enabled:not(.quick-action,.calendar-day){transition:background-color var(--nib-motion-fast) ease,color var(--nib-motion-fast) ease,border-color var(--nib-motion-fast) ease,box-shadow var(--nib-motion-fast) ease,transform var(--nib-motion-fast) ease}
 #nib-proposta .event{transition:transform var(--nib-motion-surface) var(--nib-motion-ease),box-shadow var(--nib-motion-surface) ease,border-color var(--nib-motion-fast) ease}
 #nib-proposta :is(.layout>aside nav a,#mobile-navigation .menu-grid a,.menu-profile-card){transition:background-color var(--nib-motion-fast) ease,box-shadow var(--nib-motion-fast) ease}
 #nib-proposta #mobile-drawer[open],#nib-proposta #notices-dialog[open]{animation:nib-surface-open var(--nib-motion-surface) var(--nib-motion-ease)}
 @keyframes nib-surface-open{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 @media(hover:hover) and (pointer:fine){
- #nib-proposta main button:enabled:not(.quick-action):hover{box-shadow:0 5px 14px #143b6a1a,0 0 0 2px #accbeb40;transform:translateY(-1px)}
+ #nib-proposta main button:enabled:not(.quick-action,.calendar-day):hover{box-shadow:0 5px 14px #143b6a1a,0 0 0 2px #accbeb40;transform:translateY(-1px)}
  #nib-proposta .event:hover{border-color:#9bb9db;box-shadow:0 10px 24px #143b6a1a;transform:translateY(-2px)}
  #nib-proposta :is(.header-icon,.popup-close,#drawer-close,#mobile-back):hover{background:#eaf2fb;border-color:#315f94;box-shadow:0 0 0 3px #accbeb4d}
  #nib-proposta #mobile-navigation .menu-grid a:hover,#nib-proposta .menu-profile-card:hover{background:#eaf2fb;border-radius:14px;box-shadow:inset 0 0 0 1px #b6cbe3}
  #nib-proposta .layout>aside nav a:not([aria-current=page]):hover{background:#17385b;color:#fff}
  #nib-proposta .calendar-grid .calendar-day:hover{transform:translateY(-1px);box-shadow:0 4px 10px #143b6a26}
- #nib-proposta main button:enabled:not(.quick-action):active{transform:none;box-shadow:0 2px 6px #143b6a1a}
+ #nib-proposta .calendar-grid .calendar-day[aria-pressed=true]:hover{box-shadow:0 4px 12px #041e4220,0 0 0 2px #accbeb80}
+ #nib-proposta main button:enabled:not(.quick-action,.calendar-day):active{transform:none;box-shadow:0 2px 6px #143b6a1a}
 }
-@media(hover:none){#nib-proposta :is(.header-icon,.popup-close,#drawer-close,#mobile-back):active{background:#eaf2fb;box-shadow:inset 0 0 0 1px #9bb9db}#nib-proposta main button:enabled:not(.quick-action):active{box-shadow:inset 0 0 0 1px #9bb9db}}
+@media(hover:none){#nib-proposta main .quick-action{transition:transform var(--nib-motion-fast) ease,box-shadow var(--nib-motion-fast) ease}#nib-proposta main .quick-action:active{transform:scale(.98);box-shadow:0 1px 4px #041e4214}}
+@media(hover:none){#nib-proposta :is(.header-icon,.popup-close,#drawer-close,#mobile-back):active{background:#eaf2fb;box-shadow:inset 0 0 0 1px #9bb9db}#nib-proposta main button:enabled:not(.quick-action,.calendar-day):active{box-shadow:inset 0 0 0 1px #9bb9db}}
 @media(prefers-reduced-motion:reduce){
  #nib-proposta :is(button,a,.event,.quick-action::before){transition:none!important}
  #nib-proposta :is(#mobile-drawer[open],#notices-dialog[open]){animation:none}
- #nib-proposta main button,#nib-proposta .event,#nib-proposta .calendar-grid .calendar-day{transform:none!important}
+ #nib-proposta main button,#nib-proposta main .quick-action,#nib-proposta .event,#nib-proposta .calendar-grid .calendar-day{transform:none!important}
 }

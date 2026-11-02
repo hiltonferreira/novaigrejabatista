@@ -201,3 +201,13 @@ Base d9ac72d. Hilton pediu hover desktop mais evidente nos atalhos e estendeu a 
 Botões habilitados, cards de eventos, calendário, cabeçalho, itens de menu e navegação recebem retorno discreto com transições160–200ms; cards elevam2px, ações1px e navegação destaca superfície/contorno. Modais abrem comfade/deslocamento8px em200ms. No toque, feedback de pressão sem hover persistente novo. Preferência prefers-reduced-motion remove transições/animações/elevações; botão desabilitado excluído das novas respostas. Sem alteração de rotas, dados ou fluxos.
 
 Codex:51 testes existentes aprovados. Navegador desktop confirmou estadofocus-visible dos atalhos com mesmo seletor visual dehover, fundo gradiente, halo, transform e shine550ms; captura do estado estabilizado conferida. Revisão CSS cobre escopo de ponteiro/desktop e redução de movimento; não houve emulação de preferência ou teste físico. Sem alegar medição automatizada de hover por ponteiro, pois API usada testou o estado equivalente via teclado. Claude solicitado para revisão delimitada; somente Preview, produção preservada.
+
+## Ajustes da revisão de interações — 02/11/2026
+
+Base 7853ad1. Claude aplicou os pontos menores da revisão delimitada do mesmo head, com autorização de Hilton nesta tarefa.
+
+- Popup: removida a animação antiga `nib-popup-in` e seu `@keyframes`. Fica só `nib-surface-open`, que já era a regra vigente.
+- Calendário: o hover genérico de botões (`main button:enabled:not(...)`) agora exclui `.calendar-day`, então o dia usa o próprio retorno de hover. O dia selecionado mantém a sombra do estado e ganha um halo claro ao passar o mouse.
+- Toque: em `hover:none`, os atalhos da inicial recebem pressão (`scale(.98)`, 160 ms). A regra de movimento reduzido também zera `transform` dos atalhos.
+
+Verificado: 51 testes existentes aprovados; Chromium sem erros de console, sem overflow em 390 e 1280 px; dia selecionado sob hover mantém fundo navy e sombra com halo; transição de toque aplicada em 390 px com toque emulado. Sem teste em aparelho físico. Produção preservada.
