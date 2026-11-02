@@ -573,10 +573,10 @@ html{scrollbar-gutter:stable}
 /* Abertura do aplicativo: logo animada do site, texto entrando por letras e zoom out fluido. */
 #nib-proposta .app-splash{position:fixed;inset:0;z-index:1000;display:flex;flex-direction:column;align-items:center;justify-content:center;padding-bottom:9vh;overflow:hidden;background:#041e42;color:#fff;cursor:pointer}
 #nib-proposta .app-splash[hidden]{display:none}
-#nib-proposta .splash-lockup{display:flex;align-items:center;gap:12px;transform-origin:50% 50%}
-#nib-proposta .splash-logo{display:block;width:clamp(100px,27vw,156px);height:auto}
-#nib-proposta .splash-divider{align-self:stretch;width:1px;margin:4px 0;background:#ffffff59}
-#nib-proposta .splash-text{display:flex;flex-direction:column;justify-content:center;gap:5px;white-space:nowrap}
+#nib-proposta .splash-lockup{--splash-logo:clamp(116px,32vw,180px);display:flex;align-items:center;gap:13px;transform-origin:50% 50%}
+#nib-proposta .splash-logo{display:block;width:var(--splash-logo);height:auto}
+#nib-proposta .splash-divider{align-self:stretch;width:1px;margin:calc(var(--splash-logo) * .06) 0 calc(var(--splash-logo) * .03);background:#ffffff59}
+#nib-proposta .splash-text{position:relative;top:calc(var(--splash-logo) * .026);display:flex;flex-direction:column;justify-content:center;gap:5px;white-space:nowrap}
 #nib-proposta .splash-title{font:700 clamp(16px,4.6vw,25px)/1 var(--nib-font);letter-spacing:-.01em}
 #nib-proposta .splash-sub{font:500 clamp(8px,2.25vw,11px)/1 var(--nib-font);letter-spacing:.14em;text-transform:uppercase;color:#c9d8ec}
 #nib-proposta .splash-text .ch{display:inline-block;white-space:pre}
@@ -619,7 +619,7 @@ html{scrollbar-gutter:stable}
 @media(hover:hover) and (pointer:fine){#nib-proposta .social-card{transition:transform var(--nib-motion-surface) var(--nib-motion-ease),box-shadow var(--nib-motion-surface) ease}#nib-proposta .social-card:hover{transform:translateY(-3px);box-shadow:0 14px 30px #041e4229}}
 @media(prefers-reduced-motion:reduce){#nib-proposta .social-card{transition:none}#nib-proposta .social-card:hover{transform:none}#nib-proposta .social-dots span{transition:none}}
 
-@media(max-width:350px){#nib-proposta .splash-lockup{gap:10px}#nib-proposta .splash-logo{width:92px}#nib-proposta .splash-title{font-size:15px}#nib-proposta .splash-sub{font-size:7.5px}}
+@media(max-width:350px){#nib-proposta .splash-lockup{gap:10px;--splash-logo:104px}#nib-proposta .splash-title{font-size:15px}#nib-proposta .splash-sub{font-size:7.5px}}
 
 /* Versículo do dia: cartão azul NIB com brasão em marca d'água, aspas em laranja e ação de compartilhar. */
 #nib-proposta .daily-verse{position:relative;overflow:hidden;isolation:isolate;padding:24px 24px 20px;border:0;border-radius:22px;color:#fff;background:radial-gradient(120% 90% at 0% 0%,#1d4a86 0%,#0b2d5c 45%,#041e42 100%);box-shadow:0 14px 34px #041e4226;backdrop-filter:none;-webkit-backdrop-filter:none}
