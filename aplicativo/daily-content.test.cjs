@@ -1,0 +1,10 @@
+const {test}=require('node:test');
+const assert=require('node:assert/strict');
+const vm=require('node:vm');
+const fs=require('node:fs');
+const context={Intl,Date};vm.createContext(context);vm.runInContext(fs.readFileSync(__dirname+'/daily-content.js','utf8'),context);
+const daily=context.NibDaily;
+test('Dia muda à meia-noite de Porto Velho, não à meia-noite UTC',()=>{assert.equal(daily.dayKey(new Date('2026-11-02T03:59:00Z')),'2026-11-01');assert.equal(daily.dayKey(new Date('2026-11-02T04:00:00Z')),'2026-11-02');});
+test('Versículo é estável por dia e tem texto e referência',()=>{const a=daily.verseForDay('2026-11-01');assert.equal(JSON.stringify(a),JSON.stringify(daily.verseForDay('2026-11-01')));assert.ok(a[0].length>10 && a[1].includes(':'));});
+test('Agenda trata virada de ano sem incluir datas passadas',()=>{const items=daily.agenda('2026-12-31');assert.ok(items.length>0);assert.ok(items.every(x=>x.day>='2026-12-31'));assert.ok(items.some(x=>x.day.startsWith('2027-01')));assert.ok(items.some(x=>x.name==='Culto da Fé'&&x.time==='19:30'));});
+test('NXT inclui dois dias e sai da agenda após a data',()=>{assert.equal(daily.agenda('2026-11-01').filter(x=>x.name==='NXT CAMP').length,2);assert.equal(daily.agenda('2026-11-23').filter(x=>x.name==='NXT CAMP').length,0);});
