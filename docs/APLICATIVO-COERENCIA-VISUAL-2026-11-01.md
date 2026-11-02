@@ -187,3 +187,9 @@ Base286ff6b. Pedido novo de Hilton substitui o tratamento anterior do banner: so
 Agenda agora segue o cabeçalho deCaderno: título e ação fora do card que contém encontros, comVer calendário completo alinhado à direita e white-spacenowrap. Flexwrap permite que o botão vá para linha própria em telas estreitas, conservando o texto em uma única linha e evitando overflow. Destino calendário completo preservado.
 
 Codex verificou sintaxe e51testes(removidos2pares de contraste do painelvidro que deixou de existir). Navegador320/390: imagem carregada2048px, filter:none, texto vazio, before/after:none; botão fora do card, nowrap,18px acima do card em320; semoverflow(client305/scroll305). Captura conferida. Claude solicitado para revisão; somente Preview/staging, produção preservada.
+
+## Card de evento no formato original — 02/11/2026
+
+Base7a38686. Hilton rejeitou as tentativas horizontais de compactação: pediu formato original do painel, apenas mais baixo sem distorcer banner. Inicial retorna ao card vertical: imagem em toda largura no topo, status/data, título e botão navy abaixo. Removida composição em grid/thumbnail. Altura reduzida nos espaçamentos14x16/gaps8 e conteúdo resumido, sem descrição repetitiva. Imagemwidth100/heightauto/aspectratioauto, sem corte ou esticamento; acervo original preservado. Catálogo completo permanece intacto.
+
+Codex:51 testes existentes aprovados. Navegador390: card inicial308,8px versus catálogo391,5px(~21%menor); banner render337x168,5, proporção2:1 idêntica ao arquivo1440x720.320semoverflow(client305/scroll305). Captura em320/390 conferida. Sem teste físico. Codex implementa/testa/publica Preview; Claude solicitado para revisão; Hilton valida. Produção preservada.
