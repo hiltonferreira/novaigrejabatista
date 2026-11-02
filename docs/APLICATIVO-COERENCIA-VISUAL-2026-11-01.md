@@ -90,3 +90,8 @@ Cada um dos5ícones da barra tem variante SVG sólida própria quando selecionad
 ## Cards na inicial e menu compacto — preferência mais recente de Hilton
 
 Base2614813. Os cards detalhados com ícone, título e descrição passam para a inicial mobile, em duas colunas e último acesso em largura total. O menu em tela inteira mantém grupos, mas usa blocos compactos com ícone e nome, sem descrição/sombra, em duas colunas ou uma em até350px. Estado Atual/aria-current preservado. Desktop e regras/dados inalterados. Codex implementa e verifica; Claude revisa no PR12; Hilton valida visualmente. Sintaxe e30 verificações passaram; conferir navegação no browser antes de entregar Preview.
+
+
+## Inicial neutra e menu em lista
+
+Solicitação mais recente de Hilton, base4bcd0fa: retirar destaque permanente do atalho Eventos na inicial, compactar cards e organizar menu como lista. Removidas as três regras especiais de Eventos; cards mobile padding15/14, gap9, ícone32px e mínimo138px. Menu permanece em tela inteira, grupos preservados, uma coluna com linhas de56px, ícone/nome/Atual, sem borda nos itens inativos. Hover de toque nos cards retorna à aparência neutra para não sugerir seleção persistente. Seleção de tela continua apenas na navegação. Codex implementa; revisãoClaude via PR12; Hilton valida. Produção/dados inalterados.
