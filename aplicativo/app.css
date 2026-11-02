@@ -623,8 +623,8 @@ html{scrollbar-gutter:stable}
 
 /* Versículo do dia: cartão azul NIB com brasão em marca d'água, aspas em laranja e ação de compartilhar. */
 #nib-proposta .daily-verse{position:relative;overflow:hidden;isolation:isolate;padding:24px 24px 20px;border:0;border-radius:22px;color:#fff;background:radial-gradient(120% 90% at 0% 0%,#1d4a86 0%,#0b2d5c 45%,#041e42 100%);box-shadow:0 14px 34px #041e4226;backdrop-filter:none;-webkit-backdrop-filter:none}
-#nib-proposta .daily-verse::after{content:"";position:absolute;right:-56px;bottom:-62px;z-index:-1;width:270px;height:295px;background:url("assets/brasao-branco.png") no-repeat center/contain;opacity:.12;filter:blur(3px);transform:rotate(-8deg);pointer-events:none}
-@media(min-width:821px){#nib-proposta .daily-verse::after{width:320px;height:350px;right:-40px;bottom:-110px}}
+#nib-proposta .daily-verse::after{content:"";position:absolute;right:-96px;bottom:-62px;z-index:-1;width:270px;height:295px;background:url("assets/brasao-branco.png") no-repeat center/contain;opacity:.12;filter:blur(3px);transform:rotate(-8deg);pointer-events:none}
+@media(min-width:821px){#nib-proposta .daily-verse::after{width:320px;height:350px;right:-80px;bottom:-110px}}
 #nib-proposta .verse-top{display:flex;align-items:center;gap:10px;margin-bottom:14px}
 #nib-proposta .verse-icon{display:grid;place-items:center;width:32px;height:32px;border-radius:10px;background:#ffffff1a;color:#ffb38a}
 #nib-proposta .verse-icon svg{width:18px;height:18px}
