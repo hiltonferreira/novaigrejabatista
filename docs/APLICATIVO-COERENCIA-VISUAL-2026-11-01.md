@@ -169,3 +169,13 @@ Versículo agora vidro azul suave com gradientes translúcidos, blur20/saturaç�
 Card de evento na inicial: grid com banner inteiro em thumbnail, status/data alinhados, título e botão em linha própria. Padding18px(16em320), contorno claro, radius22 e sombra suave. Sem recorte novo de banner;object-fitcontain. Compacto, altura174px em390, mantendo evento menos dominante que os acessos. Catálogo completo preservado.
 
 Codex verificou sintaxe+51testes. Navegador320/390: Calendário da barra abre30diasnovembro e fica selecionado; Eventos abre3cards e fica selecionado; Início retorna ao texto correto; versículo21px; card339x174px em390, imagemcontain;320semoverflow(client305/scroll305). Sem validação em aparelho físico. Claude solicitado para revisão do head; Hilton valida aparência. Somente Preview/staging; produção/inscrições/dados reais preservados.
+
+## Unificação de oração e banner da igreja — 02/11/2026
+
+Base42624b9, mesma branch de teste/PR12. Hilton decidiu unificar Pedido de oração e Caderno de oração: removida tela separada de envio, formulário/handlerprayer-form e entrada duplicada no menu. Atalho inicial passa a Caderno de oração e abre diretamente mural/formulário existente. Destino interno legadooracao redireciona paracaderno. Mural, apoios e publicações continuam somente memória/sem compartilhamento real nesta fase.
+
+Referência do versículo(cite) alinhada à direita. Entre atalhos e agenda incluído banner com img/hero-nib.webp original do site(cópiaaplicativo/assets/hero-nib.webp, blob785b34bbc489eca1a84bd020fab06252920424f9,223070bytes). Sem modificar a imagem original: composição CSS com blur2px, camada navy e painel de vidroblur14, fallbackopaco. Frase reaproveitada da hero do site: “Uma igreja que vive o amor de Cristo de casa em casa.”. Imagem decorativa, seção nomeada pelo título.
+
+Cabeçalho da agenda reorganizado em grid: rótulo à esquerda e botãoVer calendário completo no canto superior direito, título na linha seguinte em largura total. Mantém destinoagenda e alvo44px, sem sobreposição nas larguras estreitas.
+
+Codex verificou sintaxe e53testes de cores/integridade/data/calendário(2novos pares para vidro sobre pior fundo composto). Navegador320/390: cite text-alignright; atalho abreCaderno/formnotebook1/prayer-form0; menuCaderno1/Pedidodeoração0; botãoagenda23pxdastop/rightdo bloco390;320semoverflow(client305/scroll305). Captura visual conferida com banner original carregado. Sem teste físico. Claude solicitado para revisão; Hilton valida Preview. Produção e dados reais preservados.
