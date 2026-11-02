@@ -570,21 +570,33 @@ html{scrollbar-gutter:stable}
  #nib-proposta main button,#nib-proposta main .quick-action,#nib-proposta .event,#nib-proposta .calendar-grid .calendar-day{transform:none!important}
 }
 
-/* Abertura do aplicativo: marca branca sobre azul NIB, antes do acesso. */
-#nib-proposta .app-splash{position:fixed;inset:0;z-index:1000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:64px;background:radial-gradient(120% 80% at 50% 35%,#0b2d5c 0%,#041e42 62%,#03152f 100%);color:#fff;cursor:pointer}
+/* Abertura do aplicativo: logo animada do site, texto entrando por letras e zoom out fluido. */
+#nib-proposta .app-splash{position:fixed;inset:0;z-index:1000;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;background:#041e42;color:#fff;cursor:pointer}
 #nib-proposta .app-splash[hidden]{display:none}
-#nib-proposta .splash-mark{display:flex;flex-direction:column;align-items:center;gap:14px}
-#nib-proposta .splash-mark img{display:block;width:min(52vw,220px);height:auto}
-#nib-proposta .splash-name{font:600 13px/1 var(--nib-font);letter-spacing:.22em;text-transform:uppercase;color:#c9d8ec}
-#nib-proposta .splash-spinner{width:30px;height:30px;border-radius:50%;border:2.5px solid #ffffff33;border-top-color:#fff}
-#nib-proposta .app-splash.is-playing .splash-mark img{animation:nib-splash-logo .9s cubic-bezier(.2,.7,.2,1) both}
-#nib-proposta .app-splash.is-playing .splash-name{animation:nib-splash-fade .6s ease .45s both}
-#nib-proposta .app-splash.is-playing .splash-spinner{animation:nib-splash-fade .4s ease .8s both,nib-splash-spin .9s linear infinite}
-#nib-proposta .app-splash.is-leaving{opacity:0;transition:opacity .45s ease;pointer-events:none}
-@keyframes nib-splash-logo{from{opacity:0;transform:translateY(12px) scale(.92)}to{opacity:1;transform:none}}
+#nib-proposta .splash-lockup{display:flex;align-items:center;gap:14px;transform-origin:50% 50%}
+#nib-proposta .splash-logo{display:block;width:clamp(112px,31vw,150px);height:auto}
+#nib-proposta .splash-divider{align-self:stretch;width:1px;margin:4px 0;background:#ffffff59}
+#nib-proposta .splash-text{display:flex;flex-direction:column;justify-content:center;gap:5px;white-space:nowrap}
+#nib-proposta .splash-title{font:700 clamp(19px,5.4vw,24px)/1 var(--nib-font);letter-spacing:-.01em}
+#nib-proposta .splash-sub{font:500 clamp(10px,2.9vw,12px)/1 var(--nib-font);letter-spacing:.14em;text-transform:uppercase;color:#c9d8ec}
+#nib-proposta .splash-text .ch{display:inline-block;white-space:pre}
+#nib-proposta .splash-progress{position:absolute;left:50%;bottom:calc(72px + env(safe-area-inset-bottom));width:132px;height:4px;margin-left:-66px;border-radius:4px;background:#ffffff24;overflow:hidden}
+#nib-proposta .splash-progress span{position:absolute;inset:0;border-radius:inherit;background:linear-gradient(90deg,#6f9fd8,#fff);box-shadow:0 0 10px #ffffff80;transform:scaleX(0);transform-origin:0 50%}
+#nib-proposta .splash-progress span::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,#ffffffcc,transparent);transform:translateX(-100%)}
+#nib-proposta .app-splash.is-playing .splash-lockup{animation:nib-splash-zoom 2.3s cubic-bezier(.16,1,.3,1) both}
+#nib-proposta .app-splash.is-playing .splash-divider{animation:nib-splash-fade .5s ease 1.3s both}
+#nib-proposta .app-splash.is-playing .splash-text .ch{animation:nib-splash-letter .5s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(1.5s + var(--i) * 32ms)}
+#nib-proposta .app-splash.is-playing .splash-sub .ch{animation-delay:calc(1.95s + var(--i) * 22ms)}
+#nib-proposta .app-splash.is-playing .splash-progress{animation:nib-splash-fade .3s ease .2s both}
+#nib-proposta .app-splash.is-playing .splash-progress span{animation:nib-splash-load 3s cubic-bezier(.45,.05,.25,1) .3s both}
+#nib-proposta .app-splash.is-playing .splash-progress span::after{animation:nib-splash-shine 1.1s ease-in-out .6s 3}
+#nib-proposta .app-splash.is-leaving{opacity:0;transform:scale(1.03);transition:opacity .5s ease,transform .5s ease;pointer-events:none}
+@keyframes nib-splash-zoom{from{transform:scale(1.9)}to{transform:scale(1)}}
+@keyframes nib-splash-letter{from{opacity:0;transform:translateY(.45em);filter:blur(3px)}to{opacity:1;transform:none;filter:none}}
 @keyframes nib-splash-fade{from{opacity:0}to{opacity:1}}
-@keyframes nib-splash-spin{to{transform:rotate(360deg)}}
-@media(prefers-reduced-motion:reduce){#nib-proposta .app-splash.is-playing :is(.splash-mark img,.splash-name){animation:none}#nib-proposta .app-splash.is-playing .splash-spinner{animation:none;display:none}#nib-proposta .app-splash.is-leaving{transition:none}}
+@keyframes nib-splash-load{0%{transform:scaleX(0)}35%{transform:scaleX(.45)}70%{transform:scaleX(.8)}100%{transform:scaleX(1)}}
+@keyframes nib-splash-shine{to{transform:translateX(100%)}}
+@media(prefers-reduced-motion:reduce){#nib-proposta .app-splash.is-playing :is(.splash-lockup,.splash-divider,.splash-text .ch,.splash-progress,.splash-progress span::after){animation:none}#nib-proposta .app-splash.is-playing .splash-progress span{animation:none;transform:none}#nib-proposta .app-splash.is-leaving{transition:none;transform:none}}
 
 /* Banners das redes: foto, chapéu, título forte e caixa azul translúcida. */
 #nib-proposta .social-banners{margin:28px 0 0}

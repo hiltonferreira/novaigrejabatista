@@ -220,3 +220,14 @@ Pedido de Hilton, com vídeo de referência de outro aplicativo (padrões genér
 - **Banners das redes:** o banner único da hero foi substituído por "A NIB nas redes", com três cards (Instagram, YouTube e Facebook @nibcasadedeus, links oficiais já usados no site). Fotos da galeria do site recortadas em 5:6 e convertidas para WebP 640×768 (`assets/social-*.webp`). No celular, carrossel com snap, próximo card aparecendo e indicadores; no desktop, três cards lado a lado. Links abrem em nova aba e têm `aria-label` completo.
 
 Verificado: 51 testes existentes aprovados, sintaxe do `app.js` válida. Chromium sem erros de console; sem overflow em 390 px; indicadores acompanham a rolagem; abertura some e não reaparece ao recarregar a mesma aba. Sem teste em aparelho físico.
+
+## Abertura com a logo animada do site — 02/11/2026
+
+Hilton pediu a animação da logo usada no site (`video/brasao-nib-alpha.webm`, seção "Somos a"), menor e na proporção da referência, com texto principal "Plataforma Nib" ao lado e "Nova Igreja Batista" abaixo, letras entrando, zoom inicial com zoom out fluido e barra de carregamento melhor.
+
+- O vídeo com transparência foi convertido para WebP animado com alfa (`assets/splash-logo.webp`, 300×113, 48 quadros, cerca de 280 KB, toca uma vez e para no último quadro). WebM com alfa não funciona no Safari do iPhone, e o WebP animado funciona sem depender de autoplay. O último quadro fica em `assets/splash-logo-final.png` para quem usa movimento reduzido.
+- Conjunto logo, divisória e texto começa em escala 1,9 e reduz até 1 em 2,3 s (`cubic-bezier(.16,1,.3,1)`). As letras do título entram uma a uma a partir de 1,5 s, e as do subtítulo a partir de 1,95 s, com subida curta e desfoque saindo. As letras são montadas por DOM com `style.setProperty`, compatível com a CSP `style-src 'self'`.
+- Barra de carregamento: trilho de 132×4 px, preenchimento em degradê azul claro para branco com brilho, progresso em etapas suaves por 3 s e reflexo passando.
+- Duração total de cerca de 3,5 s, com saída em fade de 0,5 s. Toque encerra antes. Uma vez por aba. Removida a `logo-branco.svg` da versão anterior.
+
+Verificado: 51 testes aprovados, sem erros de console, capturas em 390 px a 0,15, 0,7, 1,4, 1,9, 2,6 e 3,3 s conferidas. Sem teste em iPhone físico.

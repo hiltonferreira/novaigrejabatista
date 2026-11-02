@@ -300,8 +300,12 @@
     let seen = false;
     try { seen = sessionStorage.getItem('nib-splash') === '1'; sessionStorage.setItem('nib-splash','1'); } catch (_) {}
     const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const finish = () => { if (splash.hidden) return; splash.classList.add('is-leaving'); setTimeout(() => { splash.hidden = true; }, reduced ? 0 : 450); };
+    const finish = () => { if (splash.hidden) return; splash.classList.add('is-leaving'); setTimeout(() => { splash.hidden = true; }, reduced ? 0 : 500); };
     if (seen) splash.hidden = true;
-    else { splash.classList.add('is-playing'); splash.addEventListener('click', finish); setTimeout(finish, reduced ? 700 : 2300); }
+    else {
+      splash.querySelectorAll('[data-letters]').forEach(el => { const chars = [...el.textContent]; el.textContent = ''; chars.forEach((c,i) => { const ch = document.createElement('span'); ch.className = 'ch'; ch.textContent = c; ch.style.setProperty('--i', i); el.append(ch); }); });
+      if (reduced) splash.querySelector('.splash-logo').src = 'assets/splash-logo-final.png';
+      splash.classList.add('is-playing'); splash.addEventListener('click', finish); setTimeout(finish, reduced ? 900 : 3500);
+    }
   }
 })();
