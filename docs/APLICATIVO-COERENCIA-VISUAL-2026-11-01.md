@@ -249,3 +249,7 @@ Ajuste seguinte, após teste de Hilton no iPhone:
 - A foto não preenchia o lado direito porque a regra base de imagens limita `max-width` a 100%. O fundo do card agora usa `max-width:none`, e as fotos foram recortadas já na proporção da área de paralaxe (132% da largura do card em 8:9), com os rostos abaixo da área do título.
 - Títulos mais curtos e maiores, como na referência (32 px, até 10 caracteres por linha): "A NIB no dia a dia", "Cultos e mensagens", "Nossa família reunida".
 - Abertura: o conjunto subiu para o centro óptico (cerca de 45% da altura) e ficou um pouco menor, com mais respiro nas laterais. Logo e texto têm o mesmo centro vertical.
+
+Ajuste seguinte, comparando com capturas da referência enviadas por Hilton:
+- Banners mais próximos da referência: card com 84% da largura no celular, foto clara (só um leve escurecimento no topo, sem o véu azul), chapéu de 16 px, título de 32 px em três linhas ("Acompanhe a NIB no dia a dia", "Cultos e mensagens na íntegra", "Uma família que acolhe você"), caixa em azul vivo translúcido com texto de 16 px e chamada em negrito com exclamação ("Siga agora!", "Assista agora!", "Convide alguém!"). Recortes refeitos com os rostos abaixo do título e acima da caixa; o Facebook passou a usar a foto da equipe de recepção.
+- Abertura: conjunto logo e texto menor (logo até 156 px, título até 25 px), com mais distância das bordas.
