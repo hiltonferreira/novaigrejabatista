@@ -534,39 +534,12 @@ html{scrollbar-gutter:stable}
 #nib-proposta .home-agenda>.section-heading>button{white-space:nowrap;flex:0 0 auto;margin-left:auto;max-width:none;min-height:44px;padding:11px 18px;font-size:12px}
 #nib-proposta .home-agenda>.agenda-content{margin:0}
 
-/* Atalhos desktop: brilho, elevação e contorno dão retorno claro à interação. */
+/* Interação do site institucional: preenchimento azul e texto branco em250ms. */
 @media(min-width:821px) and (hover:hover) and (pointer:fine){
- #nib-proposta main .quick-action{position:relative;isolation:isolate;overflow:hidden;transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease;background:#fff}
- #nib-proposta main .quick-action>*{position:relative;z-index:1}
- #nib-proposta main .quick-action::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;background:linear-gradient(110deg,transparent 22%,#ffffffc7 48%,transparent 74%);transform:translateX(-120%);transition:transform .55s ease}
- #nib-proposta main .quick-action:is(:hover,:focus-visible){background:linear-gradient(135deg,#f7fbff,#e5eefb);border-color:#315f94;color:#041e42;transform:translateY(-4px);box-shadow:0 12px 26px #143b6a24,0 0 0 3px #accbeb4d,inset 0 1px 0 #fff}
- #nib-proposta main .quick-action:is(:hover,:focus-visible)::before{transform:translateX(120%)}
- #nib-proposta main .quick-action:is(:hover,:focus-visible) strong{color:#041e42}
- #nib-proposta main .quick-action:is(:hover,:focus-visible) .home-action-description{color:#435d7b}
- #nib-proposta main .quick-action:active{transform:translateY(-1px);box-shadow:0 4px 12px #143b6a20,0 0 0 2px #accbeb4d}
+ #nib-proposta main .quick-action{background:#fff;color:#041e42;transition:background-color .25s ease,border-color .25s ease,color .25s ease;transform:none;box-shadow:none}
+ #nib-proposta main .quick-action::before{content:none}
+ #nib-proposta main .quick-action:is(:hover,:focus-visible,:active){background:#041e42;border-color:#041e42;color:#fff;transform:none;box-shadow:none}
+ #nib-proposta main .quick-action:is(:hover,:focus-visible,:active) strong,#nib-proposta main .quick-action:is(:hover,:focus-visible,:active) .home-action-description{color:#fff}
 }
-@media(prefers-reduced-motion:reduce){#nib-proposta main .quick-action,#nib-proposta main .quick-action::before{transition:none}#nib-proposta main .quick-action:is(:hover,:focus-visible,:active){transform:none}#nib-proposta main .quick-action::before{display:none}}
-
-/* Movimento coerente: respostas curtas, sem deslocar o conteúdo da tela. */
-#nib-proposta{--nib-motion-fast:160ms;--nib-motion-surface:200ms;--nib-motion-ease:cubic-bezier(.2,.7,.2,1)}
-#nib-proposta :is(.header-icon,.popup-close,#drawer-close,#mobile-back,.bottom-bar a){transition:background-color var(--nib-motion-fast) ease,border-color var(--nib-motion-fast) ease,box-shadow var(--nib-motion-fast) ease}
-#nib-proposta main button:enabled:not(.quick-action){transition:background-color var(--nib-motion-fast) ease,color var(--nib-motion-fast) ease,border-color var(--nib-motion-fast) ease,box-shadow var(--nib-motion-fast) ease,transform var(--nib-motion-fast) ease}
-#nib-proposta .event{transition:transform var(--nib-motion-surface) var(--nib-motion-ease),box-shadow var(--nib-motion-surface) ease,border-color var(--nib-motion-fast) ease}
-#nib-proposta :is(.layout>aside nav a,#mobile-navigation .menu-grid a,.menu-profile-card){transition:background-color var(--nib-motion-fast) ease,box-shadow var(--nib-motion-fast) ease}
-#nib-proposta #mobile-drawer[open],#nib-proposta #notices-dialog[open]{animation:nib-surface-open var(--nib-motion-surface) var(--nib-motion-ease)}
-@keyframes nib-surface-open{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-@media(hover:hover) and (pointer:fine){
- #nib-proposta main button:enabled:not(.quick-action):hover{box-shadow:0 5px 14px #143b6a1a,0 0 0 2px #accbeb40;transform:translateY(-1px)}
- #nib-proposta .event:hover{border-color:#9bb9db;box-shadow:0 10px 24px #143b6a1a;transform:translateY(-2px)}
- #nib-proposta :is(.header-icon,.popup-close,#drawer-close,#mobile-back):hover{background:#eaf2fb;border-color:#315f94;box-shadow:0 0 0 3px #accbeb4d}
- #nib-proposta #mobile-navigation .menu-grid a:hover,#nib-proposta .menu-profile-card:hover{background:#eaf2fb;border-radius:14px;box-shadow:inset 0 0 0 1px #b6cbe3}
- #nib-proposta .layout>aside nav a:not([aria-current=page]):hover{background:#17385b;color:#fff}
- #nib-proposta .calendar-grid .calendar-day:hover{transform:translateY(-1px);box-shadow:0 4px 10px #143b6a26}
- #nib-proposta main button:enabled:not(.quick-action):active{transform:none;box-shadow:0 2px 6px #143b6a1a}
-}
-@media(hover:none){#nib-proposta :is(.header-icon,.popup-close,#drawer-close,#mobile-back):active{background:#eaf2fb;box-shadow:inset 0 0 0 1px #9bb9db}#nib-proposta main button:enabled:not(.quick-action):active{box-shadow:inset 0 0 0 1px #9bb9db}}
-@media(prefers-reduced-motion:reduce){
- #nib-proposta :is(button,a,.event,.quick-action::before){transition:none!important}
- #nib-proposta :is(#mobile-drawer[open],#notices-dialog[open]){animation:none}
- #nib-proposta main button,#nib-proposta .event,#nib-proposta .calendar-grid .calendar-day{transform:none!important}
-}
+@media(hover:hover) and (pointer:fine){#nib-proposta main button:enabled:not(.quick-action){transition:background-color .25s ease,border-color .25s ease,color .25s ease}}
+@media(prefers-reduced-motion:reduce){#nib-proposta main button,#nib-proposta main .quick-action{transition:none}}

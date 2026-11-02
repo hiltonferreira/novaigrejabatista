@@ -201,3 +201,11 @@ Base d9ac72d. Hilton pediu hover desktop mais evidente nos atalhos e estendeu a 
 Botões habilitados, cards de eventos, calendário, cabeçalho, itens de menu e navegação recebem retorno discreto com transições160–200ms; cards elevam2px, ações1px e navegação destaca superfície/contorno. Modais abrem comfade/deslocamento8px em200ms. No toque, feedback de pressão sem hover persistente novo. Preferência prefers-reduced-motion remove transições/animações/elevações; botão desabilitado excluído das novas respostas. Sem alteração de rotas, dados ou fluxos.
 
 Codex:51 testes existentes aprovados. Navegador desktop confirmou estadofocus-visible dos atalhos com mesmo seletor visual dehover, fundo gradiente, halo, transform e shine550ms; captura do estado estabilizado conferida. Revisão CSS cobre escopo de ponteiro/desktop e redução de movimento; não houve emulação de preferência ou teste físico. Sem alegar medição automatizada de hover por ponteiro, pois API usada testou o estado equivalente via teclado. Claude solicitado para revisão delimitada; somente Preview, produção preservada.
+
+## Hover do site institucional — substitui efeitos anteriores
+
+Hilton rejeitou a proposta de brilho/halo/elevação do head7853ad1 e pediu padrão já usado no site. Reaproveitado comportamento .btn-ghost/.btn do index.html: preenchimento azul, texto branco e transição250ms. Nos atalhos desktop, mesmo estado parafocus-visible, com contorno de teclado preservado. Removidos bloco de brilho deslizante, halo, transform e toda a expansão de animações adicionada na última rodada. Botões habilitados usam apenas transição curta de cor/contorno; demais componentes voltam ao acabamento anterior. Sem marfim novo ou alteração de layout/rotas.
+
+51 testes existentes aprovados. Inspeção visual deste head NÃO executada: abertura do Preview interno no navegador foi rejeitada pela revisão automática por limite de uso; nenhuma tentativa alternativa de navegador foi feita. Publicação segue pelo fluxo autorizado GitHub/Vercel, conferindo estado do deployment. Pedido de reposicionar barra de carregamento foi cancelado por Hilton, pois estava sendo tratado no Claude; nenhum componente de carregamento foi criado ou alterado.
+
+Codex implementa/testa/publica somente staging; Claude recebe revisão delimitada; Hilton valida visualmente no link. Produção preservada.
