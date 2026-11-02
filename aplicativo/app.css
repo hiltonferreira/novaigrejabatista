@@ -280,3 +280,42 @@ html{scrollbar-gutter:stable}
  #nib-proposta main .quick-action:hover .home-action-description{color:#536176}
  #nib-proposta main .quick-action:hover .home-action-icon{color:#041e42;background:#eef1f4}
 }
+
+/* Acabamento NIB: vidro claro, camadas suaves e avisos em popup. */
+#nib-proposta{--nib-glass:#fffffff0;--nib-shadow-soft:0 6px 22px #041e420a;--nib-shadow-float:0 12px 40px #041e421c}
+#nib-proposta .box,#nib-proposta .event{box-shadow:var(--nib-shadow-soft)}
+#nib-proposta #notices-dialog{box-sizing:border-box;position:fixed;inset:0;margin:auto;width:min(460px,calc(100% - 32px));max-height:calc(100dvh - 48px);padding:0;border:1px solid #dce3eb;border-radius:28px;background:#fff;color:#041e42;box-shadow:0 28px 90px #041e4238;overflow-y:auto;overscroll-behavior:contain}
+#nib-proposta #notices-dialog::backdrop{background:#041e425c;backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px)}
+#nib-proposta .popup-heading{position:relative;padding:28px 26px 24px;border-bottom:1px solid #dce3eb;background:linear-gradient(145deg,#fff,#eef2f7)}
+#nib-proposta .popup-kicker{font-size:10px;font-weight:600;letter-spacing:.15em;color:#536176;display:block;margin:0 50px 12px 0}
+#nib-proposta .popup-heading h2{font-size:28px;line-height:1.2;margin:0 48px 12px 0;letter-spacing:-.03em}
+#nib-proposta .popup-heading p{font-size:14px;color:#536176;line-height:1.6;margin:0;max-width:30ch}
+#nib-proposta .popup-close{position:absolute;right:20px;top:20px;display:grid;place-items:center;width:44px;height:44px;padding:10px;border:1px solid #65768e;border-radius:50%;color:#041e42;background:#fff;cursor:pointer}
+#nib-proposta .popup-close svg{width:20px;height:20px}
+#nib-proposta .notices-empty{text-align:center;padding:30px 26px 26px}
+#nib-proposta .notices-symbol{display:grid;place-items:center;width:68px;height:68px;margin:0 auto 20px;border-radius:22px;background:linear-gradient(150deg,#eef2f7,#fff);border:1px solid #dce3eb;box-shadow:0 6px 18px #041e4208;color:#041e42}
+#nib-proposta .notices-symbol svg{width:30px;height:30px}
+#nib-proposta .notices-empty h3{font-size:18px;font-weight:600;line-height:1.4;margin:0 0 10px;text-align:center}
+#nib-proposta .notices-empty p{font-size:14px;color:#536176;line-height:1.6;margin:0 auto;max-width:30ch}
+#nib-proposta .popup-actions{padding:0 24px 24px}
+#nib-proposta .popup-actions button{display:block;width:100%;min-height:48px;padding:12px 18px;border:1px solid #041e42;border-radius:999px;background:#041e42;color:#fff;font:600 14px/1.4 var(--nib-font);cursor:pointer}
+@media(max-width:820px){
+ #nib-proposta>header{background:#fff;border-bottom:1px solid #dce3eb;box-shadow:0 4px 20px #041e4206}
+ #nib-proposta .bottom-bar:not([hidden]){background:#fff;box-shadow:var(--nib-shadow-float);border-color:#dce3eb}
+ #nib-proposta .header-icon{box-shadow:inset 0 1px 0 #fff,0 3px 10px #041e4206}
+ #nib-proposta main .quick-action{background:linear-gradient(145deg,#fff,#fafbfd);box-shadow:0 4px 14px #041e420a,inset 0 1px 0 #fff;transition:transform .18s ease,box-shadow .18s ease}
+ #nib-proposta main .quick-action .home-action-icon{background:linear-gradient(145deg,#eef2f7,#fff);border:1px solid #dce3eb;box-shadow:0 2px 5px #041e4205}
+ #nib-proposta #mobile-drawer{background:linear-gradient(160deg,#f8fafc,#f1f4f8)}
+ #nib-proposta .drawer-heading{position:sticky;top:0;z-index:1;background:#f6f8fb;padding-top:4px}
+ #nib-proposta #mobile-navigation .menu-grid a{transition:background-color .18s ease}
+ #nib-proposta #mobile-navigation .menu-grid a[aria-current=page]{box-shadow:0 4px 12px #041e421a}
+ #nib-proposta #notices-dialog{inset:auto 0 0;margin:0 auto calc(12px + env(safe-area-inset-bottom));width:calc(100% - 24px);max-width:460px;max-height:calc(100dvh - 32px - env(safe-area-inset-top) - env(safe-area-inset-bottom));border-radius:28px;animation:nib-popup-in .2s ease-out}
+}
+@supports ((backdrop-filter:blur(20px)) or (-webkit-backdrop-filter:blur(20px))){
+ @media(max-width:820px){#nib-proposta>header,#nib-proposta .bottom-bar:not([hidden]){background:var(--nib-glass);backdrop-filter:blur(20px) saturate(135%);-webkit-backdrop-filter:blur(20px) saturate(135%)}#nib-proposta .drawer-heading{background:#f6f8fbf2;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}}
+}
+@media(hover:hover){#nib-proposta main .quick-action:hover{background:#fff;color:#041e42;box-shadow:0 8px 22px #041e4214;transform:translateY(-2px)}#nib-proposta main .quick-action:hover .home-action-description{color:#536176}}
+@keyframes nib-popup-in{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+@media(prefers-reduced-motion:reduce){#nib-proposta #notices-dialog{animation:none}#nib-proposta main .quick-action{transition:none;transform:none}}
+@media(hover:hover){#nib-proposta main .quick-action:hover .home-action-icon{color:#041e42}}
+@media(prefers-reduced-transparency:reduce){#nib-proposta>header,#nib-proposta .bottom-bar:not([hidden]),#nib-proposta .drawer-heading{background:#fff;backdrop-filter:none;-webkit-backdrop-filter:none}#nib-proposta #notices-dialog::backdrop{backdrop-filter:none;-webkit-backdrop-filter:none}}

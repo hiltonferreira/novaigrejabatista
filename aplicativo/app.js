@@ -104,6 +104,7 @@
     content.innerHTML = pages[state.view]();
     renderNavigation();
     closeDrawer();
+    if (notices.open) notices.close();
     const dateField = document.getElementById('presented-date');
     if (dateField) dateField.max = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Manaus', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
     if (focus) { document.getElementById('heading').focus({preventScroll:true}); window.scrollTo({top:0,behavior:'instant'}); }
@@ -111,6 +112,8 @@
   root.addEventListener('click', event => {
     const action = event.target.closest('button,a[data-view],a[data-back]');
     if (!action || action.disabled) return;
+    if (action.id === 'header-notices') { notices.showModal(); root.classList.add('nib-dialog-open'); document.getElementById('notices-close').focus(); return; }
+    if (action.id === 'notices-close') { notices.close(); return; }
     if (action.id === 'header-menu') { document.querySelector('.test-options').open = false; drawer.showModal(); root.classList.add('nib-dialog-open'); action.setAttribute('aria-expanded','true'); (drawer.querySelector('a[aria-current=page]') || drawer.querySelector('button')).focus(); return; }
     if (action.id === 'drawer-close') { closeDrawer(); return; }
     if (action.id === 'mobile-back') { event.preventDefault(); show(viewHistory.pop() || (isManagement() ? 'gestao' : 'inicio'), true, false); return; }
@@ -167,6 +170,9 @@
     if (openMenu) { openMenu.open = false; openMenu.querySelector('summary').focus(); }
   });
   const drawer = document.getElementById('mobile-drawer');
+  const notices = document.getElementById('notices-dialog');
+  notices.addEventListener('close', () => { if (!drawer.open) root.classList.remove('nib-dialog-open'); });
+  notices.addEventListener('click', e => { if (e.target !== notices) return; const r = notices.getBoundingClientRect(); if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) notices.close(); });
   function closeDrawer() { if (drawer.open) drawer.close(); root.classList.remove('nib-dialog-open'); document.getElementById('header-menu').setAttribute('aria-expanded','false'); }
   drawer.addEventListener('close', () => { root.classList.remove('nib-dialog-open'); document.getElementById('header-menu').setAttribute('aria-expanded','false'); });
   drawer.addEventListener('click', e => { if (e.target === drawer) { const r = drawer.getBoundingClientRect(); if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) closeDrawer(); } });

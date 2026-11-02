@@ -12,6 +12,8 @@ function luminance(hex) {
   return values.reduce((n, v, i) => n + v * [0.2126, 0.7152, 0.0722][i], 0);
 }
 const pairs = [
+  ['Vidro: texto secundário sobre pior fundo escuro', '#536176', '#f0f0f0', 4.5],
+  ['Popup: texto no degradê claro', '#536176', '#eef2f7', 4.5],
   ['Texto principal', '#041e42', '#ffffff', 4.5],
   ['Texto principal no fundo', '#041e42', '#f4f6f8', 4.5],
   ['Seleção e hover marfim', '#041e42', '#ebebdf', 4.5],

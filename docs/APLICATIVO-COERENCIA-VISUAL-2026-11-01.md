@@ -95,3 +95,9 @@ Base2614813. Os cards detalhados com ícone, título e descrição passam para a
 ## Inicial neutra e menu em lista
 
 Solicitação mais recente de Hilton, base4bcd0fa: retirar destaque permanente do atalho Eventos na inicial, compactar cards e organizar menu como lista. Removidas as três regras especiais de Eventos; cards mobile padding15/14, gap9, ícone32px e mínimo138px. Menu permanece em tela inteira, grupos preservados, uma coluna com linhas de56px, ícone/nome/Atual, sem borda nos itens inativos. Hover de toque nos cards retorna à aparência neutra para não sugerir seleção persistente. Seleção de tela continua apenas na navegação. Codex implementa; revisãoClaude via PR12; Hilton valida. Produção/dados inalterados.
+
+## Acabamento de vidro e popup de avisos
+
+Pedido de Hilton: dar acabamento mais premium, mantendo identidade NIB. Basea94a3d2. Codex implementa, Claude revisão no PR12, Hilton valida visual. Vidro claro #fffffff0 com blur20/saturação135% em barras mobile, fallback branco, sombras em camadas, degradês claros e ícones com superfície sutil nos cards neutros. Foco e contornos legíveis preservados. Movimento discreto com prefers-reduced-motion e transparência reduzida respeitada.
+
+Sino abre dialog de avisos: popup central no desktop, painel inferior arredondado no mobile, fundo navy translúcido/desfocado, botão de fechar44px, foco modal/Escape nativos, fechamento por fora e scroll bloqueado. Não inventar avisos nem contadores: estado vazio informa que os comunicados não estão disponíveis na demonstração. CTA navega para Informações e fecha popup.30 testes anteriores +2pares novos passaram(32): secundário no pior fundo de vidro5,52:1 e no degradê5,59:1. Browser390 confirmou modal real, blur20 e nenhum overflow do popup; Escape devolveu foco ao sino/desbloqueou, CTA320 foi a Informações/fechou sem overflow. Sem testes em aparelho físico. Nenhuma alteração de produção/dados.
