@@ -10,7 +10,11 @@
     ['Lâmpada para os meus pés é tua palavra, e luz para o meu caminho.', 'Salmos 119:105']
   ];
   const dayKey = date => new Intl.DateTimeFormat('en-CA',{timeZone:'America/Porto_Velho',year:'numeric',month:'2-digit',day:'2-digit'}).format(date);
-  const verseForDay = key => verses[[...key].reduce((hash,c)=>(hash*31+c.charCodeAt(0))>>>0,0)%verses.length];
+  // Lista anual (verses.js): um versículo por dia do ano, sem repetir. A escolha da igreja para uma data tem prioridade.
+  const curated = {};
+  const dayOfYear = key => { const [y,m,d] = key.split('-').map(Number); return Math.round((Date.UTC(y,m-1,d)-Date.UTC(y,0,1))/864e5); };
+  const verseForDay = key => { if (curated[key]) return curated[key]; const list = scope.NibVerses && scope.NibVerses.length ? scope.NibVerses : verses; return list[dayOfYear(key) % list.length]; };
+  const setCurated = (key, text, ref) => { if (text && ref) curated[key] = [text, ref, 'igreja']; else delete curated[key]; };
   const agenda = (key, days = 14) => {
     const base = new Date(key+'T12:00:00-04:00');
     const items = [];
@@ -34,5 +38,5 @@
     return dayKey(new Date(Date.UTC(year,month-1+step,1,16))).slice(0,7);
   };
   const monthAgenda = month => agenda(month+'-01',monthInfo(month).count).filter(x=>x.day.startsWith(month));
-  scope.NibDaily={dayKey,verseForDay,agenda,monthInfo,moveMonth,monthAgenda};
+  scope.NibDaily={dayKey,verseForDay,setCurated,dayOfYear,agenda,monthInfo,moveMonth,monthAgenda};
 })(typeof window==='undefined'?globalThis:window);

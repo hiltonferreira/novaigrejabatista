@@ -366,3 +366,9 @@ Nova versão: uma única linha do tempo de 3 s, só com `transform` e `opacity`,
 - Depois do primeiro login com senha ou cadastro, aparece uma folha "Entrar com Face ID nas próximas vezes?" com "Ativar Face ID" / "Agora não"; o aceite fica em `nib-faceid` (sessionStorage) e "Rever entrada e cadastro" limpa a marcação.
 - Versão final: chave de acesso (WebAuthn/passkey) no domínio oficial, com servidor guardando só a chave pública; sessão longa (~30 dias) e Face ID ao reabrir depois do prazo ou em ações sensíveis. Nada biométrico sai do aparelho.
 - Bloco "Eventos da igreja" na inicial ganhou o chapéu "PARTICIPE COM A GENTE", no mesmo padrão de "CAMINHE COM A GENTE" e "CUIDADO EM COMUNIDADE" (2026-11-03).
+
+## Versículo do dia: lista anual + escolha da igreja (2026-11-03)
+
+- `verses.js`: 391 versículos (estilo Almeida Revista e Corrigida), um por dia do ano em ordem fixa, sem repetir no ano (antes eram 7 por sorteio da data). **A igreja deve conferir os textos na versão bíblica que adota e a licença de uso dessa versão antes da publicação.**
+- Escolha da igreja (opção aprovada por Hilton): na experiência Secretaria/Liderança, a tela de gestão tem "Versículo escolhido pela igreja" (data, texto, referência). A escolha tem prioridade sobre a lista; na inicial aparece "Escolhido pela igreja" sob a referência. Nesta versão vale só na sessão; na final será gravada no servidor.
+- `NibDaily.setCurated(data, texto, referência)` e teste novo cobrindo 366 dias sem repetição e a prioridade da escolha.

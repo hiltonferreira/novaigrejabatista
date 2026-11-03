@@ -889,3 +889,10 @@ html{scrollbar-gutter:stable}
 @media(prefers-reduced-motion:reduce){#nib-proposta :is(.face-offer,.face-offer-sheet,.face-scan,.face-scan .face-corners){animation:none}#nib-proposta .face-check{transition:none}}
 #nib-proposta .home-events-block>.section-heading .label{font-size:10px;margin-bottom:8px}
 #nib-proposta .home-events-block>.section-heading h2{margin:0}
+/* Versículo escolhido pela igreja */
+#nib-proposta .verse-ref{display:flex;flex-direction:column;gap:4px;min-width:0}
+#nib-proposta .verse-pick{font-size:11px;font-weight:500;color:#c9d8ec}
+#nib-proposta .verse-admin textarea{min-height:96px}
+#nib-proposta .verse-admin-now{padding:10px 14px;border-radius:12px;background:#eef2f7;font-size:13px;color:#41506a}
+#nib-proposta .verse-admin-now b{color:#041e42}
+#nib-proposta #verse-admin-title:focus{outline:none}
