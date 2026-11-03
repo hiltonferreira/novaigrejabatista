@@ -130,8 +130,10 @@
   function loadObra() {
     if (!window.fetch) return;
     fetch('https://novaigrejabatista.com.br/dados/obra.json', { cache: 'no-cache', credentials: 'omit' }).then(r => r.ok ? r.json() : null).then(d => {
-      const value = d && Number(d.percentual);
-      if (!(value >= 0 && value <= 100)) return;
+      const raw = d && typeof d === 'object' ? d.percentual : undefined;
+      if (!(typeof raw === 'number' || (typeof raw === 'string' && raw.trim() !== ''))) return;
+      const value = Number(raw);
+      if (!Number.isFinite(value) || value < 0 || value > 100) return;
       obra.percentual = Math.round(value);
       if (d.lugares) obra.lugares = String(d.lugares).slice(0, 12);
       if (d.entrega) obra.entrega = String(d.entrega).slice(0, 12);
