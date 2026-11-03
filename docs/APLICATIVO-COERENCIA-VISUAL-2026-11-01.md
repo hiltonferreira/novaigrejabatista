@@ -396,3 +396,12 @@ Nova versão: uma única linha do tempo de 3 s, só com `transform` e `opacity`,
 - O botão "Voltar" das etapas 2 e 3 saiu do rodapé e foi para o topo do bloco, ao lado do título.
 - Etapas redesenhadas: círculos ligados por linha, etapa atual em laranja com halo, etapas concluídas em azul com check.
 - Tela inicial mais baixa: sem título duplicado ("Dízimo" já aparece no seletor), espaçamentos menores, dados bancários em linhas compactas e QR Code oficial recolhido em "QR Code oficial" (abre ao tocar).
+
+## Contribuição guiada no padrão dos formulários do site (2026-11-03)
+
+- Seletor Dízimos / Ofertas / Campanhas centralizado, com uma frase curta sobre a finalidade escolhida.
+- Stepper igual ao das inscrições do site (01/02/03, linha fina, atual em laranja claro com borda #ff7f40, concluídas em #e85d16 com check).
+- Cada etapa tem título, uma frase de orientação, o conteúdo e uma única ação principal. "Voltar" discreto no topo do bloco.
+- Pagamento: passo a passo numerado (abrir o banco, ler QR ou colar, conferir o nome) antes de "Já fiz o Pix".
+- Valor sugerido selecionado em laranja claro, no mesmo padrão do passo atual.
+- "Outras formas de contribuir" em bloco secundário, com o QR Code oficial sempre visível.
