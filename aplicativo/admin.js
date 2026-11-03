@@ -78,13 +78,18 @@
       cells: 18, cellsMulti: 2, cellMembers: 64, cellPeople: 241,
       sundays: [['2026-09-13', 252], ['2026-09-20', 261], ['2026-09-27', 248], ['2026-10-04', 266], ['2026-10-11', 259], ['2026-10-18', 274], ['2026-10-25', 268], ['2026-11-01', 283]],
       funnel: [['Visitaram nos últimos 90 dias', 61], ['Preencheram o formulário', 14], ['Fizeram a reunião de integração', 9], ['Apresentados no culto', 6]],
-      birthdays: [['04/11', 'Ana Exemplo'], ['05/11', 'Paulo Exemplo'], ['07/11', 'Lúcia Exemplo'], ['08/11', 'Marcos Exemplo']],
+      birthdays: [[0, 'Ana Exemplo'], [1, 'Paulo Exemplo'], [3, 'Lúcia Exemplo'], [5, 'Marcos Exemplo']],
       absent: 12, noReturn: 5,
       lastService: { day: '2026-11-01', name: 'Culto de domingo', checkins: 214, visitors: 7, counted: 62 },
       giving: { month: 'outubro', total: 41380, givers: 142, avg3: 40150, parts: [['Dízimos', 33620], ['Ofertas', 4960], ['Obra do templo', 2800]] }
     };
     const brl = v => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 });
     const newVisitors = () => data.visitors.filter(v => v.isNew);
+    // Aniversariantes dos próximos 7 dias (só dia e mês, sem idade).
+    function birthdays() {
+      const base = new Date(api.NibDaily.dayKey(new Date()) + 'T12:00:00-04:00');
+      return demo.birthdays.map(([off, name]) => { const d = new Date(base); d.setUTCDate(d.getUTCDate() + off); const key = api.NibDaily.dayKey(d); return { key, name, today: off === 0, date: key.slice(8, 10) + '/' + key.slice(5, 7), week: new Intl.DateTimeFormat('pt-BR', { timeZone: 'America/Porto_Velho', weekday: 'short' }).format(d).replace('.', '') }; });
+    }
     const num = n => n.toLocaleString('pt-BR');
     const ico = d => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${d}"/></svg>`;
     const P = NibIcons.paths;
@@ -130,7 +135,7 @@
       const stat = (icon, value, text, tone) => `<li><span class="dash-ico${tone ? ' is-' + tone : ''}">${ico(icon)}</span><strong>${value}</strong><span>${text}</span></li>`;
       const third = isPas()
         ? `<section class="box dash-box">${head('CUIDADO PASTORAL', 'Quem precisa de atenção')}<ul class="dash-stats">${stat(I.alert, demo.absent, 'membros sem presença no culto ou na célula há 4 semanas ou mais', 'warn')}${stat(I.back, demo.noReturn, 'visitantes sem retorno depois da primeira visita', 'warn')}${stat(I.pray, activePrayers().length, 'pedidos de oração ativos no caderno')}</ul>${foot('Ver cuidado e oração', 'cuidado')}</section>`
-        : `<section class="box dash-box">${head('ESTA SEMANA', 'Aniversariantes')}<ul class="dash-people">${demo.birthdays.map(([d, n]) => `<li><span class="profile-avatar" aria-hidden="true">${escape(n.charAt(0))}</span><span>${escape(n)}</span><span class="dash-date">${d}</span></li>`).join('')}</ul><p class="note dash-foot">A Secretaria envia a mensagem de parabéns no grupo da igreja.</p></section>`;
+        : `<section class="box dash-box">${head('ESTA SEMANA', 'Aniversariantes')}<ul class="dash-people">${birthdays().map(b => `<li><span class="profile-avatar" aria-hidden="true">${escape(b.name.charAt(0))}</span><span>${escape(b.name)}</span><span class="dash-date">${b.today ? 'Hoje' : b.date}</span></li>`).join('')}</ul><p class="note dash-foot">A Secretaria envia a mensagem de parabéns no grupo da igreja.</p></section>`;
       const ls = demo.lastService, today = api.NibDaily.dayKey(new Date()), lsTotal = ls.checkins + ls.visitors + ls.counted;
       const todayIn = data.checkins.filter(c => c.day >= today).length, todayVis = newVisitors().length;
       const service = `<section class="box dash-box">${head('CHECK-IN', `Último culto · ${dayNum(ls.day)} ${escape(monthShort(ls.day))}`)}<p class="dash-big">${num(lsTotal)} <span>pessoas</span></p>${stack([['Check-in pelo app', ls.checkins], ['Visitantes pelo QR Code', ls.visitors], ['Contagem da recepção', ls.counted]], num)}${todayIn || todayVis ? `<p class="dash-sub">Nesta sessão de teste: ${todayIn} check-in${todayIn === 1 ? '' : 's'} e ${todayVis} visitante${todayVis === 1 ? '' : 's'}.</p>` : ''}${foot('Ver check-in e visitantes', 'recepcao')}</section>`;
@@ -342,7 +347,7 @@
     function addRequest(r) { data.requests.push({ id: 'r' + (++data.seq), name: r.name, email: r.email, note: r.note, at: now(), status: 'pendente' }); }
     const badge = () => isSec() ? pendingRequests().length : pendingPeople().length;
 
-    return { addCheckin, checkins: () => data.checkins, infoProgram, profiles, labels, descriptions, icons, views, allowed, pageLabels, pages, click, submit, addRequest, memberNotices, noticesCount: () => data.notices.length, badge, bar: () => (profiles[state.context] || profiles.secretaria).bar };
+    return { birthdays, addCheckin, checkins: () => data.checkins, infoProgram, profiles, labels, descriptions, icons, views, allowed, pageLabels, pages, click, submit, addRequest, memberNotices, noticesCount: () => data.notices.length, badge, bar: () => (profiles[state.context] || profiles.secretaria).bar };
   }
   scope.NibAdmin = { create };
 })(window);

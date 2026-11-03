@@ -1351,3 +1351,24 @@ html{scrollbar-gutter:stable}
 #nib-proposta main .quick-action .home-action-icon{display:grid;place-items:center;flex-shrink:0;width:40px;height:40px;margin-bottom:4px;border-radius:12px;background:#eef1f4;color:#041e42}
 #nib-proposta main .quick-action .home-action-icon svg{width:22px;height:22px}
 #nib-proposta main .quick-action>.admin-badge{position:absolute;top:16px;right:16px;left:auto;z-index:2}
+/* Aniversariantes na inicial do membro */
+#nib-proposta .home-birthdays{margin-top:8px}
+#nib-proposta .home-birthdays .section-heading .label{font-size:10px;margin-bottom:8px}
+#nib-proposta .bday-icon{display:grid;place-items:center;width:40px;height:40px;border-radius:12px;background:#fff1e8;color:#c2531a}
+#nib-proposta .bday-icon svg{width:22px;height:22px}
+#nib-proposta .bday-list{list-style:none;margin:0 0 12px;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+#nib-proposta .bday{display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px;padding:20px 14px 16px;border:1px solid #dce3eb;border-radius:10px;background:#fff;min-width:0}
+#nib-proposta .bday.is-today{border-color:#ffc6a6;background:#fff7f2}
+#nib-proposta .bday .profile-avatar{width:52px;height:52px;font-size:20px}
+#nib-proposta .bday.is-today .profile-avatar{background:#ff7f40;color:#fff}
+#nib-proposta .bday-text{min-width:0;max-width:100%}
+#nib-proposta .bday-text strong{display:block;font-size:15px;line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#nib-proposta .bday-text small{font-size:12.5px;color:#536176;text-transform:capitalize}
+#nib-proposta .bday.is-today .bday-text small{color:#c2531a;font-weight:700}
+#nib-proposta .bday-btn{margin-top:auto;width:100%;min-height:40px;padding:8px 12px;border:1px solid #c9d2de;border-radius:999px;background:#fff;color:#041e42;font:600 13px/1.3 var(--nib-font);cursor:pointer}
+#nib-proposta .bday.is-today .bday-btn{background:#041e42;border-color:#041e42;color:#fff}
+#nib-proposta .bday-btn.is-sent,#nib-proposta .bday.is-today .bday-btn.is-sent{background:#e6f4ec;border-color:#bfe0cc;color:#1f6a48}
+@media(hover:hover){#nib-proposta .bday-btn:not(.is-sent):hover{border-color:#041e42}}
+@media(max-width:820px){#nib-proposta .bday-list{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}}
+#nib-proposta .profile-bday{margin:14px 0 4px}
+#nib-proposta .bday-text strong{color:#041e42}
