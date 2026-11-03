@@ -78,7 +78,7 @@
       cells: 18, cellsMulti: 2, cellMembers: 64, cellPeople: 241,
       sundays: [['2026-09-13', 252], ['2026-09-20', 261], ['2026-09-27', 248], ['2026-10-04', 266], ['2026-10-11', 259], ['2026-10-18', 274], ['2026-10-25', 268], ['2026-11-01', 283]],
       funnel: [['Visitaram nos últimos 90 dias', 61], ['Preencheram o formulário', 14], ['Fizeram a reunião de integração', 9], ['Apresentados no culto', 6]],
-      birthdays: [[0, 'Ana Exemplo'], [1, 'Paulo Exemplo'], [3, 'Lúcia Exemplo'], [5, 'Marcos Exemplo']],
+      birthdays: [[0, 'Jéssica Exemplo'], [0, 'Ana Exemplo'], [1, 'Paulo Exemplo'], [3, 'Lúcia Exemplo'], [5, 'Marcos Exemplo']],
       absent: 12, noReturn: 5,
       lastService: { day: '2026-11-01', name: 'Culto de domingo', checkins: 214, visitors: 7, counted: 62 },
       giving: { month: 'outubro', total: 41380, givers: 142, avg3: 40150, parts: [['Dízimos', 33620], ['Ofertas', 4960], ['Obra do templo', 2800]] }
