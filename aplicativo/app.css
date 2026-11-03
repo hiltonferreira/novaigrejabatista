@@ -732,3 +732,9 @@ html{scrollbar-gutter:stable}
 #nib-proposta .app-enter{position:fixed;inset:0;z-index:950;display:grid;place-items:center;overflow:hidden;background:#041e42;pointer-events:none}
 #nib-proposta .app-enter[hidden]{display:none}
 #nib-proposta .enter-brasao{position:absolute;top:50%;left:50%;display:block;width:clamp(76px,22vw,112px);height:auto;max-width:none;margin:calc(clamp(76px,22vw,112px) * -0.5406) 0 0 calc(clamp(76px,22vw,112px) * -0.5);transform-origin:50.2% 45.1%;will-change:transform;opacity:0}
+
+#nib-proposta .enter-glow{position:absolute;top:50%;left:50%;width:220px;height:220px;margin:-110px 0 0 -110px;border-radius:50%;background:radial-gradient(circle,#ffffff 0%,#ffffffd9 28%,#cfe0f5 52%,#cfe0f500 72%);opacity:0;will-change:transform,opacity;pointer-events:none}
+#nib-proposta .enter-white{position:absolute;inset:0;background:#fff;opacity:0;will-change:opacity}
+#nib-proposta .app-enter{will-change:opacity}
+#nib-proposta .enter-brasao{z-index:1}
+#nib-proposta .enter-white{z-index:2}

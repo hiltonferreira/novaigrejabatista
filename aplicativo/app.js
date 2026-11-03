@@ -410,21 +410,24 @@
     window.scrollTo(0,0);
     const done = () => { enter.hidden = true; gate(false); document.getElementById('heading').focus({preventScroll:true}); };
     if (matchMedia('(prefers-reduced-motion: reduce)').matches || !enter.animate) { onboarding.hidden = true; done(); return; }
-    // Tela azul com o brasão: aparece, respira e clareia até o branco, que se desfaz na inicial.
+    // Uma só linha do tempo, só com transform e opacity (compostas na GPU, sem repintura):
+    // o brasão surge, a luz nasce atrás dele e se expande até o branco, que se desfaz na inicial.
     enter.hidden = false;
-    const mark = enter.querySelector('.enter-brasao');
-    enter.animate([{opacity:0},{opacity:1}], {duration:380, easing:'ease-out', fill:'forwards'}).finished.then(() => {
+    const mark = enter.querySelector('.enter-brasao'), glow = enter.querySelector('.enter-glow'), white = enter.querySelector('.enter-white');
+    const T = 3000, ease = 'cubic-bezier(.4,0,.2,1)';
+    enter.animate([{opacity:0},{opacity:1}], {duration:320, easing:'ease-out', fill:'forwards'}).finished.then(() => {
+      // Troca de telas enquanto tudo está coberto, para o trabalho de layout não cair no meio da animação.
       onboarding.hidden = true; gate(false); appParts.forEach(el => { if (el) el.inert = true; });
-      mark.animate([{transform:'scale(.82)',opacity:0},{transform:'scale(1)',opacity:1}], {duration:650, easing:'cubic-bezier(.2,.8,.2,1)', fill:'forwards'});
-      return new Promise(r => setTimeout(r, 1050));
+      return new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
     }).then(() => {
-      // Brilho: o brasão irradia luz e o azul clareia aos poucos até o branco total, que se desfaz na inicial.
-      mark.animate([{filter:'drop-shadow(0 0 0 #ffffff00) brightness(1)'},{filter:'drop-shadow(0 0 18px #ffffffcc) brightness(1.15)',offset:.45},{filter:'drop-shadow(0 0 60px #ffffff) brightness(1.3)'}], {duration:1800, easing:'ease-in', fill:'forwards'});
-      return enter.animate([{backgroundColor:'#041e42'},{backgroundColor:'#2c4f80',offset:.45},{backgroundColor:'#ffffff'}], {duration:1800, easing:'cubic-bezier(.55,0,.45,1)', fill:'forwards'}).finished;
-    }).then(() => {
-      gate(false); appParts.forEach(el => { if (el) el.inert = true; });
-      return enter.animate([{opacity:1},{opacity:0}], {duration:600, easing:'ease-out', fill:'forwards'}).finished;
-    }).then(() => { mark.getAnimations().forEach(a => a.cancel()); enter.getAnimations().forEach(a => a.cancel()); done(); });
+      const runs = [
+        mark.animate([{opacity:0,transform:'scale(.86)'},{opacity:1,transform:'scale(1)',offset:.28},{opacity:1,transform:'scale(1.08)',offset:.72},{opacity:.9,transform:'scale(1.12)'}], {duration:T, easing:'linear', fill:'forwards', composite:'replace'}),
+        glow.animate([{opacity:0,transform:'scale(.4)'},{opacity:.55,transform:'scale(1)',offset:.3,easing:ease},{opacity:1,transform:'scale(16)',offset:.82},{opacity:1,transform:'scale(16)'}], {duration:T, easing:'linear', fill:'forwards'}),
+        white.animate([{opacity:0},{opacity:0,offset:.6},{opacity:1,offset:.84,easing:ease},{opacity:1}], {duration:T, easing:'linear', fill:'forwards'}),
+        enter.animate([{opacity:1},{opacity:1,offset:.84},{opacity:0,easing:'ease-out'}], {duration:T, easing:'linear', fill:'forwards'})
+      ];
+      return Promise.all(runs.map(a => a.finished));
+    }).then(() => { [mark,glow,white,enter].forEach(el => el.getAnimations().forEach(a => a.cancel())); done(); });
   }
   next.addEventListener('click', () => { if (slide === slides.length - 1) closeOnboarding(); else goSlide(slide + 1); });
   document.getElementById('onb-skip').addEventListener('click', closeOnboarding);

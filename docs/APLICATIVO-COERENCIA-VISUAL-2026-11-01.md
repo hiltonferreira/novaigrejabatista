@@ -297,3 +297,10 @@ Ajustes seguintes no acesso, após teste de Hilton no iPhone:
 Ajuste seguinte: o brasão da entrada ficou menor (76 a 112 px de largura, 22% da tela) e centralizado de forma exata. A imagem `brasao-branco.png` foi recortada rente ao desenho e o brasão é posicionado pelo centro da tela, sem depender do alinhamento da grade. Medido em 390×844: centro em 422 px, igual ao centro da tela.
 
 Teste alternativo pedido por Hilton: no lugar do zoom, a entrada agora clareia. Depois de o brasão aparecer, o fundo passa do azul NIB para o branco em 1,8 s, enquanto o brasão ganha brilho (`drop-shadow` branco crescente e `brightness` até 1,3) e se funde ao branco. Em seguida o branco se desfaz em 0,6 s e revela a inicial. Total de cerca de 3,8 s. A versão com zoom continua no histórico (commit 6902cb3), caso se volte a ela.
+
+Terceira variação da entrada, após Hilton achar a anterior pouco fluida. Causas encontradas na versão de brilho:
+1. A animação era feita de fases encadeadas com pausas (fade, entrada do brasão, espera, brilho, saída). Cada fase parava e recomeçava com outra curva, o que cria "degraus" de velocidade.
+2. `filter: drop-shadow` com desfoque grande e `background-color` não são compostos na GPU. O navegador repinta a tela inteira a cada quadro, o que costuma travar no iPhone.
+3. A troca da orientação para a inicial (layout da página toda) acontecia durante a animação visível.
+
+Nova versão: uma única linha do tempo de 3 s, só com `transform` e `opacity`, em camadas com `will-change`. O brasão surge e cresce devagar sem parar (0,86 → 1,12). Atrás dele, uma luz radial pré-desenhada nasce como um halo e se expande 16 vezes até cobrir a tela. Uma camada branca completa o branco em 60–84% do tempo, e tudo se desfaz na inicial em 84–100%. A troca de telas acontece nos primeiros 320 ms, com a tela coberta, e a linha do tempo só começa dois quadros depois.
