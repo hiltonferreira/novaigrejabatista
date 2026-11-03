@@ -6,7 +6,7 @@
   const now = () => new Intl.DateTimeFormat('pt-BR', { timeZone: 'America/Porto_Velho', dateStyle: 'short', timeStyle: 'short' }).format(new Date());
   const dayNum = key => key.slice(8, 10);
   const monthShort = key => new Intl.DateTimeFormat('pt-BR', { timeZone: 'America/Porto_Velho', month: 'short' }).format(new Date(key + 'T12:00:00-04:00')).replace('.', '');
-  const tick = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>';
+  const tick = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>';
   const chevron = '<svg class="admin-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>';
 
   const profiles = {
@@ -33,23 +33,13 @@
     cuidado: ['CUIDADO PASTORAL', 'Cuidado e oração', 'Acompanhe os pedidos do caderno de oração e cuide do mural.']
   };
   const descriptions = { recepcao: 'Presença e visitantes', gestao: 'O que precisa de atenção', membresia: 'Integração e apresentação', solicitacoes: 'Atualizações de cadastro', programacao: 'Calendário dos membros', comunicados: 'Avisos no sino do app', palavra: 'Versículo escolhido', cuidado: 'Pedidos de oração' };
-  const icons = {
-    gestao: 'M3 3h7v9H3z M14 3h7v5h-7z M14 12h7v9h-7z M3 16h7v5H3z',
-    membresia: 'M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z M2 21c0-3.5 3-6 7-6s7 2.5 7 6 M16 11l2 2 4-4',
-    solicitacoes: 'M6 3h9l4 4v14H6z M15 3v4h4 M9 12h7 M9 16h5',
-    programacao: 'M4 5h16v16H4z M8 3v4 M16 3v4 M4 11h16 M12 14v4 M10 16h4',
-    comunicados: 'M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9 M10 21h4',
-    palavra: 'M12 6.5C10.2 5 7.6 4.5 4 4.5v13c3.6 0 6.2.5 8 2 1.8-1.5 4.4-2 8-2v-13c-3.6 0-6.2.5-8 2Z M12 6.5v13',
-    cuidado: 'M12 20s-8-4.7-8-10a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 5.3-8 10-8 10z',
-    informacoes: 'M3 4h18v5H3z M5 9v12h14V9 M10 13h4',
-    recepcao: 'M3 3h7v7H3z M14 3h7v7h-7z M3 14h7v7H3z M14 14h3v3h-3z M20 14v.01 M14 20h3 M20 17v4h-3'
-  };
+  const icons = NibIcons.paths;
 
   function create(api) {
     const { state, escape, button, arrow } = api;
     const actor = () => profiles[state.context] ? profiles[state.context].name : '';
     const isSec = () => state.context === 'secretaria', isPas = () => state.context === 'pastoral';
-    const svg = key => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${icons[key]}"/></svg>`;
+    const svg = key => NibIcons.svg(key);
 
     // Dados fictícios desta sessão (compartilhados entre os perfis de teste).
     const data = {
@@ -97,17 +87,8 @@
     const newVisitors = () => data.visitors.filter(v => v.isNew);
     const num = n => n.toLocaleString('pt-BR');
     const ico = d => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${d}"/></svg>`;
-    const I = {
-      members: 'M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z M2 21c0-3.5 3-6 7-6s7 2.5 7 6 M16 3.5a4 4 0 0 1 0 7 M22 21c0-2.6-1.6-4.6-4-5.5',
-      regular: 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8z M4 21c0-4 4-6 8-6s8 2 8 6',
-      visitor: 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8z M4 21c0-4 4-6 8-6 M18 15v6 M15 18h6',
-      cells: 'M12 3l8 4.5v9L12 21l-8-4.5v-9z M12 12l8-4.5 M12 12v9 M12 12L4 7.5',
-      presence: 'M4 5h16v16H4z M8 3v4 M16 3v4 M4 11h16 M9 16l2 2 4-4',
-      alert: 'M12 9v4 M12 17h.01 M10.3 3.9 2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z',
-      back: 'M9 14 4 9l5-5 M4 9h11a5 5 0 0 1 0 10h-3',
-      pray: icons.cuidado,
-      cake: 'M4 21h16 M5 21v-8h14v8 M5 16c2 1 4-1 7 0s5 1 7 0 M12 13V9 M12 6.5c-.8-.6-.8-1.9 0-2.5.8.6.8 1.9 0 2.5z'
-    };
+    const P = NibIcons.paths;
+    const I = { members: P.membros, regular: P.frequentador, visitor: P.visitante, cells: P.celulas, presence: P.presenca, alert: P.alerta, back: P.retorno, pray: P.cuidado };
     const pill = (v, suffix = '') => `<span class="dash-pill${v < 0 ? ' is-down' : ''}">${ico(v < 0 ? 'M7 10l5 5 5-5' : 'M7 14l5-5 5 5')}${v > 0 ? '+' : ''}${v}${suffix}</span>`;
     const head = (label, title, aside = '') => `<div class="dash-head"><div><span class="label">${label}</span><h2>${title}</h2></div>${aside}</div>`;
     const foot = (text, view) => `<div class="dash-foot">${button(text, view)}</div>`;
@@ -198,6 +179,7 @@
         comunicados: 'Publique avisos no sino e em Programação e avisos.',
         palavra: (verse[2] ? 'Hoje: escolhido pela igreja · ' : 'Hoje: lista automática · ') + verse[1],
         cuidado: isPas() ? 'Acompanhe os pedidos e cuide do mural.' : 'Veja os pedidos publicados pelos membros.',
+        recepcao: 'QR Code da recepção, presença e visitantes do culto.',
         informacoes: 'Veja a página Programação e avisos como os membros veem.'
       };
       const shortcuts = views().filter(([key]) => key !== 'gestao').map(([key, title]) => { const c = counts[key]; const alert = c && ['solicitacoes', 'membresia'].includes(key) && (key !== 'solicitacoes' || isSec()); return `<button type="button" class="quick-action admin-quick" data-view="${key}"><span class="home-action-icon" aria-hidden="true">${svg(key)}</span>${alert ? `<span class="admin-badge" aria-label="${c} pendente${c === 1 ? '' : 's'}">${c}</span>` : ''}<strong>${title}</strong><span class="home-action-description">${texts[key] || ''}</span></button>`; }).join('');
