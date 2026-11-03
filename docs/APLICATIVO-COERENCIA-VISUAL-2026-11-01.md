@@ -295,3 +295,5 @@ Ajustes seguintes no acesso, após teste de Hilton no iPhone:
 - Saudações neutras: "Boas-vindas, [nome]" na orientação e "BOAS-VINDAS" na inicial, porque o nome cadastrado pode ser de qualquer pessoa.
 
 Ajuste seguinte: o brasão da entrada ficou menor (76 a 112 px de largura, 22% da tela) e centralizado de forma exata. A imagem `brasao-branco.png` foi recortada rente ao desenho e o brasão é posicionado pelo centro da tela, sem depender do alinhamento da grade. Medido em 390×844: centro em 422 px, igual ao centro da tela.
+
+Teste alternativo pedido por Hilton: no lugar do zoom, a entrada agora clareia. Depois de o brasão aparecer, o fundo passa do azul NIB para o branco em 1,8 s, enquanto o brasão ganha brilho (`drop-shadow` branco crescente e `brightness` até 1,3) e se funde ao branco. Em seguida o branco se desfaz em 0,6 s e revela a inicial. Total de cerca de 3,8 s. A versão com zoom continua no histórico (commit 6902cb3), caso se volte a ela.

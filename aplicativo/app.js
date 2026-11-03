@@ -410,7 +410,7 @@
     window.scrollTo(0,0);
     const done = () => { enter.hidden = true; gate(false); document.getElementById('heading').focus({preventScroll:true}); };
     if (matchMedia('(prefers-reduced-motion: reduce)').matches || !enter.animate) { onboarding.hidden = true; done(); return; }
-    // Tela azul com o brasão: aparece, respira e o zoom atravessa o centro do brasão até revelar a inicial.
+    // Tela azul com o brasão: aparece, respira e clareia até o branco, que se desfaz na inicial.
     enter.hidden = false;
     const mark = enter.querySelector('.enter-brasao');
     enter.animate([{opacity:0},{opacity:1}], {duration:380, easing:'ease-out', fill:'forwards'}).finished.then(() => {
@@ -418,8 +418,12 @@
       mark.animate([{transform:'scale(.82)',opacity:0},{transform:'scale(1)',opacity:1}], {duration:650, easing:'cubic-bezier(.2,.8,.2,1)', fill:'forwards'});
       return new Promise(r => setTimeout(r, 1050));
     }).then(() => {
-      mark.animate([{transform:'scale(1)'},{transform:'scale(1.12)',offset:.18},{transform:'scale(38)'}], {duration:1300, easing:'cubic-bezier(.65,0,.35,1)', fill:'forwards'});
-      return enter.animate([{opacity:1},{opacity:1,offset:.55},{opacity:0}], {duration:1300, easing:'ease-in-out', fill:'forwards'}).finished;
+      // Brilho: o brasão irradia luz e o azul clareia aos poucos até o branco total, que se desfaz na inicial.
+      mark.animate([{filter:'drop-shadow(0 0 0 #ffffff00) brightness(1)'},{filter:'drop-shadow(0 0 18px #ffffffcc) brightness(1.15)',offset:.45},{filter:'drop-shadow(0 0 60px #ffffff) brightness(1.3)'}], {duration:1800, easing:'ease-in', fill:'forwards'});
+      return enter.animate([{backgroundColor:'#041e42'},{backgroundColor:'#2c4f80',offset:.45},{backgroundColor:'#ffffff'}], {duration:1800, easing:'cubic-bezier(.55,0,.45,1)', fill:'forwards'}).finished;
+    }).then(() => {
+      gate(false); appParts.forEach(el => { if (el) el.inert = true; });
+      return enter.animate([{opacity:1},{opacity:0}], {duration:600, easing:'ease-out', fill:'forwards'}).finished;
     }).then(() => { mark.getAnimations().forEach(a => a.cancel()); enter.getAnimations().forEach(a => a.cancel()); done(); });
   }
   next.addEventListener('click', () => { if (slide === slides.length - 1) closeOnboarding(); else goSlide(slide + 1); });
