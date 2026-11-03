@@ -896,3 +896,37 @@ html{scrollbar-gutter:stable}
 #nib-proposta .verse-admin-now{padding:10px 14px;border-radius:12px;background:#eef2f7;font-size:13px;color:#41506a}
 #nib-proposta .verse-admin-now b{color:#041e42}
 #nib-proposta #verse-admin-title:focus{outline:none}
+/* Contribuição: etapas, valores sugeridos, dados preenchidos e Pix */
+#nib-proposta .gift-steps{display:flex;gap:6px;margin:0 0 18px;padding:0;list-style:none;counter-reset:none}
+#nib-proposta .gift-steps li{flex:1;display:flex;align-items:center;gap:7px;padding-top:10px;border-top:3px solid #dce3eb;font-size:11.5px;font-weight:600;color:#7a879a}
+#nib-proposta .gift-steps li span{display:grid;place-items:center;width:20px;height:20px;border-radius:50%;background:#eef2f7;font-size:11px;color:#536176}
+#nib-proposta .gift-steps li.is-done{border-top-color:#041e42;color:#041e42}
+#nib-proposta .gift-steps li.is-done span{background:#041e42;color:#fff}
+#nib-proposta .gift-step-title{margin:0 0 16px;font-size:18px;line-height:1.3;color:#041e42}
+#nib-proposta .gift-step-title:focus{outline:none}
+#nib-proposta .gift-amounts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:18px}
+#nib-proposta main .gift-amounts button{min-height:46px;padding:8px 4px;border:1px solid #c9d3df;border-radius:14px;background:#fff;color:#041e42;font-size:14px;font-weight:700;box-shadow:none;transform:none}
+#nib-proposta main .gift-amounts button[aria-pressed=true]{background:#041e42;border-color:#041e42;color:#fff}
+#nib-proposta main .gift-amounts button:not([aria-pressed=true]):is(:hover,:active,:focus){background:#fff;color:#041e42;border-color:#c9d3df}
+@media(hover:hover){#nib-proposta main .gift-amounts button:not([aria-pressed=true]):hover{border-color:#041e42}}
+#nib-proposta .gift-summary{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:16px 18px;border-radius:16px;background:linear-gradient(165deg,#0d3a72,#041e42);color:#fff}
+#nib-proposta .gift-summary span{font-size:13px;color:#c9d8ec}
+#nib-proposta .gift-summary strong{font-size:24px;letter-spacing:-.01em}
+#nib-proposta .gift-payer{display:flex;align-items:center;gap:12px;margin-top:12px;padding:14px;border:1px solid #dce3eb;border-radius:16px;background:#f8fafc}
+#nib-proposta .gift-payer>div{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+#nib-proposta .gift-payer .profile-avatar{width:40px;height:40px;flex:0 0 40px;font-size:17px}
+#nib-proposta .gift-payer-label{font-size:10.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#7a879a}
+#nib-proposta .gift-payer strong{font-size:15px;color:#041e42}
+#nib-proposta .gift-payer small{font-size:12px;color:#536176;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#nib-proposta .gift-auto{align-self:flex-start;padding:4px 8px;border-radius:999px;background:#e9f3ed;color:#24674e;font-size:10.5px;font-weight:700}
+#nib-proposta .gift-hint{margin:12px 0;font-size:13px;line-height:1.5;color:#536176}
+#nib-proposta .gift-hint .auth-link{display:inline;padding:0;min-height:0;font-size:inherit}
+#nib-proposta .gift-actions{flex-direction:column}
+#nib-proposta .gift-actions button{width:100%}
+#nib-proposta .pix-demo{display:grid;place-items:center;align-content:center;gap:10px;width:180px;aspect-ratio:1;margin:16px auto;border-radius:18px;background:repeating-linear-gradient(45deg,#041e42 0 8px,#0b2c5a 8px 16px);color:#fff;font-size:12px;font-weight:600}
+#nib-proposta .pix-demo img{width:46px;height:auto;max-width:none;opacity:.9}
+#nib-proposta .pix-copy{display:flex;gap:8px}
+#nib-proposta .pix-copy input{flex:1;min-width:0;font-size:12px;color:#536176}
+#nib-proposta main .pix-copy button{flex:0 0 auto;gap:6px;min-height:48px;padding:10px 14px}
+#nib-proposta .pix-copy svg{width:16px;height:16px}
+#nib-proposta main button.button-back{gap:8px}

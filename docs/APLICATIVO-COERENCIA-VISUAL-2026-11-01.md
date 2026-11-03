@@ -372,3 +372,8 @@ Nova versão: uma única linha do tempo de 3 s, só com `transform` e `opacity`,
 - `verses.js`: 391 versículos (estilo Almeida Revista e Corrigida), um por dia do ano em ordem fixa, sem repetir no ano (antes eram 7 por sorteio da data). **A igreja deve conferir os textos na versão bíblica que adota e a licença de uso dessa versão antes da publicação.**
 - Escolha da igreja (opção aprovada por Hilton): na experiência Secretaria/Liderança, a tela de gestão tem "Versículo escolhido pela igreja" (data, texto, referência). A escolha tem prioridade sobre a lista; na inicial aparece "Escolhido pela igreja" sob a referência. Nesta versão vale só na sessão; na final será gravada no servidor.
 - `NibDaily.setCurated(data, texto, referência)` e teste novo cobrindo 366 dias sem repetição e a prioridade da escolha.
+
+## Contribuição com dados preenchidos automaticamente (2026-11-03)
+
+- Pedido de um membro (via Hilton): no app atual, ao contribuir por Pix já logado, é preciso digitar os dados de novo. Aqui, Dízimo/Oferta viram 3 etapas: **Valor** (R$ 50/100/200/500 ou outro valor) → **Seus dados** (resumo do valor e cartão "Contribuindo como" com nome, CPF mascarado e e-mail vindos do cadastro, selo "Preenchido", opção de enviar comprovante ao e-mail) → **Pix** (espaço do QR Code de teste listrado e "copia e cola" fictício com botão Copiar).
+- Versão final: o servidor gera um Pix dinâmico (cobrança com nome, CPF, valor e finalidade) pelo banco/PSP da igreja, confirma o pagamento por webhook e envia o comprovante. O CPF ainda não é pedido no cadastro (decisão pendente).
