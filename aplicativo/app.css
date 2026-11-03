@@ -729,12 +729,9 @@ html{scrollbar-gutter:stable}
 #nib-proposta .onb-badge{z-index:2;bottom:-2px}
 @media(min-width:821px){#nib-proposta .onb-media img{border-radius:32px}#nib-proposta .onb-copy{margin-top:0;padding:0;border-radius:0;background:none}#nib-proposta .onb-badge{bottom:-30px}}
 /* Entrada no app: brasão branco no azul, zoom pelo centro até a inicial. */
-#nib-proposta .app-enter{position:fixed;inset:0;z-index:950;display:grid;place-items:center;overflow:hidden;background:#041e42;pointer-events:none}
+#nib-proposta .app-enter{position:fixed;inset:0;z-index:950;overflow:hidden;background:radial-gradient(120% 80% at 50% 46%,#0b3166 0%,#06244f 42%,#03183a 100%);pointer-events:none;will-change:opacity}
 #nib-proposta .app-enter[hidden]{display:none}
-#nib-proposta .enter-brasao{position:absolute;top:50%;left:50%;display:block;width:clamp(76px,22vw,112px);height:auto;max-width:none;margin:calc(clamp(76px,22vw,112px) * -0.5406) 0 0 calc(clamp(76px,22vw,112px) * -0.5);transform-origin:50.2% 45.1%;will-change:transform;opacity:0}
-
-#nib-proposta .enter-glow{position:absolute;top:50%;left:50%;width:220px;height:220px;margin:-110px 0 0 -110px;border-radius:50%;background:radial-gradient(circle,#ffffff 0%,#ffffffd9 28%,#cfe0f5 52%,#cfe0f500 72%);opacity:0;will-change:transform,opacity;pointer-events:none}
-#nib-proposta .enter-white{position:absolute;inset:0;background:#fff;opacity:0;will-change:opacity}
-#nib-proposta .app-enter{will-change:opacity}
-#nib-proposta .enter-brasao{z-index:1}
-#nib-proposta .enter-white{z-index:2}
+#nib-proposta .enter-halo{position:absolute;top:50%;left:50%;width:min(130vw,640px);aspect-ratio:1;transform:translate(-50%,-52%);border-radius:50%;background:radial-gradient(circle,#4f86c633 0%,#4f86c614 36%,#4f86c600 66%);opacity:0;will-change:opacity,transform}
+#nib-proposta .enter-mark{--mark:clamp(76px,22vw,104px);position:absolute;top:50%;left:50%;width:var(--mark);aspect-ratio:271/293;margin:calc(var(--mark) * -0.5406) 0 0 calc(var(--mark) * -0.5);transform-origin:50% 50%;opacity:0;overflow:hidden;-webkit-mask:url(assets/brasao-branco.png) center/100% 100% no-repeat;mask:url(assets/brasao-branco.png) center/100% 100% no-repeat;will-change:transform,opacity}
+#nib-proposta .enter-brasao{display:block;width:100%;height:100%;max-width:none;opacity:.8}
+#nib-proposta .enter-shine{position:absolute;top:-20%;left:0;width:60%;height:140%;background:linear-gradient(100deg,#fff0 0%,#ffffff00 30%,#ffffff 50%,#ffffff00 70%,#fff0 100%);transform:translateX(-170%) skewX(-12deg);will-change:transform}

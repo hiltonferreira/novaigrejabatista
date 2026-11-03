@@ -309,3 +309,8 @@ Nova versão: uma única linha do tempo de 3 s, só com `transform` e `opacity`,
 
 - Brasão + nome NIB em cima e "Plataforma Nib" / "NOVA IGREJA BATISTA" embaixo, tudo empilhado e centralizado na tela; divisor vertical removido.
 - Carregamento continua no meio entre o conjunto e a borda inferior (conferido em 390x844, 320x560 e 1280x800).
+
+## Transição pós-orientação mais refinada (2026-11-03)
+
+- Sai o brilho grande e o branco estourado. Fundo azul profundo com leve vinheta, brasão assenta com desaceleração longa (sobe 10px e cresce de 94% a 100%), um reflexo de luz atravessa o desenho (máscara no formato do brasão) e a tela se dissolve sobre a inicial, que sobe 14px ao assentar.
+- Total de cerca de 3s, só transform e opacity; com movimento reduzido, entra direto.

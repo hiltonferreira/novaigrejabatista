@@ -410,24 +410,37 @@
     window.scrollTo(0,0);
     const done = () => { enter.hidden = true; gate(false); document.getElementById('heading').focus({preventScroll:true}); };
     if (matchMedia('(prefers-reduced-motion: reduce)').matches || !enter.animate) { onboarding.hidden = true; done(); return; }
-    // Uma só linha do tempo, só com transform e opacity (compostas na GPU, sem repintura):
-    // o brasão surge, a luz nasce atrás dele e se expande até o branco, que se desfaz na inicial.
+    // Acabamento contido: o brasão assenta com desaceleração longa, um reflexo de luz atravessa
+    // o desenho e a tela se dissolve sobre a inicial, que sobe de leve. Só transform e opacity.
     enter.hidden = false;
-    const mark = enter.querySelector('.enter-brasao'), glow = enter.querySelector('.enter-glow'), white = enter.querySelector('.enter-white');
-    const T = 3000, ease = 'cubic-bezier(.4,0,.2,1)';
-    enter.animate([{opacity:0},{opacity:1}], {duration:320, easing:'ease-out', fill:'forwards'}).finished.then(() => {
+    const mark = enter.querySelector('.enter-mark'), shine = enter.querySelector('.enter-shine'), halo = enter.querySelector('.enter-halo');
+    const T = 2600, settle = 'cubic-bezier(.16,1,.3,1)', soft = 'cubic-bezier(.65,0,.35,1)';
+    const parts = appParts.filter(Boolean);
+    enter.animate([{opacity:0},{opacity:1}], {duration:360, easing:'cubic-bezier(.33,1,.68,1)', fill:'forwards'}).finished.then(() => {
       // Troca de telas enquanto tudo está coberto, para o trabalho de layout não cair no meio da animação.
-      onboarding.hidden = true; gate(false); appParts.forEach(el => { if (el) el.inert = true; });
+      onboarding.hidden = true; gate(false); parts.forEach(el => { el.inert = true; });
       return new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
     }).then(() => {
+      const at = ms => ms / T;
       const runs = [
-        mark.animate([{opacity:0,transform:'scale(.86)'},{opacity:1,transform:'scale(1)',offset:.28},{opacity:1,transform:'scale(1.08)',offset:.72},{opacity:.9,transform:'scale(1.12)'}], {duration:T, easing:'linear', fill:'forwards', composite:'replace'}),
-        glow.animate([{opacity:0,transform:'scale(.4)'},{opacity:.55,transform:'scale(1)',offset:.3,easing:ease},{opacity:1,transform:'scale(16)',offset:.82},{opacity:1,transform:'scale(16)'}], {duration:T, easing:'linear', fill:'forwards'}),
-        white.animate([{opacity:0},{opacity:0,offset:.6},{opacity:1,offset:.84,easing:ease},{opacity:1}], {duration:T, easing:'linear', fill:'forwards'}),
-        enter.animate([{opacity:1},{opacity:1,offset:.84},{opacity:0,easing:'ease-out'}], {duration:T, easing:'linear', fill:'forwards'})
+        halo.animate([{opacity:0,transform:'translate(-50%,-52%) scale(.7)'},{opacity:1,transform:'translate(-50%,-52%) scale(1)',offset:at(1300),easing:soft},{opacity:0,transform:'translate(-50%,-52%) scale(1.15)'}], {duration:T, easing:settle, fill:'forwards'}),
+        mark.animate([
+          {opacity:0,transform:'translateY(10px) scale(.94)',easing:settle},
+          {opacity:1,transform:'translateY(0) scale(1)',offset:at(1000)},
+          {opacity:1,transform:'translateY(0) scale(1)',offset:at(1700),easing:'cubic-bezier(.5,0,.75,0)'},
+          {opacity:0,transform:'translateY(0) scale(1.04)'}
+        ], {duration:T, fill:'forwards'}),
+        shine.animate([
+          {transform:'translateX(-170%) skewX(-12deg)'},
+          {transform:'translateX(-170%) skewX(-12deg)',offset:at(650),easing:soft},
+          {transform:'translateX(260%) skewX(-12deg)',offset:at(1550)},
+          {transform:'translateX(260%) skewX(-12deg)'}
+        ], {duration:T, fill:'forwards'}),
+        enter.animate([{opacity:1},{opacity:1,offset:at(1850),easing:soft},{opacity:0}], {duration:T, fill:'forwards'}),
+        ...parts.map(el => el.animate([{transform:'translateY(14px)'},{transform:'translateY(14px)',offset:at(1850),easing:settle},{transform:'none'}], {duration:T}))
       ];
       return Promise.all(runs.map(a => a.finished));
-    }).then(() => { [mark,glow,white,enter].forEach(el => el.getAnimations().forEach(a => a.cancel())); done(); });
+    }).then(() => { enter.getAnimations({subtree:true}).forEach(a => a.cancel()); done(); });
   }
   next.addEventListener('click', () => { if (slide === slides.length - 1) closeOnboarding(); else goSlide(slide + 1); });
   document.getElementById('onb-skip').addEventListener('click', closeOnboarding);
