@@ -1193,3 +1193,39 @@ html{scrollbar-gutter:stable}
 #nib-proposta .history-how p{font-size:14px;line-height:1.6}
 #nib-proposta .gift-thanks~.gift-actions{flex-wrap:wrap}
 @media(max-width:820px){#nib-proposta .history-layout{grid-template-columns:minmax(0,1fr)}#nib-proposta .history-peek{padding:18px 20px}#nib-proposta .history-peek .button-go{width:100%;justify-content:center}}
+/* Dashboard da gestão */
+#nib-proposta .dash>.section-heading{margin-top:0}
+#nib-proposta .dash-tiles{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px}
+#nib-proposta .dash-tile{display:flex;flex-direction:column;gap:4px;padding:18px;border:1px solid #dde3eb;border-radius:16px;background:#fff;text-align:left;min-width:0}
+#nib-proposta .dash-tile-label{font-size:12.5px;font-weight:600;color:#536176}
+#nib-proposta .dash-tile-value{font-size:30px;line-height:1.1;letter-spacing:-.02em;color:#041e42;font-variant-numeric:tabular-nums}
+#nib-proposta .dash-tile small{font-size:12.5px;line-height:1.45;color:#536176}
+#nib-proposta .dash-box h2{font-size:18px;margin-bottom:14px}
+#nib-proposta .dash-box .button-go{margin-top:18px}
+#nib-proposta .dash-chart{display:block;width:100%;height:auto;overflow:visible}
+#nib-proposta .dash-grid{stroke:#e6ebf1;stroke-width:1}
+#nib-proposta .dash-grid.is-base{stroke:#c9d2de}
+#nib-proposta .dash-axis{font-size:12px;fill:#65768e;font-variant-numeric:tabular-nums}
+#nib-proposta .dash-bar path{fill:#9fb3cc;transition:fill .15s}
+#nib-proposta .dash-bar.is-last path{fill:#041e42}
+#nib-proposta .dash-hit{fill:transparent}
+#nib-proposta .dash-value{font-size:13px;font-weight:700;fill:#041e42;font-variant-numeric:tabular-nums}
+#nib-proposta .dash-hover{opacity:0;transition:opacity .15s}
+#nib-proposta .dash-bar:focus{outline:none}
+#nib-proposta .dash-bar:focus-visible path{fill:#ff7f40}
+#nib-proposta .dash-bar:focus-visible .dash-hover{opacity:1}
+@media(hover:hover){#nib-proposta .dash-bar:hover path{fill:#31567f}#nib-proposta .dash-bar.is-last:hover path{fill:#041e42}#nib-proposta .dash-bar:hover .dash-hover{opacity:1}}
+#nib-proposta .dash-funnel{list-style:none;margin:0;padding:0;display:grid;gap:14px}
+#nib-proposta .dash-funnel-row{display:flex;justify-content:space-between;gap:12px;font-size:14px;margin-bottom:6px}
+#nib-proposta .dash-funnel-row strong{font-variant-numeric:tabular-nums}
+#nib-proposta .dash-track{display:block;height:10px;border-radius:999px;background:#eef1f5;overflow:hidden}
+#nib-proposta .dash-fill{display:block;height:100%;width:0;border-radius:999px;background:#041e42}
+#nib-proposta .dash-funnel small{display:block;margin-top:5px;font-size:12px;color:#65768e}
+#nib-proposta .dash-list{list-style:none;margin:0;padding:0}
+#nib-proposta .dash-list li{display:flex;align-items:baseline;gap:14px;padding:11px 0;border-bottom:1px solid #e6ebf1;font-size:14px;line-height:1.45}
+#nib-proposta .dash-list li:last-child{border-bottom:0}
+#nib-proposta .dash-list strong{flex:0 0 52px;font-size:20px;color:#041e42;font-variant-numeric:tabular-nums}
+#nib-proposta .dash-birthdays strong{font-size:14px;flex-basis:52px;color:#e85d16}
+#nib-proposta .dash+section>.section-heading{margin-top:36px}
+@media(max-width:1100px){#nib-proposta .dash-tiles{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:600px){#nib-proposta .dash-tiles{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}#nib-proposta .dash-tile{padding:14px}#nib-proposta .dash-tile-value{font-size:26px}#nib-proposta .dash-tile:last-child{grid-column:1/-1}}

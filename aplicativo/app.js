@@ -318,6 +318,7 @@
       informacoes: () => `${admin.infoProgram()}<section class="box"><h2>Endereço e contato</h2><p>Os canais de atendimento serão configurados nesta área.</p></section>`
     };
     content.innerHTML = (isManagement() && admin.pages[state.view] ? admin.pages[state.view] : pages[state.view])();
+    content.querySelectorAll('[data-w]').forEach(el => el.style.setProperty('width', el.dataset.w + '%'));
     if (state.view === 'informacoes') markNoticesSeen();
     bindSocialBanners(); renderPixQr(); syncCampaignBar();
     renderNavigation();

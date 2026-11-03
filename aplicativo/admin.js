@@ -74,6 +74,47 @@
       return labels[view];
     };
 
+    // ---------- Dashboard (números fictícios até existir a base de pessoas e presença) ----------
+    const demo = {
+      members: 312, membersNew: 6, regulars: 47, visitors: 23, visitorsFirst: 9,
+      cells: 18, cellsMulti: 2, cellMembers: 64, cellPeople: 241,
+      sundays: [['2026-09-13', 252], ['2026-09-20', 261], ['2026-09-27', 248], ['2026-10-04', 266], ['2026-10-11', 259], ['2026-10-18', 274], ['2026-10-25', 268], ['2026-11-01', 283]],
+      funnel: [['Visitaram nos últimos 90 dias', 61], ['Preencheram o formulário', 14], ['Fizeram a reunião de integração', 9], ['Apresentados no culto', 6]],
+      birthdays: [['04/11', 'Ana Exemplo'], ['05/11', 'Paulo Exemplo'], ['07/11', 'Lúcia Exemplo'], ['08/11', 'Marcos Exemplo']],
+      absent: 12, noReturn: 5
+    };
+    const num = n => n.toLocaleString('pt-BR');
+    function attendanceChart() {
+      const narrow = typeof innerWidth === 'number' && innerWidth < 600, W = narrow ? 340 : 560, H = 200, top = 22, base = 168, max = 300, bw = narrow ? 26 : 40, gap = (W - 50 - demo.sundays.length * bw) / (demo.sundays.length - 1);
+      const y = v => base - (v / max) * (base - top);
+      const grid = [0, 100, 200, 300].map(v => `<line x1="40" x2="${W}" y1="${y(v)}" y2="${y(v)}" class="dash-grid${v ? '' : ' is-base'}"/><text x="32" y="${y(v) + 4}" class="dash-axis" text-anchor="end">${v}</text>`).join('');
+      const bars = demo.sundays.map(([d, v], i) => {
+        const x = 40 + i * (bw + gap), yt = y(v), r = 4, last = i === demo.sundays.length - 1;
+        const path = `M${x},${base} V${yt + r} Q${x},${yt} ${x + r},${yt} H${x + bw - r} Q${x + bw},${yt} ${x + bw},${yt + r} V${base} Z`;
+        return `<g class="dash-bar${last ? ' is-last' : ''}" tabindex="0" role="img" aria-label="${dayNum(d)} ${escape(monthShort(d))}: ${v} pessoas"><rect x="${x - gap / 2}" y="${top}" width="${bw + gap}" height="${base - top}" class="dash-hit"/><path d="${path}"/>${last ? `<text x="${x + bw / 2}" y="${yt - 7}" text-anchor="middle" class="dash-value">${v}</text>` : `<text x="${x + bw / 2}" y="${yt - 7}" text-anchor="middle" class="dash-value dash-hover">${v}</text>`}<text x="${x + bw / 2}" y="${base + 20}" text-anchor="middle" class="dash-axis">${narrow ? dayNum(d) + '/' + d.slice(5, 7) : dayNum(d) + ' ' + escape(monthShort(d))}</text></g>`;
+      }).join('');
+      return `<svg class="dash-chart" viewBox="0 0 ${W} ${H + 8}" role="group" aria-label="Presença nos cultos de domingo, últimas 8 semanas">${grid}${bars}</svg><table class="visually-hidden"><caption>Presença nos cultos de domingo</caption><tr><th>Domingo</th><th>Pessoas</th></tr>${demo.sundays.map(([d, v]) => `<tr><td>${dayNum(d)} ${escape(monthShort(d))}</td><td>${v}</td></tr>`).join('')}</table>`;
+    }
+    function dashboard() {
+      const s = demo.sundays.map(x => x[1]), avg = Math.round(s.slice(-4).reduce((a, b) => a + b, 0) / 4), prev = Math.round(s.slice(-8, -4).reduce((a, b) => a + b, 0) / 4), diff = Math.round((avg - prev) / prev * 100);
+      const tile = (label, value, note, view) => `<${view ? `button type="button" data-view="${view}"` : 'div'} class="dash-tile"><span class="dash-tile-label">${label}</span><strong class="dash-tile-value">${value}</strong><small>${note}</small></${view ? 'button' : 'div'}>`;
+      const tiles = [
+        tile('Membros ativos', num(demo.members), `+${demo.membersNew} nos últimos 30 dias`),
+        tile('Frequentadores', num(demo.regulars), 'Participam, mas ainda não são membros'),
+        tile('Visitantes em outubro', num(demo.visitors), `${demo.visitorsFirst} vieram pela primeira vez`),
+        tile('Células ativas', num(demo.cells), `${demo.cellPeople} participantes · ${demo.cellsMulti} multiplicações no ano`),
+        tile('Presença média', num(avg), `Domingos, últimas 4 semanas · ${diff >= 0 ? '+' : ''}${diff}%`)
+      ].join('');
+      const fmax = demo.funnel[0][1];
+      const funnel = demo.funnel.map(([l, v], i) => `<li><div class="dash-funnel-row"><span>${l}</span><strong>${v}</strong></div><span class="dash-track"><span class="dash-fill" data-w="${Math.max(3, Math.round(v / fmax * 100))}"></span></span>${i ? `<small>${Math.round(v / demo.funnel[i - 1][1] * 100)}% da etapa anterior</small>` : ''}</li>`).join('');
+      const third = isPas()
+        ? `<section class="box dash-box"><span class="label">CUIDADO PASTORAL</span><h2>Quem precisa de atenção</h2><ul class="dash-list"><li><strong>${demo.absent}</strong><span>membros sem presença no culto ou na célula há 4 semanas ou mais</span></li><li><strong>${demo.noReturn}</strong><span>visitantes sem retorno depois da primeira visita</span></li><li><strong>${activePrayers().length}</strong><span>pedidos de oração ativos no caderno</span></li></ul>${button('Ver cuidado e oração', 'cuidado')}</section>`
+        : `<section class="box dash-box"><span class="label">ESTA SEMANA</span><h2>Aniversariantes</h2><ul class="dash-list dash-birthdays">${demo.birthdays.map(([d, n]) => `<li><strong>${d}</strong><span>${escape(n)}</span></li>`).join('')}</ul><p class="note">A Secretaria envia a mensagem de parabéns no grupo da igreja.</p></section>`;
+      return `<section class="dash" aria-labelledby="dash-title"><div class="section-heading"><div><span class="label">RESUMO DA IGREJA</span><h2 id="dash-title">Como a igreja está hoje</h2></div><span class="note">Números fictícios de exemplo</span></div><div class="dash-tiles">${tiles}</div>
+      <div class="admin-grid dash-grid-2"><section class="box dash-box"><span class="label">CULTOS DE DOMINGO</span><h2>Presença nas últimas 8 semanas</h2>${attendanceChart()}</section><section class="box dash-box"><span class="label">CAMINHO ATÉ A MEMBRESIA</span><h2>Integração</h2><ol class="dash-funnel">${funnel}</ol>${button('Ver membresia', 'membresia')}</section></div>
+      <div class="admin-grid dash-grid-2"><section class="box dash-box"><span class="label">CÉLULAS</span><h2>Vida em célula</h2><ul class="dash-list"><li><strong>${demo.cells}</strong><span>células ativas</span></li><li><strong>${demo.cellMembers}%</strong><span>dos membros participam de uma célula</span></li><li><strong>${demo.members - Math.round(demo.members * demo.cellMembers / 100)}</strong><span>membros ainda sem célula</span></li></ul><p class="note">Na versão real, estes números vêm da plataforma de células.</p></section>${third}</div></section>`;
+    }
+
     // ---------- Painel ----------
     function task(view, count, title, text, tone) {
       return `<button type="button" class="admin-task${tone ? ' is-' + tone : ''}" data-view="${view}"><span class="admin-task-icon" aria-hidden="true">${svg(view)}</span><span class="admin-task-text"><strong>${title}</strong><small>${text}</small></span>${count !== null ? `<span class="admin-count${count ? '' : ' is-zero'}">${count}</span>` : ''}${chevron}</button>`;
@@ -94,7 +135,7 @@
       };
       const shortcuts = views().filter(([key]) => key !== 'gestao').map(([key, title]) => { const c = counts[key]; const alert = c && ['solicitacoes', 'membresia'].includes(key) && (key !== 'solicitacoes' || isSec()); return `<button type="button" class="quick-action admin-quick" data-view="${key}"><span class="home-action-icon" aria-hidden="true">${svg(key)}</span>${alert ? `<span class="admin-badge" aria-label="${c} pendente${c === 1 ? '' : 's'}">${c}</span>` : ''}<strong>${title}</strong><span class="home-action-description">${texts[key] || ''}</span></button>`; }).join('');
       const next = upcoming.map(x => `<li><span class="admin-when"><small>${escape(monthShort(x.day))}</small><strong>${dayNum(x.day)}</strong></span><span><b>${escape(x.name)}</b><small>${escape(x.type)} · ${x.time ? escape(x.time) : 'horário a definir'}</small></span></li>`).join('');
-      return `<section aria-labelledby="admin-quick-title"><div class="section-heading"><div><span class="label">${escape(actor().toUpperCase())}</span><h2 id="admin-quick-title">O que você precisa está aqui</h2></div></div><p class="admin-rule">${isPas() ? 'A Liderança Pastoral decide. A Secretaria organiza e registra o que foi decidido.' : 'A Secretaria organiza e registra. Decisões pastorais ficam com a Liderança Pastoral.'}</p><div class="quick-actions">${shortcuts}</div></section>
+      return `${dashboard()}<section aria-labelledby="admin-quick-title"><div class="section-heading"><div><span class="label">${escape(actor().toUpperCase())}</span><h2 id="admin-quick-title">Atalhos de gestão</h2></div></div><p class="admin-rule">${isPas() ? 'A Liderança Pastoral decide. A Secretaria organiza e registra o que foi decidido.' : 'A Secretaria organiza e registra. Decisões pastorais ficam com a Liderança Pastoral.'}</p><div class="quick-actions">${shortcuts}</div></section>
       <div class="admin-grid"><section class="box"><div class="section-heading"><div><span class="label">PRÓXIMOS DIAS</span><h2>Na agenda</h2></div>${isSec() ? button('Gerenciar', 'programacao') : ''}</div><ul class="admin-upcoming">${next || '<li>Nenhum item nos próximos dias.</li>'}</ul></section>
       <section class="box"><span class="label">EVENTOS E INSCRIÇÕES</span><h2>Painel de inscrições</h2><p>As inscrições dos eventos continuam no painel do site, com login próprio.</p><a class="button button-go admin-external" href="https://novaigrejabatista.com.br/inscricoes/" target="_blank" rel="noopener"><span>Abrir painel de inscrições</span>${arrow}</a></section></div>
       <p class="note">Fora desta área: o financeiro (relatórios de contribuição) fica isolado, e as células usam a plataforma própria. O seletor de perfil desta versão de teste não é controle de acesso.</p>`;
