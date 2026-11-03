@@ -286,3 +286,10 @@ Contraste conferido: bordas dos campos #7a879a (3,4:1 sobre o fundo), textos sec
 Verificado: 51 testes aprovados, sem erros de console. Navegador em 390 px: validação do cadastro, cadastro completo levando à orientação, quatro telas até "Começar", inicial com "Olá, Maria!" e sem overflow. Também em 1280 px.
 
 Decisões em aberto para a versão real: forma de acesso (e-mail e senha, código por WhatsApp ou ambos), quem confirma o vínculo de quem se cadastra (secretaria), se haverá CPF, e se a orientação aparece só no primeiro acesso.
+
+Ajustes seguintes no acesso, após teste de Hilton no iPhone:
+- Vínculo em uma linha só, com três opções de largura igual: Membro, Frequento e Conhecendo.
+- Senha com critérios visíveis e marcados em tempo real (8 caracteres, maiúscula, minúscula, número e símbolo) e campo "Repita a senha", que avisa se as senhas são iguais. O cadastro só avança com todos os critérios atendidos e as senhas iguais. Erros somem ao corrigir o campo.
+- Orientação: a foto ficou reta embaixo e o texto sobe numa folha com cantos arredondados por cima, como na tela de acesso. O ícone fica na emenda.
+- Ao tocar em "Começar" ou "Pular": tela azul com o brasão branco no centro (fade de 0,38 s, entrada de 0,65 s e pausa), depois zoom de 1 para 38 vezes, com origem no centro do brasão, enquanto a tela azul some e revela a inicial (1,3 s, `cubic-bezier(.65,0,.35,1)`). Total de cerca de 3 s, feito com Web Animations. Com movimento reduzido, vai direto para a inicial.
+- Saudações neutras: "Boas-vindas, [nome]" na orientação e "BOAS-VINDAS" na inicial, porque o nome cadastrado pode ser de qualquer pessoa.

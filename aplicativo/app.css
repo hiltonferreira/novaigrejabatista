@@ -680,10 +680,11 @@ html{scrollbar-gutter:stable}
 #nib-proposta .auth-secondary{width:100%;min-height:50px;border:1px solid #7a879a;border-radius:999px;background:#fff;color:#041e42;font:600 15px/1 "NIB Acumin Mobile",Arial,sans-serif;cursor:pointer}
 #nib-proposta .auth-or{display:flex;align-items:center;gap:12px;margin:16px 0;color:#536176;font-size:13px}
 #nib-proposta .auth-or::before,#nib-proposta .auth-or::after{content:"";flex:1;height:1px;background:#dce3eb}
-#nib-proposta .auth-choice{margin:0 0 16px;padding:0;border:0}
-#nib-proposta .auth-choice label{display:inline-flex;margin:4px 6px 0 0;cursor:pointer}
+#nib-proposta .auth-choice{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 16px;padding:0;border:0}
+#nib-proposta .auth-choice legend{grid-column:1/-1;float:left;width:100%}
+#nib-proposta .auth-choice label{display:flex;margin:0;cursor:pointer;min-width:0}
 #nib-proposta .auth-choice input{position:absolute;opacity:0;width:1px;height:1px}
-#nib-proposta .auth-choice span{display:inline-flex;align-items:center;min-height:40px;padding:8px 14px;border:1px solid #7a879a;border-radius:999px;background:#fff;font-size:14px;color:#041e42}
+#nib-proposta .auth-choice span{display:flex;align-items:center;justify-content:center;width:100%;min-height:44px;padding:8px 6px;white-space:nowrap;border:1px solid #7a879a;border-radius:999px;background:#fff;font-size:14px;color:#041e42}
 #nib-proposta .auth-choice input:checked+span{background:#041e42;border-color:#041e42;color:#fff}
 #nib-proposta .auth-choice input:focus-visible+span{outline:3px solid #315f94;outline-offset:2px}
 #nib-proposta .auth-consent{display:flex;gap:10px;align-items:flex-start;margin:0 0 16px;font-size:14px;line-height:1.4;color:#43516a;cursor:pointer}
@@ -713,3 +714,21 @@ html{scrollbar-gutter:stable}
 @media(min-width:821px){#nib-proposta .onb-slide{flex-direction:row;align-items:center;gap:48px;padding:48px}#nib-proposta .onb-media{flex:1;height:min(70vh,560px)}#nib-proposta .onb-media img{border-radius:32px}#nib-proposta .onb-copy{flex:1;padding:0}#nib-proposta .onb-footer{padding:20px 48px 32px}}
 #nib-proposta .replay-flow{display:block;width:100%;margin-top:12px;min-height:44px;cursor:pointer}
 @media(prefers-reduced-motion:reduce){#nib-proposta .auth-primary,#nib-proposta .onb-dots span{transition:none}#nib-proposta .auth-primary:active{transform:none}}
+
+#nib-proposta .pass-rules{display:grid;gap:4px;margin:-8px 0 16px;padding:0;list-style:none;font-size:13px;line-height:1.35;color:#536176}
+#nib-proposta .pass-rules li{display:flex;align-items:center;gap:8px}
+#nib-proposta .pass-rules li::before{content:"";flex:none;width:14px;height:14px;border:1.5px solid #7a879a;border-radius:50%;box-sizing:border-box}
+#nib-proposta .pass-rules li.is-ok{color:#1f513c}
+#nib-proposta .pass-rules li.is-ok::before{border-color:#1f513c;background:#1f513c url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 12 4 4 8-8'/%3E%3C/svg%3E") center/10px no-repeat}
+#nib-proposta .pass-match.is-ok{color:#1f513c}
+#nib-proposta .pass-match:not(.is-ok):not(:empty){color:#a3341a}
+/* Orientação: foto reta embaixo e texto em folha arredondada por cima, como na tela de acesso. */
+#nib-proposta .onb-media img{border-radius:0}
+#nib-proposta .onb-copy{position:relative;z-index:1;flex:1;max-width:none;margin-top:-30px;padding:52px 24px 12px;border-radius:30px 30px 0 0;background:#f6f8fb}
+#nib-proposta .onb-copy>*{max-width:520px}
+#nib-proposta .onb-badge{z-index:2;bottom:-2px}
+@media(min-width:821px){#nib-proposta .onb-media img{border-radius:32px}#nib-proposta .onb-copy{margin-top:0;padding:0;border-radius:0;background:none}#nib-proposta .onb-badge{bottom:-30px}}
+/* Entrada no app: brasão branco no azul, zoom pelo centro até a inicial. */
+#nib-proposta .app-enter{position:fixed;inset:0;z-index:950;display:grid;place-items:center;overflow:hidden;background:#041e42;pointer-events:none}
+#nib-proposta .app-enter[hidden]{display:none}
+#nib-proposta .enter-brasao{width:clamp(120px,34vw,180px);height:auto;max-width:none;transform-origin:50.4% 45.9%;will-change:transform;opacity:0}

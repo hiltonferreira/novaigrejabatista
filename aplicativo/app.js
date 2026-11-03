@@ -12,7 +12,7 @@
   ];
   const state = { member: { first: 'Jéssica', full: 'Jéssica Exemplo', email: 'jessica@example.com' }, context: 'membro', view: 'inicio', request: null, presented: null, gift: 'Dízimo', calendarMonth: NibDaily.dayKey(new Date()).slice(0,7), calendarDay: NibDaily.dayKey(new Date()), prayers: demoPrayers() };
   const navigation = [['inicio', 'Início'], ['cadastro', 'Meu cadastro'], ['eventos', 'Eventos'], ['celulas', 'Células'], ['generosidade', 'Generosidade'], ['informacoes', 'Informações'], ['agenda', 'Agenda'], ['caderno', 'Caderno de oração']];
-  const labels = { caderno: ['VIDA DE ORAÇÃO', 'Caderno de oração', 'Uma comunidade que cuida e ora em conjunto.'], agenda: ['VIDA NA IGREJA', 'Agenda da igreja', 'Cultos, encontros e próximos eventos em um só lugar.'], inicio: ['SEJA BEM-VINDA', 'Olá, Jéssica! Você está na plataforma Nib.', 'Acesse seu cadastro, encontre eventos, contribua e acompanhe a vida da igreja.'], cadastro: ['MINHAS INFORMAÇÕES', 'Meu cadastro', 'Consulte seus dados e encaminhe uma atualização à equipe.'], eventos: ['VIDA EM COMUNIDADE', 'Eventos e inscrições', 'Encontre os próximos encontros da igreja.'], celulas: ['CAMINHAR JUNTOS', 'Células', 'Acesse a plataforma de células adotada pela igreja.'], generosidade: ['CONTRIBUIR', 'Generosidade', 'Dízimos, ofertas e campanhas em um só lugar.'], informacoes: ['FIQUE POR PERTO', 'Informações da igreja', 'Programação, endereço e canais da comunidade.'], gestao: ['ADMINISTRAÇÃO', 'Integração e membresia', 'Acompanhe o formulário, a reunião e a apresentação no culto.'], confirmar: ['MEMBRESIA', 'Registrar apresentação', 'O registro documenta a apresentação já realizada no culto.'] };
+  const labels = { caderno: ['VIDA DE ORAÇÃO', 'Caderno de oração', 'Uma comunidade que cuida e ora em conjunto.'], agenda: ['VIDA NA IGREJA', 'Agenda da igreja', 'Cultos, encontros e próximos eventos em um só lugar.'], inicio: ['BOAS-VINDAS', 'Olá, Jéssica! Você está na plataforma Nib.', 'Acesse seu cadastro, encontre eventos, contribua e acompanhe a vida da igreja.'], cadastro: ['MINHAS INFORMAÇÕES', 'Meu cadastro', 'Consulte seus dados e encaminhe uma atualização à equipe.'], eventos: ['VIDA EM COMUNIDADE', 'Eventos e inscrições', 'Encontre os próximos encontros da igreja.'], celulas: ['CAMINHAR JUNTOS', 'Células', 'Acesse a plataforma de células adotada pela igreja.'], generosidade: ['CONTRIBUIR', 'Generosidade', 'Dízimos, ofertas e campanhas em um só lugar.'], informacoes: ['FIQUE POR PERTO', 'Informações da igreja', 'Programação, endereço e canais da comunidade.'], gestao: ['ADMINISTRAÇÃO', 'Integração e membresia', 'Acompanhe o formulário, a reunião e a apresentação no culto.'], confirmar: ['MEMBRESIA', 'Registrar apresentação', 'O registro documenta a apresentação já realizada no culto.'] };
   const escape = value => String(value).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const button = (text, view, primary = false) => `<button type="button" class="button ${primary ? 'action primary' : ''}" data-view="${view}">${text}</button>`;
   // Ícones reaproveitados da função icon() do painel; sem ícones nas ações.
@@ -348,6 +348,17 @@
     state.member = { first: 'Jéssica', full: 'Jéssica Exemplo', email: id.value.includes('@') ? id.value.trim().slice(0,80) : 'jessica@example.com' };
     finishAuth();
   });
+  const passRules = v => [v.length >= 8, /[A-ZÀ-Ý]/.test(v), /[a-zß-ÿ]/.test(v), /\d/.test(v), /[^A-Za-zÀ-ÿ0-9\s]/.test(v)];
+  const passItems = [...document.querySelectorAll('.pass-rules li')];
+  function refreshPass() {
+    const p1 = document.getElementById('signup-pass').value, p2 = document.getElementById('signup-pass2').value;
+    passRules(p1).forEach((ok,i) => { passItems[i].classList.toggle('is-ok', ok); passItems[i].setAttribute('aria-label', passItems[i].textContent + (ok ? ': atendido' : ': pendente')); });
+    const hint = document.getElementById('signup-pass2-hint');
+    hint.textContent = !p2 ? '' : p1 === p2 ? 'As senhas são iguais.' : 'As senhas ainda não são iguais.';
+    hint.classList.toggle('is-ok', !!p2 && p1 === p2);
+  }
+  ['signup-pass','signup-pass2'].forEach(id => document.getElementById(id).addEventListener('input', refreshPass));
+  auth.addEventListener('input', e => { const field = e.target.closest('input'); if (!field) return; field.removeAttribute('aria-invalid'); const err = field.form && field.form.querySelector('.auth-error'); if (err) err.textContent = ''; });
   document.getElementById('panel-signup').addEventListener('submit', e => {
     e.preventDefault();
     const form = e.currentTarget; const f = form.elements;
@@ -356,7 +367,8 @@
       [f.nome, name.split(' ').length < 2, 'Escreva seu nome e sobrenome.'],
       [f.celular, f.celular.value.replace(/\D/g,'').length < 10, 'Informe um celular com DDD.'],
       [f.email, !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email.value.trim()), 'Informe um e-mail válido.'],
-      [f.senha, f.senha.value.length < 8, 'A senha precisa ter pelo menos 8 caracteres.'],
+      [f.senha, !passRules(f.senha.value).every(Boolean), 'A senha ainda não atende a todos os critérios.'],
+      [f.senha2, f.senha2.value !== f.senha.value || !f.senha2.value, 'As senhas não são iguais.'],
       [document.getElementById('signup-consent'), !document.getElementById('signup-consent').checked, 'Para continuar, aceite a política de privacidade.']
     ];
     checks.forEach(([el,bad]) => mark(el,bad));
@@ -392,7 +404,24 @@
   }
   let slideFrame = 0;
   track.addEventListener('scroll', () => { if (slideFrame) return; slideFrame = requestAnimationFrame(() => { slideFrame = 0; const k = Math.round(track.scrollLeft / track.clientWidth); if (k !== slide) { slide = k; syncSlide(); } }); }, {passive:true});
-  function closeOnboarding() { onboarding.hidden = true; gate(false); writeFlag('nib-onboarded', true); document.getElementById('heading').focus({preventScroll:true}); window.scrollTo(0,0); }
+  const enter = document.getElementById('app-enter');
+  function closeOnboarding() {
+    writeFlag('nib-onboarded', true);
+    window.scrollTo(0,0);
+    const done = () => { enter.hidden = true; gate(false); document.getElementById('heading').focus({preventScroll:true}); };
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches || !enter.animate) { onboarding.hidden = true; done(); return; }
+    // Tela azul com o brasão: aparece, respira e o zoom atravessa o centro do brasão até revelar a inicial.
+    enter.hidden = false;
+    const mark = enter.querySelector('.enter-brasao');
+    enter.animate([{opacity:0},{opacity:1}], {duration:380, easing:'ease-out', fill:'forwards'}).finished.then(() => {
+      onboarding.hidden = true; gate(false); appParts.forEach(el => { if (el) el.inert = true; });
+      mark.animate([{transform:'scale(.82)',opacity:0},{transform:'scale(1)',opacity:1}], {duration:650, easing:'cubic-bezier(.2,.8,.2,1)', fill:'forwards'});
+      return new Promise(r => setTimeout(r, 1050));
+    }).then(() => {
+      mark.animate([{transform:'scale(1)'},{transform:'scale(1.12)',offset:.18},{transform:'scale(38)'}], {duration:1300, easing:'cubic-bezier(.65,0,.35,1)', fill:'forwards'});
+      return enter.animate([{opacity:1},{opacity:1,offset:.55},{opacity:0}], {duration:1300, easing:'ease-in-out', fill:'forwards'}).finished;
+    }).then(() => { mark.getAnimations().forEach(a => a.cancel()); enter.getAnimations().forEach(a => a.cancel()); done(); });
+  }
   next.addEventListener('click', () => { if (slide === slides.length - 1) closeOnboarding(); else goSlide(slide + 1); });
   document.getElementById('onb-skip').addEventListener('click', closeOnboarding);
   onboarding.addEventListener('keydown', e => { if (e.key === 'ArrowRight') goSlide(slide + 1); if (e.key === 'ArrowLeft') goSlide(slide - 1); if (e.key === 'Escape') closeOnboarding(); });
