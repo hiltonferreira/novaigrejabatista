@@ -377,3 +377,9 @@ Nova versão: uma única linha do tempo de 3 s, só com `transform` e `opacity`,
 
 - Pedido de um membro (via Hilton): no app atual, ao contribuir por Pix já logado, é preciso digitar os dados de novo. Aqui, Dízimo/Oferta viram 3 etapas: **Valor** (R$ 50/100/200/500 ou outro valor) → **Seus dados** (resumo do valor e cartão "Contribuindo como" com nome, CPF mascarado e e-mail vindos do cadastro, selo "Preenchido", opção de enviar comprovante ao e-mail) → **Pix** (espaço do QR Code de teste listrado e "copia e cola" fictício com botão Copiar).
 - Versão final: o servidor gera um Pix dinâmico (cobrança com nome, CPF, valor e finalidade) pelo banco/PSP da igreja, confirma o pagamento por webhook e envia o comprovante. O CPF ainda não é pedido no cadastro (decisão pendente).
+
+## Pix funcionando + campanha da construção (2026-11-03)
+
+- `pix.js` gera o Pix "copia e cola" (BR Code estático EMV do Banco Central) com a chave CNPJ 40518758000130, nome NOVA IGREJA BATISTA e cidade ARIQUEMES, **conferidos lendo o QR Code oficial do site**: sem valor, o código gerado é idêntico ao oficial (teste `pix.test.cjs`). Com valor e identificador (txid DIZ/OFE/OBRA + data + 6 caracteres), o QR é desenhado no app com `assets/vendor/qrcode-generator-2.0.4.js` (MIT, Kazuhiko Arase). QR renderizado conferido por leitura automática (jsQR).
+- O Pix é **real** e paga a conta da igreja; o banco do pagador já envia nome e CPF à igreja. CPF falso removido do cartão. Etapa final "Já fiz o Pix" → agradecimento; a confirmação automática depende da API Pix do Sicoob (Pix dinâmico + webhook), ainda não integrada.
+- Aba Campanhas: "Construção do novo templo" (textos e números do site: 30% concluída, 1.500 lugares, entrega prevista em 2028; foto do pôster da obra) com o mesmo fluxo de contribuição (finalidade "Obra do templo").
