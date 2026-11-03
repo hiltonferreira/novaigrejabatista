@@ -814,3 +814,19 @@ html{scrollbar-gutter:stable}
 #nib-proposta .calendar-dot[data-kind=celula]{background:#6a45b0}
 #nib-proposta .calendar-selection .day-entries li[data-kind=celula]::before{background:#6a45b0}
 #nib-proposta .calendar-entry-place{color:#41506a}
+/* Caderno de oração: botão de orar com coração e frase de apoio */
+#nib-proposta .prayer-post-author{flex-wrap:nowrap;margin-bottom:18px}
+#nib-proposta .prayer-post-author>div{min-width:0}
+#nib-proposta .prayer-answered{display:inline-flex;align-items:center;gap:6px;margin:0 0 10px;padding:5px 10px 5px 8px;border-radius:999px;background:#e9f3ed;color:#24674e;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;line-height:1}
+#nib-proposta .prayer-answered svg{width:14px;height:14px;flex:0 0 14px}
+#nib-proposta .prayer-post-footer{flex-wrap:nowrap;gap:14px}
+#nib-proposta main .prayer-support{flex:0 0 auto;gap:8px;min-height:44px;padding:10px 18px 10px 14px;border:1px solid #c9d3df;background:#fff;color:#041e42;font-size:14px;font-weight:600;box-shadow:none}
+#nib-proposta .prayer-support .pray-heart{width:20px;height:20px;flex:0 0 20px;fill:none;color:#041e42;transition:fill .2s ease,color .2s ease}
+#nib-proposta main .prayer-support[aria-pressed=true]{background:#fdecef;border-color:#f3b9c5;color:#b3123a}
+#nib-proposta .prayer-support[aria-pressed=true] .pray-heart{fill:#e11d48;color:#e11d48;animation:nib-heart-pop .42s cubic-bezier(.2,1.6,.4,1)}
+@keyframes nib-heart-pop{0%{transform:scale(.6)}55%{transform:scale(1.25)}100%{transform:scale(1)}}
+@media(hover:hover){#nib-proposta main .prayer-support:not([aria-pressed=true]):hover{background:#fff5f7;border-color:#f3b9c5;color:#041e42}#nib-proposta main .prayer-support:not([aria-pressed=true]):hover .pray-heart{color:#e11d48}#nib-proposta main .prayer-support[aria-pressed=true]:hover{background:#fbe1e7;color:#b3123a}}
+#nib-proposta .prayer-support-caption{min-width:0;font-size:12px;line-height:1.4;color:#536176}
+#nib-proposta .prayer-support-caption b{font-weight:700;color:#041e42}
+@media(prefers-reduced-motion:reduce){#nib-proposta .prayer-support[aria-pressed=true] .pray-heart{animation:none}}
+#nib-proposta .prayer-support-label{line-height:1;padding-top:2px}

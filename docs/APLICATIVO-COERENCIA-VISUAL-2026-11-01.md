@@ -343,3 +343,9 @@ Nova versão: uma única linha do tempo de 3 s, só com `transform` e `opacity`,
 ## Terceiro banner: site da igreja (2026-11-03)
 
 - Banner do Facebook trocado pelo site: "Site da igreja" / "A NIB em um só lugar" / "Cultos, células, eventos e inscrições. **Acesse o site!**", link https://novaigrejabatista.com.br/. Mesma foto, arquivo renomeado para social-site.webp (também usado no 4º slide da orientação).
+
+## Caderno de oração: botão com coração e frase de apoio (2026-11-03)
+
+- Botão "Vou orar" com coração em contorno; ao tocar vira "Orando", coração vermelho preenchido (#e11d48) com pequeno pulso e fundo rosado. O contador saiu do botão.
+- Ao lado, uma frase em vez de "0 pessoas orando": "Seja o primeiro a orar por este pedido", "**3** pessoas estão orando", "**Você** está orando por este pedido" ou "**Você** e mais 2 pessoas estão orando".
+- "Oração atendida" saiu do canto da linha do autor e virou selo com ícone de confirmação, alinhado à esquerda acima do título.
