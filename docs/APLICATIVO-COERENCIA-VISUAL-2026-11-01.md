@@ -326,3 +326,9 @@ Nova versão: uma única linha do tempo de 3 s, só com `transform` e `opacity`,
 - "Ver calendário completo" saiu do cabeçalho e virou botão de largura total, centralizado no rodapé do bloco.
 - Todos os botões de navegação secundários (`button()` não primário: Ver calendário completo, Ver caderno, Ver todos, Voltar à gestão) ganham seta à direita e texto centralizado; nos cabeçalhos ficam alinhados ao título.
 - Calendário mensal começa no domingo (D S T Q Q S S); `monthInfo().offset` passou a contar a partir do domingo, com teste atualizado.
+
+## Calendário: Hoje no topo, seleção e bloco do dia (2026-11-03)
+
+- Botão "Hoje" saiu do fim da legenda e foi para baixo do nome do mês; fica destacado quando o dia de hoje está selecionado. Legenda centralizada em uma linha, com o quadradinho de contorno explicando "Hoje".
+- Dias sem fundo cinza; número sempre na mesma altura. Dia selecionado vira um quadrado arredondado azul em degradê com sombra suave e pequena animação de entrada; hoje tem contorno azul.
+- Bloco do dia selecionado: cartão de data (NOV / 22), dia da semana em destaque, data por extenso e contador de encontros. Cada encontro é um cartão com faixa colorida do tipo e horário em uma pílula ("Horário a definir" quando não houver).
