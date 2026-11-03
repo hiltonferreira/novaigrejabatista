@@ -1159,3 +1159,5 @@ html{scrollbar-gutter:stable}
 @keyframes notice-pop{0%{transform:scale(.4);opacity:0}70%{transform:scale(1.12)}100%{transform:scale(1);opacity:1}}
 #nib-proposta .notice-badge{animation:notice-pop .45s cubic-bezier(.2,.8,.2,1) both;box-shadow:0 0 0 3px #fff}
 @media(prefers-reduced-motion:reduce){#nib-proposta .notice-badge{animation:none}}
+#nib-proposta .box h2+.admin-notice{padding-top:10px}
+#nib-proposta .admin-notice:last-of-type{padding-bottom:0}
