@@ -887,3 +887,5 @@ html{scrollbar-gutter:stable}
 @keyframes nib-sheet-up{from{transform:translateY(100%)}to{transform:none}}
 @keyframes nib-fade-in{from{opacity:0}to{opacity:1}}
 @media(prefers-reduced-motion:reduce){#nib-proposta :is(.face-offer,.face-offer-sheet,.face-scan,.face-scan .face-corners){animation:none}#nib-proposta .face-check{transition:none}}
+#nib-proposta .home-events-block>.section-heading .label{font-size:10px;margin-bottom:8px}
+#nib-proposta .home-events-block>.section-heading h2{margin:0}

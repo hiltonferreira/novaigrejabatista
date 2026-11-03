@@ -365,3 +365,4 @@ Nova versão: uma única linha do tempo de 3 s, só com `transform` e `opacity`,
 - Login ganhou "Entrar com Face ID" (ícone de rosto) entre "ou" e "Receber código pelo WhatsApp". Toque mostra o cartão de leitura (cantos pulsando → ✓ "Reconhecido") e entra como Jéssica.
 - Depois do primeiro login com senha ou cadastro, aparece uma folha "Entrar com Face ID nas próximas vezes?" com "Ativar Face ID" / "Agora não"; o aceite fica em `nib-faceid` (sessionStorage) e "Rever entrada e cadastro" limpa a marcação.
 - Versão final: chave de acesso (WebAuthn/passkey) no domínio oficial, com servidor guardando só a chave pública; sessão longa (~30 dias) e Face ID ao reabrir depois do prazo ou em ações sensíveis. Nada biométrico sai do aparelho.
+- Bloco "Eventos da igreja" na inicial ganhou o chapéu "PARTICIPE COM A GENTE", no mesmo padrão de "CAMINHE COM A GENTE" e "CUIDADO EM COMUNIDADE" (2026-11-03).
