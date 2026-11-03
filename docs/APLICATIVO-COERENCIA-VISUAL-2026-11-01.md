@@ -405,3 +405,10 @@ Nova versão: uma única linha do tempo de 3 s, só com `transform` e `opacity`,
 - Pagamento: passo a passo numerado (abrir o banco, ler QR ou colar, conferir o nome) antes de "Já fiz o Pix".
 - Valor sugerido selecionado em laranja claro, no mesmo padrão do passo atual.
 - "Outras formas de contribuir" em bloco secundário, com o QR Code oficial sempre visível.
+
+## Contribuição em 4 telas e Pix copia e cola da igreja (2026-11-03)
+
+- Passo a passo real: 01 Finalidade (Dízimo, Oferta ou Campanha em cartões com descrição; a campanha mostra foto e % da obra) → 02 Valor (título conforme a finalidade) → 03 Seus dados → 04 Pix. Cada tela tem título, orientação e um botão principal.
+- O seletor no topo da página saiu; a escolha agora é a primeira etapa.
+- "Outras formas de contribuir": descrição mais clara e botão laranja "Copiar código Pix" abaixo do QR oficial, igual ao do site (copia o mesmo código do QR oficial).
+- Mensagem de cópia do Pix corrigida (não é mais "de teste").

@@ -1012,3 +1012,27 @@ html{scrollbar-gutter:stable}
 #nib-proposta .church-qr-open img{width:180px;height:180px;padding:0;border:0}
 #nib-proposta .church-qr-open figcaption{margin-top:8px;font-size:12.5px;color:#536176}
 #nib-proposta .church-qr-open figcaption b{color:#041e42}
+/* Contribuição: etapa 1, escolha da finalidade */
+#nib-proposta .gift-choices{display:grid;gap:10px}
+#nib-proposta main button.gift-choice{display:flex;align-items:flex-start;gap:14px;width:100%;min-height:0;padding:16px;border:1px solid #dce3eb;border-radius:18px;background:#fff;color:#041e42;text-align:left;font-weight:400;box-shadow:none;transform:none;transition:border-color .25s ease,background-color .25s ease,box-shadow .25s ease}
+#nib-proposta main button.gift-choice:is(:hover,:active,:focus){background:#fff;color:#041e42}
+@media(hover:hover){#nib-proposta main button.gift-choice:not([aria-pressed=true]):hover{border-color:#ffb48f}}
+#nib-proposta main button.gift-choice[aria-pressed=true]{border-color:#ff7f40;background:rgba(255,127,64,.06);box-shadow:inset 0 0 0 1px #ff7f40}
+#nib-proposta .gift-choice-icon{flex:0 0 44px;display:grid;place-items:center;width:44px;height:44px;border-radius:14px;background:#f3f6fa;color:#041e42;transition:background-color .25s,color .25s}
+#nib-proposta .gift-choice-icon svg{width:22px;height:22px}
+#nib-proposta .gift-choice[aria-pressed=true] .gift-choice-icon{background:rgba(255,127,64,.16);color:#9a3e13}
+#nib-proposta .gift-choice-text{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+#nib-proposta .gift-choice-text strong{font-size:16px;font-weight:700;color:#041e42}
+#nib-proposta .gift-choice-text small{font-size:13px;line-height:1.45;color:#536176}
+#nib-proposta .gift-choice-radio{flex:0 0 22px;width:22px;height:22px;margin-top:11px;border:1.5px solid #aeb7c1;border-radius:50%;background:#fff;transition:border-color .25s,box-shadow .25s}
+#nib-proposta .gift-choice[aria-pressed=true] .gift-choice-radio{border-color:#ff7f40;box-shadow:inset 0 0 0 5px #ff7f40}
+#nib-proposta .gift-choice-obra{display:flex;align-items:center;gap:10px;margin-top:8px}
+#nib-proposta .gift-choice-obra img{flex:0 0 64px;width:64px;height:40px;max-width:none;border-radius:8px;object-fit:cover}
+#nib-proposta .gift-choice-obra>span{flex:1;min-width:0;display:flex;flex-direction:column;gap:5px}
+#nib-proposta .gift-choice-obra .campaign-bar{height:6px}
+#nib-proposta .gift-choice-obra em{font-style:normal;font-size:12px;font-weight:600;color:#041e42}
+#nib-proposta main button.church-pix-copy{display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:48px;margin-top:14px;padding:10px 16px;border:1px solid #ff7f40;border-radius:999px;background:#ff7f40;color:#041e42;font-size:14px;font-weight:700;box-shadow:none}
+#nib-proposta main button.church-pix-copy svg{width:17px;height:17px}
+@media(hover:hover){#nib-proposta main button.church-pix-copy:hover{background:#041e42;border-color:#041e42;color:#fff}}
+#nib-proposta main button.church-pix-copy:active,#nib-proposta main button.church-pix-copy.is-copied{background:#041e42;border-color:#041e42;color:#fff}
+#nib-proposta .church-pix-note{display:block;margin-top:8px;font-size:12px;line-height:1.45;color:#65728a}
