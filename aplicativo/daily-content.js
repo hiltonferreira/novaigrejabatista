@@ -15,7 +15,7 @@
   // Itens incluídos pela Secretaria (nesta versão de teste, só na sessão).
   const extras = [];
   let extraSeq = 0;
-  const addItem = item => { const x = {id:'x'+(++extraSeq), day:item.day, end:item.end||item.day, time:item.time||'', timeEnd:item.timeEnd||'', name:item.name, type:item.type||'Evento', added:true}; extras.push(x); return x; };
+  const addItem = item => { const x = {id:'x'+(++extraSeq), day:item.day, end:item.end||item.day, time:item.time||'', timeEnd:item.timeEnd||'', name:item.name, type:item.type||'Evento', notice:!!item.notice, added:true}; extras.push(x); return x; };
   const removeItem = id => { const i = extras.findIndex(x=>x.id===id); if(i>=0) extras.splice(i,1); };
   const addedItems = () => extras.slice().sort((a,b)=>(a.day+' '+a.time).localeCompare(b.day+' '+b.time));
   const dayOfYear = key => { const [y,m,d] = key.split('-').map(Number); return Math.round((Date.UTC(y,m-1,d)-Date.UTC(y,0,1))/864e5); };

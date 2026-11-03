@@ -56,5 +56,6 @@ Pedido de cadastro do membro → Cadastros. Item incluído na agenda → calend�
 ## Ajustes (2026-11-03, tarde)
 
 - A Secretaria também pode ocultar ou mostrar pedidos no mural. "Acompanhar" continua só com a Liderança Pastoral.
-- Agenda: data de início, data de término, horário de início e horário de término, e a opção "Acontece em um único dia" (marcada por padrão). Um item de vários dias aparece em cada dia do período. Validações: término não pode ser antes do início, período de até 60 dias, e no mesmo dia o horário de término vem depois do de início.
+- Agenda e Avisos: data de início, data de término, horário de início e horário de término, e a opção "Acontece em um único dia" (marcada por padrão). Um item de vários dias aparece em cada dia do período. Validações: término não pode ser antes do início, período de até 60 dias, e no mesmo dia o horário de término vem depois do de início.
 - Campos dentro do bloco: no iOS Safari, campos de data e hora deixam de ter largura própria; grades com `minmax(0,1fr)`; datas em coluna única no celular.
+- Aviso com data: aparece no sino, em Informações → Avisos (com o período) e na lista Programação/calendário nas datas informadas. Remover o aviso tira também da programação.

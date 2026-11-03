@@ -1153,3 +1153,6 @@ html{scrollbar-gutter:stable}
 #nib-proposta .ag-dates:has(.ag-single input:checked) .ag-end{display:none}
 #nib-proposta .ag-dates:has(.ag-single input:checked) .ag-row:first-of-type{grid-template-columns:minmax(0,1fr)}
 @media(max-width:600px){#nib-proposta .admin-form-box .ag-row:first-of-type{grid-template-columns:minmax(0,1fr)}#nib-proposta .admin-form-box .ag-row:first-of-type .ag-end label{margin-top:16px}}
+#nib-proposta .admin-period{display:inline-flex;margin:2px 0 6px;padding:3px 9px;border-radius:999px;background:rgba(255,127,64,.12);color:#9a3e13;font-size:12px;font-weight:700}
+#nib-proposta .notices-list .admin-period{display:table}
+#nib-proposta .admin-notice .admin-period{display:table}
