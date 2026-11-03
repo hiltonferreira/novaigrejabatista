@@ -246,17 +246,34 @@
     update();
   }
   // Aniversariantes da semana: visível para todos os membros (só nome, dia e mês).
-  // Mensagem só para o aniversariante: popup com fundo de vidro, uma vez por sessão.
+  // Mensagem só para o aniversariante: popup com fundo de vidro, uma vez por sessão,
+  // depois da abertura do app e da animação do brasão.
   function myBirthdayPopup(tries = 0) {
     const me = admin.birthdays().find(b => b.today && b.name === state.member.full);
     if (!me || state.birthdayShown || isManagement() || state.view !== 'inicio') return;
-    const ready = ['app-splash', 'app-auth', 'app-onboarding'].every(id => { const el = document.getElementById(id); return !el || el.hidden; });
-    if (!ready) { if (tries < 40) setTimeout(() => myBirthdayPopup(tries + 1), 500); return; }
+    const ready = ['app-splash', 'app-auth', 'app-onboarding', 'app-enter'].every(id => { const el = document.getElementById(id); return !el || el.hidden; });
+    if (!ready) { if (tries < 60) setTimeout(() => myBirthdayPopup(tries + 1), 400); return; }
     state.birthdayShown = true;
+    setTimeout(openBirthday, 700); // respiro depois do brasão
+  }
+  function openBirthday() {
+    if (state.view !== 'inicio' || isManagement()) return;
     let dlg = document.getElementById('bday-dialog');
     if (!dlg) { dlg = document.createElement('dialog'); dlg.id = 'bday-dialog'; dlg.setAttribute('aria-labelledby', 'my-bday-title'); document.body.append(dlg); dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); }); }
-    dlg.innerHTML = `<div class="my-bday"><span class="my-bday-confetti" aria-hidden="true"></span><button type="button" class="my-bday-close" data-bday-close="1" aria-label="Fechar mensagem"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12 M18 6 6 18"/></svg></button><span class="my-bday-cake" aria-hidden="true">🎂</span><span class="label">HOJE É O SEU DIA</span><h2 id="my-bday-title">Feliz aniversário, ${escape(state.member.first)}!</h2><p class="my-bday-msg">A Nova Igreja Batista celebra a sua vida e agradece a Deus por você caminhar com a gente. Que este novo ano seja cheio da graça e da paz do Senhor.</p><p class="my-bday-verse">“Ensina-nos a contar os nossos dias, de tal maneira que alcancemos corações sábios.” <b>Salmos 90:12</b></p><p class="my-bday-count"><span aria-hidden="true">🎉</span> 18 pessoas da igreja já te deram parabéns</p><button type="button" class="action primary my-bday-ok" data-bday-close="1" autofocus>Amém, obrigado!</button></div>`;
+    const date = new Intl.DateTimeFormat('pt-BR', { timeZone: 'America/Porto_Velho', day: 'numeric', month: 'long' }).format(new Date());
+    const fans = ['Ana', 'Paulo', 'Lúcia'];
+    dlg.innerHTML = `<div class="my-bday" tabindex="-1"><div class="my-bday-confetti" aria-hidden="true">${'<i></i>'.repeat(16)}</div><img class="my-bday-water" src="assets/brasao-branco.png" alt="" width="271" height="293"><button type="button" class="my-bday-close" data-bday-close="1" aria-label="Fechar mensagem"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12 M18 6 6 18"/></svg></button>
+      <div class="my-bday-crest" aria-hidden="true"><img src="assets/brasao-branco.png" alt="" width="271" height="293"></div>
+      <span class="my-bday-date">${escape(date.toUpperCase())} · HOJE É O SEU DIA</span>
+      <h2 id="my-bday-title">Feliz aniversário,<span>${escape(state.member.first)}</span></h2>
+      <span class="my-bday-rule" aria-hidden="true"><i></i></span>
+      <p class="my-bday-msg">A Nova Igreja Batista celebra a sua vida e agradece a Deus por você caminhar com a gente. Que este novo ano seja cheio da graça e da paz do Senhor.</p>
+      <blockquote class="my-bday-verse"><p>“Ensina-nos a contar os nossos dias, de tal maneira que alcancemos corações sábios.”</p><cite>SALMOS 90:12</cite></blockquote>
+      <div class="my-bday-fans"><span class="my-bday-avatars" aria-hidden="true">${fans.map(n => `<span>${n.charAt(0)}</span>`).join('')}<span class="more">+15</span></span><p><b>${fans.slice(0, 2).join(', ')}</b> e mais 16 pessoas te deram parabéns</p></div>
+      <button type="button" class="my-bday-ok" data-bday-close="1">Amém, obrigado!</button></div>`;
+    dlg.querySelectorAll('.my-bday-confetti i').forEach((el, i) => { el.style.setProperty('--x', ((i * 37) % 100) + '%'); el.style.setProperty('--d', (i % 5) * .35 + 's'); el.style.setProperty('--t', 2.8 + (i % 4) * .5 + 's'); el.style.setProperty('--r', (i * 47 % 180) + 'deg'); });
     dlg.showModal();
+    dlg.querySelector('.my-bday').focus({ preventScroll: true });
   }
   function birthdayBlock() {
     const list = admin.birthdays().filter(b => !(b.name === state.member.full && state.hideBirthday)); if (!list.length) return '';

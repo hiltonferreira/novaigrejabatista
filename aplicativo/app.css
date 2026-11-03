@@ -1371,20 +1371,45 @@ html{scrollbar-gutter:stable}
 #nib-proposta .bday-btn.is-me,#nib-proposta .bday.is-today .bday-btn.is-me{display:inline-grid;place-items:center;background:#fff1e8;border-color:#ffc6a6;color:#c2531a;cursor:default}
 @media(hover:hover){#nib-proposta .bday-btn:not(.is-sent):not(.is-me):hover{border-color:#041e42}}
 #nib-proposta .profile-bday{margin:14px 0 4px}
-/* Popup do aniversariante com fundo de vidro */
-#nib-proposta #bday-dialog{box-sizing:border-box;position:fixed;inset:0;margin:auto;width:min(440px,calc(100% - 32px));max-height:calc(100dvh - 48px);padding:0;border:0;border-radius:28px;background:transparent;overflow:visible}
-#nib-proposta #bday-dialog::backdrop{background:#041e4240;backdrop-filter:blur(14px) saturate(140%);-webkit-backdrop-filter:blur(14px) saturate(140%)}
-#nib-proposta #bday-dialog[open]{animation:nib-surface-open var(--nib-motion-surface,.35s) var(--nib-motion-ease,ease)}
-#nib-proposta .my-bday{position:relative;overflow:hidden;padding:30px 26px 24px;border-radius:28px;background:linear-gradient(150deg,#041e42f2 0%,#0b2f5ff2 60%,#1b4677f2 100%);border:1px solid #ffffff2e;box-shadow:0 30px 90px #041e4259;color:#fff;text-align:center}
-#nib-proposta .my-bday-confetti{position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at 12% 14%,#ff7f40 0 4px,transparent 5px),radial-gradient(circle at 24% 6%,#ffd2bb 0 3px,transparent 4px),radial-gradient(circle at 80% 10%,#ffb38a 0 3.5px,transparent 4.5px),radial-gradient(circle at 70% 4%,#ffffff66 0 2.5px,transparent 3.5px),radial-gradient(circle at 6% 30%,#ff7f4099 0 2.5px,transparent 3.5px),radial-gradient(circle at 94% 26%,#ffd2bb99 0 3px,transparent 4px)}
-#nib-proposta .my-bday-cake{display:grid;place-items:center;width:64px;height:64px;margin:0 auto 14px;border-radius:50%;background:#ffffff1f;font-size:32px}
-#nib-proposta .my-bday .label{display:block;color:#ffb38a;margin-bottom:8px}
-#nib-proposta .my-bday h2{color:#fff;font-size:24px;line-height:1.2;margin:0 0 12px;letter-spacing:-.02em}
-#nib-proposta .my-bday-msg{font-size:15px;line-height:1.6;margin:0 0 12px;color:#e6edf7}
-#nib-proposta .my-bday-verse{font-size:13.5px;line-height:1.55;margin:0 0 16px;color:#c9d6e6;font-style:italic}
-#nib-proposta .my-bday-verse b{font-style:normal;color:#fff}
-#nib-proposta .my-bday-count{display:inline-flex;align-items:center;gap:8px;margin:0 0 20px;padding:7px 14px;border-radius:999px;background:#ffffff1f;font-size:13px;font-weight:600;color:#fff}
-#nib-proposta .my-bday-ok{display:block;width:100%;min-height:48px;background:#ff7f40!important;border-color:#ff7f40!important;color:#041e42!important}
-#nib-proposta .my-bday-close{position:absolute;top:16px;right:16px;display:grid;place-items:center;width:40px;height:40px;border:1px solid #ffffff4d;border-radius:50%;background:transparent;color:#fff;cursor:pointer;z-index:1}
-#nib-proposta .my-bday-close svg{width:18px;height:18px}
-#nib-proposta .my-bday-ok{border-radius:999px!important;font-weight:700!important}
+/* Popup do aniversariante: fundo de vidro, cartão premium */
+#nib-proposta #bday-dialog{box-sizing:border-box;position:fixed;inset:0;margin:auto;width:min(420px,calc(100% - 32px));max-height:calc(100dvh - 40px);padding:0;border:0;border-radius:30px;background:transparent;overflow:visible}
+#nib-proposta #bday-dialog::backdrop{background:radial-gradient(circle at 50% 40%,#0b2f5f55,#041e4280);backdrop-filter:blur(18px) saturate(150%);-webkit-backdrop-filter:blur(18px) saturate(150%)}
+#nib-proposta #bday-dialog[open] .my-bday{animation:bday-in .7s cubic-bezier(.16,1,.3,1) both}
+@keyframes bday-in{from{opacity:0;transform:translateY(18px) scale(.96)}to{opacity:1;transform:none}}
+#nib-proposta .my-bday{position:relative;overflow:hidden;max-height:calc(100dvh - 40px);overflow-y:auto;padding:34px 28px 26px;border-radius:30px;text-align:center;color:#fff;outline:none;background:radial-gradient(120% 70% at 50% 0%,#1f4f86 0%,#0b2f5f 45%,#041e42 100%);border:1px solid #ffffff26;box-shadow:0 40px 100px #00000059,inset 0 1px 0 #ffffff33}
+#nib-proposta .my-bday-water{position:absolute;right:-70px;bottom:-60px;width:230px;height:auto;opacity:.05;pointer-events:none}
+#nib-proposta .my-bday-confetti{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+#nib-proposta .my-bday-confetti i{position:absolute;top:-14px;left:var(--x);width:6px;height:12px;border-radius:2px;background:#ff7f40;opacity:0;transform:rotate(var(--r));animation:bday-fall var(--t) cubic-bezier(.3,.6,.5,1) var(--d) 2 both}
+#nib-proposta .my-bday-confetti i:nth-child(3n){background:#ffd7a8;width:4px;height:9px}
+#nib-proposta .my-bday-confetti i:nth-child(4n){background:#ffffffcc;width:5px;height:5px;border-radius:50%}
+@keyframes bday-fall{0%{opacity:0;transform:translateY(0) rotate(var(--r))}10%{opacity:.95}100%{opacity:0;transform:translateY(420px) rotate(calc(var(--r) + 260deg))}}
+@media(prefers-reduced-motion:reduce){#nib-proposta .my-bday-confetti{display:none}#nib-proposta #bday-dialog[open] .my-bday{animation:none}}
+#nib-proposta .my-bday>*{position:relative}
+#nib-proposta .my-bday-crest{display:grid;place-items:center;width:84px;height:84px;margin:0 auto 18px;border-radius:50%;background:radial-gradient(circle at 50% 35%,#ff9a62,#e85d16);box-shadow:0 0 0 6px #ff7f4026,0 0 0 13px #ff7f4012,0 14px 34px #e85d1666}
+#nib-proposta .my-bday-crest img{width:40px;height:auto}
+#nib-proposta .my-bday-date{display:block;font-size:10.5px;font-weight:600;letter-spacing:.16em;color:#ffb38a;margin-bottom:12px}
+#nib-proposta .my-bday h2{margin:0;color:#fff;font-size:20px;font-weight:500;line-height:1.25;letter-spacing:-.01em}
+#nib-proposta .my-bday h2 span{display:block;margin-top:2px;font-size:38px;font-weight:700;line-height:1.1;letter-spacing:-.03em;background:linear-gradient(90deg,#ffd7a8,#ff9a62);-webkit-background-clip:text;background-clip:text;color:transparent}
+#nib-proposta .my-bday-rule{display:flex;align-items:center;justify-content:center;gap:10px;margin:18px auto 16px;width:140px}
+#nib-proposta .my-bday-rule::before,#nib-proposta .my-bday-rule::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,transparent,#ffffff59)}
+#nib-proposta .my-bday-rule::after{transform:scaleX(-1)}
+#nib-proposta .my-bday-rule i{width:6px;height:6px;background:#ff7f40;transform:rotate(45deg)}
+#nib-proposta .my-bday-msg{margin:0 0 18px;font-size:15px;line-height:1.65;color:#dfe7f2}
+#nib-proposta .my-bday-verse{margin:0 0 20px;padding:16px 18px;border-radius:16px;background:#ffffff0f;border:1px solid #ffffff1a}
+#nib-proposta .my-bday-verse p{margin:0 0 8px;font-size:14px;line-height:1.6;font-style:italic;color:#eef3f9}
+#nib-proposta .my-bday-verse cite{font-style:normal;font-size:10.5px;font-weight:700;letter-spacing:.14em;color:#ffb38a}
+#nib-proposta .my-bday-fans{display:flex;align-items:center;justify-content:center;gap:12px;margin:0 0 22px}
+#nib-proposta .my-bday-avatars{display:flex}
+#nib-proposta .my-bday-avatars span{display:grid;place-items:center;width:30px;height:30px;margin-left:-8px;border-radius:50%;background:#eef2f8;color:#041e42;font-size:12px;font-weight:700;border:2px solid #0b2f5f}
+#nib-proposta .my-bday-avatars span:first-child{margin-left:0}
+#nib-proposta .my-bday-avatars .more{background:#ff7f40;color:#fff;font-size:10.5px}
+#nib-proposta .my-bday-fans p{margin:0;font-size:13px;line-height:1.4;color:#c9d6e6;text-align:left}
+#nib-proposta .my-bday-fans b{color:#fff}
+#nib-proposta .my-bday-ok{display:block;width:100%;min-height:52px;border:0;border-radius:999px;background:#fff;color:#041e42;font:700 15px/1 var(--nib-font);cursor:pointer;box-shadow:0 10px 26px #00000033;transition:transform .2s}
+#nib-proposta .my-bday-ok:active{transform:scale(.98)}
+#nib-proposta .my-bday-ok:focus-visible{outline:2px solid #ffb38a;outline-offset:3px}
+#nib-proposta .my-bday-close{position:absolute!important;top:16px;right:16px;display:grid;place-items:center;width:38px;height:38px;border:1px solid #ffffff40;border-radius:50%;background:#ffffff14;color:#fff;cursor:pointer;z-index:2}
+#nib-proposta .my-bday-close svg{width:17px;height:17px}
+@media(max-height:700px){#nib-proposta .my-bday-crest{width:64px;height:64px;margin-bottom:12px}#nib-proposta .my-bday-crest img{width:30px}#nib-proposta .my-bday h2 span{font-size:32px}}
+#nib-proposta .my-bday>.my-bday-water,#nib-proposta .my-bday>.my-bday-confetti{position:absolute}
+#nib-proposta .my-bday>.my-bday-confetti{inset:0}
