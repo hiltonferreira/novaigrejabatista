@@ -40,9 +40,15 @@ Na barra inferior do celular aparecem 5 atalhos por perfil. O menu completo fica
 
 Pedido de cadastro do membro → Cadastros. Item incluído na agenda → calendário do membro. Aviso publicado → sino do membro. Pedido ocultado → some do mural do membro. O caderno não reinicia mais ao trocar de perfil, para a liderança ver o que o membro publicou.
 
-## Decisões em aberto (não inventadas)
+## Decisões de Hilton (2026-11-03)
 
-- Ordem das etapas de membresia: a tela sugere formulário → reunião → apresentação, mas não bloqueia. Falta confirmar se a ordem é obrigatória.
-- Quem pode publicar avisos e se um aviso precisa de aprovação.
-- Se a Secretaria pode ver o caderno de oração e o acompanhamento pastoral (hoje: não).
-- O que deixa de ser teste: login, permissões no servidor e persistência.
+- Ordem das etapas de membresia é obrigatória: formulário → reunião de integração → apresentação. O app bloqueia registrar fora da ordem.
+- Todos podem publicar no caderno de oração sem aprovação; há um filtro simples de palavras de baixo calão e ofensas (`aplicativo/moderation.js`, testes em `moderation.test.cjs`).
+- A Secretaria pode ver o caderno (sem acompanhar ou ocultar, que ficam com a Liderança Pastoral).
+- Painel da gestão usa o mesmo bloco de atalhos da inicial do membro.
+- Avisos e agenda cadastrados na gestão aparecem também em Informações → Programação e avisos.
+
+## Decisões em aberto
+
+- Quem pode publicar avisos e se precisam de aprovação (hoje: Secretaria e Liderança, sem aprovação).
+- Login, permissões no servidor e persistência (o que deixa de ser teste).
