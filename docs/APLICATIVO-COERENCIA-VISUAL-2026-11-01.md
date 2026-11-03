@@ -351,3 +351,7 @@ Nova versão: uma única linha do tempo de 3 s, só com `transform` e `opacity`,
 - "Oração atendida" saiu do canto da linha do autor e virou selo com ícone de confirmação, alinhado à esquerda acima do título.
 - Ajuste: selo "Oração atendida" voltou ao canto superior direito, alinhado ao topo do nome, em formato compacto (sem caixa alta). Corrigido o botão ficando azul preenchido ao desmarcar no celular (hover/active "preso" do toque herdava o estilo genérico de botão).
 - Correção geral: os estilos de passar o mouse (botões, atalhos, menu lateral, pontos do calendário) agora só valem em aparelhos com mouse (`@media(hover:hover)`). No celular, depois do toque nenhum botão fica azul "preso"; o retorno do toque é o contorno suave já existente em `@media(hover:none)`.
+
+## Caderno: ações do próprio pedido (2026-11-03)
+
+- Os dois botões grandes ("Marcar em oração"/"Oração atendida" e "Excluir") viraram uma barra discreta no rodapé do card: rótulo "SEU PEDIDO" à esquerda e, à direita, pílulas compactas com ícone: "Marcar atendida" (ou "Reabrir", quando já atendida) em cinza e "Excluir" em vermelho suave.
