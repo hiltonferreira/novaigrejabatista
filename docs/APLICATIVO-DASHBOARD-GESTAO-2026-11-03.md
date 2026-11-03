@@ -39,7 +39,7 @@ Todos os números da versão de teste são fictícios. Para cada número, a vers
 
 ## Decisões do Hilton (03/11/2026)
 
-1. **Financeiro:** a Liderança Pastoral vê um resumo consolidado: total do mês, número de contribuintes e divisão por finalidade, sem nomes e sem valores individuais. A Secretaria não vê.
+1. **Financeiro:** a Liderança Pastoral e a Secretaria veem um resumo consolidado: total do mês, número de contribuintes e divisão por finalidade, sem nomes e sem valores individuais.
 2. **Presença:** será por check-in no app. O membro toca em "Fazer check-in" no card da tela inicial. Na versão real, o check-in abre 1 hora antes do culto e fecha 2 horas depois.
 3. **Visitante:** um QR Code na recepção abre um cadastro rápido (nome, WhatsApp, se é a primeira vez, como conheceu e se aceita mensagens), sem criar conta. A Secretaria vê os visitantes em "Check-in e visitantes" e marca quando enviou as boas-vindas.
 
