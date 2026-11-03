@@ -78,7 +78,7 @@
       cells: 18, cellsMulti: 2, cellMembers: 64, cellPeople: 241,
       sundays: [['2026-09-13', 252], ['2026-09-20', 261], ['2026-09-27', 248], ['2026-10-04', 266], ['2026-10-11', 259], ['2026-10-18', 274], ['2026-10-25', 268], ['2026-11-01', 283]],
       funnel: [['Visitaram nos últimos 90 dias', 61], ['Preencheram o formulário', 14], ['Fizeram a reunião de integração', 9], ['Apresentados no culto', 6]],
-      birthdays: [[0, 'Jéssica Exemplo'], [0, 'Ana Exemplo'], [1, 'Paulo Exemplo'], [3, 'Lúcia Exemplo'], [5, 'Marcos Exemplo']],
+      birthdays: [[0, null], [0, 'Ana Exemplo'], [1, 'Paulo Exemplo'], [3, 'Lúcia Exemplo'], [5, 'Marcos Exemplo']],
       absent: 12, noReturn: 5,
       lastService: { day: '2026-11-01', name: 'Culto de domingo', checkins: 214, visitors: 7, counted: 62 },
       giving: { month: 'outubro', total: 41380, givers: 142, avg3: 40150, parts: [['Dízimos', 33620], ['Ofertas', 4960], ['Obra do templo', 2800]] }
@@ -88,7 +88,7 @@
     // Aniversariantes dos próximos 7 dias (só dia e mês, sem idade).
     function birthdays() {
       const base = new Date(api.NibDaily.dayKey(new Date()) + 'T12:00:00-04:00');
-      return demo.birthdays.map(([off, name]) => { const d = new Date(base); d.setUTCDate(d.getUTCDate() + off); const key = api.NibDaily.dayKey(d); return { key, name, today: off === 0, date: key.slice(8, 10) + '/' + key.slice(5, 7), week: new Intl.DateTimeFormat('pt-BR', { timeZone: 'America/Porto_Velho', weekday: 'short' }).format(d).replace('.', '') }; });
+      return demo.birthdays.map(([off, who]) => { const name = who || state.member.full; const d = new Date(base); d.setUTCDate(d.getUTCDate() + off); const key = api.NibDaily.dayKey(d); return { key, name, today: off === 0, date: key.slice(8, 10) + '/' + key.slice(5, 7), week: new Intl.DateTimeFormat('pt-BR', { timeZone: 'America/Porto_Velho', weekday: 'short' }).format(d).replace('.', '') }; });
     }
     const num = n => n.toLocaleString('pt-BR');
     const ico = d => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${d}"/></svg>`;
@@ -308,7 +308,7 @@
         if (!name || phone.replace(/\D/g, '').length < 10) { const f = form.querySelector('#vf-phone'); f.setAttribute('aria-invalid', 'true'); f.focus(); return true; }
         data.visitors.push({ id: 'v' + (++data.seq), name, phone, how: String(values.get('how')), first: values.get('first') === '1', whats: values.get('whats') === 'on', at: now(), contacted: false, isNew: true });
         const dlg = document.getElementById('visit-dialog'), first = name.split(' ')[0];
-        dlg.querySelector('form').outerHTML = `<div class="visit-done"><span class="gift-thanks-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><h3 tabindex="-1">Visita registrada, ${escape(first)}!</h3><p>Seja muito bem-vindo. Em breve a Secretaria entra em contato para conhecer você.</p><div class="form-actions"><button type="button" class="action primary" data-admin-visit-close="1">Concluir</button></div></div>`;
+        dlg.querySelector('form').outerHTML = `<div class="visit-done"><span class="gift-thanks-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><h3 tabindex="-1">Visita registrada, ${escape(first)}!</h3><p>Que alegria ter você com a gente. Em breve a Secretaria entra em contato para conhecer você.</p><div class="form-actions"><button type="button" class="action primary" data-admin-visit-close="1">Concluir</button></div></div>`;
         dlg.querySelector('.visit-done h3').focus();
         return true;
       }
