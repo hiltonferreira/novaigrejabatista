@@ -15,7 +15,7 @@
   // Itens incluídos pela Secretaria (nesta versão de teste, só na sessão).
   const extras = [];
   let extraSeq = 0;
-  const addItem = item => { const x = {id:'x'+(++extraSeq), day:item.day, time:item.time||'', name:item.name, type:item.type||'Evento', added:true}; extras.push(x); return x; };
+  const addItem = item => { const x = {id:'x'+(++extraSeq), day:item.day, end:item.end||item.day, time:item.time||'', timeEnd:item.timeEnd||'', name:item.name, type:item.type||'Evento', added:true}; extras.push(x); return x; };
   const removeItem = id => { const i = extras.findIndex(x=>x.id===id); if(i>=0) extras.splice(i,1); };
   const addedItems = () => extras.slice().sort((a,b)=>(a.day+' '+a.time).localeCompare(b.day+' '+b.time));
   const dayOfYear = key => { const [y,m,d] = key.split('-').map(Number); return Math.round((Date.UTC(y,m-1,d)-Date.UTC(y,0,1))/864e5); };
@@ -32,7 +32,14 @@
     }
     for(const day of ['2026-11-21','2026-11-22']) if(day>=key) items.push({day,time:'',name:'NXT CAMP',type:'Evento',view:'eventos'});
     const last = dayKey(new Date(base.getTime()+(days-1)*864e5));
-    for(const x of extras) if(x.day>=key && x.day<=last) items.push({...x});
+    // Itens de vários dias aparecem em cada dia do período.
+    for(const x of extras){
+      const start = new Date(x.day+'T12:00:00-04:00'), stop = x.end||x.day;
+      for(let d = new Date(start); dayKey(d) <= stop; d.setUTCDate(d.getUTCDate()+1)){
+        const day = dayKey(d);
+        if(day>=key && day<=last) items.push({...x, day, time: x.time ? x.time+(x.timeEnd?' às '+x.timeEnd:'') : ''});
+      }
+    }
     return items.sort((a,b)=>(a.day+' '+a.time).localeCompare(b.day+' '+b.time));
   };
   const monthInfo = key => {

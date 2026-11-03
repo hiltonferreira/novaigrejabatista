@@ -1140,3 +1140,16 @@ html{scrollbar-gutter:stable}
 #nib-proposta .admin-rule{margin:-6px 0 18px;font-size:14px;line-height:1.5;color:#536176}
 #nib-proposta .info-grid{margin-top:0;margin-bottom:24px}
 #nib-proposta .admin-notice:last-of-type{border-bottom:0}
+/* Campos: sem ultrapassar a borda do bloco (iOS Safari dá largura própria a data/hora) */
+#nib-proposta input,#nib-proposta textarea,#nib-proposta select{box-sizing:border-box;min-width:0;max-width:100%}
+#nib-proposta input[type=date],#nib-proposta input[type=time]{-webkit-appearance:none;appearance:none;display:block;width:100%;min-width:0;min-height:46px;line-height:1.5;text-align:left;background-color:var(--nib-field-surface)}
+#nib-proposta input[type=date]::-webkit-date-and-time-value,#nib-proposta input[type=time]::-webkit-date-and-time-value{text-align:left;margin:0}
+#nib-proposta input[type=date]::-webkit-calendar-picker-indicator,#nib-proposta input[type=time]::-webkit-calendar-picker-indicator{margin-left:auto}
+#nib-proposta .form-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+#nib-proposta .form-grid>div{min-width:0}
+#nib-proposta .box,#nib-proposta .admin-grid>*{min-width:0}
+@media(max-width:600px){#nib-proposta .form-grid{grid-template-columns:minmax(0,1fr)}#nib-proposta .admin-form-box .ag-row{grid-template-columns:repeat(2,minmax(0,1fr))}}
+#nib-proposta .ag-dates .ag-single{margin:16px 0 0}
+#nib-proposta .ag-dates:has(.ag-single input:checked) .ag-end{display:none}
+#nib-proposta .ag-dates:has(.ag-single input:checked) .ag-row:first-of-type{grid-template-columns:minmax(0,1fr)}
+@media(max-width:600px){#nib-proposta .admin-form-box .ag-row:first-of-type{grid-template-columns:minmax(0,1fr)}#nib-proposta .admin-form-box .ag-row:first-of-type .ag-end label{margin-top:16px}}
