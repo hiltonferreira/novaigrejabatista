@@ -304,3 +304,8 @@ Terceira variação da entrada, após Hilton achar a anterior pouco fluida. Caus
 3. A troca da orientação para a inicial (layout da página toda) acontecia durante a animação visível.
 
 Nova versão: uma única linha do tempo de 3 s, só com `transform` e `opacity`, em camadas com `will-change`. O brasão surge e cresce devagar sem parar (0,86 → 1,12). Atrás dele, uma luz radial pré-desenhada nasce como um halo e se expande 16 vezes até cobrir a tela. Uma camada branca completa o branco em 60–84% do tempo, e tudo se desfaz na inicial em 84–100%. A troca de telas acontece nos primeiros 320 ms, com a tela coberta, e a linha do tempo só começa dois quadros depois.
+
+## Abertura empilhada (2026-11-03)
+
+- Brasão + nome NIB em cima e "Plataforma Nib" / "NOVA IGREJA BATISTA" embaixo, tudo empilhado e centralizado na tela; divisor vertical removido.
+- Carregamento continua no meio entre o conjunto e a borda inferior (conferido em 390x844, 320x560 e 1280x800).
