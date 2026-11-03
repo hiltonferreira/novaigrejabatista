@@ -31,14 +31,22 @@ Esta análise compara o que os sistemas de gestão de igrejas mais usados costum
 Todos os números da versão de teste são fictícios. Para cada número, a versão real vai precisar de uma fonte:
 
 - **Membros, frequentadores e aniversários:** o cadastro de pessoas, que ainda será criado e terá o vínculo e a data de nascimento.
-- **Visitantes:** o cartão do visitante, em papel ou formulário, lançado pela Secretaria.
-- **Presença nos cultos:** uma contagem por culto, lançada pela Secretaria ou pela recepção.
+- **Visitantes:** o cadastro rápido pelo QR Code da recepção.
+- **Presença nos cultos:** check-in no app, mais os visitantes e a contagem da recepção.
 - **Células:** a plataforma de células. A fonte ainda está em aberto, junto com a célula do membro no calendário.
 - **Funil de integração:** as etapas registradas em Membresia (este número já é real dentro do app).
 - **Afastados:** a presença no culto e na célula, cruzada com o cadastro.
 
-## Decisões pendentes
+## Decisões do Hilton (03/11/2026)
 
-1. O Pastoral vê um resumo financeiro (total do mês e número de contribuintes, sem nomes)? Ou o financeiro continua só com a tesouraria?
-2. A presença nos cultos será contada? Quem lança a contagem?
-3. Como o visitante é registrado: cartão em papel, QR Code na recepção ou formulário no site?
+1. **Financeiro:** a Liderança Pastoral vê um resumo consolidado: total do mês, número de contribuintes e divisão por finalidade, sem nomes e sem valores individuais. A Secretaria não vê.
+2. **Presença:** será por check-in no app. O membro toca em "Fazer check-in" no card da tela inicial. Na versão real, o check-in abre 1 hora antes do culto e fecha 2 horas depois.
+3. **Visitante:** um QR Code na recepção abre um cadastro rápido (nome, WhatsApp, se é a primeira vez, como conheceu e se aceita mensagens), sem criar conta. A Secretaria vê os visitantes em "Check-in e visitantes" e marca quando enviou as boas-vindas.
+
+Com isso, a presença de cada culto soma três partes: os check-ins do app, os visitantes do QR Code e a contagem da recepção para quem não usa o app.
+
+## Ainda em aberto
+
+- O endereço do QR Code (proposta: `novaigrejabatista.com.br/app/checkin`). O mesmo QR serve aos dois casos: quem tem login faz o check-in, e quem não tem vai para o cadastro de visitante.
+- Como evitar check-in feito de casa: janela de horário apenas, ou exigir a leitura do QR na igreja.
+- Quem lança a contagem da recepção.

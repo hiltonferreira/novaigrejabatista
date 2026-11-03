@@ -1229,3 +1229,50 @@ html{scrollbar-gutter:stable}
 #nib-proposta .dash+section>.section-heading{margin-top:36px}
 @media(max-width:1100px){#nib-proposta .dash-tiles{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:600px){#nib-proposta .dash-tiles{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}#nib-proposta .dash-tile{padding:14px}#nib-proposta .dash-tile-value{font-size:26px}#nib-proposta .dash-tile:last-child{grid-column:1/-1}}
+/* Check-in do membro */
+#nib-proposta .checkin-card{display:flex;align-items:center;gap:16px 18px;flex-wrap:wrap;margin:24px 0 0;padding:20px 22px;border:1px solid #ffd2bb;border-radius:20px;background:#fff7f2}
+#nib-proposta .checkin-card.is-done{border-color:#cfe5d8;background:#f1f8f4}
+#nib-proposta .checkin-icon{flex:0 0 48px;display:grid;place-items:center;width:48px;height:48px;border-radius:14px;background:#ff7f40;color:#fff}
+#nib-proposta .checkin-card.is-done .checkin-icon{background:#24674e}
+#nib-proposta .checkin-icon svg{width:24px;height:24px}
+#nib-proposta .checkin-text{flex:1 1 220px;min-width:0}
+#nib-proposta .checkin-text .label{margin-bottom:4px;color:#b4501c}
+#nib-proposta .checkin-card.is-done .checkin-text .label{color:#24674e}
+#nib-proposta .checkin-text h2{font-size:18px;margin:0 0 2px}
+#nib-proposta .checkin-text p{margin:0;font-size:14px;color:#41506a}
+#nib-proposta .checkin-card .action{flex:0 0 auto}
+@media(max-width:600px){#nib-proposta .checkin-card .action{width:100%}}
+/* Recepção e visitantes */
+#nib-proposta .reception-code{width:180px;max-width:100%;margin:4px 0 16px;padding:10px;border:1px solid #dde3eb;border-radius:16px;background:#fff}
+#nib-proposta .reception-code svg{display:block;width:100%;height:auto}
+#nib-proposta .reception-qr .action{margin:4px 0 14px}
+#nib-proposta .reception-qr .note{word-break:break-word}
+#nib-proposta .visit-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+#nib-proposta .visit-head strong{display:block;font-size:16px}
+#nib-proposta .visit-head small{font-size:12.5px;color:#65768e}
+#nib-proposta .visit-card .tag{font-size:11px;font-weight:700;padding:5px 10px;border-radius:999px;background:#eef1f5;color:#41506a}
+#nib-proposta .visit-card .tag.is-first{background:#fff1e8;color:#b4501c}
+#nib-proposta .visit-data{margin:12px 0 0}
+#nib-proposta .visit-data>div{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:8px 0;border-top:1px solid #eef1f5;font-size:14px}
+#nib-proposta .visit-data dt{color:#536176}
+#nib-proposta .visit-data dd{margin:0;text-align:right;min-width:0}
+#nib-proposta .visit-list{margin-top:8px}
+#nib-proposta #visit-dialog{box-sizing:border-box;position:fixed;inset:0;margin:auto;width:min(480px,calc(100% - 24px));max-height:calc(100dvh - 32px);padding:0;border:1px solid #dce3eb;border-radius:28px;background:#fff;color:#041e42;box-shadow:0 28px 90px #041e4238;overflow-y:auto;overscroll-behavior:contain}
+#nib-proposta #visit-dialog::backdrop{background:#041e425c}
+#nib-proposta .visit-form,#nib-proposta .visit-done{padding:20px 24px 24px}
+#nib-proposta .visit-form>label:not(.check){display:block;margin:14px 0 6px;font-size:14px;font-weight:600}
+#nib-proposta .visit-form input:not([type=radio]):not([type=checkbox]),#nib-proposta .visit-form select{width:100%;box-sizing:border-box}
+#nib-proposta .visit-first{border:0;margin:16px 0 4px;padding:0;display:flex;gap:8px 18px;flex-wrap:wrap}
+#nib-proposta .visit-first legend{font-size:14px;font-weight:600;margin-bottom:8px;padding:0}
+#nib-proposta .visit-form>.check{margin-top:16px}
+#nib-proposta .visit-form .form-actions button{width:100%}
+#nib-proposta .visit-done{text-align:center}
+#nib-proposta .visit-done h3{font-size:20px;margin:4px 0 8px}
+#nib-proposta .visit-done p{font-size:14px;color:#41506a}
+/* Dashboard: complementos */
+#nib-proposta .dash-sum{font-size:14px;margin:12px 0 0;color:#41506a}
+#nib-proposta .box p.dash-big{line-height:1.15;font-size:30px;font-weight:700;letter-spacing:-.02em;margin:0;color:#041e42;font-variant-numeric:tabular-nums}
+#nib-proposta .dash-sub{font-size:13.5px;color:#536176;margin:2px 0 18px}
+#nib-proposta .dash-visitors strong{font-size:12px;flex-basis:52px;color:#b4501c}
+#nib-proposta .dash-visitors span small{display:block;font-size:12.5px;color:#65768e}
+#nib-proposta .visit-form input[type=radio],#nib-proposta .visit-form input[type=checkbox]{accent-color:#e85d16}

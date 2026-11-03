@@ -39,7 +39,7 @@
   ];
   const eventCards = (compact = false) => `<div class="cards ${compact ? 'home-events' : ''}">${[...events].filter(e => !compact || e.active).sort((a,b) => Number(b.active) - Number(a.active)).map(e => `<article class="event ${e.name === 'Mulheres Virtuosas' ? 'event-mulheres-virtuosas' : ''} ${e.active ? '' : 'event-ended'}"><div class="event-cover"><img src="${e.image}" alt="${e.name}" width="800" height="400"></div><div class="event-content"><div class="event-top"><span class="tag ${e.active ? 'status-active' : 'status-ended'}">${e.active ? 'Ativo' : 'Encerrado'}</span><time class="event-date">${e.date}</time></div><${compact ? 'h3' : 'h2'}>${e.name}</${compact ? 'h3' : 'h2'}><p>${e.active ? 'Conheça o encontro e as informações do evento.' : 'Evento realizado. Consulte as informações.'}</p><button type="button" class="button primary" aria-label="Ver informações: ${e.name}" data-message="${e.name}: catálogo demonstrativo. A integração com as inscrições ainda será conectada; nenhum cadastro ou pagamento é realizado aqui.">Ver informações</button></div></article>`).join('')}</div>`;
   const isManagement = () => ['secretaria', 'pastoral'].includes(state.context);
-  const NibAdminIcons = { gestao: 'M3 3h7v9H3z M14 3h7v5h-7z M14 12h7v9h-7z M3 16h7v5H3z', membresia: 'M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z M2 21c0-3.5 3-6 7-6s7 2.5 7 6 M16 11l2 2 4-4', solicitacoes: 'M6 3h9l4 4v14H6z M15 3v4h4 M9 12h7 M9 16h5', programacao: 'M4 5h16v16H4z M8 3v4 M16 3v4 M4 11h16 M12 14v4 M10 16h4', comunicados: 'M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9 M10 21h4', palavra: 'M12 6.5C10.2 5 7.6 4.5 4 4.5v13c3.6 0 6.2.5 8 2 1.8-1.5 4.4-2 8-2v-13c-3.6 0-6.2.5-8 2Z M12 6.5v13', cuidado: 'M12 20s-8-4.7-8-10a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 5.3-8 10-8 10z', informacoes: 'M3 4h18v5H3z M5 9v12h14V9 M10 13h4' };
+  const NibAdminIcons = { gestao: 'M3 3h7v9H3z M14 3h7v5h-7z M14 12h7v9h-7z M3 16h7v5H3z', membresia: 'M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z M2 21c0-3.5 3-6 7-6s7 2.5 7 6 M16 11l2 2 4-4', solicitacoes: 'M6 3h9l4 4v14H6z M15 3v4h4 M9 12h7 M9 16h5', programacao: 'M4 5h16v16H4z M8 3v4 M16 3v4 M4 11h16 M12 14v4 M10 16h4', comunicados: 'M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9 M10 21h4', palavra: 'M12 6.5C10.2 5 7.6 4.5 4 4.5v13c3.6 0 6.2.5 8 2 1.8-1.5 4.4-2 8-2v-13c-3.6 0-6.2.5-8 2Z M12 6.5v13', cuidado: 'M12 20s-8-4.7-8-10a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 5.3-8 10-8 10z', informacoes: 'M3 4h18v5H3z M5 9v12h14V9 M10 13h4', recepcao: 'M3 3h7v7H3z M14 3h7v7h-7z M3 14h7v7H3z M14 14h3v3h-3z M20 14v.01 M14 20h3 M20 17v4h-3' };
   const barPaths = {
     inicio: 'M3 11l9-8 9 8 M5 10v10h5v-6h4v6h5V10',
     agenda: iconPaths.calendar,
@@ -75,6 +75,15 @@
       a.querySelector('.bar-icon').innerHTML = barIcon(a.dataset.view, active);
     });
   }
+  // Check-in do culto: o membro registra a presença pelo app (na versão real, abre 1 h antes e fecha 2 h depois do culto).
+  function nextService() { const key = NibDaily.dayKey(new Date()); return NibDaily.agenda(key, 8).find(x => x.type === 'Culto'); }
+  function checkinCard() {
+    const c = nextService(); if (!c) return '';
+    const key = NibDaily.dayKey(new Date()), done = admin.checkins().some(x => x.day === c.day && x.name === c.name && x.who === state.member.full);
+    const when = c.day === key ? `Hoje${c.time ? ', às ' + escape(c.time) : ''}` : `${escape(new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Porto_Velho',weekday:'long',day:'2-digit',month:'short'}).format(new Date(c.day+'T12:00:00-04:00')).replace('.',''))}${c.time ? ', às ' + escape(c.time) : ''}`;
+    const icon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${done ? 'm5 12.5 4.5 4.5L19 7.5' : NibAdminIcons.recepcao}"/></svg>`;
+    return `<section class="checkin-card${done ? ' is-done' : ''}" aria-labelledby="checkin-title"><span class="checkin-icon">${icon}</span><div class="checkin-text"><span class="label">CHECK-IN DO CULTO</span><h2 id="checkin-title" tabindex="-1">${done ? 'Presença registrada' : escape(c.name)}</h2><p>${done ? `Você está no ${escape(c.name)}. Que bom ter você aqui!` : `${when}. Chegou na igreja? Registre sua presença.`}</p></div>${done ? '' : `<button type="button" class="action primary" data-checkin="${escape(c.day)}">Fazer check-in</button>`}</section>`;
+  }
   function dailyBlocks(full = false, part = 'all') {
     const key = NibDaily.dayKey(new Date());
     const verse = NibDaily.verseForDay(key);
@@ -92,8 +101,8 @@
     return full || part === 'agenda' ? agenda : part === 'verse' ? verseBlock : verseBlock + agenda;
   }
   const fullDate = key => new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Porto_Velho',weekday:'long',day:'2-digit',month:'long',year:'numeric'}).format(new Date(key+'T12:00:00-04:00'));
-  const admin = NibAdmin.create({ state, escape, button, arrow, backArrow, NibDaily, fullDate, show: (...a) => show(...a), announce: (...a) => announce(...a), refreshNotices: () => refreshNotices() });
-  const adminOnly = ['gestao','membresia','confirmar','solicitacoes','programacao','comunicados','palavra','cuidado'];
+  const admin = NibAdmin.create({ qrSvg: t => qrSvg(t), state, escape, button, arrow, backArrow, NibDaily, fullDate, show: (...a) => show(...a), announce: (...a) => announce(...a), refreshNotices: () => refreshNotices() });
+  const adminOnly = ['recepcao','gestao','membresia','confirmar','solicitacoes','programacao','comunicados','palavra','cuidado'];
   const calendarKinds = {celula:'Minha célula',culto:'Cultos',escola:'Escola bíblica',evento:'Eventos'};
   // Célula do membro (exemplo): na versão final vem do vínculo do membro com a célula na plataforma de células.
   const myCell = { name: 'Célula Exemplo', weekday: 3, time: '19:30', place: 'Casa da família Exemplo · Bairro Exemplo' };
@@ -136,6 +145,7 @@
     return `<section class="box verse-admin" aria-labelledby="verse-admin-title"><span class="label">PALAVRA DO DIA</span><h2 id="verse-admin-title" tabindex="-1">Versículo escolhido pela igreja</h2><p>Defina o versículo de uma data, alinhado à série de mensagens. Quando não houver escolha, o app usa a lista anual automática, com um versículo diferente por dia.</p><p class="verse-admin-now"><b>Hoje:</b> ${escape(current[1])}${current[2] ? ' · escolhido pela igreja' : ' · lista automática'}</p><form id="verse-form"><label for="verse-date">Data</label><input id="verse-date" name="data" type="date" value="${today}" required><label for="verse-text">Texto do versículo</label><textarea id="verse-text" name="texto" maxlength="280" rows="3" required placeholder="Digite o texto conforme a versão bíblica da igreja"></textarea><label for="verse-ref">Referência</label><input id="verse-ref" name="referencia" maxlength="40" required placeholder="Ex.: Salmos 23:1"><div class="form-actions"><button type="submit" class="primary">Salvar para esta data</button>${current[2] ? '<button type="button" id="verse-clear">Voltar à lista automática</button>' : ''}</div></form><p class="note">Nesta versão de teste, a escolha vale só nesta sessão.</p></section>`;
   }
   const money = v => v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+  const qrSvg = text => { if (typeof qrcode !== 'function') return ''; const qr = qrcode(0, 'M'); qr.addData(text); qr.make(); const n = qr.getModuleCount(), q = 4; let d = ''; for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) if (qr.isDark(r, c)) d += `M${c+q} ${r+q}h1v1h-1z`; return `<svg viewBox="0 0 ${n+q*2} ${n+q*2}" shape-rendering="crispEdges" aria-hidden="true"><rect width="100%" height="100%" fill="#fff"/><path d="${d}" fill="#041e42"/></svg>`; };
   function renderPixQr() {
     const box = content.querySelector('#pix-qr'); if (!box || !state.giftCode || typeof qrcode !== 'function') return;
     const qr = qrcode(0, 'M'); qr.addData(state.giftCode); qr.make();
@@ -300,7 +310,7 @@
     document.getElementById('description').textContent = description;
     feedback.textContent = ''; feedback.dataset.tone='info';
     const pages = {
-      inicio: () => `${dailyBlocks(false,'verse')}<section aria-labelledby="quick-title"><div class="section-heading"><h2 id="quick-title">O que você precisa está aqui</h2></div><div class="quick-actions">${[
+      inicio: () => `${dailyBlocks(false,'verse')}${checkinCard()}<section aria-labelledby="quick-title"><div class="section-heading"><h2 id="quick-title">O que você precisa está aqui</h2></div><div class="quick-actions">${[
         ['cadastro', 'Meu cadastro', 'Consulte seus dados e solicite uma atualização.'],
         ['eventos', 'Eventos e inscrições', 'Veja os encontros e acompanhe suas inscrições.'],
         ['generosidade', 'Dízimos e ofertas', 'Encontre as opções para contribuir e as campanhas.'],
@@ -332,6 +342,7 @@
     const action = event.target.closest('button,a[data-view],a[data-back]');
     if (!action || action.disabled) return;
     if (isManagement() && admin.click(action)) return;
+    if (action.dataset.checkin) { const c = nextService(); if (c) admin.addCheckin({ day: c.day, name: c.name, who: state.member.full }); show('inicio', false, false); announce('Check-in feito. Sua presença no culto foi registrada (teste).', 'success', false); const t = content.querySelector('#checkin-title'); if (t) t.focus({preventScroll:true}); return; }
     if (action.id === 'header-notices') { markNoticesSeen(); notices.showModal(); root.classList.add('nib-dialog-open'); document.getElementById('notices-close').focus(); return; }
     if (action.id === 'notices-close') { notices.close(); return; }
     if (action.id === 'header-menu') { document.querySelector('.test-options').open = false; drawer.showModal(); root.classList.add('nib-dialog-open'); action.setAttribute('aria-expanded','true'); document.getElementById('drawer-close').focus({preventScroll:true}); return; }
