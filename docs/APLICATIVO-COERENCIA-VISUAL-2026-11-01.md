@@ -319,3 +319,10 @@ Nova versão: uma única linha do tempo de 3 s, só com `transform` e `opacity`,
 
 - Removido "Plataforma Nib". "NOVA IGREJA BATISTA" (mesma fonte, caixa alta) agora escala com a logo (7,6% da largura), ocupando a mesma largura do brasão + Nib.
 - O mesmo reflexo de luz da transição passa pela logo (máscara com splash-logo-final.png) aos 3,05s, depois que o vídeo da logo termina. Desligado com movimento reduzido.
+
+## Agenda, botões com seta e calendário a partir do domingo (2026-11-03)
+
+- Bloco de data da agenda: cartão azul em degradê com mês (NOV), dia grande e dia da semana (QUI); tipo do encontro com o mesmo ponto colorido do calendário.
+- "Ver calendário completo" saiu do cabeçalho e virou botão de largura total, centralizado no rodapé do bloco.
+- Todos os botões de navegação secundários (`button()` não primário: Ver calendário completo, Ver caderno, Ver todos, Voltar à gestão) ganham seta à direita e texto centralizado; nos cabeçalhos ficam alinhados ao título.
+- Calendário mensal começa no domingo (D S T Q Q S S); `monthInfo().offset` passou a contar a partir do domingo, com teste atualizado.

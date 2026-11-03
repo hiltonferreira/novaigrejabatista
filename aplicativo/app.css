@@ -739,3 +739,23 @@ html{scrollbar-gutter:stable}
 #nib-proposta .enter-mark{--mark:clamp(76px,22vw,104px);position:absolute;top:50%;left:50%;width:var(--mark);aspect-ratio:271/293;margin:calc(var(--mark) * -0.5406) 0 0 calc(var(--mark) * -0.5);transform-origin:50% 50%;opacity:0;overflow:hidden;-webkit-mask:url(assets/brasao-branco.png) center/100% 100% no-repeat;mask:url(assets/brasao-branco.png) center/100% 100% no-repeat;will-change:transform,opacity}
 #nib-proposta .enter-brasao{display:block;width:100%;height:100%;max-width:none;opacity:.8}
 #nib-proposta .enter-shine{position:absolute;top:-20%;left:0;width:60%;height:140%;background:linear-gradient(100deg,#fff0 0%,#ffffff00 30%,#ffffff 50%,#ffffff00 70%,#fff0 100%);transform:translateX(-170%) skewX(-12deg);will-change:transform}
+/* Botões de navegação com seta (padrão "Ver ...") */
+#nib-proposta main button.button-go{gap:8px;padding:10px 16px 10px 20px;text-align:center;white-space:nowrap;line-height:1}
+#nib-proposta main button.button-go>span{display:block;padding-top:1px}
+#nib-proposta .button-arrow{display:block;flex:0 0 16px;width:16px;height:16px;transition:transform var(--nib-motion-fast) ease}
+@media(hover:hover){#nib-proposta main button.button-go:hover .button-arrow{transform:translateX(3px)}}
+#nib-proposta .section-heading:has(>button.button-go){flex-wrap:nowrap;align-items:flex-end}
+#nib-proposta .section-heading>div{min-width:0}
+#nib-proposta .section-heading>button.button-go{flex:0 0 auto;margin:0 0 0 auto;min-height:40px;font-size:12px}
+/* Agenda da inicial */
+#nib-proposta .home-agenda .agenda-content{padding-top:8px;padding-bottom:22px}
+#nib-proposta .agenda-list li{gap:16px;padding:16px 0}
+#nib-proposta .agenda-date{flex:0 0 58px;width:58px;min-height:0;height:70px;gap:1px;border-radius:16px;background:linear-gradient(165deg,#0d3a72 0%,#062a58 45%,#041e42 100%);color:#fff;box-shadow:inset 0 1px 0 #ffffff26,0 8px 18px -8px #041e4299}
+#nib-proposta .agenda-date small{order:0;margin:0;font:600 10px/1 var(--nib-font);letter-spacing:.14em;margin-right:-.14em;text-transform:uppercase;color:#a9c6ea}
+#nib-proposta .agenda-date strong{order:1;font:700 26px/1 var(--nib-font);letter-spacing:-.02em;color:#fff;margin:3px 0 2px}
+#nib-proposta .agenda-date em{order:2;font:500 9px/1 var(--nib-font);font-style:normal;letter-spacing:.1em;margin-right:-.1em;text-transform:uppercase;color:#ffffffa6}
+#nib-proposta .agenda-type{display:flex;align-items:center;gap:7px;font-weight:600}
+#nib-proposta .agenda-list h3{margin:6px 0 4px}
+#nib-proposta .agenda-more{display:flex;justify-content:center;padding:18px 0 4px;border-top:1px solid #dce3eb}
+#nib-proposta main .agenda-more>button.button-go{width:100%;min-height:46px;font-size:13px;border-color:#041e42}
+#nib-proposta .home-agenda .agenda-content>.note{margin-top:16px;font-size:12px;line-height:1.55}

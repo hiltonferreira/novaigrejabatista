@@ -27,7 +27,7 @@
     const [year,month] = key.split('-').map(Number);
     const first = new Date(Date.UTC(year,month-1,1,16));
     const count = new Date(Date.UTC(year,month,0,16)).getUTCDate();
-    return {count,offset:(first.getUTCDay()+6)%7};
+    return {count,offset:first.getUTCDay()};
   };
   const moveMonth = (key,step) => {
     const [year,month] = key.split('-').map(Number);
