@@ -801,3 +801,16 @@ html{scrollbar-gutter:stable}
 #nib-proposta main .calendar-actions .calendar-today{min-height:40px;padding:9px 26px;font-size:13px;background:#fff;border-color:#c9d3df;box-shadow:0 4px 12px -6px #041e4233}
 #nib-proposta main .calendar-actions .calendar-today[aria-pressed=true]{background:#041e42;border-color:#041e42;color:#fff}
 #nib-proposta .calendar-grid .calendar-day{font-weight:600}
+/* Linha acima do calendário: resumo de hoje + botão Hoje à direita */
+#nib-proposta .calendar-actions{display:flex;align-items:center;justify-content:space-between;gap:14px;max-width:780px;margin:0 0 14px;padding:14px 14px 14px 18px;border:1px solid #e3e9f0;border-radius:18px;background:#fff}
+#nib-proposta .calendar-now{display:flex;flex-direction:column;gap:3px;min-width:0}
+#nib-proposta .calendar-now .label{font-size:10px;margin:0;color:#b64e1a}
+#nib-proposta .calendar-now strong{font-size:16px;line-height:1.25;color:#041e42}
+#nib-proposta .calendar-now small{display:flex;align-items:center;gap:6px;font-size:12px;line-height:1.35;color:#536176;min-width:0}
+#nib-proposta .calendar-now small>span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#nib-proposta .calendar-now b{font-weight:600;color:#041e42}
+#nib-proposta main .calendar-actions .calendar-today{flex:0 0 auto;gap:7px;min-height:42px;padding:9px 16px 9px 14px;box-shadow:none}
+#nib-proposta .calendar-today svg{width:17px;height:17px;flex:0 0 17px}
+#nib-proposta .calendar-dot[data-kind=celula]{background:#6a45b0}
+#nib-proposta .calendar-selection .day-entries li[data-kind=celula]::before{background:#6a45b0}
+#nib-proposta .calendar-entry-place{color:#41506a}

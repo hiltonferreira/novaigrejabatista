@@ -333,3 +333,9 @@ Nova versão: uma única linha do tempo de 3 s, só com `transform` e `opacity`,
 - Dias sem fundo cinza; número sempre na mesma altura. Dia selecionado vira um quadrado arredondado azul em degradê com sombra suave e pequena animação de entrada; hoje tem contorno azul.
 - Bloco do dia selecionado: cartão de data (NOV / 22), dia da semana em destaque, data por extenso e contador de encontros. Cada encontro é um cartão com faixa colorida do tipo e horário em uma pílula ("Horário a definir" quando não houver).
 - Ajuste a pedido: dias voltaram a ser círculos cinza (seleção em círculo azul com degradê, hoje com contorno azul) e o botão "Hoje" saiu do bloco: fica acima do calendário, centralizado (azul quando hoje está selecionado).
+
+## Resumo de hoje com botão Hoje à direita e célula do membro no calendário (2026-11-03)
+
+- Acima do calendário, um cartão com "HOJE", a data por extenso e o próximo encontro (com ponto da cor do tipo); botão "Hoje" com ícone no canto direito.
+- Célula do membro (exemplo fictício: Célula Exemplo, quartas 19:30) entra no calendário e na agenda da inicial como tipo "Minha célula" (roxo #6a45b0), com local no bloco do dia. Item "Hoje" da legenda removido (o contorno continua).
+- Em aberto: de onde vem o vínculo membro→célula (plataforma de células ou secretaria), mudanças/cancelamentos de encontro e quem pode ver o endereço.
