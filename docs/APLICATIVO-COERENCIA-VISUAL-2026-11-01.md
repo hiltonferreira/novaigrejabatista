@@ -332,3 +332,4 @@ Nova versão: uma única linha do tempo de 3 s, só com `transform` e `opacity`,
 - Botão "Hoje" saiu do fim da legenda e foi para baixo do nome do mês; fica destacado quando o dia de hoje está selecionado. Legenda centralizada em uma linha, com o quadradinho de contorno explicando "Hoje".
 - Dias sem fundo cinza; número sempre na mesma altura. Dia selecionado vira um quadrado arredondado azul em degradê com sombra suave e pequena animação de entrada; hoje tem contorno azul.
 - Bloco do dia selecionado: cartão de data (NOV / 22), dia da semana em destaque, data por extenso e contador de encontros. Cada encontro é um cartão com faixa colorida do tipo e horário em uma pílula ("Horário a definir" quando não houver).
+- Ajuste a pedido: dias voltaram a ser círculos cinza (seleção em círculo azul com degradê, hoje com contorno azul) e o botão "Hoje" saiu do bloco: fica acima do calendário, centralizado (azul quando hoje está selecionado).
