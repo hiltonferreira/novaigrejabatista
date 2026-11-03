@@ -8,11 +8,11 @@
     inicio: 'M3 11l9-8 9 8 M5 10v10h5v-6h4v6h5V10',
     cadastro: user,
     eventos: 'M3 6h18v4a2 2 0 0 0 0 4v4H3v-4a2 2 0 0 0 0-4z M15 6v2 M15 11v2 M15 16v2',
-    // Célula: uma casa com pessoas dentro.
-    celulas: 'M3 10.5 12 3l9 7.5V21H3z M9 14.2a1.9 1.9 0 1 0 0-3.8 1.9 1.9 0 0 0 0 3.8z M15 14.2a1.9 1.9 0 1 0 0-3.8 1.9 1.9 0 0 0 0 3.8z M5.8 21c0-2.3 1.4-4 3.2-4s3.2 1.7 3.2 4 M11.8 21c0-2.3 1.4-4 3.2-4s3.2 1.7 3.2 4',
+    // Célula: meia casa que se completa com duas pessoas.
+    celulas: 'M13.2 4.4 12 3 3 10.5V21h3.9 M10 14.2a1.8 1.8 0 1 0 0-3.6 1.8 1.8 0 0 0 0 3.6z M6.9 21c0-2.7 1.4-4.6 3.1-4.6s3.1 1.9 3.1 4.6 M16.8 12.5a2.1 2.1 0 1 0 0-4.2 2.1 2.1 0 0 0 0 4.2z M13.2 21c0-3.3 1.6-5.6 3.6-5.6s3.6 2.3 3.6 5.6',
     generosidade: heart,
     historico: 'M3 12a9 9 0 1 0 2.6-6.4 M3 4v4h4 M12 7v5l3 2',
-    informacoes: 'M3 11v2a1 1 0 0 0 1 1h2l5 4V6L6 10H4a1 1 0 0 0-1 1z M15 9a4 4 0 0 1 0 6 M18 6a8 8 0 0 1 0 12',
+    informacoes: 'M20 11V5H4v16h7 M8 3v4 M16 3v4 M4 11h16 M17 23a5 5 0 1 0 0-10 5 5 0 0 0 0 10z M17 16v2l1.5 1',
     agenda: calendar,
     caderno: 'M5 3h12a2 2 0 0 1 2 2v16H7a2 2 0 0 1-2-2z M5 17a2 2 0 0 1 2-2h12 M12 12.5s-3-1.8-3-3.8a1.6 1.6 0 0 1 3-.8 1.6 1.6 0 0 1 3 .8c0 2-3 3.8-3 3.8z',
     gestao: 'M3 3h7v9H3z M14 3h7v5h-7z M14 12h7v9h-7z M3 16h7v5H3z',
@@ -37,8 +37,7 @@
     agenda: 'M7 2h2v3h6V2h2v3h2a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h2Zm-2 9v9h14v-9Zm2 2h3v3H7Zm5 0h3v3h-3Z',
     eventos: 'M2 5h20v5a2 2 0 0 0 0 4v5H2v-5a2 2 0 0 0 0-4Zm12 2v2h2V7Zm0 4v2h2v-2Zm0 4v2h2v-2Z',
     generosidade: heart,
-    cadastro: 'M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm-9 9a9 7 0 0 1 18 0v1H3Z',
-    celulas: 'M12 2 2 10v12h20V10ZM9 9.9a2.2 2.2 0 1 1 0 4.4 2.2 2.2 0 0 1 0-4.4Zm6 0a2.2 2.2 0 1 1 0 4.4 2.2 2.2 0 0 1 0-4.4ZM5.6 20.5c.2-2.5 1.6-4.3 3.4-4.3s3.2 1.8 3.4 4.3Zm6.4 0c.2-2.5 1.4-4.3 3-4.3s3.2 1.8 3.4 4.3Z'
+    cadastro: 'M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm-9 9a9 7 0 0 1 18 0v1H3Z'
   };
   const svg = (key, width = 1.8) => paths[key] ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${width}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${paths[key]}"/></svg>` : '';
   window.NibIcons = { paths, filled, svg };
