@@ -10,7 +10,7 @@
     {id:'exemplo-1',author:'João Exemplo',name:'Pela nossa caminhada em família',reason:'Pedido fictício para demonstrar como a comunidade pode se unir em oração.',answered:false,supporters:0,supported:false,own:false},
     {id:'exemplo-2',author:'Jéssica Exemplo',name:'Gratidão por uma nova etapa',reason:'Exemplo de oração marcada como atendida por quem publicou.',answered:true,supporters:0,supported:false,own:true}
   ];
-  const state = { context: 'membro', view: 'inicio', request: null, presented: null, gift: 'Dízimo', calendarMonth: NibDaily.dayKey(new Date()).slice(0,7), calendarDay: NibDaily.dayKey(new Date()), prayers: demoPrayers() };
+  const state = { member: { first: 'Jéssica', full: 'Jéssica Exemplo', email: 'jessica@example.com' }, context: 'membro', view: 'inicio', request: null, presented: null, gift: 'Dízimo', calendarMonth: NibDaily.dayKey(new Date()).slice(0,7), calendarDay: NibDaily.dayKey(new Date()), prayers: demoPrayers() };
   const navigation = [['inicio', 'Início'], ['cadastro', 'Meu cadastro'], ['eventos', 'Eventos'], ['celulas', 'Células'], ['generosidade', 'Generosidade'], ['informacoes', 'Informações'], ['agenda', 'Agenda'], ['caderno', 'Caderno de oração']];
   const labels = { caderno: ['VIDA DE ORAÇÃO', 'Caderno de oração', 'Uma comunidade que cuida e ora em conjunto.'], agenda: ['VIDA NA IGREJA', 'Agenda da igreja', 'Cultos, encontros e próximos eventos em um só lugar.'], inicio: ['SEJA BEM-VINDA', 'Olá, Jéssica! Você está na plataforma Nib.', 'Acesse seu cadastro, encontre eventos, contribua e acompanhe a vida da igreja.'], cadastro: ['MINHAS INFORMAÇÕES', 'Meu cadastro', 'Consulte seus dados e encaminhe uma atualização à equipe.'], eventos: ['VIDA EM COMUNIDADE', 'Eventos e inscrições', 'Encontre os próximos encontros da igreja.'], celulas: ['CAMINHAR JUNTOS', 'Células', 'Acesse a plataforma de células adotada pela igreja.'], generosidade: ['CONTRIBUIR', 'Generosidade', 'Dízimos, ofertas e campanhas em um só lugar.'], informacoes: ['FIQUE POR PERTO', 'Informações da igreja', 'Programação, endereço e canais da comunidade.'], gestao: ['ADMINISTRAÇÃO', 'Integração e membresia', 'Acompanhe o formulário, a reunião e a apresentação no culto.'], confirmar: ['MEMBRESIA', 'Registrar apresentação', 'O registro documenta a apresentação já realizada no culto.'] };
   const escape = value => String(value).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -155,7 +155,7 @@
       });
     }
     document.getElementById('member-shortcuts').hidden = isManagement();
-    document.getElementById('menu-profile').innerHTML = isManagement() ? '<div class="menu-profile-card"><strong>' + (state.context === 'secretaria' ? 'Secretaria da igreja' : 'Liderança Pastoral') + '</strong><span>Experiência de teste</span></div>' : '<a class="menu-profile-card" href="#cadastro" data-view="cadastro"><span class="profile-avatar" aria-hidden="true">J</span><span><strong>Jéssica Exemplo</strong><small>jessica@example.com</small></span><span class="profile-demo">Teste</span></a>';
+    document.getElementById('menu-profile').innerHTML = isManagement() ? '<div class="menu-profile-card"><strong>' + (state.context === 'secretaria' ? 'Secretaria da igreja' : 'Liderança Pastoral') + '</strong><span>Experiência de teste</span></div>' : '<a class="menu-profile-card" href="#cadastro" data-view="cadastro"><span class="profile-avatar" aria-hidden="true">' + escape(state.member.first.charAt(0).toUpperCase()) + '</span><span><strong>' + escape(state.member.full) + '</strong><small>' + escape(state.member.email) + '</small></span><span class="profile-demo">Teste</span></a>';
     renderBar();
   }
   function show(view, focus = true, record = true) {
@@ -168,7 +168,7 @@
     document.getElementById('mobile-return').hidden = state.view === 'inicio' || (isManagement() && state.view === 'gestao');
     const [eyebrow, title, description] = labels[state.view];
     document.getElementById('eyebrow').textContent = eyebrow;
-    document.getElementById('heading').textContent = title;
+    document.getElementById('heading').textContent = state.view === 'inicio' ? title.replace('Jéssica', state.member.first) : title;
     document.getElementById('description').textContent = description;
     feedback.textContent = ''; feedback.dataset.tone='info';
     const pages = {
@@ -182,7 +182,7 @@
       ].map(([view, title, text]) => `<button type="button" class="quick-action" data-view="${view}"><span class="home-action-icon" aria-hidden="true">${navIcon(view)}</span><strong>${title}</strong><span class="home-action-description">${text}</span></button>`).join('')}</div></section>${socialBanners()}${dailyBlocks(false,'agenda')}${communityBlock()}<section aria-labelledby="home-events-title"><div class="section-heading"><h2 id="home-events-title">Eventos da igreja</h2>${button('Ver todos', 'eventos')}</div>${eventCards(true)}</section>`,
       agenda: () => calendarPage(),
       caderno: () => notebookPage(),
-      cadastro: () => `<div class="profile-layout"><section class="box profile-summary"><span class="tag">Membro · exemplo</span><h2>Jéssica Exemplo</h2><p>Confira seu cadastro na igreja.</p><dl class="profile"><dt>E-mail</dt><dd>jessica@example.com</dd><dt>Telefone</dt><dd>Não informado</dd><dt>Endereço</dt><dd>Não informado</dd><dt>Apresentação no culto</dt><dd>Apresentação registrada · exemplo</dd></dl><p class="note">As alterações são encaminhadas para conferência da Secretaria.</p></section><section class="box profile-edit"><h2>O que você deseja atualizar?</h2><p>Preencha somente os dados que precisam mudar.</p><form id="profile-form"><fieldset><legend>Dados para atualização</legend><div class="form-grid"><div><label for="new-name">Nome completo</label><input id="new-name" name="newName" autocomplete="off" placeholder="Informe o nome corrigido" maxlength="160"></div><div><label for="new-email">Novo e-mail</label><input id="new-email" name="newEmail" type="email" autocomplete="off" placeholder="nome@exemplo.com" maxlength="160"></div><div><label for="new-phone">Novo telefone / WhatsApp</label><input id="new-phone" name="newPhone" type="tel" inputmode="tel" autocomplete="off" placeholder="(69) 99999-9999" maxlength="25"></div><div><label for="new-address">Endereço</label><input id="new-address" name="newAddress" autocomplete="off" placeholder="Rua, número, bairro e cidade" maxlength="250"></div></div></fieldset><fieldset><legend>Contato e observações</legend><label for="contact-email">E-mail para retorno</label><input id="contact-email" name="email" type="email" autocomplete="off" placeholder="exemplo@example.com" maxlength="160" required><label for="contact-note">Outra alteração ou observação (opcional)</label><textarea id="contact-note" name="note" placeholder="Descreva o que a Secretaria precisa conferir." maxlength="500"></textarea></fieldset><div class="form-actions"><button class="action" type="submit">Enviar solicitação de teste</button><button type="reset">Limpar alterações</button></div></form><p class="note">Use dados fictícios. A solicitação fica nesta sessão; nenhum cadastro real é alterado.</p></section></div>`,
+      cadastro: () => `<div class="profile-layout"><section class="box profile-summary"><span class="tag">Membro · exemplo</span><h2>${escape(state.member.full)}</h2><p>Confira seu cadastro na igreja.</p><dl class="profile"><dt>E-mail</dt><dd>jessica@example.com</dd><dt>Telefone</dt><dd>Não informado</dd><dt>Endereço</dt><dd>Não informado</dd><dt>Apresentação no culto</dt><dd>Apresentação registrada · exemplo</dd></dl><p class="note">As alterações são encaminhadas para conferência da Secretaria.</p></section><section class="box profile-edit"><h2>O que você deseja atualizar?</h2><p>Preencha somente os dados que precisam mudar.</p><form id="profile-form"><fieldset><legend>Dados para atualização</legend><div class="form-grid"><div><label for="new-name">Nome completo</label><input id="new-name" name="newName" autocomplete="off" placeholder="Informe o nome corrigido" maxlength="160"></div><div><label for="new-email">Novo e-mail</label><input id="new-email" name="newEmail" type="email" autocomplete="off" placeholder="nome@exemplo.com" maxlength="160"></div><div><label for="new-phone">Novo telefone / WhatsApp</label><input id="new-phone" name="newPhone" type="tel" inputmode="tel" autocomplete="off" placeholder="(69) 99999-9999" maxlength="25"></div><div><label for="new-address">Endereço</label><input id="new-address" name="newAddress" autocomplete="off" placeholder="Rua, número, bairro e cidade" maxlength="250"></div></div></fieldset><fieldset><legend>Contato e observações</legend><label for="contact-email">E-mail para retorno</label><input id="contact-email" name="email" type="email" autocomplete="off" placeholder="exemplo@example.com" maxlength="160" required><label for="contact-note">Outra alteração ou observação (opcional)</label><textarea id="contact-note" name="note" placeholder="Descreva o que a Secretaria precisa conferir." maxlength="500"></textarea></fieldset><div class="form-actions"><button class="action" type="submit">Enviar solicitação de teste</button><button type="reset">Limpar alterações</button></div></form><p class="note">Use dados fictícios. A solicitação fica nesta sessão; nenhum cadastro real é alterado.</p></section></div>`,
       eventos: () => `${eventCards()}<section class="box event-follow-up"><h2>Minhas inscrições</h2><p>Nenhuma inscrição vinculada nesta demonstração.</p><p class="note">Inscrições anteriores não serão vinculadas automaticamente por nome ou telefone.</p></section>`,
       celulas: () => `<section class="box"><span class="label">PLATAFORMA EXTERNA</span><h2>Encontre sua comunidade</h2><p>A igreja utilizará uma plataforma de células pronta. O endereço de acesso será configurado após a definição da integração.</p><button type="button" disabled>Acesso em preparação</button><p class="note">A entrada sem um novo login depende do serviço externo.</p></section>`,
       generosidade: () => `<div class="gift-options" role="group" aria-label="Finalidade da contribuição">${['Dízimo', 'Oferta', 'Campanha'].map(name => `<button type="button" data-gift="${name}" aria-pressed="${state.gift === name}">${name === 'Campanha' ? 'Campanhas' : name + 's'}</button>`).join('')}</div><div class="giving-layout"><section class="box"><h2>${state.gift === 'Campanha' ? 'Campanhas da igreja' : state.gift}</h2>${state.gift === 'Campanha' ? '<p>Nenhuma campanha cadastrada nesta versão de teste.</p>' : '<p>Experimente a escolha do valor nesta demonstração.</p><form id="gift-form"><label for="gift-value">Valor da contribuição (R$)</label><input id="gift-value" name="amount" type="number" inputmode="decimal" min="0.01" max="1000000" step="0.01" placeholder="0,00" required><div class="form-actions"><button class="action" type="submit">Simular próximo passo</button></div></form>'}<p class="note">A simulação não gera cobrança, não confirma recebimento e não altera o QR Code ao lado.</p></section><section class="box giving-details"><h2>Dados da igreja</h2><p>Nova Igreja Batista · Ariquemes/RO</p><dl class="bank-details"><div><dt>Pix (CNPJ)</dt><dd>40.518.758/0001-30</dd></div><div><dt>Banco</dt><dd>Sicoob</dd></div><div><dt>Agência / Conta</dt><dd>3315 / 51.404-7</dd></div></dl><figure class="church-qr"><img src="assets/pix-qrcode.png" alt="QR Code Pix oficial da Nova Igreja Batista" width="220" height="220"><figcaption>O mesmo QR Code disponível no site da igreja.</figcaption></figure><p class="qr-warning">Dados e QR Code reais, exibidos como referência. Não efetue transferências durante os testes.</p></section></div>`,
@@ -249,7 +249,7 @@
     if (form.id === 'notebook-form') {
       const name=String(values.get('name')||'').trim(); const reason=String(values.get('reason')||'').trim();
       if(!name||!reason) return announce('Informe a pessoa ou título e o motivo da oração.','warning');
-      state.prayers.push({id:String(++notebookSequence),name:name.slice(0,120),reason:reason.slice(0,1000),author:'Jéssica Exemplo',answered:false,supporters:0,supported:false,own:true});
+      state.prayers.push({id:String(++notebookSequence),name:name.slice(0,120),reason:reason.slice(0,1000),author:state.member.full,answered:false,supporters:0,supported:false,own:true});
       show('caderno',false,false); content.querySelector('#notebook-name').focus({preventScroll:true}); announce('Pedido publicado apenas neste mural de teste. Não foi compartilhado com outros usuários.','success',false);
     }
     if (form.id === 'gift-form') announce('Simulação concluída. Nenhuma cobrança foi criada ou contribuição recebida.','success');
@@ -267,7 +267,7 @@
     viewHistory.length = 0;
     state.context = event.target.value;
     state.prayers = demoPrayers(); // Caderno demonstrativo não é compartilhado entre experiências.
-    document.getElementById('account').textContent = state.context === 'membro' ? 'Jéssica Exemplo · Membro' : (state.context === 'secretaria' ? 'Secretaria da igreja · Teste' : 'Liderança Pastoral · Teste');
+    document.getElementById('account').textContent = state.context === 'membro' ? state.member.full + ' · Membro' : (state.context === 'secretaria' ? 'Secretaria da igreja · Teste' : 'Liderança Pastoral · Teste');
     show(isManagement() ? 'gestao' : 'inicio');
     document.querySelector('.test-options').open = false;
     document.getElementById('demo-context').value = state.context;
@@ -312,18 +312,105 @@
   document.addEventListener('visibilitychange', () => { if (!document.hidden) refreshDailyDate(); });
   document.getElementById('demo-context').value = 'membro';
   show('inicio', false);
+  // Fluxo de entrada de teste: abertura → acesso (entrar ou criar cadastro) → orientação → inicial.
+  // Nada é enviado: a CSP bloqueia conexões e os dados ficam só na memória desta aba.
+  const auth = document.getElementById('app-auth');
+  const onboarding = document.getElementById('app-onboarding');
+  const appParts = [root.querySelector(':scope > header'), root.querySelector(':scope > .layout'), document.getElementById('bottom-nav')];
+  const readFlag = key => { try { return sessionStorage.getItem(key) === '1'; } catch (_) { return false; } };
+  const writeFlag = (key, on) => { try { on ? sessionStorage.setItem(key,'1') : sessionStorage.removeItem(key); } catch (_) {} };
+  const gate = on => { root.classList.toggle('nib-gated', on); appParts.forEach(el => { if (el) el.inert = on; }); };
+  function openAuth() { gate(true); onboarding.hidden = true; auth.hidden = false; auth.scrollTop = 0; setTab('login', false); requestAnimationFrame(() => document.getElementById('auth-title').focus({preventScroll:true})); }
+  function setTab(which, focus = true) {
+    const login = which === 'login';
+    const tl = document.getElementById('tab-login'), ts = document.getElementById('tab-signup');
+    tl.setAttribute('aria-selected', String(login)); ts.setAttribute('aria-selected', String(!login));
+    tl.tabIndex = login ? 0 : -1; ts.tabIndex = login ? -1 : 0;
+    document.getElementById('panel-login').hidden = !login; document.getElementById('panel-signup').hidden = login;
+    auth.querySelectorAll('.auth-error').forEach(e => { e.textContent = ''; });
+    if (focus) (login ? tl : ts).focus();
+  }
+  auth.querySelector('.auth-tabs').addEventListener('click', e => { const t = e.target.closest('[role=tab]'); if (t) setTab(t.id === 'tab-login' ? 'login' : 'signup'); });
+  auth.querySelector('.auth-tabs').addEventListener('keydown', e => { if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { e.preventDefault(); setTab(document.getElementById('tab-login').getAttribute('aria-selected') === 'true' ? 'signup' : 'login'); } });
+  auth.addEventListener('click', e => {
+    const eye = e.target.closest('[data-toggle-pass]');
+    if (eye) { const input = document.getElementById(eye.dataset.togglePass); const show = input.type === 'password'; input.type = show ? 'text' : 'password'; eye.setAttribute('aria-pressed', String(show)); eye.setAttribute('aria-label', show ? 'Ocultar senha' : 'Mostrar senha'); return; }
+    if (e.target.closest('#auth-forgot')) { document.getElementById('login-error').textContent = 'Na versão final, você vai receber um link para criar uma nova senha. Nesta versão de teste, é só entrar com qualquer senha.'; return; }
+    if (e.target.closest('#auth-code')) { document.getElementById('login-error').textContent = 'Na versão final, um código de acesso chega pelo WhatsApp. Nesta versão de teste, use o e-mail ou celular com qualquer senha.'; }
+  });
+  const fail = (form, id, message) => { document.getElementById(id).textContent = message; const field = form.querySelector('[aria-invalid=true]'); if (field) field.focus(); };
+  const mark = (input, bad) => { input.setAttribute('aria-invalid', String(bad)); return bad; };
+  document.getElementById('panel-login').addEventListener('submit', e => {
+    e.preventDefault();
+    const form = e.currentTarget; const id = form.elements.login, pass = form.elements.senha;
+    const badId = mark(id, id.value.trim().length < 5), badPass = mark(pass, pass.value.length < 1);
+    if (badId || badPass) return fail(form, 'login-error', badId ? 'Informe seu e-mail ou celular.' : 'Informe sua senha.');
+    state.member = { first: 'Jéssica', full: 'Jéssica Exemplo', email: id.value.includes('@') ? id.value.trim().slice(0,80) : 'jessica@example.com' };
+    finishAuth();
+  });
+  document.getElementById('panel-signup').addEventListener('submit', e => {
+    e.preventDefault();
+    const form = e.currentTarget; const f = form.elements;
+    const name = f.nome.value.trim().replace(/\s+/g,' ');
+    const checks = [
+      [f.nome, name.split(' ').length < 2, 'Escreva seu nome e sobrenome.'],
+      [f.celular, f.celular.value.replace(/\D/g,'').length < 10, 'Informe um celular com DDD.'],
+      [f.email, !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email.value.trim()), 'Informe um e-mail válido.'],
+      [f.senha, f.senha.value.length < 8, 'A senha precisa ter pelo menos 8 caracteres.'],
+      [document.getElementById('signup-consent'), !document.getElementById('signup-consent').checked, 'Para continuar, aceite a política de privacidade.']
+    ];
+    checks.forEach(([el,bad]) => mark(el,bad));
+    const first = checks.find(c => c[1]);
+    if (first) return fail(form, 'signup-error', first[2]);
+    const full = name.slice(0,80);
+    state.member = { first: full.split(' ')[0], full, email: f.email.value.trim().slice(0,80) };
+    finishAuth();
+  });
+  function finishAuth() {
+    writeFlag('nib-auth', true);
+    auth.hidden = true;
+    onboarding.querySelectorAll('[data-member-first]').forEach(el => { el.textContent = state.member.first; });
+    renderNavigation(); show('inicio', false, false);
+    document.getElementById('account').textContent = state.member.full + ' · Membro';
+    onboarding.hidden = false; goSlide(0);
+    requestAnimationFrame(() => document.getElementById('onb-next').focus({preventScroll:true}));
+  }
+  const track = document.getElementById('onb-track');
+  const slides = [...track.children];
+  const onbDots = [...document.querySelectorAll('#onb-dots span')];
+  const next = document.getElementById('onb-next');
+  let slide = 0;
+  function goSlide(i, smooth = true) {
+    slide = Math.max(0, Math.min(slides.length - 1, i));
+    track.scrollTo({ left: slides[slide].offsetLeft - track.offsetLeft, behavior: smooth && !matchMedia('(prefers-reduced-motion: reduce)').matches ? 'smooth' : 'auto' });
+    syncSlide();
+  }
+  function syncSlide() {
+    onbDots.forEach((d,k) => d.classList.toggle('is-active', k === slide));
+    slides.forEach((el,k) => { el.setAttribute('aria-hidden', String(k !== slide)); el.inert = k !== slide; });
+    next.textContent = slide === slides.length - 1 ? 'Começar' : 'Próximo';
+  }
+  let slideFrame = 0;
+  track.addEventListener('scroll', () => { if (slideFrame) return; slideFrame = requestAnimationFrame(() => { slideFrame = 0; const k = Math.round(track.scrollLeft / track.clientWidth); if (k !== slide) { slide = k; syncSlide(); } }); }, {passive:true});
+  function closeOnboarding() { onboarding.hidden = true; gate(false); writeFlag('nib-onboarded', true); document.getElementById('heading').focus({preventScroll:true}); window.scrollTo(0,0); }
+  next.addEventListener('click', () => { if (slide === slides.length - 1) closeOnboarding(); else goSlide(slide + 1); });
+  document.getElementById('onb-skip').addEventListener('click', closeOnboarding);
+  onboarding.addEventListener('keydown', e => { if (e.key === 'ArrowRight') goSlide(slide + 1); if (e.key === 'ArrowLeft') goSlide(slide - 1); if (e.key === 'Escape') closeOnboarding(); });
+  document.getElementById('replay-flow').addEventListener('click', () => { document.querySelector('.test-options').open = false; writeFlag('nib-auth', false); ['panel-login','panel-signup'].forEach(id => document.getElementById(id).reset()); openAuth(); });
   // Abertura: aparece ao abrir o aplicativo, antes do acesso; some sozinha ou ao toque.
   const splash = document.getElementById('app-splash');
+  const afterSplash = () => { if (!readFlag('nib-auth')) openAuth(); };
   if (splash) {
     let seen = false;
     try { seen = sessionStorage.getItem('nib-splash') === '1'; sessionStorage.setItem('nib-splash','1'); } catch (_) {}
     const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const finish = () => { if (splash.hidden) return; splash.classList.add('is-leaving'); setTimeout(() => { splash.hidden = true; }, reduced ? 0 : 500); };
-    if (seen) splash.hidden = true;
+    const finish = () => { if (splash.hidden || splash.classList.contains('is-leaving')) return; if (!readFlag('nib-auth')) openAuth(); else gate(false); splash.classList.add('is-leaving'); setTimeout(() => { splash.hidden = true; }, reduced ? 0 : 500); };
+    if (seen) { splash.hidden = true; afterSplash(); }
     else {
+      gate(true);
       splash.querySelectorAll('[data-letters]').forEach(el => { const chars = [...el.textContent]; el.textContent = ''; chars.forEach((c,i) => { const ch = document.createElement('span'); ch.className = 'ch'; ch.textContent = c; ch.style.setProperty('--i', i); el.append(ch); }); });
       if (reduced) splash.querySelector('.splash-logo').src = 'assets/splash-logo-final.png';
       splash.classList.add('is-playing'); splash.addEventListener('click', finish); setTimeout(finish, reduced ? 1200 : 4500);
     }
-  }
+  } else afterSplash();
 })();

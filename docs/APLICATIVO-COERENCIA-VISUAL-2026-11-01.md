@@ -265,3 +265,24 @@ Ajuste seguinte: o brasão ao fundo ficou maior (270 px no celular, 320 px no co
 Ajuste seguinte da abertura: logo maior (até 180 px, 32% da largura) e o bloco de texto alinhado ao centro óptico da palavra Nib da logo, e não ao centro da imagem. A palavra fica cerca de 5% abaixo do centro do arquivo, então o texto desce na mesma proporção do tamanho da logo. Medido em 414 px: centro do Nib em 348 px e do texto em 348,5 px.
 
 Ajuste seguinte: o círculo de carregamento fica centralizado entre a base da logo e a borda inferior da tela, calculado a partir da posição e do tamanho da logo. Medido: 390×844 (logo termina em 407, círculo em 626, ponto médio 626) e 320×560 (417 e 417).
+
+## Acesso e orientação de teste — 03/11/2026
+
+Pedido de Hilton: pensar o login e o cadastro na entrada do aplicativo e, depois do acesso, telas de orientação com o resumo do que há no app.
+
+Fluxo: abertura animada → tela de acesso → orientação em quatro telas → inicial. Tudo é demonstrativo: a CSP bloqueia conexões (`connect-src 'none'`, `form-action 'none'`), os envios são interceptados no JavaScript e os dados ficam só na memória da aba. A tela avisa para usar dados fictícios.
+
+- **Acesso:** foto da igreja no topo com a logo branca e uma folha clara com abas "Entrar" e "Criar cadastro" (tabs acessíveis com setas).
+  - Entrar: e-mail ou celular, senha com botão de mostrar/ocultar, "Esqueci minha senha" e "Receber código pelo WhatsApp". As duas últimas só explicam como funcionarão.
+  - Criar cadastro: nome completo, celular com WhatsApp, e-mail, vínculo com a igreja (Sou membro, Frequento, Estou conhecendo), senha de pelo menos 8 caracteres e aceite da política de privacidade do site.
+  - A validação é própria, com mensagem em `role=alert`, foco no campo e `aria-invalid`. Os campos não usam autocomplete do navegador.
+- **Orientação:** quatro telas com foto, ícone, título e resumo (inicial, agenda e eventos, generosidade, células e oração). Deslizar, botão Próximo/Começar, Pular e setas do teclado. No celular, foto em cima e texto embaixo; no computador, lado a lado. A primeira tela cumprimenta pelo primeiro nome do cadastro.
+- **Depois do acesso:** a inicial, o topo, o menu, o Meu cadastro e o Caderno usam o nome cadastrado. No login sem cadastro, continua a usuária Jéssica Exemplo.
+- A tela de acesso aparece uma vez por aba. Em "Versão de teste" há o botão "Ver login e orientação de novo".
+- Enquanto acesso ou orientação estão abertos, o restante do app fica `inert`.
+
+Contraste conferido: bordas dos campos #7a879a (3,4:1 sobre o fundo), textos secundários #536176 (5,9:1), laranja do rótulo #b64e1a (4,8:1).
+
+Verificado: 51 testes aprovados, sem erros de console. Navegador em 390 px: validação do cadastro, cadastro completo levando à orientação, quatro telas até "Começar", inicial com "Olá, Maria!" e sem overflow. Também em 1280 px.
+
+Decisões em aberto para a versão real: forma de acesso (e-mail e senha, código por WhatsApp ou ambos), quem confirma o vínculo de quem se cadastra (secretaria), se haverá CPF, e se a orientação aparece só no primeiro acesso.
