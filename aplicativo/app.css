@@ -1161,3 +1161,35 @@ html{scrollbar-gutter:stable}
 @media(prefers-reduced-motion:reduce){#nib-proposta .notice-badge{animation:none}}
 #nib-proposta .box h2+.admin-notice{padding-top:10px}
 #nib-proposta .admin-notice:last-of-type{padding-bottom:0}
+/* Minhas contribuições */
+#nib-proposta .history-peek{display:flex;align-items:center;justify-content:space-between;gap:16px 24px;flex-wrap:wrap;margin:0 0 24px;padding:20px 24px}
+#nib-proposta .history-peek .label{margin-bottom:6px}
+#nib-proposta .history-peek h2{font-size:17px;margin:0 0 4px}
+#nib-proposta .history-peek p{margin:0;font-size:14px;color:#41506a}
+#nib-proposta .history-peek-text{min-width:0;flex:1 1 260px}
+#nib-proposta .history-years{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 20px}
+#nib-proposta .history-year{min-height:40px;padding:8px 18px;border-radius:999px;border:1px solid #c9d2de;background:#fff;color:#041e42;font:inherit;font-size:14px;font-weight:600;cursor:pointer}
+#nib-proposta .history-year.is-active{background:#041e42;border-color:#041e42;color:#fff}
+#nib-proposta .history-layout{display:grid;grid-template-columns:minmax(0,340px) minmax(0,1fr);gap:24px;align-items:start}
+#nib-proposta .history-layout .box{margin:0}
+#nib-proposta .history-total{font-size:30px;letter-spacing:-.02em;margin:0 0 4px}
+#nib-proposta .history-total-note{font-size:13.5px;color:#41506a;margin:0 0 14px}
+#nib-proposta .history-parts{margin:0 0 20px}
+#nib-proposta .history-parts>div{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:11px 0}
+#nib-proposta .history-parts dd{margin:0;font-size:14.5px;text-align:right}
+#nib-proposta .history-summary .action{width:100%}
+#nib-proposta .history-list h2{margin-bottom:6px}
+#nib-proposta .history-months,#nib-proposta .history-months ul{list-style:none;margin:0;padding:0}
+#nib-proposta .history-month h3{font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#536176;margin:18px 0 6px}
+#nib-proposta .history-month ul>li{display:flex;align-items:center;gap:14px;padding:10px 0;border-bottom:1px solid #e6ebf1}
+#nib-proposta .history-month:last-child ul>li:last-child{border-bottom:0;padding-bottom:0}
+#nib-proposta .history-what{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+#nib-proposta .history-what small{font-size:12.5px;color:#536176}
+#nib-proposta .history-amount{font-size:15px;white-space:nowrap}
+#nib-proposta .history-status{color:#24674e;font-weight:600}
+#nib-proposta .history-status.is-pending{color:#9a5a12}
+#nib-proposta .history-how{margin-top:24px}
+#nib-proposta .history-how h2{font-size:17px}
+#nib-proposta .history-how p{font-size:14px;line-height:1.6}
+#nib-proposta .gift-thanks~.gift-actions{flex-wrap:wrap}
+@media(max-width:820px){#nib-proposta .history-layout{grid-template-columns:minmax(0,1fr)}#nib-proposta .history-peek{padding:18px 20px}#nib-proposta .history-peek .button-go{width:100%;justify-content:center}}
