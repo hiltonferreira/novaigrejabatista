@@ -412,3 +412,7 @@ Nova versão: uma única linha do tempo de 3 s, só com `transform` e `opacity`,
 - O seletor no topo da página saiu; a escolha agora é a primeira etapa.
 - "Outras formas de contribuir": descrição mais clara e botão laranja "Copiar código Pix" abaixo do QR oficial, igual ao do site (copia o mesmo código do QR oficial).
 - Mensagem de cópia do Pix corrigida (não é mais "de teste").
+
+## Gestão por perfil: Secretaria e Liderança Pastoral (2026-11-03)
+
+Mapa completo e decisões em `docs/APLICATIVO-GESTAO-PERFIS-2026-11-03.md`. Código novo em `aplicativo/admin.js`; agenda aceita itens incluídos pela gestão (`NibDaily.addItem`). Nomes e tipos da agenda agora passam por escape.

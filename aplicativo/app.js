@@ -19,7 +19,7 @@
   const button = (text, view, primary = false) => { const back = !primary && /^Voltar/.test(text); return `<button type="button" class="button ${primary ? 'action primary' : back ? 'button-go button-back' : 'button-go'}" data-view="${view}">${back ? backArrow : ''}<span>${text}</span>${primary || back ? '' : arrow}</button>`; };
   // Ícones reaproveitados da função icon() do painel; sem ícones nas ações.
   const iconPaths = { heart: 'M12 20s-8-4.7-8-10a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 5.3-8 10-8 10z', user: 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8z M4 21c0-4 4-6 8-6s8 2 8 6', grid: 'M3 3h7v7H3z M14 3h7v7h-7z M3 14h7v7H3z M14 14h7v7h-7z', calendar: 'M4 5h16v16H4z M8 3v4 M16 3v4 M4 11h16', receipt: 'M6 3h12v18l-3-2-3 2-3-2-3 2z M9 8h6 M9 12h6', archive: 'M3 4h18v5H3z M5 9v12h14V9 M10 13h4' };
-  const navIcon = key => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${iconPaths[({ inicio: 'grid', cadastro: 'user', eventos: 'calendar', celulas: 'grid', generosidade: 'heart', informacoes: 'archive', gestao: 'grid', agenda: 'calendar', oracao: 'heart', caderno: 'receipt' })[key]]}"/></svg>`;
+  const navIcon = key => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${(isManagement() && NibAdminIcons[key]) || iconPaths[({ inicio: 'grid', cadastro: 'user', eventos: 'calendar', celulas: 'grid', generosidade: 'heart', informacoes: 'archive', gestao: 'grid', agenda: 'calendar', oracao: 'heart', caderno: 'receipt' })[key]]}"/></svg>`;
   const events = [
     { name: 'Mulheres Virtuosas', image: 'assets/mulheres.webp', date: '30/10/2026', active: false },
     { name: 'NXT CAMP', image: 'assets/nxt.png', date: '21/11/2026', active: true },
@@ -27,6 +27,7 @@
   ];
   const eventCards = (compact = false) => `<div class="cards ${compact ? 'home-events' : ''}">${[...events].filter(e => !compact || e.active).sort((a,b) => Number(b.active) - Number(a.active)).map(e => `<article class="event ${e.name === 'Mulheres Virtuosas' ? 'event-mulheres-virtuosas' : ''} ${e.active ? '' : 'event-ended'}"><div class="event-cover"><img src="${e.image}" alt="${e.name}" width="800" height="400"></div><div class="event-content"><div class="event-top"><span class="tag ${e.active ? 'status-active' : 'status-ended'}">${e.active ? 'Ativo' : 'Encerrado'}</span><time class="event-date">${e.date}</time></div><${compact ? 'h3' : 'h2'}>${e.name}</${compact ? 'h3' : 'h2'}><p>${e.active ? 'Conheça o encontro e as informações do evento.' : 'Evento realizado. Consulte as informações.'}</p><button type="button" class="button primary" aria-label="Ver informações: ${e.name}" data-message="${e.name}: catálogo demonstrativo. A integração com as inscrições ainda será conectada; nenhum cadastro ou pagamento é realizado aqui.">Ver informações</button></div></article>`).join('')}</div>`;
   const isManagement = () => ['secretaria', 'pastoral'].includes(state.context);
+  const NibAdminIcons = { gestao: 'M3 3h7v9H3z M14 3h7v5h-7z M14 12h7v9h-7z M3 16h7v5H3z', membresia: 'M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z M2 21c0-3.5 3-6 7-6s7 2.5 7 6 M16 11l2 2 4-4', solicitacoes: 'M6 3h9l4 4v14H6z M15 3v4h4 M9 12h7 M9 16h5', programacao: 'M4 5h16v16H4z M8 3v4 M16 3v4 M4 11h16 M12 14v4 M10 16h4', comunicados: 'M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9 M10 21h4', palavra: 'M12 6.5C10.2 5 7.6 4.5 4 4.5v13c3.6 0 6.2.5 8 2 1.8-1.5 4.4-2 8-2v-13c-3.6 0-6.2.5-8 2Z M12 6.5v13', cuidado: 'M12 20s-8-4.7-8-10a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 5.3-8 10-8 10z', informacoes: 'M3 4h18v5H3z M5 9v12h14V9 M10 13h4' };
   const barPaths = {
     inicio: 'M3 11l9-8 9 8 M5 10v10h5v-6h4v6h5V10',
     agenda: iconPaths.calendar,
@@ -44,16 +45,20 @@
     cadastro: 'M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm-9 9a9 7 0 0 1 18 0v1H3Z',
     celulas: 'M3 3h8v8H3Zm10 0h8v8h-8ZM3 13h8v8H3Zm10 0h8v8h-8Z'
   };
-  const barIcon = (key, selected = false) => selected
+  const barIcon = (key, selected = false) => !barPaths[key]
+    ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${selected ? 2.3 : 1.8}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${NibAdminIcons[key]}"/></svg>`
+    : selected
     ? `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="${barFilledPaths[key]}"/></svg>`
     : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${barPaths[key]}"/></svg>`;
   function renderBar() {
     const bar = document.getElementById('bottom-nav');
-    bar.hidden = isManagement();
-    if (bar.hidden) return;
-    if (!bar.children.length) bar.innerHTML = [['inicio','Início'],['agenda','Calendário'],['generosidade','Contribuir'],['eventos','Eventos'],['celulas','Células']].map(([view,label]) => `<a href="#${view}" data-view="${view}" class="${view === 'generosidade' ? 'bar-main' : ''}"><span class="bar-icon">${barIcon(view)}</span><span>${label}</span></a>`).join('');
+    const barKey = isManagement() ? state.context : 'membro';
+    if (bar.dataset.context !== barKey) { bar.innerHTML = ''; bar.dataset.context = barKey; }
+    bar.classList.toggle('is-admin', isManagement());
+    bar.hidden = false; bar.setAttribute('aria-label', isManagement() ? 'Acessos da gestão' : 'Acessos do membro');
+    if (!bar.children.length) bar.innerHTML = (isManagement() ? admin.bar() : [['inicio','Início'],['agenda','Calendário'],['generosidade','Contribuir'],['eventos','Eventos'],['celulas','Células']]).map(([view,label]) => `<a href="#${view}" data-view="${view}" class="${view === 'generosidade' ? 'bar-main' : ''}"><span class="bar-icon">${barIcon(view)}</span><span>${label}</span></a>`).join('');
     bar.querySelectorAll('a').forEach(a => {
-      const active = a.dataset.view === state.view;
+      const active = a.dataset.view === state.view || (a.dataset.view === 'membresia' && state.view === 'confirmar');
       if (active) a.setAttribute('aria-current','page'); else a.removeAttribute('aria-current');
       a.querySelector('.bar-icon').innerHTML = barIcon(a.dataset.view, active);
     });
@@ -68,13 +73,15 @@
       const day = new Intl.DateTimeFormat('pt-BR',{day:'2-digit',timeZone:'America/Porto_Velho'}).format(date);
       const month = new Intl.DateTimeFormat('pt-BR',{month:'short',timeZone:'America/Porto_Velho'}).format(date).replace('.','');
       const week = new Intl.DateTimeFormat('pt-BR',{weekday:'short',timeZone:'America/Porto_Velho'}).format(date).replace('.','');
-      return `<li><span class="agenda-date"><small>${month}</small><strong>${day}</strong><em>${week}</em></span><div><span class="agenda-type">${calendarDot(calendarKind(item))}${item.type}</span><h3>${item.name}</h3><p>${new Intl.DateTimeFormat('pt-BR',{weekday:'long',timeZone:'America/Porto_Velho'}).format(date)}${item.time ? ' · '+item.time : ' · horário a confirmar'}</p></div></li>`;
+      return `<li><span class="agenda-date"><small>${month}</small><strong>${day}</strong><em>${week}</em></span><div><span class="agenda-type">${calendarDot(calendarKind(item))}${escape(item.type)}</span><h3>${escape(item.name)}</h3><p>${new Intl.DateTimeFormat('pt-BR',{weekday:'long',timeZone:'America/Porto_Velho'}).format(date)}${item.time ? ' · '+item.time : ' · horário a confirmar'}</p></div></li>`;
     }).join('');
     const agenda = `<section class="home-agenda" aria-labelledby="agenda-title"><div class="section-heading"><div><span class="label">CAMINHE COM A GENTE</span><h2 id="agenda-title">${full ? 'Próximos encontros' : 'Na agenda da igreja'}</h2></div></div><div class="box agenda-content"><ul class="agenda-list">${list}</ul>${full ? '' : '<div class="agenda-more">'+button('Ver calendário completo','agenda')+'</div>'}<p class="note">Programação de referência do site da igreja, ainda sem sincronização. Confirme mudanças com a igreja.${full ? ' Novas festividades aparecerão após o cadastro pela equipe.' : ''}</p></div></section>`;
     const verseBlock = `<section class="daily-verse" aria-labelledby="verse-label"><div class="verse-top"><span class="verse-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.5C10.2 5 7.6 4.5 4 4.5v13c3.6 0 6.2.5 8 2 1.8-1.5 4.4-2 8-2v-13c-3.6 0-6.2.5-8 2Z"/><path d="M12 6.5v13"/></svg></span><span class="label" id="verse-label">Palavra para o seu dia</span></div><blockquote><span class="verse-mark" aria-hidden="true">“</span>${verse[0]}</blockquote><div class="verse-foot"><div class="verse-ref"><cite>${verse[1]}</cite>${verse[2]?'<small class="verse-pick">Escolhido pela igreja</small>':''}</div><button type="button" class="verse-share" id="verse-share"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3 M7.5 7.5 12 3l4.5 4.5 M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg><span>Compartilhar</span></button></div></section>`;
     return full || part === 'agenda' ? agenda : part === 'verse' ? verseBlock : verseBlock + agenda;
   }
   const fullDate = key => new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Porto_Velho',weekday:'long',day:'2-digit',month:'long',year:'numeric'}).format(new Date(key+'T12:00:00-04:00'));
+  const admin = NibAdmin.create({ state, escape, button, arrow, backArrow, NibDaily, fullDate, show: (...a) => show(...a), announce: (...a) => announce(...a), refreshNotices: () => refreshNotices() });
+  const adminOnly = ['gestao','membresia','confirmar','solicitacoes','programacao','comunicados','palavra','cuidado'];
   const calendarKinds = {celula:'Minha célula',culto:'Cultos',escola:'Escola bíblica',evento:'Eventos'};
   // Célula do membro (exemplo): na versão final vem do vínculo do membro com a célula na plataforma de células.
   const myCell = { name: 'Célula Exemplo', weekday: 3, time: '19:30', place: 'Casa da família Exemplo · Bairro Exemplo' };
@@ -103,12 +110,12 @@
     const fmt = o => new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Porto_Velho',...o}).format(sel);
     const weekday = fmt({weekday:'long'}), cap = weekday.charAt(0).toUpperCase()+weekday.slice(1);
     const countLabel = selected.length ? selected.length+(selected.length>1?' encontros':' encontro') : 'Sem encontros';
-    const entries = selected.length ? '<ul class="day-entries">'+selected.map(x=>{ const kind = calendarKind(x); return `<li data-kind="${kind}"><time${x.time?'':' class="is-tbd"'}>${x.time ? x.time : 'Horário<br>a definir'}</time><div><strong>${x.name}</strong><p class="calendar-entry-kind">${calendarDot(kind)}${x.type}</p>${x.place?'<p class="calendar-entry-place">'+x.place+'</p>':''}</div></li>`; }).join('')+'</ul>' : '<p class="day-empty">Nenhum encontro de referência para esta data.</p>';
+    const entries = selected.length ? '<ul class="day-entries">'+selected.map(x=>{ const kind = calendarKind(x); return `<li data-kind="${kind}"><time${x.time?'':' class="is-tbd"'}>${x.time ? x.time : 'Horário<br>a definir'}</time><div><strong>${escape(x.name)}</strong><p class="calendar-entry-kind">${calendarDot(kind)}${escape(x.type)}</p>${x.place?'<p class="calendar-entry-place">'+x.place+'</p>':''}</div></li>`; }).join('')+'</ul>' : '<p class="day-empty">Nenhum encontro de referência para esta data.</p>';
     const clock = new Intl.DateTimeFormat('en-GB',{timeZone:'America/Porto_Velho',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(new Date());
     const upcoming = withCell(NibDaily.agenda(today, 14), today, 14).find(x => x.day > today || (x.day === today && (!x.time || x.time >= clock)));
     const short = key => new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Porto_Velho',weekday:'short',day:'2-digit'}).format(new Date(key+'T12:00:00-04:00')).replace('.','');
     const todayLong = new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Porto_Velho',weekday:'long',day:'numeric',month:'long'}).format(new Date(today+'T12:00:00-04:00'));
-    const nextLine = upcoming ? `${calendarDot(calendarKind(upcoming))}<span>Próximo: <b>${upcoming.name}</b> · ${upcoming.day===today?'hoje':short(upcoming.day)}${upcoming.time?', '+upcoming.time:''}</span>` : '<span>Sem encontros nos próximos dias</span>';
+    const nextLine = upcoming ? `${calendarDot(calendarKind(upcoming))}<span>Próximo: <b>${escape(upcoming.name)}</b> · ${upcoming.day===today?'hoje':short(upcoming.day)}${upcoming.time?', '+upcoming.time:''}</span>` : '<span>Sem encontros nos próximos dias</span>';
     return `<div class="calendar-actions"><div class="calendar-now"><span class="label">HOJE</span><strong>${todayLong.charAt(0).toUpperCase()+todayLong.slice(1)}</strong><small>${nextLine}</small></div><button type="button" id="calendar-today" class="calendar-today"${state.calendarDay===today?' aria-pressed="true"':''}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3v3 M17 3v3 M4 8h16 M5 5h14a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1z"/><circle cx="12" cy="14" r="1.6" fill="currentColor" stroke="none"/></svg><span>Hoje</span></button></div><section class="box calendar-box" aria-label="Calendário mensal"><div class="calendar-toolbar"><button type="button" data-month="-1" aria-label="Mês anterior">‹</button><div><h2>${title.charAt(0).toUpperCase()+title.slice(1)}</h2></div><button type="button" data-month="1" aria-label="Próximo mês">›</button></div><div class="calendar-week" aria-hidden="true">${['D','S','T','Q','Q','S','S'].map(x=>'<span>'+x+'</span>').join('')}</div><div class="calendar-grid">${cells}</div><div class="calendar-legend">${Object.entries(calendarKinds).map(([key,name])=>'<span>'+calendarDot(key)+name+'</span>').join('')}</div></section><section class="box calendar-selection"><div class="selection-head"><span class="selection-date" aria-hidden="true"><small>${fmt({month:'short'}).replace('.','')}</small><strong>${fmt({day:'2-digit'})}</strong></span><div><span class="label">${state.calendarDay===today?'HOJE':'DIA SELECIONADO'}</span><h2>${cap}</h2><p>${fmt({day:'numeric',month:'long',year:'numeric'})}</p></div><span class="selection-count">${countLabel}</span></div>${entries}</section><p class="note">Programação de referência do site da igreja, ainda sem sincronização; as recorrências não representam histórico de encontros realizados. Confirme mudanças com a igreja. Festividades aparecerão após o cadastro pela equipe.</p>`;
   }
   const prayHeart = '<svg class="pray-heart" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20.5s-8-4.7-8-10.2A4.6 4.6 0 0 1 12 7.4a4.6 4.6 0 0 1 8 2.9c0 5.5-8 10.2-8 10.2z"/></svg>';
@@ -179,7 +186,7 @@
     return others ? `<b>${others}</b> ${others===1?'pessoa está':'pessoas estão'} orando` : 'Seja o primeiro a orar por este pedido';
   }
   function prayerCards(compact=false) {
-    return [...state.prayers].reverse().slice(0,compact?2:state.prayers.length).map(p=>`<article class="prayer-post" data-post="${p.id}"><div class="prayer-post-author"><span class="profile-avatar" aria-hidden="true">${escape(p.author.charAt(0))}</span><div><strong>${escape(p.author)}</strong><small>Pedido fictício · Demonstração</small></div>${p.answered?'<span class="prayer-answered"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>Oração atendida</span>':''}</div><h3>${escape(p.name)}</h3><p class="prayer-reason">${escape(p.reason)}</p><div class="prayer-post-footer"><button type="button" class="prayer-support" data-prayer-support="${p.id}" aria-pressed="${p.supported}" aria-label="Estou orando por: ${escape(p.name)}">${prayHeart}<span class="prayer-support-label">${p.supported?'Orando':'Vou orar'}</span></button><span class="prayer-support-caption" aria-live="polite">${prayCaption(p)}</span></div>${!compact&&p.own?'<div class="prayer-own-actions"><span class="prayer-own-label">Seu pedido</span><button type="button" class="prayer-own-btn" data-prayer-toggle="'+p.id+'" aria-label="'+(p.answered?'Reabrir pedido':'Marcar como atendida')+': '+escape(p.name)+'">'+(p.answered?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.3-5.6 M4 4v4h4"/></svg><span>Reabrir</span>':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg><span>Marcar atendida</span>')+'</button><button type="button" class="prayer-own-btn is-danger" data-prayer-delete="'+p.id+'" aria-label="Excluir pedido: '+escape(p.name)+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16 M9 7V4h6v3 M6 7l1 13h10l1-13 M10 11v6 M14 11v6"/></svg><span>Excluir</span></button></div>':''}</article>`).join('');
+    return state.prayers.filter(p => isManagement() || !p.hidden).reverse().slice(0,compact?2:state.prayers.length).map(p=>`<article class="prayer-post" data-post="${p.id}"><div class="prayer-post-author"><span class="profile-avatar" aria-hidden="true">${escape(p.author.charAt(0))}</span><div><strong>${escape(p.author)}</strong><small>Pedido fictício · Demonstração</small></div>${p.answered?'<span class="prayer-answered"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>Oração atendida</span>':''}</div><h3>${escape(p.name)}</h3><p class="prayer-reason">${escape(p.reason)}</p><div class="prayer-post-footer"><button type="button" class="prayer-support" data-prayer-support="${p.id}" aria-pressed="${p.supported}" aria-label="Estou orando por: ${escape(p.name)}">${prayHeart}<span class="prayer-support-label">${p.supported?'Orando':'Vou orar'}</span></button><span class="prayer-support-caption" aria-live="polite">${prayCaption(p)}</span></div>${!compact&&p.own?'<div class="prayer-own-actions"><span class="prayer-own-label">Seu pedido</span><button type="button" class="prayer-own-btn" data-prayer-toggle="'+p.id+'" aria-label="'+(p.answered?'Reabrir pedido':'Marcar como atendida')+': '+escape(p.name)+'">'+(p.answered?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.3-5.6 M4 4v4h4"/></svg><span>Reabrir</span>':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg><span>Marcar atendida</span>')+'</button><button type="button" class="prayer-own-btn is-danger" data-prayer-delete="'+p.id+'" aria-label="Excluir pedido: '+escape(p.name)+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16 M9 7V4h6v3 M6 7l1 13h10l1-13 M10 11v6 M14 11v6"/></svg><span>Excluir</span></button></div>':''}</article>`).join('');
   }
   // Banners das redes oficiais: foto da igreja, chapéu, título e caixa azul translúcida.
   const socialLinks = [
@@ -222,20 +229,20 @@
   }
   function announce(message, tone = 'info', reveal = true) { feedback.dataset.tone=tone; feedback.textContent = message; if(reveal) feedback.scrollIntoView({block:"nearest",behavior:"instant"}); }
   function renderNavigation() {
-    const items = isManagement() ? [['gestao', 'Membresia'], ['informacoes', 'Informações']] : navigation;
-    const context = isManagement() ? 'gestao' : 'membro';
+    const items = isManagement() ? admin.views() : navigation;
+    const context = isManagement() ? state.context : 'membro';
     for (const nav of [document.getElementById('navigation'), document.getElementById('mobile-navigation')]) {
       if (nav.dataset.context !== context) {
         if (nav.id === 'navigation') nav.innerHTML = items.map(([key,label]) => `<a href="#${key}" data-view="${key}" aria-label="${label}">${navIcon(key)}<span>${label}</span></a>`).join('');
         else {
-          const descriptions = {inicio:'Seu ponto de partida',cadastro:'Dados e atualizações',eventos:'Encontros e inscrições',generosidade:'Dízimos, ofertas e campanhas',celulas:'Acesso à plataforma',informacoes:'Programação e avisos',gestao:'Integração e apresentações',agenda:'Cultos, eventos e festividades',caderno:'Ore com a comunidade'};
-          const groups = isManagement() ? [['Gestão',items]] : [['Seu acesso',items.filter(([key])=>['inicio','cadastro'].includes(key))],['Vida na igreja',items.filter(([key])=>['agenda','eventos','generosidade','celulas','informacoes','caderno'].includes(key))]];
+          const descriptions = {...admin.descriptions, inicio:'Seu ponto de partida',cadastro:'Dados e atualizações',eventos:'Encontros e inscrições',generosidade:'Dízimos, ofertas e campanhas',celulas:'Acesso à plataforma',informacoes:'Programação e avisos',gestao:'Integração e apresentações',agenda:'Cultos, eventos e festividades',caderno:'Ore com a comunidade'};
+          const groups = isManagement() ? [[admin.profiles[state.context].name,items]] : [['Seu acesso',items.filter(([key])=>['inicio','cadastro'].includes(key))],['Vida na igreja',items.filter(([key])=>['agenda','eventos','generosidade','celulas','informacoes','caderno'].includes(key))]];
           nav.innerHTML = groups.map(([label,links],index) => `<section class="menu-group" aria-labelledby="menu-group-${index}"><h3 id="menu-group-${index}">${label}</h3><div class="menu-grid">${links.map(([key,title])=>`<a href="#${key}" data-view="${key}" aria-label="${title}"><span class="menu-icon">${navIcon(key)}</span><strong>${title}</strong><span class="menu-description">${descriptions[key]}</span><span class="mobile-current" hidden>Atual</span></a>`).join('')}</div></section>`).join('');
         }
         nav.dataset.context = context;
       }
       nav.querySelectorAll('a').forEach(item => {
-      const active = state.view === item.dataset.view || (item.dataset.view === 'gestao' && state.view === 'confirmar');
+      const active = state.view === item.dataset.view || (item.dataset.view === 'membresia' && state.view === 'confirmar');
       item.classList.toggle('selected', active);
       const current = item.querySelector('.mobile-current');
       if (current) current.hidden = !active;
@@ -248,13 +255,13 @@
   }
   function show(view, focus = true, record = true) {
     if(view==='oracao') view='caderno'; // Compatibilidade com o destino anterior.
-    if (isManagement() && !['gestao','confirmar','informacoes'].includes(view)) view = 'gestao';
-    if (['gestao', 'confirmar'].includes(view) && !isManagement()) view = 'inicio';
+    if (isManagement() && !admin.allowed(view)) view = 'gestao';
+    if (adminOnly.includes(view) && !isManagement()) view = 'inicio';
     if (record && focus && view !== state.view) viewHistory.push(state.view);
-    state.view = labels[view] ? view : 'inicio';
+    state.view = (labels[view] || admin.labels[view]) ? view : 'inicio';
     root.dataset.view = state.view;
     document.getElementById('mobile-return').hidden = state.view === 'inicio' || (isManagement() && state.view === 'gestao');
-    const [eyebrow, title, description] = labels[state.view];
+    const [eyebrow, title, description] = (isManagement() && admin.pageLabels(state.view)) || labels[state.view];
     document.getElementById('eyebrow').textContent = eyebrow;
     document.getElementById('heading').textContent = state.view === 'inicio' ? title.replace('Jéssica', state.member.first) : title;
     document.getElementById('description').textContent = description;
@@ -274,11 +281,9 @@
       eventos: () => `${eventCards()}<section class="box event-follow-up"><h2>Minhas inscrições</h2><p>Nenhuma inscrição vinculada nesta demonstração.</p><p class="note">Inscrições anteriores não serão vinculadas automaticamente por nome ou telefone.</p></section>`,
       celulas: () => `<section class="box"><span class="label">PLATAFORMA EXTERNA</span><h2>Encontre sua comunidade</h2><p>A igreja utilizará uma plataforma de células pronta. O endereço de acesso será configurado após a definição da integração.</p><button type="button" disabled>Acesso em preparação</button><p class="note">A entrada sem um novo login depende do serviço externo.</p></section>`,
       generosidade: () => `<div class="giving-layout${(state.giftStep || 'finalidade') === 'finalidade' ? '' : ' is-flow'}"><section class="box gift-box" aria-labelledby="gift-step-title">${giftFlow()}</section>${(state.giftStep || 'finalidade') === 'finalidade' ? `<section class="box giving-details"><h2>Outras formas de contribuir</h2><p class="giving-church">Se preferir, faça o Pix direto no app do seu banco com os dados oficiais da igreja, os mesmos do site.</p><dl class="bank-details"><div><dt>Pix (CNPJ)</dt><dd>40.518.758/0001-30</dd></div><div><dt>Banco</dt><dd>Sicoob</dd></div><div><dt>Agência / Conta</dt><dd>3315 / 51.404-7</dd></div></dl><figure class="church-qr church-qr-open"><img src="assets/pix-qrcode.png" alt="QR Code Pix oficial da Nova Igreja Batista" width="200" height="200"><figcaption>Abra o app do seu banco e escaneie o QR Code para fazer o Pix.</figcaption><button type="button" class="action church-pix-copy" id="church-pix-copy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 9h10v10H9z M5 15V5h10"/></svg><span>Copiar código Pix</span></button><small class="church-pix-note">Depois, cole em Pix copia e cola e informe o valor no app do banco.</small></figure></section>` : ''}</div>`,
-      informacoes: () => `<section class="box"><h2>Programação e avisos</h2><p>Os horários e conteúdos oficiais serão incluídos pela igreja.</p></section><section class="box"><h2>Endereço e contato</h2><p>Os canais de atendimento serão configurados nesta área.</p></section>`,
-      gestao: () => `<section class="box"><span class="label">PESSOA FICTÍCIA · NOVA INTEGRAÇÃO</span><h2>João Exemplo</h2><ul><li>Formulário de membros: registrado</li><li>Reunião de integração: registrada</li><li>Apresentação no culto: ${state.presented ? escape(state.presented.dateLabel) : 'a registrar'}</li></ul>${state.presented ? '<span class="tag">Membro · exemplo</span><p>Registro efetuado por ' + escape(state.presented.actor) + '.</p><p class="note">Registrado em ' + escape(state.presented.registeredAt) + ' · somente nesta sessão.</p>' : button('Revisar apresentação', 'confirmar', true)}</section><section class="box"><h2>Solicitações de atualização</h2>${state.request ? '<p>Solicitação demonstrativa de Jéssica Exemplo.</p><dl class="profile"><dt>Contato</dt><dd>' + escape(state.request.email) + '</dd><dt>Atualização solicitada</dt><dd>' + escape(state.request.note) + '</dd></dl>' : '<p>Nenhuma solicitação nesta sessão.</p>'}</section>${verseAdmin()}<p class="note">Secretaria da igreja e Liderança Pastoral podem confirmar o reconhecimento. Este seletor de demonstração não é autenticação ou controle de permissões.</p>`,
-      confirmar: () => `<section class="box"><h2>João Exemplo</h2><p>Formulário e reunião de integração já registrados neste exemplo.</p><form id="membership-form"><label for="presented-date">Data da apresentação no culto</label><input id="presented-date" name="date" type="date" required><label class="check"><input name="confirm" type="checkbox" required><span>Confirmo que a pessoa foi apresentada à igreja no culto.</span></label><button type="submit" class="action">Confirmar registro de teste</button></form><p class="note">O reconhecimento decorre da apresentação. Esta confirmação registra o fato e seu responsável.</p>${button('Voltar à gestão', 'gestao')}</section>`
+      informacoes: () => `<section class="box"><h2>Programação e avisos</h2><p>Os horários e conteúdos oficiais serão incluídos pela igreja.</p></section><section class="box"><h2>Endereço e contato</h2><p>Os canais de atendimento serão configurados nesta área.</p></section>`
     };
-    content.innerHTML = pages[state.view]();
+    content.innerHTML = (isManagement() && admin.pages[state.view] ? admin.pages[state.view] : pages[state.view])();
     bindSocialBanners(); renderPixQr(); syncCampaignBar();
     renderNavigation();
     closeDrawer();
@@ -290,6 +295,7 @@
   root.addEventListener('click', event => {
     const action = event.target.closest('button,a[data-view],a[data-back]');
     if (!action || action.disabled) return;
+    if (isManagement() && admin.click(action)) return;
     if (action.id === 'header-notices') { notices.showModal(); root.classList.add('nib-dialog-open'); document.getElementById('notices-close').focus(); return; }
     if (action.id === 'notices-close') { notices.close(); return; }
     if (action.id === 'header-menu') { document.querySelector('.test-options').open = false; drawer.showModal(); root.classList.add('nib-dialog-open'); action.setAttribute('aria-expanded','true'); document.getElementById('drawer-close').focus({preventScroll:true}); return; }
@@ -304,7 +310,7 @@
     if (action.dataset.month) { state.calendarMonth=NibDaily.moveMonth(state.calendarMonth,Number(action.dataset.month)); state.calendarDay=state.calendarMonth+'-01'; show('agenda',false,false); content.querySelector('[data-month="'+action.dataset.month+'"]').focus({preventScroll:true}); feedback.textContent=content.querySelector('.calendar-toolbar h2').textContent; return; }
     if (action.dataset.day) { state.calendarDay=action.dataset.day; show('agenda',false,false); content.querySelector('[data-day="'+state.calendarDay+'"]').focus({preventScroll:true}); feedback.textContent=calendarAnnouncement(); return; }
     if (action.id==='calendar-today') { state.calendarDay=NibDaily.dayKey(new Date()); state.calendarMonth=state.calendarDay.slice(0,7); show('agenda',false,false); content.querySelector('#calendar-today').focus({preventScroll:true}); feedback.textContent=calendarAnnouncement(); return; }
-    if (action.id==='verse-clear') { NibDaily.setCurated(NibDaily.dayKey(new Date())); show('gestao',false,false); announce('Hoje volta a usar a lista automática.','success',false); return; }
+    if (action.id==='verse-clear') { NibDaily.setCurated(NibDaily.dayKey(new Date())); show(isManagement() ? 'palavra' : 'inicio',false,false); announce('Hoje volta a usar a lista automática.','success',false); return; }
     if (action.dataset.prayerSupport) {
       const p=state.prayers.find(x=>x.id===action.dataset.prayerSupport); if(!p||isManagement()) return;
       p.supported=!p.supported; p.supporters+=p.supported?1:-1;
@@ -329,13 +335,7 @@
     const form = event.target;
     if (!form.reportValidity()) return;
     const values = new FormData(form);
-    if (form.id === 'verse-form') {
-      const day = String(values.get('data')), text = String(values.get('texto')).trim().replace(/\s+/g,' '), ref = String(values.get('referencia')).trim();
-      NibDaily.setCurated(day, text.slice(0,280), ref.slice(0,40));
-      show('gestao', false, false); content.querySelector('#verse-admin-title').focus({preventScroll:true});
-      announce('Versículo salvo para ' + fullDate(day) + '. Aparece na inicial nessa data.', 'success', false);
-      return;
-    }
+    if (isManagement() && admin.submit(form, values)) return;
     if (form.id === 'profile-form') {
       const email = String(values.get('email')).trim();
       const changes = [['Nome', 'newName'], ['E-mail', 'newEmail'], ['Telefone', 'newPhone'], ['Endereço', 'newAddress']].map(([label,key]) => { const value = String(values.get(key) || '').trim(); return value ? label + ': ' + value : ''; }).filter(Boolean);
@@ -343,8 +343,8 @@
       if (observation) changes.push('Observação: ' + observation);
       const note = changes.join(' · ');
       if (!note) return announce('Preencha ao menos um dado para atualização ou descreva outra alteração.','warning');
-      state.request = { email, note };
-      announce('Solicitação fictícia registrada nesta sessão. Você pode consultá-la na experiência de gestão.','success');
+      admin.addRequest({ name: state.member.full, email, note });
+      announce('Solicitação enviada à Secretaria (teste). Ela aparece no perfil Secretaria, em Cadastros.','success');
       form.reset();
     }
     if (form.id === 'notebook-form') {
@@ -358,22 +358,13 @@
       if (!(amount >= 1 && amount <= 1000000)) return announce('Informe um valor a partir de R$ 1,00.','warning');
       state.giftAmount = Math.round(amount*100)/100; state.giftStep = 'confirmar'; show('generosidade', false, false); content.querySelector('#gift-step-title').focus({preventScroll:true}); return;
     }
-    if (form.id === 'membership-form' && isManagement()) {
-      const raw = String(values.get('date'));
-      const date = new Date(raw + 'T12:00:00-04:00');
-      const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Manaus', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
-      if (Number.isNaN(date.getTime()) || raw > today) return announce('Informe a data de uma apresentação já realizada.','warning');
-      state.presented = { dateLabel: new Intl.DateTimeFormat('pt-BR', { timeZone: 'America/Manaus' }).format(date), actor: state.context === 'secretaria' ? 'Secretaria da igreja (teste)' : 'Liderança Pastoral (teste)', registeredAt: new Intl.DateTimeFormat('pt-BR', { timeZone: 'America/Manaus', dateStyle: 'short', timeStyle: 'short' }).format(new Date()) };
-      show('gestao');
-      announce('Apresentação registrada na demonstração. Nenhum membro real foi alterado.','success');
-    }
   });
   function changeContext(event) {
     viewHistory.length = 0;
     state.context = event.target.value;
-    state.prayers = demoPrayers(); // Caderno demonstrativo não é compartilhado entre experiências.
     document.getElementById('account').textContent = state.context === 'membro' ? state.member.full + ' · Membro' : (state.context === 'secretaria' ? 'Secretaria da igreja · Teste' : 'Liderança Pastoral · Teste');
     show(isManagement() ? 'gestao' : 'inicio');
+    refreshNotices();
     document.querySelector('.test-options').open = false;
     document.getElementById('demo-context').value = state.context;
     document.getElementById('demo-context-mobile').value = state.context;
@@ -396,6 +387,14 @@
   const notices = document.getElementById('notices-dialog');
   notices.addEventListener('close', () => { if (!drawer.open) root.classList.remove('nib-dialog-open'); });
   notices.addEventListener('click', e => { if (e.target !== notices) return; const r = notices.getBoundingClientRect(); if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) notices.close(); });
+  function refreshNotices() {
+    const empty = notices.querySelector('.notices-empty');
+    let feed = notices.querySelector('.notices-feed');
+    if (!feed) { feed = document.createElement('div'); feed.className = 'notices-feed'; empty.after(feed); }
+    const html = admin.memberNotices();
+    feed.innerHTML = html; feed.hidden = !html; empty.hidden = !!html;
+    document.getElementById('header-notices').classList.toggle('has-unread', !!html && !isManagement());
+  }
   function closeDrawer() { if (drawer.open) drawer.close(); root.classList.remove('nib-dialog-open'); document.getElementById('header-menu').setAttribute('aria-expanded','false'); }
   drawer.addEventListener('close', () => { root.classList.remove('nib-dialog-open'); document.getElementById('header-menu').setAttribute('aria-expanded','false'); });
   drawer.addEventListener('click', e => { if (e.target === drawer) { const r = drawer.getBoundingClientRect(); if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) closeDrawer(); } });
