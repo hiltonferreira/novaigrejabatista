@@ -1156,3 +1156,6 @@ html{scrollbar-gutter:stable}
 #nib-proposta .admin-period{display:inline-flex;margin:2px 0 6px;padding:3px 9px;border-radius:999px;background:rgba(255,127,64,.12);color:#9a3e13;font-size:12px;font-weight:700}
 #nib-proposta .notices-list .admin-period{display:table}
 #nib-proposta .admin-notice .admin-period{display:table}
+@keyframes notice-pop{0%{transform:scale(.4);opacity:0}70%{transform:scale(1.12)}100%{transform:scale(1);opacity:1}}
+#nib-proposta .notice-badge{animation:notice-pop .45s cubic-bezier(.2,.8,.2,1) both;box-shadow:0 0 0 3px #fff}
+@media(prefers-reduced-motion:reduce){#nib-proposta .notice-badge{animation:none}}

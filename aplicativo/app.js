@@ -274,7 +274,7 @@
         ['celulas', 'Células', 'Saiba como acessar a plataforma de células.'],
         ['informacoes', 'Programação e avisos', 'Consulte as informações e os canais da igreja.'],
         ['caderno', 'Caderno de oração', 'Compartilhe seus pedidos e ore com a comunidade.']
-      ].map(([view, title, text]) => `<button type="button" class="quick-action" data-view="${view}"><span class="home-action-icon" aria-hidden="true">${navIcon(view)}</span><strong>${title}</strong><span class="home-action-description">${text}</span></button>`).join('')}</div></section>${socialBanners()}${dailyBlocks(false,'agenda')}${communityBlock()}<section class="home-events-block" aria-labelledby="home-events-title"><div class="section-heading"><div><span class="label">PARTICIPE COM A GENTE</span><h2 id="home-events-title">Eventos da igreja</h2></div>${button('Ver todos', 'eventos')}</div>${eventCards(true)}</section>`,
+      ].map(([view, title, text]) => `<button type="button" class="quick-action admin-quick" data-view="${view}"><span class="home-action-icon" aria-hidden="true">${navIcon(view)}</span>${view === 'informacoes' && unreadNotices() ? `<span class="admin-badge notice-badge" aria-label="${unreadNotices()} ${unreadNotices() === 1 ? 'aviso novo' : 'avisos novos'}">${unreadNotices()}</span>` : ''}<strong>${title}</strong><span class="home-action-description">${text}</span></button>`).join('')}</div></section>${socialBanners()}${dailyBlocks(false,'agenda')}${communityBlock()}<section class="home-events-block" aria-labelledby="home-events-title"><div class="section-heading"><div><span class="label">PARTICIPE COM A GENTE</span><h2 id="home-events-title">Eventos da igreja</h2></div>${button('Ver todos', 'eventos')}</div>${eventCards(true)}</section>`,
       agenda: () => calendarPage(),
       caderno: () => notebookPage(),
       cadastro: () => `<div class="profile-layout"><section class="box profile-summary"><span class="tag">Membro · exemplo</span><h2>${escape(state.member.full)}</h2><p>Confira seu cadastro na igreja.</p><dl class="profile"><dt>E-mail</dt><dd>jessica@example.com</dd><dt>Telefone</dt><dd>Não informado</dd><dt>Endereço</dt><dd>Não informado</dd><dt>Apresentação no culto</dt><dd>Apresentação registrada · exemplo</dd></dl><p class="note">As alterações são encaminhadas para conferência da Secretaria.</p></section><section class="box profile-edit"><h2>O que você deseja atualizar?</h2><p>Preencha somente os dados que precisam mudar.</p><form id="profile-form"><fieldset><legend>Dados para atualização</legend><div class="form-grid"><div><label for="new-name">Nome completo</label><input id="new-name" name="newName" autocomplete="off" placeholder="Informe o nome corrigido" maxlength="160"></div><div><label for="new-email">Novo e-mail</label><input id="new-email" name="newEmail" type="email" autocomplete="off" placeholder="nome@exemplo.com" maxlength="160"></div><div><label for="new-phone">Novo telefone / WhatsApp</label><input id="new-phone" name="newPhone" type="tel" inputmode="tel" autocomplete="off" placeholder="(69) 99999-9999" maxlength="25"></div><div><label for="new-address">Endereço</label><input id="new-address" name="newAddress" autocomplete="off" placeholder="Rua, número, bairro e cidade" maxlength="250"></div></div></fieldset><fieldset><legend>Contato e observações</legend><label for="contact-email">E-mail para retorno</label><input id="contact-email" name="email" type="email" autocomplete="off" placeholder="exemplo@example.com" maxlength="160" required><label for="contact-note">Outra alteração ou observação (opcional)</label><textarea id="contact-note" name="note" placeholder="Descreva o que a Secretaria precisa conferir." maxlength="500"></textarea></fieldset><div class="form-actions"><button class="action" type="submit">Enviar solicitação de teste</button><button type="reset">Limpar alterações</button></div></form><p class="note">Use dados fictícios. A solicitação fica nesta sessão; nenhum cadastro real é alterado.</p></section></div>`,
@@ -284,6 +284,7 @@
       informacoes: () => `${admin.infoProgram()}<section class="box"><h2>Endereço e contato</h2><p>Os canais de atendimento serão configurados nesta área.</p></section>`
     };
     content.innerHTML = (isManagement() && admin.pages[state.view] ? admin.pages[state.view] : pages[state.view])();
+    if (state.view === 'informacoes') markNoticesSeen();
     bindSocialBanners(); renderPixQr(); syncCampaignBar();
     renderNavigation();
     closeDrawer();
@@ -296,7 +297,7 @@
     const action = event.target.closest('button,a[data-view],a[data-back]');
     if (!action || action.disabled) return;
     if (isManagement() && admin.click(action)) return;
-    if (action.id === 'header-notices') { notices.showModal(); root.classList.add('nib-dialog-open'); document.getElementById('notices-close').focus(); return; }
+    if (action.id === 'header-notices') { markNoticesSeen(); notices.showModal(); root.classList.add('nib-dialog-open'); document.getElementById('notices-close').focus(); return; }
     if (action.id === 'notices-close') { notices.close(); return; }
     if (action.id === 'header-menu') { document.querySelector('.test-options').open = false; drawer.showModal(); root.classList.add('nib-dialog-open'); action.setAttribute('aria-expanded','true'); document.getElementById('drawer-close').focus({preventScroll:true}); return; }
     if (action.id === 'drawer-close') { closeDrawer(); return; }
@@ -389,13 +390,15 @@
   const notices = document.getElementById('notices-dialog');
   notices.addEventListener('close', () => { if (!drawer.open) root.classList.remove('nib-dialog-open'); });
   notices.addEventListener('click', e => { if (e.target !== notices) return; const r = notices.getBoundingClientRect(); if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) notices.close(); });
+  function unreadNotices() { return Math.max(0, admin.noticesCount() - (state.noticesSeen || 0)); }
+  function markNoticesSeen() { if (isManagement()) return; state.noticesSeen = admin.noticesCount(); refreshNotices(); }
   function refreshNotices() {
     const empty = notices.querySelector('.notices-empty');
     let feed = notices.querySelector('.notices-feed');
     if (!feed) { feed = document.createElement('div'); feed.className = 'notices-feed'; empty.after(feed); }
     const html = admin.memberNotices();
     feed.innerHTML = html; feed.hidden = !html; empty.hidden = !!html;
-    document.getElementById('header-notices').classList.toggle('has-unread', !!html && !isManagement());
+    document.getElementById('header-notices').classList.toggle('has-unread', unreadNotices() > 0 && !isManagement());
   }
   function closeDrawer() { if (drawer.open) drawer.close(); root.classList.remove('nib-dialog-open'); document.getElementById('header-menu').setAttribute('aria-expanded','false'); }
   drawer.addEventListener('close', () => { root.classList.remove('nib-dialog-open'); document.getElementById('header-menu').setAttribute('aria-expanded','false'); });
