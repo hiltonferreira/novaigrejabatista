@@ -948,7 +948,7 @@ html{scrollbar-gutter:stable}
 #nib-proposta .campaign-progress-top strong{font-size:22px;color:#041e42}
 #nib-proposta .campaign-progress-top span{font-size:13px;color:#536176}
 #nib-proposta .campaign-bar{height:10px;border-radius:999px;background:#eef2f7;overflow:hidden}
-#nib-proposta .campaign-bar span{display:block;width:30%;height:100%;border-radius:inherit;background:linear-gradient(90deg,#2463a6,#041e42)}
+#nib-proposta .campaign-bar span{display:block;width:0;transition:width .6s cubic-bezier(.16,1,.3,1);height:100%;border-radius:inherit;background:linear-gradient(90deg,#2463a6,#041e42)}
 #nib-proposta .campaign-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0 0}
 #nib-proposta .campaign-stats div{padding:12px;border-radius:14px;background:#f3f6fa}
 #nib-proposta .campaign-stats dt{font-size:11px;color:#536176}

@@ -3353,8 +3353,26 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
   const fill=section && section.querySelector('.cp-fill');
   if(!section || !pct || !fill) return;
 
-  const target=parseInt(pct.dataset.target,10)||30;
+  let target=parseInt(pct.dataset.target,10)||30;
   const duration=1600;
+
+  /* dados da obra em /dados/obra.json (mesma fonte do aplicativo); sem resposta, fica o valor do HTML */
+  fetch('/dados/obra.json',{cache:'no-cache'}).then(r=>r.ok?r.json():null).then(d=>{
+    const value=d && Number(d.percentual);
+    if(!(value>=0 && value<=100)) return;
+    target=Math.round(value);
+    pct.dataset.target=String(target);
+    fill.dataset.width=target+'%';
+    const items=section.querySelectorAll('.cs-item');
+    items.forEach(item=>{
+      const num=item.querySelector('.cs-num'), txt=item.querySelector('.cs-txt');
+      if(!num||!txt) return;
+      if(/conclu/i.test(txt.textContent)) num.textContent=target+'%';
+      if(/lugares/i.test(txt.textContent) && d.lugares) num.textContent=String(d.lugares);
+      if(/entrega/i.test(txt.textContent) && d.entrega) num.textContent=String(d.entrega);
+    });
+    if(wasVisible || window.matchMedia('(prefers-reduced-motion: reduce)').matches){ pct.textContent=target+'%'; fill.style.width=target+'%'; }
+  }).catch(()=>{});
   let raf=0;
   let wasVisible=false;
 

@@ -124,10 +124,24 @@
     for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) if (qr.isDark(r, c)) d += `M${c+q} ${r+q}h1v1h-1z`;
     box.innerHTML = `<svg viewBox="0 0 ${n+q*2} ${n+q*2}" shape-rendering="crispEdges" aria-hidden="true"><rect width="100%" height="100%" fill="#fff"/><path d="${d}" fill="#041e42"/></svg>`;
   }
+  // Dados da obra: mesma fonte do site (novaigrejabatista.com.br/dados/obra.json). Sem conexão, ficam os últimos valores conhecidos.
+  const obra = { percentual: 30, lugares: '1.500', entrega: '2028' };
+  function syncCampaignBar() { const bar = content.querySelector('.campaign-bar span'); if (bar) bar.style.setProperty('width', obra.percentual + '%'); }
+  function loadObra() {
+    if (!window.fetch) return;
+    fetch('https://novaigrejabatista.com.br/dados/obra.json', { cache: 'no-cache', credentials: 'omit' }).then(r => r.ok ? r.json() : null).then(d => {
+      const value = d && Number(d.percentual);
+      if (!(value >= 0 && value <= 100)) return;
+      obra.percentual = Math.round(value);
+      if (d.lugares) obra.lugares = String(d.lugares).slice(0, 12);
+      if (d.entrega) obra.entrega = String(d.entrega).slice(0, 12);
+      if (state.view === 'generosidade' && state.gift === 'Campanha' && (state.giftStep || 'valor') === 'valor') { const card = content.querySelector('.campaign-card'); if (card) { card.outerHTML = campaignCard(); syncCampaignBar(); } }
+    }).catch(() => {});
+  }
   const giftLabel = () => state.gift === 'Campanha' ? 'Obra do templo' : state.gift;
   function campaignCard() {
     if ((state.giftStep || 'valor') !== 'valor') return '';
-    return `<article class="campaign-card"><div class="campaign-photo"><img src="assets/campanha-templo.webp" alt="Estrutura do novo templo da Nova Igreja Batista em construção" width="900" height="506"><span class="campaign-badge">Campanha ativa</span></div><h3>Construção do novo templo</h3><p>Estamos edificando um novo lar para a família Nib, preparado para receber ainda mais pessoas, gerações e histórias. Cada contribuição faz parte dessa conquista.</p><div class="campaign-progress"><div class="campaign-progress-top"><strong>30%</strong><span>da obra concluída</span></div><div class="campaign-bar" role="progressbar" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100" aria-label="Andamento da obra"><span></span></div></div><dl class="campaign-stats"><div><dt>Lugares planejados</dt><dd>1.500</dd></div><div><dt>Entrega prevista</dt><dd>2028</dd></div></dl></article>`;
+    return `<article class="campaign-card"><div class="campaign-photo"><img src="assets/campanha-templo.webp" alt="Estrutura do novo templo da Nova Igreja Batista em construção" width="900" height="506"><span class="campaign-badge">Campanha ativa</span></div><h3>Construção do novo templo</h3><p>Estamos edificando um novo lar para a família Nib, preparado para receber ainda mais pessoas, gerações e histórias. Cada contribuição faz parte dessa conquista.</p><div class="campaign-progress"><div class="campaign-progress-top"><strong>${obra.percentual}%</strong><span>da obra concluída</span></div><div class="campaign-bar" role="progressbar" aria-valuenow="${obra.percentual}" aria-valuemin="0" aria-valuemax="100" aria-label="Andamento da obra"><span></span></div></div><dl class="campaign-stats"><div><dt>Lugares planejados</dt><dd>${escape(obra.lugares)}</dd></div><div><dt>Entrega prevista</dt><dd>${escape(obra.entrega)}</dd></div></dl></article>`;
   }
   function giftFlow() {
     const step = state.giftStep || 'valor', m = state.member;
@@ -245,7 +259,7 @@
       confirmar: () => `<section class="box"><h2>João Exemplo</h2><p>Formulário e reunião de integração já registrados neste exemplo.</p><form id="membership-form"><label for="presented-date">Data da apresentação no culto</label><input id="presented-date" name="date" type="date" required><label class="check"><input name="confirm" type="checkbox" required><span>Confirmo que a pessoa foi apresentada à igreja no culto.</span></label><button type="submit" class="action">Confirmar registro de teste</button></form><p class="note">O reconhecimento decorre da apresentação. Esta confirmação registra o fato e seu responsável.</p>${button('Voltar à gestão', 'gestao')}</section>`
     };
     content.innerHTML = pages[state.view]();
-    bindSocialBanners(); renderPixQr();
+    bindSocialBanners(); renderPixQr(); syncCampaignBar();
     renderNavigation();
     closeDrawer();
     if (notices.open) notices.close();
@@ -378,6 +392,7 @@
     if (quote) { quote.lastChild.textContent = verse[0]; content.querySelector('.daily-verse cite').textContent = verse[1]; }
   }
   refreshDailyDate();
+  loadObra();
   setInterval(refreshDailyDate, 60000);
   document.addEventListener('visibilitychange', () => { if (!document.hidden) refreshDailyDate(); });
   document.getElementById('demo-context').value = 'membro';
