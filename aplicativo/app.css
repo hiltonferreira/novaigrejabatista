@@ -731,4 +731,4 @@ html{scrollbar-gutter:stable}
 /* Entrada no app: brasão branco no azul, zoom pelo centro até a inicial. */
 #nib-proposta .app-enter{position:fixed;inset:0;z-index:950;display:grid;place-items:center;overflow:hidden;background:#041e42;pointer-events:none}
 #nib-proposta .app-enter[hidden]{display:none}
-#nib-proposta .enter-brasao{width:clamp(120px,34vw,180px);height:auto;max-width:none;transform-origin:50.4% 45.9%;will-change:transform;opacity:0}
+#nib-proposta .enter-brasao{position:absolute;top:50%;left:50%;display:block;width:clamp(76px,22vw,112px);height:auto;max-width:none;margin:calc(clamp(76px,22vw,112px) * -0.5406) 0 0 calc(clamp(76px,22vw,112px) * -0.5);transform-origin:50.2% 45.1%;will-change:transform;opacity:0}

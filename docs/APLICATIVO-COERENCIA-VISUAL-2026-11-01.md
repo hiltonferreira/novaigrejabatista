@@ -293,3 +293,5 @@ Ajustes seguintes no acesso, após teste de Hilton no iPhone:
 - Orientação: a foto ficou reta embaixo e o texto sobe numa folha com cantos arredondados por cima, como na tela de acesso. O ícone fica na emenda.
 - Ao tocar em "Começar" ou "Pular": tela azul com o brasão branco no centro (fade de 0,38 s, entrada de 0,65 s e pausa), depois zoom de 1 para 38 vezes, com origem no centro do brasão, enquanto a tela azul some e revela a inicial (1,3 s, `cubic-bezier(.65,0,.35,1)`). Total de cerca de 3 s, feito com Web Animations. Com movimento reduzido, vai direto para a inicial.
 - Saudações neutras: "Boas-vindas, [nome]" na orientação e "BOAS-VINDAS" na inicial, porque o nome cadastrado pode ser de qualquer pessoa.
+
+Ajuste seguinte: o brasão da entrada ficou menor (76 a 112 px de largura, 22% da tela) e centralizado de forma exata. A imagem `brasao-branco.png` foi recortada rente ao desenho e o brasão é posicionado pelo centro da tela, sem depender do alinhamento da grade. Medido em 390×844: centro em 422 px, igual ao centro da tela.
