@@ -860,3 +860,30 @@ html{scrollbar-gutter:stable}
 #nib-proposta #mobile-back{padding:10px 18px 10px 14px;text-transform:none;letter-spacing:0}
 #nib-proposta main button.button-back{padding:10px 20px 10px 16px}
 @media(hover:hover){#nib-proposta :is(#mobile-back,#drawer-close,.button-back):hover .back-arrow{transform:translateX(-3px)}}
+/* Face ID (simulado) */
+#nib-proposta .auth-face,#nib-proposta .auth-code{display:flex;align-items:center;justify-content:center;gap:10px}
+#nib-proposta .auth-face{border-color:#041e42}
+#nib-proposta .auth-face .face-icon{width:22px;height:22px;flex:0 0 22px;stroke-width:3.2}
+#nib-proposta .auth-code{margin-top:10px}
+#nib-proposta .face-offer{position:fixed;inset:0;z-index:960;display:flex;align-items:flex-end;justify-content:center;background:#041e4273;animation:nib-fade-in .25s ease both}
+#nib-proposta .face-offer[hidden],#nib-proposta .face-scan[hidden]{display:none}
+#nib-proposta .face-offer-sheet{width:min(100%,480px);padding:28px 24px calc(24px + env(safe-area-inset-bottom));border-radius:28px 28px 0 0;background:#fff;text-align:center;box-shadow:0 -12px 40px #041e4233;animation:nib-sheet-up .42s cubic-bezier(.16,1,.3,1) both}
+#nib-proposta .face-offer-icon{display:inline-grid;place-items:center;width:72px;height:72px;margin-bottom:16px;border-radius:22px;background:linear-gradient(165deg,#0d3a72,#041e42);color:#fff;box-shadow:0 10px 24px -10px #041e42b3}
+#nib-proposta .face-offer-icon .face-icon{width:42px;height:42px}
+#nib-proposta .face-offer h2{margin:0 0 10px;font:700 21px/1.25 "NIB Acumin Mobile",Arial,sans-serif;color:#041e42}
+#nib-proposta .face-offer p{margin:0 0 22px;font-size:14px;line-height:1.55;color:#536176}
+#nib-proposta .face-later{display:block;margin:12px auto 0;font-size:14px}
+#nib-proposta .face-offer .auth-test{display:block;margin-top:14px}
+#nib-proposta .face-scan{position:fixed;inset:0;z-index:970;display:grid;place-items:center;background:#041e4240;animation:nib-fade-in .2s ease both}
+#nib-proposta .face-scan-card{display:flex;flex-direction:column;align-items:center;gap:14px;width:170px;padding:28px 0 22px;border-radius:28px;background:#ffffffeb;box-shadow:0 18px 50px #041e4240;-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+#nib-proposta .face-scan-icon{position:relative;display:block;width:76px;height:76px;color:#041e42}
+#nib-proposta .face-scan-icon svg{position:absolute;inset:0;width:100%;height:100%}
+#nib-proposta .face-scan .face-corners{animation:nib-face-pulse 1s ease-in-out infinite}
+#nib-proposta .face-check{opacity:0;transform:scale(.7);color:#24874e;transition:opacity .25s ease,transform .35s cubic-bezier(.2,1.5,.4,1)}
+#nib-proposta .face-scan.is-ok .face-icon{opacity:0;transition:opacity .2s ease}
+#nib-proposta .face-scan.is-ok .face-check{opacity:1;transform:none}
+#nib-proposta .face-scan-text{font:600 15px/1 "NIB Acumin Mobile",Arial,sans-serif;color:#041e42}
+@keyframes nib-face-pulse{0%,100%{opacity:1}50%{opacity:.35}}
+@keyframes nib-sheet-up{from{transform:translateY(100%)}to{transform:none}}
+@keyframes nib-fade-in{from{opacity:0}to{opacity:1}}
+@media(prefers-reduced-motion:reduce){#nib-proposta :is(.face-offer,.face-offer-sheet,.face-scan,.face-scan .face-corners){animation:none}#nib-proposta .face-check{transition:none}}

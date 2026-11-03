@@ -374,7 +374,7 @@
     const badId = mark(id, id.value.trim().length < 5), badPass = mark(pass, pass.value.length < 1);
     if (badId || badPass) return fail(form, 'login-error', badId ? 'Informe seu e-mail ou celular.' : 'Informe sua senha.');
     state.member = { first: 'Jéssica', full: 'Jéssica Exemplo', email: id.value.includes('@') ? id.value.trim().slice(0,80) : 'jessica@example.com' };
-    finishAuth();
+    offerFace();
   });
   const passRules = v => [v.length >= 8, /[A-ZÀ-Ý]/.test(v), /[a-zß-ÿ]/.test(v), /\d/.test(v), /[^A-Za-zÀ-ÿ0-9\s]/.test(v)];
   const passItems = [...document.querySelectorAll('.pass-rules li')];
@@ -404,7 +404,28 @@
     if (first) return fail(form, 'signup-error', first[2]);
     const full = name.slice(0,80);
     state.member = { first: full.split(' ')[0], full, email: f.email.value.trim().slice(0,80) };
-    finishAuth();
+    offerFace();
+  });
+  // Face ID (simulação): na versão final usa chave de acesso (WebAuthn/passkey); o rosto nunca sai do aparelho.
+  const faceOffer = document.getElementById('face-offer'), faceScan = document.getElementById('face-scan');
+  function scanFace() {
+    return new Promise(resolve => {
+      const text = faceScan.querySelector('.face-scan-text');
+      faceScan.classList.remove('is-ok'); text.textContent = 'Face ID'; faceScan.hidden = false;
+      const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      setTimeout(() => { faceScan.classList.add('is-ok'); text.textContent = 'Reconhecido'; setTimeout(() => { faceScan.hidden = true; resolve(); }, still ? 400 : 750); }, still ? 400 : 1300);
+    });
+  }
+  function offerFace() {
+    if (readFlag('nib-faceid')) { finishAuth(); return; }
+    faceOffer.hidden = false;
+    requestAnimationFrame(() => document.getElementById('face-enable').focus({preventScroll:true}));
+  }
+  document.getElementById('face-enable').addEventListener('click', () => { faceOffer.hidden = true; scanFace().then(() => { writeFlag('nib-faceid', true); finishAuth(); }); });
+  document.getElementById('face-later').addEventListener('click', () => { faceOffer.hidden = true; finishAuth(); });
+  faceOffer.addEventListener('keydown', e => { if (e.key === 'Escape') { faceOffer.hidden = true; finishAuth(); } });
+  document.getElementById('auth-face').addEventListener('click', () => {
+    scanFace().then(() => { state.member = { first: 'Jéssica', full: 'Jéssica Exemplo', email: 'jessica@example.com' }; finishAuth(); });
   });
   function finishAuth() {
     writeFlag('nib-auth', true);
@@ -473,7 +494,7 @@
   next.addEventListener('click', () => { if (slide === slides.length - 1) closeOnboarding(); else goSlide(slide + 1); });
   document.getElementById('onb-skip').addEventListener('click', closeOnboarding);
   onboarding.addEventListener('keydown', e => { if (e.key === 'ArrowRight') goSlide(slide + 1); if (e.key === 'ArrowLeft') goSlide(slide - 1); if (e.key === 'Escape') closeOnboarding(); });
-  document.getElementById('replay-flow').addEventListener('click', () => { document.querySelector('.test-options').open = false; writeFlag('nib-auth', false); ['panel-login','panel-signup'].forEach(id => document.getElementById(id).reset()); openAuth(); });
+  document.getElementById('replay-flow').addEventListener('click', () => { document.querySelector('.test-options').open = false; writeFlag('nib-auth', false); writeFlag('nib-faceid', false); ['panel-login','panel-signup'].forEach(id => document.getElementById(id).reset()); openAuth(); });
   // Abertura: aparece ao abrir o aplicativo, antes do acesso; some sozinha ou ao toque.
   const splash = document.getElementById('app-splash');
   const afterSplash = () => { if (!readFlag('nib-auth')) openAuth(); };

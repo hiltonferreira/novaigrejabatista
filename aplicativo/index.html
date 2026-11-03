@@ -22,7 +22,8 @@
    <p class="auth-error" id="login-error" role="alert"></p>
    <button type="submit" class="auth-primary">Entrar</button>
    <div class="auth-or"><span>ou</span></div>
-   <button type="button" class="auth-secondary" id="auth-code">Receber código pelo WhatsApp</button>
+   <button type="button" class="auth-secondary auth-face" id="auth-face"><svg class="face-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="face-corners" d="M6 16V11a5 5 0 0 1 5-5h5 M32 6h5a5 5 0 0 1 5 5v5 M42 32v5a5 5 0 0 1-5 5h-5 M16 42h-5a5 5 0 0 1-5-5v-5"/><path class="face-features" d="M17 18v3 M31 18v3 M24 18v8h-2 M18 32c3.5 3 8.5 3 12 0"/></svg><span>Entrar com Face ID</span></button>
+   <button type="button" class="auth-secondary auth-code" id="auth-code">Receber código pelo WhatsApp</button>
   </form>
   <form id="panel-signup" class="auth-form" role="tabpanel" aria-labelledby="tab-signup" novalidate hidden>
    <label for="signup-name">Nome completo</label>
@@ -49,6 +50,8 @@
   <p class="auth-test">Versão de teste: nada do que você digitar é enviado ou guardado. Use dados fictícios.</p>
  </div>
 </section>
+<div id="face-offer" class="face-offer" role="dialog" aria-modal="true" aria-labelledby="face-offer-title" hidden><div class="face-offer-sheet"><span class="face-offer-icon"><svg class="face-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="face-corners" d="M6 16V11a5 5 0 0 1 5-5h5 M32 6h5a5 5 0 0 1 5 5v5 M42 32v5a5 5 0 0 1-5 5h-5 M16 42h-5a5 5 0 0 1-5-5v-5"/><path class="face-features" d="M17 18v3 M31 18v3 M24 18v8h-2 M18 32c3.5 3 8.5 3 12 0"/></svg></span><h2 id="face-offer-title">Entrar com Face ID nas próximas vezes?</h2><p>Você entra só olhando para o celular, sem digitar a senha. Seu rosto fica apenas no aparelho: a igreja não recebe nenhuma imagem.</p><button type="button" class="auth-primary" id="face-enable">Ativar Face ID</button><button type="button" class="auth-link face-later" id="face-later">Agora não</button><small class="auth-test">Simulação nesta versão de teste.</small></div></div>
+<div id="face-scan" class="face-scan" role="status" aria-live="polite" hidden><div class="face-scan-card"><span class="face-scan-icon"><svg class="face-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="face-corners" d="M6 16V11a5 5 0 0 1 5-5h5 M32 6h5a5 5 0 0 1 5 5v5 M42 32v5a5 5 0 0 1-5 5h-5 M16 42h-5a5 5 0 0 1-5-5v-5"/><path class="face-features" d="M17 18v3 M31 18v3 M24 18v8h-2 M18 32c3.5 3 8.5 3 12 0"/></svg><svg class="face-check" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="24" cy="24" r="19"/><path d="m15.5 24.5 6 6 11-12"/></svg></span><span class="face-scan-text">Face ID</span></div></div>
 <div id="app-enter" class="app-enter" aria-hidden="true" hidden><span class="enter-halo"></span><span class="enter-mark"><img class="enter-brasao" src="assets/brasao-branco.png" alt="" width="271" height="293"><span class="enter-shine"></span></span></div>
 <section id="app-onboarding" class="app-onboarding" aria-roledescription="apresentação" aria-label="Conheça o aplicativo" hidden>
  <button type="button" class="onb-skip" id="onb-skip">Pular</button>
