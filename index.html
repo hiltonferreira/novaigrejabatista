@@ -3358,8 +3358,9 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 
   /* dados da obra em /dados/obra.json (mesma fonte do aplicativo); sem resposta, fica o valor do HTML */
   fetch('/dados/obra.json',{cache:'no-cache'}).then(r=>r.ok?r.json():null).then(d=>{
-    const value=d && Number(d.percentual);
-    if(!(value>=0 && value<=100)) return;
+    if(!d || typeof d!=='object' || !['number','string'].includes(typeof d.percentual) || String(d.percentual).trim()==='') return;
+    const value=Number(d.percentual);
+    if(!Number.isFinite(value) || value<0 || value>100) return;
     target=Math.round(value);
     pct.dataset.target=String(target);
     fill.dataset.width=target+'%';
