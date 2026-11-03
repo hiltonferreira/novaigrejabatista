@@ -830,3 +830,16 @@ html{scrollbar-gutter:stable}
 #nib-proposta .prayer-support-caption b{font-weight:700;color:#041e42}
 @media(prefers-reduced-motion:reduce){#nib-proposta .prayer-support[aria-pressed=true] .pray-heart{animation:none}}
 #nib-proposta .prayer-support-label{line-height:1;padding-top:2px}
+/* Selo no canto superior direito, alinhado ao topo do nome; botão sem azul preso no toque */
+#nib-proposta .prayer-post-author{align-items:flex-start}
+#nib-proposta .prayer-post-author .profile-avatar{align-self:center}
+#nib-proposta .prayer-post-author strong{line-height:1.2}
+#nib-proposta .prayer-post-author>.prayer-answered{flex:0 0 auto;margin:0 0 0 auto;align-self:flex-start}
+#nib-proposta main .prayer-support:not([aria-pressed=true]):is(:hover,:active,:focus){background:#fff;color:#041e42;border-color:#c9d3df}
+#nib-proposta main .prayer-support[aria-pressed=true]:is(:hover,:active,:focus){background:#fdecef;color:#b3123a;border-color:#f3b9c5}
+@media(hover:hover){#nib-proposta main .prayer-support:not([aria-pressed=true]):hover{background:#fff5f7;border-color:#f3b9c5}#nib-proposta main .prayer-support[aria-pressed=true]:hover{background:#fbe1e7}}
+
+#nib-proposta .prayer-post-author{gap:10px}
+#nib-proposta .prayer-post-author small{white-space:nowrap}
+#nib-proposta .prayer-post-author>.prayer-answered{gap:4px;padding:5px 9px 5px 7px;font-size:11px;letter-spacing:0;text-transform:none;white-space:nowrap}
+#nib-proposta .prayer-post-author>.prayer-answered svg{width:13px;height:13px;flex-basis:13px}

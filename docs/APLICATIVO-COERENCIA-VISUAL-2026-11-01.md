@@ -349,3 +349,4 @@ Nova versão: uma única linha do tempo de 3 s, só com `transform` e `opacity`,
 - Botão "Vou orar" com coração em contorno; ao tocar vira "Orando", coração vermelho preenchido (#e11d48) com pequeno pulso e fundo rosado. O contador saiu do botão.
 - Ao lado, uma frase em vez de "0 pessoas orando": "Seja o primeiro a orar por este pedido", "**3** pessoas estão orando", "**Você** está orando por este pedido" ou "**Você** e mais 2 pessoas estão orando".
 - "Oração atendida" saiu do canto da linha do autor e virou selo com ícone de confirmação, alinhado à esquerda acima do título.
+- Ajuste: selo "Oração atendida" voltou ao canto superior direito, alinhado ao topo do nome, em formato compacto (sem caixa alta). Corrigido o botão ficando azul preenchido ao desmarcar no celular (hover/active "preso" do toque herdava o estilo genérico de botão).
