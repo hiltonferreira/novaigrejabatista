@@ -246,18 +246,24 @@
     update();
   }
   // Aniversariantes da semana: visível para todos os membros (só nome, dia e mês).
-  // Mensagem só para o aniversariante, no topo da tela inicial dele.
-  function myBirthday() {
+  // Mensagem só para o aniversariante: popup com fundo de vidro, uma vez por sessão.
+  function myBirthdayPopup(tries = 0) {
     const me = admin.birthdays().find(b => b.today && b.name === state.member.full);
-    if (!me || state.birthdayClosed) return '';
-    return `<section class="my-bday" aria-labelledby="my-bday-title"><span class="my-bday-confetti" aria-hidden="true"></span><button type="button" class="my-bday-close" data-bday-close="1" aria-label="Fechar mensagem"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12 M18 6 6 18"/></svg></button><span class="label">HOJE É O SEU DIA</span><h2 id="my-bday-title">Feliz aniversário, ${escape(state.member.first)}!</h2><p class="my-bday-msg">A Nova Igreja Batista celebra a sua vida e agradece a Deus por você caminhar com a gente. Que este novo ano seja cheio da graça e da paz do Senhor.</p><p class="my-bday-verse">“Ensina-nos a contar os nossos dias, de tal maneira que alcancemos corações sábios.” <b>Salmos 90:12</b></p><p class="my-bday-count"><span aria-hidden="true">🎉</span> 18 pessoas da igreja já te deram parabéns</p></section>`;
+    if (!me || state.birthdayShown || isManagement() || state.view !== 'inicio') return;
+    const ready = ['app-splash', 'app-auth', 'app-onboarding'].every(id => { const el = document.getElementById(id); return !el || el.hidden; });
+    if (!ready) { if (tries < 40) setTimeout(() => myBirthdayPopup(tries + 1), 500); return; }
+    state.birthdayShown = true;
+    let dlg = document.getElementById('bday-dialog');
+    if (!dlg) { dlg = document.createElement('dialog'); dlg.id = 'bday-dialog'; dlg.setAttribute('aria-labelledby', 'my-bday-title'); document.body.append(dlg); dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); }); }
+    dlg.innerHTML = `<div class="my-bday"><span class="my-bday-confetti" aria-hidden="true"></span><button type="button" class="my-bday-close" data-bday-close="1" aria-label="Fechar mensagem"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12 M18 6 6 18"/></svg></button><span class="my-bday-cake" aria-hidden="true">🎂</span><span class="label">HOJE É O SEU DIA</span><h2 id="my-bday-title">Feliz aniversário, ${escape(state.member.first)}!</h2><p class="my-bday-msg">A Nova Igreja Batista celebra a sua vida e agradece a Deus por você caminhar com a gente. Que este novo ano seja cheio da graça e da paz do Senhor.</p><p class="my-bday-verse">“Ensina-nos a contar os nossos dias, de tal maneira que alcancemos corações sábios.” <b>Salmos 90:12</b></p><p class="my-bday-count"><span aria-hidden="true">🎉</span> 18 pessoas da igreja já te deram parabéns</p><button type="button" class="action primary my-bday-ok" data-bday-close="1" autofocus>Amém, obrigado!</button></div>`;
+    dlg.showModal();
   }
   function birthdayBlock() {
     const list = admin.birthdays().filter(b => !(b.name === state.member.full && state.hideBirthday)); if (!list.length) return '';
     state.congrats = state.congrats || {};
     const cake = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 21h16 M5 21v-8h14v8 M5 16c2 1 4-1 7 0s5 1 7 0 M12 13V9 M12 6.5c-.8-.6-.8-1.9 0-2.5.8.6.8 1.9 0 2.5z"/></svg>';
     const cards = list.map(b => { const sent = state.congrats[b.key + b.name]; return `<li class="bday${b.today ? ' is-today' : ''}"><span class="profile-avatar" aria-hidden="true">${escape(b.name.charAt(0))}</span><div class="bday-text"><strong>${escape(b.name)}</strong><small>${b.today ? 'Hoje' : escape(b.week) + ', ' + b.date}</small></div>${b.name === state.member.full ? '<span class="bday-btn is-me">É você! 🎉</span>' : `<button type="button" class="bday-btn${sent ? ' is-sent' : ''}" data-congrats="${escape(b.key + b.name)}" aria-pressed="${!!sent}">${sent ? 'Parabéns enviado' : 'Dar parabéns'}</button>`}</li>`; }).join('');
-    return `<section class="home-birthdays" aria-labelledby="bday-title"><div class="section-heading"><div><span class="label">ESTA SEMANA</span><h2 id="bday-title">Aniversariantes</h2></div><span class="bday-icon">${cake}</span></div><ul class="bday-list">${cards}</ul><p class="note">Aparecem só o nome, o dia e o mês. Quem não quiser aparecer pode desmarcar em Meu cadastro.</p></section>`;
+    return `<section class="home-birthdays" aria-labelledby="bday-title"><div class="section-heading"><div><span class="label">ESTA SEMANA</span><h2 id="bday-title">Aniversariantes</h2></div><span class="bday-icon">${cake}</span></div><ul class="bday-list box">${cards}</ul><p class="note">Aparecem só o nome, o dia e o mês. Quem não quiser aparecer pode desmarcar em Meu cadastro.</p></section>`;
   }
   function communityBlock() {
     return `<section class="community-prayer" aria-labelledby="community-prayer-title"><div class="section-heading"><div><span class="label">CUIDADO EM COMUNIDADE</span><h2 id="community-prayer-title">Caderno de oração</h2></div>${button('Ver caderno','caderno')}</div><p>Vamos orar uns pelos outros.</p><div class="prayer-feed">${prayerCards(true)}</div><p class="note">Mural demonstrativo com pedidos fictícios. O contador representa pessoas orando. Ainda sem compartilhamento entre usuários.</p></section>`;
@@ -305,7 +311,7 @@
     document.getElementById('description').textContent = description;
     feedback.textContent = ''; feedback.dataset.tone='info';
     const pages = {
-      inicio: () => `${myBirthday()}${dailyBlocks(false,'verse')}${checkinCard()}<section aria-labelledby="quick-title"><div class="section-heading"><h2 id="quick-title">O que você precisa está aqui</h2></div><div class="quick-actions">${[
+      inicio: () => `${dailyBlocks(false,'verse')}${checkinCard()}<section aria-labelledby="quick-title"><div class="section-heading"><h2 id="quick-title">O que você precisa está aqui</h2></div><div class="quick-actions">${[
         ['cadastro', 'Meu cadastro', 'Consulte seus dados e solicite uma atualização.'],
         ['eventos', 'Eventos e inscrições', 'Veja os encontros e acompanhe suas inscrições.'],
         ['generosidade', 'Dízimos e ofertas', 'Encontre as opções para contribuir e as campanhas.'],
@@ -324,6 +330,7 @@
     };
     content.innerHTML = (isManagement() && admin.pages[state.view] ? admin.pages[state.view] : pages[state.view])();
     content.querySelectorAll('[data-w]').forEach(el => el.style.setProperty('width', el.dataset.w + '%'));
+    if (state.view === 'inicio') myBirthdayPopup();
     if (state.view === 'informacoes') markNoticesSeen();
     bindSocialBanners(); renderPixQr(); syncCampaignBar();
     renderNavigation();
@@ -337,7 +344,7 @@
     const action = event.target.closest('button,a[data-view],a[data-back]');
     if (!action || action.disabled) return;
     if (isManagement() && admin.click(action)) return;
-    if (action.dataset.bdayClose) { state.birthdayClosed = true; show('inicio', false, false); return; }
+    if (action.dataset.bdayClose) { const d = document.getElementById('bday-dialog'); if (d) d.close(); return; }
     if (action.dataset.congrats) { state.congrats = state.congrats || {}; const k = action.dataset.congrats; state.congrats[k] = !state.congrats[k]; action.classList.toggle('is-sent', state.congrats[k]); action.setAttribute('aria-pressed', String(state.congrats[k])); action.textContent = state.congrats[k] ? 'Parabéns enviado' : 'Dar parabéns'; if (state.congrats[k]) announce('Parabéns enviado (teste). Na versão real, a pessoa recebe uma notificação.', 'success', false); return; }
     if (action.dataset.checkin) { const c = nextService(); if (c) admin.addCheckin({ day: c.day, name: c.name, who: state.member.full }); show('inicio', false, false); announce('Check-in feito. Sua presença no culto foi registrada (teste).', 'success', false); const t = content.querySelector('#checkin-title'); if (t) t.focus({preventScroll:true}); return; }
     if (action.id === 'header-notices') { markNoticesSeen(); notices.showModal(); root.classList.add('nib-dialog-open'); document.getElementById('notices-close').focus(); return; }
