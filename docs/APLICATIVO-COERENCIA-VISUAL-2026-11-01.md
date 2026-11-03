@@ -355,3 +355,7 @@ Nova versão: uma única linha do tempo de 3 s, só com `transform` e `opacity`,
 ## Caderno: ações do próprio pedido (2026-11-03)
 
 - Os dois botões grandes ("Marcar em oração"/"Oração atendida" e "Excluir") viraram uma barra discreta no rodapé do card: rótulo "SEU PEDIDO" à esquerda e, à direita, pílulas compactas com ícone: "Marcar atendida" (ou "Reabrir", quando já atendida) em cinza e "Excluir" em vermelho suave.
+
+## Voltar com seta para a esquerda (2026-11-03)
+
+- Todos os botões de voltar usam a mesma seta ← antes do texto "Voltar": barra de retorno das telas internas (antes "VOLTAR" em caixa alta), botão do menu lateral e "Voltar à gestão" (que antes recebia a seta → do padrão "Ver ..."). O helper `button()` detecta textos que começam com "Voltar".

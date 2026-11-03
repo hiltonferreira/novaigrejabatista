@@ -854,3 +854,9 @@ html{scrollbar-gutter:stable}
 #nib-proposta main .prayer-own-btn.is-danger:is(:hover,:active,:focus){background:#fdf0ee;color:#b3261e}
 @media(hover:hover){#nib-proposta main .prayer-own-btn:not(.is-danger):hover{background:#e2e8f0}#nib-proposta main .prayer-own-btn.is-danger:hover{background:#fbe2de}}
 #nib-proposta main .prayer-own-btn:focus-visible{outline:2px solid #2463a6;outline-offset:2px}
+/* Voltar: seta para a esquerda em todo o app */
+#nib-proposta .back-arrow{display:block;flex:0 0 16px;width:16px;height:16px;transition:transform var(--nib-motion-fast) ease}
+#nib-proposta #mobile-back,#nib-proposta #drawer-close{display:inline-flex;align-items:center;justify-content:center;gap:8px}
+#nib-proposta #mobile-back{padding:10px 18px 10px 14px;text-transform:none;letter-spacing:0}
+#nib-proposta main button.button-back{padding:10px 20px 10px 16px}
+@media(hover:hover){#nib-proposta :is(#mobile-back,#drawer-close,.button-back):hover .back-arrow{transform:translateX(-3px)}}
