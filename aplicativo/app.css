@@ -897,11 +897,6 @@ html{scrollbar-gutter:stable}
 #nib-proposta .verse-admin-now b{color:#041e42}
 #nib-proposta #verse-admin-title:focus{outline:none}
 /* Contribuição: etapas, valores sugeridos, dados preenchidos e Pix */
-#nib-proposta .gift-steps{display:flex;gap:6px;margin:0 0 18px;padding:0;list-style:none;counter-reset:none}
-#nib-proposta .gift-steps li{flex:1;display:flex;align-items:center;gap:7px;padding-top:10px;border-top:3px solid #dce3eb;font-size:11.5px;font-weight:600;color:#7a879a}
-#nib-proposta .gift-steps li span{display:grid;place-items:center;width:20px;height:20px;border-radius:50%;background:#eef2f7;font-size:11px;color:#536176}
-#nib-proposta .gift-steps li.is-done{border-top-color:#041e42;color:#041e42}
-#nib-proposta .gift-steps li.is-done span{background:#041e42;color:#fff}
 #nib-proposta .gift-step-title{margin:0 0 16px;font-size:18px;line-height:1.3;color:#041e42}
 #nib-proposta .gift-step-title:focus{outline:none}
 #nib-proposta .gift-amounts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:18px}
@@ -953,3 +948,37 @@ html{scrollbar-gutter:stable}
 #nib-proposta .campaign-stats div{padding:12px;border-radius:14px;background:#f3f6fa}
 #nib-proposta .campaign-stats dt{font-size:11px;color:#536176}
 #nib-proposta .campaign-stats dd{margin:4px 0 0;font-size:18px;font-weight:700;color:#041e42}
+
+/* Contribuição: cabeçalho das etapas, stepper e tela compacta */
+#nib-proposta main button.gift-back{flex:0 0 auto;width:auto;min-height:36px;padding:6px 14px 6px 10px;border:1px solid #c9d3df;border-radius:999px;background:#fff;color:#041e42;font-size:13px;font-weight:600;box-shadow:none}
+#nib-proposta main button.gift-back .back-arrow{width:16px;height:16px}
+#nib-proposta .gift-steps{display:grid;grid-template-columns:repeat(3,1fr);margin:0 0 20px;padding:14px 8px 12px;list-style:none;border-radius:18px;background:#f3f6fa}
+#nib-proposta .gift-steps li{position:relative;display:flex;flex-direction:column;align-items:center;gap:7px;font-size:12px;font-weight:600;color:#7a879a;text-align:center}
+#nib-proposta .gift-steps li+li::before{content:"";position:absolute;top:14px;right:calc(50% + 20px);left:calc(-50% + 20px);height:2px;border-radius:2px;background:#d5dde7}
+#nib-proposta .gift-steps li.is-done+li::before{background:#041e42}
+#nib-proposta .gift-dot{position:relative;z-index:1;display:grid;place-items:center;width:30px;height:30px;border-radius:50%;border:2px solid #d5dde7;background:#fff;font-size:12.5px;font-weight:700;color:#7a879a;transition:background .3s,border-color .3s,box-shadow .3s}
+#nib-proposta .gift-dot svg{width:15px;height:15px}
+#nib-proposta .gift-steps li.is-done{color:#041e42}
+#nib-proposta .gift-steps li.is-done .gift-dot{border-color:#041e42;background:#041e42;color:#fff}
+#nib-proposta .gift-steps li.is-current{color:#041e42;font-weight:700}
+#nib-proposta .gift-steps li.is-current .gift-dot{border-color:#b64e1a;background:#b64e1a;color:#fff;box-shadow:0 0 0 5px rgba(182,78,26,.16)}
+#nib-proposta .gift-box-head{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:38px;margin:0 0 14px}
+#nib-proposta .gift-box-head h2{margin:0}
+#nib-proposta .gift-step-title{margin-bottom:14px}
+#nib-proposta .gift-amounts{margin-bottom:14px}
+#nib-proposta #gift-form .form-actions{margin-top:14px}
+#nib-proposta .gift-note{margin:14px 0 0;font-size:12.5px;color:#536176}
+#nib-proposta .giving-church{margin:-4px 0 6px;font-size:13px;color:#536176}
+#nib-proposta .giving-details .bank-details{margin:6px 0 12px}
+#nib-proposta .giving-details .bank-details>div{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:11px 0;flex-wrap:nowrap}
+#nib-proposta .giving-details .bank-details dd{margin:0;font-size:14.5px;text-align:right}
+#nib-proposta .church-qr-details{border:1px solid #dce3eb;border-radius:16px;background:#f8fafc}
+#nib-proposta .church-qr-details>summary{display:flex;align-items:center;gap:10px;min-height:50px;padding:10px 16px;cursor:pointer;list-style:none;font-size:14px;font-weight:600;color:#041e42}
+#nib-proposta .church-qr-details>summary::-webkit-details-marker{display:none}
+#nib-proposta .church-qr-details>summary small{margin-left:auto;font-size:12px;font-weight:500;color:#536176}
+#nib-proposta .church-qr-details>summary::after{content:"";width:8px;height:8px;margin:-4px 2px 0 0;border-right:2px solid #536176;border-bottom:2px solid #536176;transform:rotate(45deg);transition:transform .25s}
+#nib-proposta .church-qr-details[open]>summary::after{transform:rotate(-135deg);margin-top:4px}
+#nib-proposta .church-qr-details .church-qr{margin:0;padding:4px 16px 16px}
+#nib-proposta .church-qr-details .church-qr img{width:200px;height:200px}
+#nib-proposta .gift-options{margin-bottom:16px}
+#nib-proposta .visually-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}

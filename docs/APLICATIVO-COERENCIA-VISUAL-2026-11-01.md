@@ -390,3 +390,9 @@ Nova versão: uma única linha do tempo de 3 s, só com `transform` e `opacity`,
 - Site (`index.html`, bloco da construção): lê `/dados/obra.json` e atualiza o contador animado, a barra e os números "concluído", "lugares" e "entrega". Sem resposta, mantém os valores escritos no HTML.
 - App: lê `https://novaigrejabatista.com.br/dados/obra.json` ao abrir; sem conexão, usa 30% / 1.500 / 2028. `vercel.json` passa a permitir `connect-src` só para esse endereço.
 - **Para valer em produção:** enviar `dados/obra.json` e `dados/.htaccess` e aplicar o trecho do `index.html` sobre o arquivo atual de produção (o painel reescreve partes do index; comparar antes). Depois, mudar o percentual = editar só o `obra.json`.
+
+## Contribuição: etapas e tela inicial mais compacta (2026-11-03)
+
+- O botão "Voltar" das etapas 2 e 3 saiu do rodapé e foi para o topo do bloco, ao lado do título.
+- Etapas redesenhadas: círculos ligados por linha, etapa atual em laranja com halo, etapas concluídas em azul com check.
+- Tela inicial mais baixa: sem título duplicado ("Dízimo" já aparece no seletor), espaçamentos menores, dados bancários em linhas compactas e QR Code oficial recolhido em "QR Code oficial" (abre ao tocar).
