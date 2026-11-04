@@ -15,6 +15,11 @@
       views: [['gestao', 'Painel'], ['membresia', 'Membresia'], ['recepcao', 'Check-in e visitantes'], ['solicitacoes', 'Cadastros'], ['programacao', 'Agenda'], ['comunicados', 'Avisos'], ['palavra', 'Palavra do dia'], ['cuidado', 'Caderno de oração'], ['informacoes', 'Informações']],
       bar: [['gestao', 'Painel'], ['membresia', 'Membresia'], ['solicitacoes', 'Cadastros'], ['programacao', 'Agenda'], ['comunicados', 'Avisos']]
     },
+    tesouraria: {
+      name: 'Tesouraria', short: 'Tesouraria',
+      views: [['gestao', 'Painel'], ['conferencia', 'Conferência'], ['lancamentos', 'Lançamentos'], ['fechamento', 'Fechamento'], ['informacoes', 'Informações']],
+      bar: [['gestao', 'Painel'], ['conferencia', 'Conferência'], ['lancamentos', 'Lançamentos'], ['fechamento', 'Fechamento']]
+    },
     pastoral: {
       name: 'Liderança Pastoral', short: 'Liderança Pastoral',
       views: [['gestao', 'Painel'], ['membresia', 'Membresia'], ['recepcao', 'Check-in e visitantes'], ['cuidado', 'Cuidado e oração'], ['palavra', 'Palavra do dia'], ['comunicados', 'Avisos'], ['solicitacoes', 'Cadastros'], ['informacoes', 'Informações']],
@@ -30,9 +35,12 @@
     comunicados: ['COMUNICAÇÃO', 'Avisos para a igreja', 'Os avisos publicados chegam ao sino de avisos dos membros.'],
     palavra: ['PALAVRA DO DIA', 'Versículo do dia', 'Escolha o versículo de uma data. Sem escolha, vale a lista anual.'],
     recepcao: ['RECEPÇÃO', 'Check-in e visitantes', 'Um QR Code na entrada: o membro registra a presença e o visitante faz um cadastro rápido.'],
+    conferencia: ['TESOURARIA', 'Conferência com o extrato', 'Confirme cada crédito do banco com o lançamento correspondente.'],
+    lancamentos: ['TESOURARIA', 'Lançamentos', 'Entradas do mês por conta, forma e situação.'],
+    fechamento: ['TESOURARIA', 'Fechamento do mês', 'Feche o mês conciliado e gere o arquivo para a contabilidade.'],
     cuidado: ['CUIDADO PASTORAL', 'Cuidado e oração', 'Acompanhe os pedidos do caderno de oração e cuide do mural.']
   };
-  const descriptions = { recepcao: 'Presença e visitantes', gestao: 'O que precisa de atenção', membresia: 'Integração e apresentação', solicitacoes: 'Atualizações de cadastro', programacao: 'Calendário dos membros', comunicados: 'Avisos no sino do app', palavra: 'Versículo escolhido', cuidado: 'Pedidos de oração' };
+  const descriptions = { conferencia: 'Extrato e conciliação', lancamentos: 'Entradas do mês', fechamento: 'Mês e contabilidade', recepcao: 'Presença e visitantes', gestao: 'O que precisa de atenção', membresia: 'Integração e apresentação', solicitacoes: 'Atualizações de cadastro', programacao: 'Calendário dos membros', comunicados: 'Avisos no sino do app', palavra: 'Versículo escolhido', cuidado: 'Pedidos de oração' };
   const icons = NibIcons.paths;
 
   function create(api) {
@@ -73,6 +81,7 @@
     const views = () => (profiles[state.context] || profiles.secretaria).views;
     const allowed = view => view === 'confirmar' ? true : views().some(([key]) => key === view);
     const pageLabels = view => {
+      if (view === 'gestao' && state.context === 'tesouraria') return ['TESOURARIA', 'Painel da Tesouraria', 'Conferência, lançamentos e fechamento do mês.'];
       if (view === 'gestao') return ['ADMINISTRAÇÃO', isPas() ? 'Painel da Liderança Pastoral' : 'Painel da Secretaria', isPas() ? 'Acompanhe a membresia, o cuidado e a palavra da igreja.' : 'Cadastros, membresia, agenda e avisos em um só lugar.'];
       if (view === 'cuidado' && isSec()) return ['CADERNO DE ORAÇÃO', 'Caderno de oração', 'Veja os pedidos publicados pelos membros.'];
       return labels[view];
@@ -145,12 +154,129 @@
       const ls = demo.lastService, today = api.NibDaily.dayKey(new Date()), lsTotal = ls.checkins + ls.visitors + ls.counted;
       const todayIn = data.checkins.filter(c => c.day >= today).length, todayVis = newVisitors().length;
       const service = `<section class="box dash-box">${head('ÚLTIMO CULTO REALIZADO', `Domingo · ${dayNum(ls.day)} ${escape(monthShort(ls.day))}`)}<p class="dash-big">${num(lsTotal)} <span>pessoas</span></p>${stack([['Check-in pelo app', ls.checkins], ['Visitantes pelo QR Code', ls.visitors], ['Contagem da recepção', ls.counted]], num)}${todayIn || todayVis ? `<p class="dash-sub">Nesta sessão de teste: ${todayIn} check-in${todayIn === 1 ? '' : 's'} e ${todayVis} visitante${todayVis === 1 ? '' : 's'}.</p>` : ''}${foot('Ver check-in e visitantes', 'recepcao')}</section>`;
-      const g = demo.giving, gdiff = Math.round((g.total - g.avg3) / g.avg3 * 100);
+      const g = consolidated(), gdiff = Math.round((g.total - g.avg3) / g.avg3 * 100);
       const giving = `<section class="box dash-box">${head('GENEROSIDADE · CONSOLIDADO', `Contribuições em ${g.month}`)}<p class="dash-big">${brl(g.total)} ${pill(gdiff, '%')}</p><p class="dash-sub">${g.givers} contribuintes · comparado à média dos 3 meses anteriores</p>${stack(g.parts, brl)}<p class="note dash-foot">Só totais, sem nomes nem valores individuais. O detalhe fica com a tesouraria.</p></section>`;
       return `<section class="dash" aria-labelledby="dash-title"><div class="section-heading"><div><span class="label">RESUMO DA IGREJA</span><h2 id="dash-title">Como a igreja está hoje</h2></div><span class="dash-demo">Números fictícios de exemplo</span></div><div class="dash-tiles">${tiles}</div></section>${afterTiles}<section class="dash dash-more" aria-label="Indicadores">
       <div class="admin-grid dash-row"><section class="box dash-box">${head('CULTOS DE DOMINGO', 'Presença nas últimas 8 semanas', `<div class="dash-head-aside"><strong>${last}</strong>${pill(lastDiff, '%')}</div>`)}${attendanceChart(avg)}<div class="dash-foot dash-minis"><div><small>Maior</small><strong>${Math.max(...s)}</strong></div><div><small>Menor</small><strong>${Math.min(...s)}</strong></div><div><small>Média</small><strong>${Math.round(s.reduce((a, b) => a + b, 0) / s.length)}</strong></div></div></section><section class="box dash-box">${head('CAMINHO ATÉ A MEMBRESIA', 'Integração')}<ol class="dash-funnel">${funnel}</ol><p class="dash-sub">A porcentagem compara cada etapa com a anterior.</p>${foot('Ver membresia', 'membresia')}</section></div>
       <div class="admin-grid dash-row"><section class="box dash-box">${head('CÉLULAS', 'Vida em célula')}<div class="dash-cells">${ring(demo.cellMembers)}<ul class="dash-stats is-compact">${stat(I.cells, demo.cells, 'células ativas')}${stat(I.members, demo.cellPeople, 'participantes')}${stat(I.regular, demo.members - Math.round(demo.members * demo.cellMembers / 100), 'membros sem célula', 'warn')}</ul></div><p class="note dash-foot">${demo.cellsMulti} multiplicações neste ano. Na versão real, os números vêm da plataforma de células.</p></section>${third}</div>
       <div class="admin-grid dash-row">${service}${giving}</div></section>`;
+    }
+
+    // ---------- Tesouraria ----------
+    // Plano de contas sugerido (validar com a contabilidade). Receitas no grupo 3, contrapartidas no ativo.
+    const ACCOUNTS = {
+      'Dízimo': { code: '3.1.01', name: 'Dízimos' },
+      'Oferta': { code: '3.1.02', name: 'Ofertas' },
+      'Campanha': { code: '3.1.03', name: 'Doações vinculadas · Obra do templo', restricted: true }
+    };
+    const BANK = { code: '1.1.02', name: 'Banco Sicoob c/c 51.404-7' }, CASH = { code: '1.1.01', name: 'Caixa (espécie)' };
+    const isTes = () => state.context === 'tesouraria';
+    const money = v => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    const ymLabel = ym => new Intl.DateTimeFormat('pt-BR', { timeZone: 'America/Porto_Velho', month: 'long', year: 'numeric' }).format(new Date(ym + '-15T12:00:00-04:00'));
+    const fmtDay = d => d.slice(8, 10) + '/' + d.slice(5, 7) + '/' + d.slice(0, 4);
+    // Lançamentos fictícios: outubro fechado (bate com o consolidado do painel) e novembro em aberto.
+    const ledger = (() => {
+      const L = [], first = ['Ana','Bruno','Carla','Daniel','Elisa','Fábio','Gabriela','Hugo','Isabel','José','Karen','Lucas','Marta','Nelson','Olívia','Pedro','Raquel','Sérgio','Tânia','Vítor'];
+      let seq = 0; const add = e => L.push({ id: 'L' + (++seq), status: 'conciliado', by: 'Tesouraria', conferred: '', ...e });
+      // Outubro: 120 dizimistas, 22 contribuições para a obra (142 contribuintes distintos), ofertas de 4 cultos.
+      const giverName = i => first[i % first.length] + ' ' + ['Exemplo','Teste','Modelo','Amostra','Fictício','Demo'][Math.floor(i / first.length) % 6];
+      let diz = 0; for (let i = 0; i < 120; i++) { const v = i === 119 ? 33620 - diz : [150, 200, 250, 280, 300, 320, 350, 400][i % 8]; diz += v; add({ day: '2026-10-' + String(1 + i % 28).padStart(2, '0'), type: 'Dízimo', amount: v, method: i % 5 ? 'Pix no app' : 'Pix direto no banco', payer: giverName(i), payerId: 'M' + String(i + 1).padStart(4, '0'), doc: 'E2E' + String(810000 + i), source: i % 5 ? 'app' : 'extrato' }); }
+      let obra = 0; for (let i = 0; i < 22; i++) { const v = i === 21 ? 2800 - obra : [100, 150, 120][i % 3]; obra += v; add({ day: '2026-10-' + String(3 + i).padStart(2, '0'), type: 'Campanha', amount: v, method: 'Pix no app', payer: giverName(120 + i), payerId: 'M' + String(121 + i).padStart(4, '0'), doc: 'E2E' + String(820000 + i), source: 'app' }); }
+      [['2026-10-04', 1180], ['2026-10-11', 1240], ['2026-10-18', 1210], ['2026-10-25', 1330]].forEach(([d, v], i) => add({ day: d, type: 'Oferta', amount: v, method: 'Espécie (culto)', payer: 'Oferta do culto', payerId: '', doc: 'CONT-' + d.replace(/-/g, ''), source: 'manual', conferred: 'Conferido por Ana Exemplo e José Exemplo' }));
+      // Novembro: ainda em aberto.
+      add({ day: '2026-11-02', type: 'Dízimo', amount: 300, method: 'Pix no app', payer: 'Bruno Exemplo', payerId: 'M0002', doc: 'E2E900001', source: 'app' });
+      add({ day: '2026-11-02', type: 'Campanha', amount: 150, method: 'Pix no app', payer: 'Carla Exemplo', payerId: 'M0003', doc: 'E2E900002', source: 'app' });
+      add({ day: '2026-11-03', type: 'Dízimo', amount: 250, method: 'Pix no app', payer: 'Ana Exemplo', payerId: 'M0001', doc: 'E2E900003', source: 'app', status: 'pendente' });
+      add({ day: '2026-11-01', type: 'Oferta', amount: 1265.5, method: 'Espécie (culto)', payer: 'Oferta do culto', payerId: '', doc: 'CONT-20261101', source: 'manual', status: 'aguardando depósito', conferred: 'Conferido por Ana Exemplo e José Exemplo' });
+      return L;
+    })();
+    // Extrato do banco (simulado). Na versão real: arquivo OFX do Sicoob ou integração Pix com o banco.
+    const bank = [
+      { id: 'B1', day: '2026-11-02', text: 'PIX RECEBIDO BRUNO EXEMPLO', amount: 300, doc: 'E2E900001', match: 'L' + (120 + 22 + 4 + 1) },
+      { id: 'B2', day: '2026-11-02', text: 'PIX RECEBIDO CARLA EXEMPLO', amount: 150, doc: 'E2E900002', match: 'L' + (120 + 22 + 4 + 2) },
+      { id: 'B3', day: '2026-11-03', text: 'PIX RECEBIDO ANA EXEMPLO', amount: 250, doc: 'E2E900003', match: null },
+      { id: 'B4', day: '2026-11-03', text: 'DEPOSITO EM DINHEIRO AG 3315', amount: 1265.5, doc: 'DEP-0311', match: null },
+      { id: 'B5', day: '2026-11-03', text: 'PIX RECEBIDO JESSICA EXEMPLO', amount: 100, doc: 'E2E900007', match: null }
+    ];
+    data.closed = { '2026-10': { by: 'Tesouraria', at: '03/11/2026 09:12' } };
+    data.ledger = ledger; data.bank = bank;
+    const monthOf = e => e.day.slice(0, 7);
+    const openMonth = () => api.NibDaily.dayKey(new Date()).slice(0, 7);
+    const lastClosed = () => Object.keys(data.closed).sort().pop();
+    const entriesOf = ym => data.ledger.filter(e => monthOf(e) === ym);
+    const okSum = list => list.filter(e => e.status === 'conciliado').reduce((t, e) => t + e.amount, 0);
+    const pendingEntries = () => data.ledger.filter(e => e.status !== 'conciliado');
+    const bankOpen = () => data.bank.filter(b => !b.match);
+    // Sugestão de correspondência: mesmo documento (E2E) ou mesmo valor em até 3 dias.
+    function suggest(b) {
+      const cands = pendingEntries().filter(e => !data.bank.some(x => x.match === e.id));
+      return cands.find(e => e.doc && e.doc === b.doc) || cands.find(e => Math.abs(e.amount - b.amount) < 0.005 && Math.abs(new Date(e.day) - new Date(b.day)) <= 3 * 864e5);
+    }
+    // Consolidado para a gestão: sempre o último mês fechado, só totais.
+    function consolidated() {
+      const ym = lastClosed(), list = entriesOf(ym).filter(e => e.status === 'conciliado');
+      const by = t => list.filter(e => e.type === t).reduce((s, e) => s + e.amount, 0);
+      return { month: ymLabel(ym).split(' de ')[0], total: okSum(list), givers: new Set(list.filter(e => e.payerId).map(e => e.payerId)).size, avg3: demo.giving.avg3, parts: [['Dízimos', by('Dízimo')], ['Ofertas', by('Oferta')], ['Obra do templo', by('Campanha')]] };
+    }
+    // Pix feito pelo membro no app: entra como pendente até a conciliação com o extrato.
+    function addAppPix(p) {
+      const e = { id: 'L' + (data.ledger.length + 1), day: p.day, type: p.type, amount: p.amount, method: 'Pix no app', payer: state.member.full, payerId: 'M0042', doc: p.txid, source: 'app', status: 'pendente', by: 'App do membro', conferred: '', member: true };
+      data.ledger.push(e); return e.id;
+    }
+    function confirmEntry(e, b) {
+      e.status = 'conciliado'; e.confirmedAt = now(); e.bankDoc = b ? b.doc : ''; if (b) b.match = e.id;
+      if (e.member) api.giftConfirmed(e);
+    }
+    const statusTag = s => `<span class="tag ${s === 'conciliado' ? 'status-active' : 'is-wait'}">${s === 'conciliado' ? 'Conciliado' : s === 'pendente' ? 'A conferir' : 'Aguardando depósito'}</span>`;
+    const tstat = (icon, value, text, tone) => `<li><span class="dash-ico${tone ? ' is-' + tone : ''}">${ico(icon)}</span><strong>${value}</strong><span>${text}</span></li>`;
+    function treasuryPanel() {
+      const ym = openMonth(), list = entriesOf(ym), pend = pendingEntries(), open = bankOpen();
+      const by = t => list.filter(e => e.type === t && e.status === 'conciliado').reduce((s, e) => s + e.amount, 0);
+      const fundTotal = data.ledger.filter(e => e.type === 'Campanha' && e.status === 'conciliado').reduce((s, e) => s + e.amount, 0);
+      const c = consolidated();
+      const ttile = (icon, label, value, note, view) => `<${view ? `button type="button" class="dash-tile is-link" data-view="${view}"` : 'div class="dash-tile"'}><span class="dash-tile-top"><span class="dash-ico">${ico(icon)}</span><span class="dash-tile-label">${label}</span></span><strong class="dash-tile-value">${value}</strong><span class="dash-tile-note"><small>${note}</small></span></${view ? 'button' : 'div'}>`;
+      const tiles = `<div class="dash-tiles tes-tiles">${ttile(P.generosidade, 'Entradas de ' + escape(ymLabel(ym).split(' de ')[0]), money(okSum(list)), 'Conciliadas · mês em aberto')}${ttile(P.conferencia, 'A conferir', pend.length + open.length, `${pend.length} lançamento${pend.length === 1 ? '' : 's'} e ${open.length} crédito${open.length === 1 ? '' : 's'} do extrato`, 'conferencia')}${ttile(P.inicio, 'Fundo da obra (vinculado)', money(fundTotal), 'Conciliado até hoje')}${ttile(P.fechamento, 'Último fechamento', `<span class="tes-cap">${escape(c.month)}</span>`, `${money(c.total)} · ${c.givers} contribuintes`, 'fechamento')}</div>`;
+      return `<section class="dash"><div class="section-heading"><div><span class="label">TESOURARIA</span><h2>Como está o financeiro</h2></div><span class="dash-demo">Valores fictícios de exemplo</span></div>${tiles}</section>
+      <div class="admin-grid dash-row"><section class="box dash-box">${head('MÊS EM ABERTO', 'Por finalidade')}${stack([['Dízimos', by('Dízimo')], ['Ofertas', by('Oferta')], ['Obra do templo', by('Campanha')]].map(([l, v]) => [l, v || 0.0001]), v => money(Math.round(v * 100) / 100))}<p class="note dash-foot">Só entra no total o que já foi conciliado com o extrato.</p></section>
+      <section class="box dash-box">${head('PASSO A PASSO', 'Rotina da semana')}<ol class="tes-steps"><li><strong>Conferência</strong><span>Importe o extrato e confirme cada crédito com o lançamento correspondente.</span></li><li><strong>Lançamentos</strong><span>Registre a oferta em espécie do culto, contada por duas pessoas.</span></li><li><strong>Fechamento</strong><span>Com tudo conciliado, feche o mês e envie o arquivo à contabilidade.</span></li></ol>${foot('Ir para a conferência', 'conferencia')}</section></div>
+      <p class="note">A Secretaria e a Liderança Pastoral veem só o consolidado do último mês fechado, sem nomes nem valores individuais. O membro vê apenas as próprias contribuições.</p>`;
+    }
+    function reconcilePage() {
+      const open = bankOpen(), suggested = open.map(suggest).filter(Boolean).map(e => e.id), pendApp = pendingEntries().filter(e => !data.bank.some(b => b.match === e.id) && !suggested.includes(e.id));
+      const types = Object.keys(ACCOUNTS).map(t => `<option value="${t}">${t === 'Campanha' ? 'Campanha · Obra do templo' : t}</option>`).join('');
+      const lines = open.map(b => {
+        const s = suggest(b);
+        return `<li class="box tes-line"><div class="tes-line-head"><div><small>${fmtDay(b.day)} · Extrato Sicoob</small><strong>${escape(b.text)}</strong><small>Documento ${escape(b.doc)}</small></div><span class="tes-amount">${money(b.amount)}</span></div>${s ? `<div class="tes-match"><span class="tes-match-label">Corresponde a</span><strong>${escape(s.type === 'Campanha' ? 'Obra do templo' : s.type)} · ${escape(s.payer)}</strong><small>${escape(s.method)} · lançado em ${fmtDay(s.day)}${s.conferred ? ' · ' + escape(s.conferred) : ''}</small><button type="button" class="action primary" data-tes-confirm="${b.id}" data-entry="${s.id}">Confirmar conciliação</button></div>` : `<form class="tes-identify" data-bank="${b.id}"><span class="tes-match-label">Sem lançamento correspondente. Identifique o crédito:</span><div class="tes-fields"><label>Finalidade<select name="type">${types}</select></label><label>Contribuinte<select name="payer"><option value="">Não identificado</option><option>${escape(state.member.full)}</option><option>Carlos Exemplo</option><option>Marcos Exemplo</option></select></label></div><button type="submit" class="action primary">Lançar e conciliar</button></form>`}</li>`;
+      }).join('');
+      const waiting = pendApp.map(e => `<li><span>${fmtDay(e.day)} · ${escape(e.payer)} · ${escape(e.type === 'Campanha' ? 'Obra do templo' : e.type)}</span><strong>${money(e.amount)}</strong>${statusTag(e.status)}</li>`).join('');
+      return `<div class="tes-toolbar"><button type="button" class="action primary" data-tes-import="1">Importar extrato do dia (teste)</button><p class="note">Na versão real: arquivo OFX do Sicoob ou integração Pix com o banco. O app sugere a correspondência pelo número do Pix (E2E) ou pelo valor e data.</p></div>
+      <section aria-labelledby="tes-bank-title"><div class="section-heading"><div><span class="label">EXTRATO DO BANCO</span><h2 id="tes-bank-title">Créditos a conciliar</h2></div><span class="dash-demo is-neutral">${open.length}</span></div>${open.length ? `<ul class="tes-lines">${lines}</ul>` : '<p class="box">Tudo conciliado. Nenhum crédito do extrato aguardando.</p>'}</section>
+      <section class="box tes-waiting" aria-labelledby="tes-wait-title"><h2 id="tes-wait-title">Lançados, ainda sem crédito no extrato</h2>${waiting ? `<ul class="tes-wait-list">${waiting}</ul><p class="note">O Pix aparece no extrato no mesmo dia ou no seguinte. A oferta em espécie espera o depósito.</p>` : '<p>Nenhum lançamento esperando o extrato.</p>'}</section>`;
+    }
+    function entriesPage() {
+      const ym = state.tesMonth || openMonth(), months = [...new Set(data.ledger.map(monthOf))].sort().reverse();
+      const list = entriesOf(ym).slice().sort((a, b) => b.day.localeCompare(a.day) || b.id.localeCompare(a.id));
+      const closed = !!data.closed[ym];
+      const rows = list.slice(0, 40).map(e => `<tr><td>${fmtDay(e.day)}</td><td><strong>${escape(e.payer)}</strong><small>${escape(e.method)}${e.conferred ? ' · ' + escape(e.conferred) : ''}</small></td><td>${ACCOUNTS[e.type].code}<small>${escape(ACCOUNTS[e.type].name)}</small></td><td class="num">${money(e.amount)}</td><td>${statusTag(e.status)}</td></tr>`).join('');
+      return `<section class="box tes-cash" aria-labelledby="tes-cash-title"><h2 id="tes-cash-title">Oferta em espécie do culto</h2><p>A contagem é feita por duas pessoas, logo depois do culto. O valor fica aguardando até o depósito aparecer no extrato.</p><form id="cash-form" class="form-grid"><label>Culto<select name="service">${['2026-11-01 · Culto de domingo', '2026-10-29 · Culto da Fé'].map(o => `<option>${o}</option>`).join('')}</select></label><label>Valor contado (R$)<input name="amount" inputmode="decimal" required placeholder="0,00"></label><label>Conferente 1<input name="c1" required maxlength="60"></label><label>Conferente 2<input name="c2" required maxlength="60"></label><div class="form-actions"><button type="submit" class="action primary"${closed ? ' disabled' : ''}>Registrar contagem</button></div></form></section>
+      <section aria-labelledby="tes-list-title"><div class="section-heading"><div><span class="label">LANÇAMENTOS</span><h2 id="tes-list-title">${escape(ymLabel(ym))}</h2></div><div class="history-years" role="group" aria-label="Mês">${months.map(m => `<button type="button" class="history-year${m === ym ? ' is-active' : ''}" data-tes-month="${m}" aria-pressed="${m === ym}">${escape(ymLabel(m).split(' de ')[0])}</button>`).join('')}</div></div>
+      <div class="box tes-table-wrap"><table class="tes-table"><thead><tr><th>Data</th><th>Histórico</th><th>Conta</th><th class="num">Valor</th><th>Situação</th></tr></thead><tbody>${rows}</tbody></table>${list.length > 40 ? `<p class="note">Mostrando 40 de ${list.length} lançamentos. O arquivo do fechamento traz todos.</p>` : ''}</div></section>`;
+    }
+    function csvFor(ym) {
+      const q = v => /[;"\n]/.test(String(v)) ? '"' + String(v).replace(/"/g, '""') + '"' : String(v);
+      const head = ['data', 'competencia', 'conta_debito', 'conta_credito', 'historico', 'forma', 'documento', 'contribuinte_id', 'valor', 'situacao', 'conferencia'];
+      const rows = entriesOf(ym).map(e => [fmtDay(e.day), ym.slice(5) + '/' + ym.slice(0, 4), e.method.startsWith('Espécie') ? CASH.code : BANK.code, ACCOUNTS[e.type].code, `${ACCOUNTS[e.type].name}${e.payerId ? ' · ' + e.payerId : ' · ' + e.payer}`, e.method, e.doc, e.payerId, e.amount.toFixed(2).replace('.', ','), e.status, e.conferred]);
+      return [head, ...rows].map(r => r.map(q).join(';')).join('\n');
+    }
+    function closingPage() {
+      const months = [...new Set(data.ledger.map(monthOf))].sort().reverse(), ym = state.tesClose || months[0];
+      const list = entriesOf(ym), closed = data.closed[ym], pend = list.filter(e => e.status !== 'conciliado');
+      const byAcc = Object.entries(ACCOUNTS).map(([t, a]) => [a, list.filter(e => e.type === t && e.status === 'conciliado').reduce((s, e) => s + e.amount, 0)]);
+      const csv = csvFor(ym), preview = csv.split('\n').slice(0, 4).join('\n');
+      return `<div class="history-years" role="group" aria-label="Mês">${months.map(m => `<button type="button" class="history-year${m === ym ? ' is-active' : ''}" data-tes-close-month="${m}" aria-pressed="${m === ym}">${escape(ymLabel(m).split(' de ')[0])}</button>`).join('')}</div>
+      <div class="admin-grid dash-row"><section class="box dash-box">${head(closed ? 'MÊS FECHADO' : 'MÊS EM ABERTO', escape(ymLabel(ym)))}<table class="tes-table is-compact"><thead><tr><th>Conta</th><th class="num">Valor</th></tr></thead><tbody>${byAcc.map(([a, v]) => `<tr><td>${a.code}<small>${escape(a.name)}${a.restricted ? ' · fundo vinculado' : ''}</small></td><td class="num">${money(v)}</td></tr>`).join('')}<tr class="tes-total"><td>Total das receitas</td><td class="num">${money(okSum(list))}</td></tr></tbody></table>
+      ${closed ? `<p class="tes-closed">Fechado por ${escape(closed.by)} em ${escape(closed.at)}. Correções viram um lançamento de estorno no mês seguinte.</p>` : pend.length ? `<p class="tes-block">${pend.length === 1 ? 'Falta 1 lançamento' : `Faltam ${pend.length} lançamentos`} para conciliar antes de fechar.</p>${button('Ir para a conferência', 'conferencia')}` : `<button type="button" class="action primary" data-tes-close="${ym}">Fechar ${escape(ymLabel(ym).split(' de ')[0])}</button>`}</section>
+      <section class="box dash-box">${head('CONTABILIDADE', 'Arquivo do mês')}<p>Uma linha por lançamento, com a conta de débito e de crédito, o documento do banco e o código do contribuinte. O nome da pessoa não vai no arquivo.</p><pre class="tes-csv" aria-label="Prévia do arquivo">${escape(preview)}</pre><a class="button button-go" download="nib-lancamentos-${ym}.csv" href="data:text/csv;charset=utf-8,${encodeURIComponent('﻿' + csv)}">Baixar CSV (${list.length} linhas) ${arrow}</a>${closed ? '' : '<p class="note">Enquanto o mês estiver aberto, o arquivo é só uma prévia.</p>'}</section></div>`;
     }
 
     // ---------- Check-in e visitantes ----------
@@ -293,7 +419,7 @@
       return `<dl class="admin-stats"><div><dt>Pedidos</dt><dd>${total}</dd></div><div><dt>Orando</dt><dd>${praying}</dd></div><div><dt>Atendidos</dt><dd>${answered}</dd></div></dl><div class="admin-intro"><p>${isPas() ? 'Marque “Acompanhar” para lembrar do cuidado pastoral. Isso só aparece para a gestão. Use “Ocultar do mural” para um pedido que não deve ficar público.' : 'Use “Ocultar do mural” para um pedido que não deve ficar público. O acompanhamento pastoral fica com a Liderança Pastoral.'} Os pedidos são publicados sem aprovação, com um filtro automático de palavras ofensivas.</p></div><div class="admin-people">${visible.map(card).join('')}</div>`;
     }
 
-    const pages = { recepcao: reception, gestao: panel, membresia: membership, confirmar: confirmPage, solicitacoes: requests, programacao: agendaAdmin, comunicados: noticesAdmin, palavra: verse, cuidado: care };
+    const pages = { conferencia: reconcilePage, lancamentos: entriesPage, fechamento: closingPage, recepcao: reception, gestao: () => isTes() ? treasuryPanel() : panel(), membresia: membership, confirmar: confirmPage, solicitacoes: requests, programacao: agendaAdmin, comunicados: noticesAdmin, palavra: verse, cuidado: care };
 
     function click(action) {
       const d = action.dataset;
@@ -305,6 +431,11 @@
       if (d.adminRequest) { const r = data.requests.find(x => x.id === d.adminRequest); if (r && isSec()) { r.status = 'atualizado'; r.by = actor(); r.done = now(); if (r.name === state.member.full) api.notify({ kind: 'ok', title: 'Seu cadastro foi atualizado', text: 'A Secretaria conferiu e atualizou: ' + r.note + '.', at: r.done, view: 'cadastro', action: 'Ver meu cadastro' }); } api.show('solicitacoes', false, false); api.announce('Cadastro marcado como atualizado.', 'success', false); return true; }
       if (d.adminAgendaRemove) { api.NibDaily.removeItem(d.adminAgendaRemove); api.show('programacao', false, false); api.announce('Item removido da agenda.', 'success', false); return true; }
       if (d.adminNoticeRemove) { const gone = data.notices.find(n => n.id === d.adminNoticeRemove); if (gone && gone.item) api.NibDaily.removeItem(gone.item); data.notices = data.notices.filter(n => n.id !== d.adminNoticeRemove); api.show('comunicados', false, false); api.refreshNotices(); api.announce('Aviso removido.', 'success', false); return true; }
+      if (d.tesConfirm) { const b = data.bank.find(x => x.id === d.tesConfirm), e = data.ledger.find(x => x.id === d.entry); if (b && e && isTes()) { if (e.status === 'aguardando depósito') e.depositDoc = b.doc; confirmEntry(e, b); } api.show('conferencia', false, false); api.announce('Crédito conciliado com o lançamento.', 'success', false); return true; }
+      if (d.tesImport) { const mine = data.ledger.filter(e => e.member && e.status === 'pendente' && !data.bank.some(b => b.doc === e.doc)); mine.forEach((e, i) => data.bank.push({ id: 'BX' + (data.bank.length + 1), day: e.day, text: 'PIX RECEBIDO ' + e.payer.toUpperCase(), amount: e.amount, doc: e.doc, match: null })); api.show('conferencia', false, false); api.announce(mine.length ? `${mine.length} crédito${mine.length === 1 ? '' : 's'} novo${mine.length === 1 ? '' : 's'} no extrato.` : 'Extrato importado. Nenhum crédito novo.', 'success', false); return true; }
+      if (d.tesMonth) { state.tesMonth = d.tesMonth; api.show('lancamentos', false, false); return true; }
+      if (d.tesCloseMonth) { state.tesClose = d.tesCloseMonth; api.show('fechamento', false, false); return true; }
+      if (d.tesClose) { if (isTes() && !entriesOf(d.tesClose).some(e => e.status !== 'conciliado')) data.closed[d.tesClose] = { by: actor(), at: now() }; api.show('fechamento', false, false); api.announce('Mês fechado. O arquivo para a contabilidade está pronto.', 'success', false); return true; }
       if (d.adminAttention) { const x = data.attention.find(y => y.id === d.adminAttention); if (x && isPas()) x.done = !x.done; api.show('gestao', false, false); const b = document.querySelector('[data-admin-attention="' + d.adminAttention + '"]'); if (b) b.focus({ preventScroll: true }); return true; }
       if (d.adminFollow && !isPas()) return true;
       if (d.adminFollow) { const p = state.prayers.find(x => x.id === d.adminFollow); if (p) p.followed = !p.followed; api.show('cuidado', false, false); const b = document.querySelector('[data-admin-follow="' + d.adminFollow + '"]'); if (b) b.focus({ preventScroll: true }); api.announce(p && p.followed ? 'Pedido em acompanhamento pastoral.' : 'Acompanhamento encerrado.', 'success', false); return true; }
@@ -320,6 +451,20 @@
         dlg.querySelector('form').outerHTML = `<div class="visit-done"><span class="gift-thanks-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><h3 tabindex="-1">Visita registrada, ${escape(first)}!</h3><p>Que alegria ter você com a gente. Em breve a Secretaria entra em contato para conhecer você.</p><div class="form-actions"><button type="button" class="action primary" data-admin-visit-close="1">Concluir</button></div></div>`;
         dlg.querySelector('.visit-done h3').focus();
         return true;
+      }
+      if (form.classList.contains('tes-identify')) {
+        const b = data.bank.find(x => x.id === form.dataset.bank); if (!b) return true;
+        const type = String(values.get('type')), payer = String(values.get('payer') || '');
+        const e = { id: 'L' + (data.ledger.length + 1), day: b.day, type, amount: b.amount, method: 'Pix direto no banco', payer: payer || 'Não identificado', payerId: payer === state.member.full ? 'M0042' : payer ? 'M0' + (500 + data.ledger.length) : '', doc: b.doc, source: 'extrato', status: 'pendente', by: actor(), conferred: '', member: payer === state.member.full };
+        data.ledger.push(e); confirmEntry(e, b);
+        api.show('conferencia', false, false); api.announce('Crédito lançado em ' + ACCOUNTS[type].name + ' e conciliado.', 'success', false); return true;
+      }
+      if (form.id === 'cash-form') {
+        const amount = Math.round(Number(String(values.get('amount')).replace(/\./g, '').replace(',', '.')) * 100) / 100, c1 = String(values.get('c1')).trim(), c2 = String(values.get('c2')).trim(), day = String(values.get('service')).slice(0, 10);
+        if (!(amount > 0)) { api.announce('Informe o valor contado.', 'warning'); return true; }
+        if (!c1 || !c2 || c1.toLowerCase() === c2.toLowerCase()) { api.announce('A contagem precisa de duas pessoas diferentes.', 'warning'); return true; }
+        data.ledger.push({ id: 'L' + (data.ledger.length + 1), day, type: 'Oferta', amount, method: 'Espécie (culto)', payer: 'Oferta do culto', payerId: '', doc: 'CONT-' + day.replace(/-/g, '') + '-' + data.ledger.length, source: 'manual', status: 'aguardando depósito', by: actor(), conferred: `Conferido por ${c1} e ${c2}` });
+        state.tesMonth = day.slice(0, 7); api.show('lancamentos', false, false); api.announce('Contagem registrada. Ela fica aguardando o depósito aparecer no extrato.', 'success', false); return true;
       }
       if (form.id === 'count-form') {
         const n = Math.round(Number(values.get('count')));
@@ -360,9 +505,9 @@
     }
     const myRequests = name => data.requests.filter(r => r.name === name).slice().reverse();
     function addRequest(r) { data.requests.push({ id: 'r' + (++data.seq), name: r.name, email: r.email, note: r.note, at: now(), status: 'pendente' }); }
-    const badge = () => isSec() ? pendingRequests().length : pendingPeople().length;
+    const badge = () => isTes() ? pendingEntries().length + bankOpen().length : isSec() ? pendingRequests().length : pendingPeople().length;
 
-    return { birthdays, addCheckin, checkins: () => data.checkins, infoProgram, profiles, labels, descriptions, icons, views, allowed, pageLabels, pages, click, submit, addRequest, myRequests, memberNotices, latestNotice, noticesCount: () => data.notices.length, badge, bar: () => (profiles[state.context] || profiles.secretaria).bar };
+    return { birthdays, addCheckin, checkins: () => data.checkins, infoProgram, profiles, labels, descriptions, icons, views, allowed, pageLabels, pages, click, submit, addRequest, addAppPix, myRequests, memberNotices, latestNotice, noticesCount: () => data.notices.length, badge, bar: () => (profiles[state.context] || profiles.secretaria).bar };
   }
   scope.NibAdmin = { create };
 })(window);

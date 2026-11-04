@@ -28,7 +28,11 @@
     visitante: 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8z M4 21c0-4 4-6 8-6 M18 15v6 M15 18h6',
     presenca: calendar + ' M9 16l2 2 4-4',
     alerta: 'M12 9v4 M12 17h.01 M10.3 3.9 2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z',
-    retorno: 'M9 14 4 9l5-5 M4 9h11a5 5 0 0 1 0 10h-3'
+    retorno: 'M9 14 4 9l5-5 M4 9h11a5 5 0 0 1 0 10h-3',
+    // Tesouraria
+    conferencia: 'M3 10h18 M12 3l9 5H3z M5 10v7 M9 10v7 M15 10v4 M3 21h10 M16 19l2 2 4-4',
+    lancamentos: 'M5 4h14v17H5z M8 8h8 M8 12h8 M8 16h5',
+    fechamento: 'M6 11h12v10H6z M8 11V7a4 4 0 0 1 8 0v4 M12 15v2'
   };
   paths.cuidado = paths.caderno; // Caderno de oração e cuidado pastoral são o mesmo assunto.
   // Versões preenchidas para o item ativo da barra inferior.

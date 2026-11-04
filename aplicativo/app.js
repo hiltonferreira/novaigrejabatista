@@ -41,7 +41,7 @@
     { name: 'Jornada DNA', image: 'assets/jornada.webp', date: '25/10/2026', active: false }
   ];
   const eventCards = (compact = false) => `<div class="cards ${compact ? 'home-events' : ''}">${[...events].filter(e => !compact || e.active).sort((a,b) => Number(b.active) - Number(a.active)).map(e => `<article class="event ${e.name === 'Mulheres Virtuosas' ? 'event-mulheres-virtuosas' : ''} ${e.active ? '' : 'event-ended'}"><div class="event-cover"><img src="${e.image}" alt="${e.name}" width="800" height="400"></div><div class="event-content"><div class="event-top"><span class="tag ${e.active ? 'status-active' : 'status-ended'}">${e.active ? 'Ativo' : 'Encerrado'}</span><time class="event-date">${e.date}</time></div><${compact ? 'h3' : 'h2'}>${e.name}</${compact ? 'h3' : 'h2'}><p>${e.active ? 'Conheça o encontro e as informações do evento.' : 'Evento realizado. Consulte as informações.'}</p><button type="button" class="button primary" aria-label="Ver informações: ${e.name}" data-message="${e.name}: catálogo demonstrativo. A integração com as inscrições ainda será conectada; nenhum cadastro ou pagamento é realizado aqui.">Ver informações</button></div></article>`).join('')}</div>`;
-  const isManagement = () => ['secretaria', 'pastoral'].includes(state.context);
+  const isManagement = () => ['secretaria', 'pastoral', 'tesouraria'].includes(state.context);
   const NibAdminIcons = NibIcons.paths;
   const barIcon = (key, selected = false) => selected && NibIcons.filled[key]
     ? `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="${NibIcons.filled[key]}"/></svg>`
@@ -86,7 +86,7 @@
     return full || part === 'agenda' ? agenda : part === 'verse' ? verseBlock : verseBlock + agenda;
   }
   const fullDate = key => new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Porto_Velho',weekday:'long',day:'2-digit',month:'long',year:'numeric'}).format(new Date(key+'T12:00:00-04:00'));
-  const admin = NibAdmin.create({ qrSvg: t => qrSvg(t), state, escape, button, arrow, backArrow, NibDaily, fullDate, show: (...a) => show(...a), announce: (...a) => announce(...a), refreshNotices: () => refreshNotices(), notify: n => notify(n) });
+  const admin = NibAdmin.create({ qrSvg: t => qrSvg(t), state, escape, button, arrow, backArrow, NibDaily, fullDate, show: (...a) => show(...a), announce: (...a) => announce(...a), refreshNotices: () => refreshNotices(), notify: n => notify(n), giftConfirmed: e => giftConfirmed(e) });
   const adminOnly = ['recepcao','gestao','membresia','confirmar','solicitacoes','programacao','comunicados','palavra','cuidado'];
   const calendarKinds = {celula:'Minha célula',culto:'Cultos',escola:'Escola bíblica',evento:'Eventos'};
   // Célula do membro (exemplo): na versão final vem do vínculo do membro com a célula na plataforma de células.
@@ -365,7 +365,7 @@
       });
     }
     document.getElementById('member-shortcuts').hidden = isManagement();
-    document.getElementById('menu-profile').innerHTML = isManagement() ? '<div class="menu-profile-card"><strong>' + (state.context === 'secretaria' ? 'Secretaria da igreja' : 'Liderança Pastoral') + '</strong><span>Experiência de teste</span></div>' : '<a class="menu-profile-card" href="#cadastro" data-view="cadastro"><span class="profile-avatar" aria-hidden="true">' + escape(state.member.first.charAt(0).toUpperCase()) + '</span><span><strong>' + escape(state.member.full) + '</strong><small>' + escape(state.member.email) + '</small></span><span class="profile-demo">Teste</span></a>';
+    document.getElementById('menu-profile').innerHTML = isManagement() ? '<div class="menu-profile-card"><strong>' + admin.profiles[state.context].name + '</strong><span>Experiência de teste</span></div>' : '<a class="menu-profile-card" href="#cadastro" data-view="cadastro"><span class="profile-avatar" aria-hidden="true">' + escape(state.member.first.charAt(0).toUpperCase()) + '</span><span><strong>' + escape(state.member.full) + '</strong><small>' + escape(state.member.email) + '</small></span><span class="profile-demo">Teste</span></a>';
     renderBar();
   }
   function show(view, focus = true, record = true) {
@@ -451,7 +451,7 @@
     if (action.dataset.message) announce(action.dataset.message);
     if (action.dataset.giftAmount) { const input = content.querySelector('#gift-value'); input.value = action.dataset.giftAmount; content.querySelectorAll('[data-gift-amount]').forEach(b => b.setAttribute('aria-pressed', String(b === action))); return; }
     if (action.dataset.historyYear) { state.historyYear = action.dataset.historyYear; show('historico', false, false); content.querySelector('[data-history-year="' + state.historyYear + '"]').focus({preventScroll:true}); return; }
-    if (action.dataset.giftStep) { state.giftStep = action.dataset.giftStep; if (state.giftStep === 'obrigado' && state.giftAmount && state.giftLogged !== state.giftCode) { state.giftLogged = state.giftCode; state.history.push({ day: NibDaily.dayKey(new Date()), type: state.gift, amount: state.giftAmount, status: 'pending', app: true }); } if (action.dataset.done) state.giftAmount = null; if (state.giftStep === 'pix') { if (content.querySelector('#gift-receipt')) state.giftReceipt = content.querySelector('#gift-receipt').checked; state.giftCode = NibPix.brCode({ amount: state.giftAmount, txid: ({'Dízimo':'DIZ','Oferta':'OFE','Campanha':'OBRA'})[state.gift] + NibDaily.dayKey(new Date()).replace(/-/g,'') + Math.random().toString(36).slice(2,8) }); } show('generosidade', false, false); const t = content.querySelector('#gift-step-title'); if (t) t.focus({preventScroll:true});  return; }
+    if (action.dataset.giftStep) { state.giftStep = action.dataset.giftStep; if (state.giftStep === 'obrigado' && state.giftAmount && state.giftLogged !== state.giftCode) { state.giftLogged = state.giftCode; const txid = 'E2E' + Date.now().toString().slice(-9); state.history.push({ day: NibDaily.dayKey(new Date()), type: state.gift, amount: state.giftAmount, status: 'pending', app: true, txid }); admin.addAppPix({ day: NibDaily.dayKey(new Date()), type: state.gift, amount: state.giftAmount, txid }); } if (action.dataset.done) state.giftAmount = null; if (state.giftStep === 'pix') { if (content.querySelector('#gift-receipt')) state.giftReceipt = content.querySelector('#gift-receipt').checked; state.giftCode = NibPix.brCode({ amount: state.giftAmount, txid: ({'Dízimo':'DIZ','Oferta':'OFE','Campanha':'OBRA'})[state.gift] + NibDaily.dayKey(new Date()).replace(/-/g,'') + Math.random().toString(36).slice(2,8) }); } show('generosidade', false, false); const t = content.querySelector('#gift-step-title'); if (t) t.focus({preventScroll:true});  return; }
     if (action.id === 'church-pix-copy') { const label = action.querySelector('span'); const done = () => { label.textContent = 'Código copiado!'; action.classList.add('is-copied'); announce('Código Pix da igreja copiado. Cole no app do seu banco e informe o valor.','success',false); setTimeout(() => { label.textContent = 'Copiar código Pix'; action.classList.remove('is-copied'); }, 2200); }; if (navigator.clipboard) navigator.clipboard.writeText(NibPix.brCode()).then(done, done); else done(); return; }
     if (action.id === 'pix-copy') { const code = content.querySelector('#pix-code').value; const ok = () => { action.querySelector('span').textContent = 'Copiado'; announce('Código Pix copiado. Cole no app do seu banco.','success',false); }; if (navigator.clipboard) navigator.clipboard.writeText(code).then(ok, ok); else ok(); return; }
     if (action.dataset.gift) { state.gift = action.dataset.gift; state.giftStep = 'finalidade'; show('generosidade', false, false); content.querySelector('[data-gift="' + state.gift + '"]').focus({preventScroll:true}); return; }
@@ -490,7 +490,7 @@
   function changeContext(event) {
     viewHistory.length = 0;
     state.context = event.target.value;
-    document.getElementById('account').textContent = state.context === 'membro' ? state.member.full + ' · Membro' : (state.context === 'secretaria' ? 'Secretaria da igreja · Teste' : 'Liderança Pastoral · Teste');
+    document.getElementById('account').textContent = state.context === 'membro' ? state.member.full + ' · Membro' : admin.profiles[state.context].name + ' · Teste';
     show(isManagement() ? 'gestao' : 'inicio');
     refreshNotices();
     document.querySelector('.test-options').open = false;
@@ -517,6 +517,12 @@
   notices.addEventListener('close', () => { if (!drawer.open) root.classList.remove('nib-dialog-open'); });
   notices.addEventListener('click', e => { if (e.target !== notices) return; const r = notices.getBoundingClientRect(); if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) notices.close(); });
   state.notifs = [];
+  function giftConfirmed(e) {
+    let h = state.history.find(x => x.txid === e.doc && x.status !== 'ok');
+    if (h) h.status = 'ok'; else state.history.push({ day: e.day, type: e.type, amount: e.amount, status: 'ok', txid: e.doc });
+    const what = e.type === 'Campanha' ? 'para a obra do templo' : e.type === 'Oferta' ? 'de oferta' : 'de dízimo';
+    notify({ kind: 'ok', title: 'Contribuição confirmada', text: `A tesouraria confirmou ${money(e.amount)} ${what}, de ${e.day.slice(8, 10)}/${e.day.slice(5, 7)}. Obrigado pela sua generosidade!`, at: e.confirmedAt || '', view: 'historico', action: 'Ver minhas contribuições' });
+  }
   function notify(n) { state.notifs.push({ ...n, id: 'nt' + (state.notifs.length + 1), seen: false }); refreshNotices(); }
   function unreadNotices() { return Math.max(0, admin.noticesCount() - (state.noticesSeen || 0)); }
   function unreadAll() { return unreadNotices() + state.notifs.filter(n => !n.seen).length + (birthdayNotifSeen() ? 0 : 1); }
@@ -716,6 +722,12 @@
   document.getElementById('onb-skip').addEventListener('click', () => { setOnbHidden(true); closeOnboarding(); });
   onboarding.addEventListener('keydown', e => { if (e.key === 'ArrowRight') goSlide(slide + 1); if (e.key === 'ArrowLeft') goSlide(slide - 1); if (e.key === 'Escape') closeOnboarding(); });
   document.getElementById('simulate-service').addEventListener('change', e => { state.simulateService = e.target.checked; document.querySelector('.test-options').open = false; if (!isManagement()) show('inicio', false, false); });
+  document.addEventListener('click', e => {
+    if (!e.target.closest('[data-logout]')) return;
+    closeDrawer(); writeFlag('nib-auth', false); writeFlag('nib-faceid', false);
+    if (state.context !== 'membro') { const s = document.getElementById('demo-context'); s.value = 'membro'; changeContext({ target: s }); }
+    ['panel-login','panel-signup'].forEach(id => document.getElementById(id).reset()); openAuth();
+  });
   document.getElementById('replay-flow').addEventListener('click', () => { document.querySelector('.test-options').open = false; writeFlag('nib-auth', false); writeFlag('nib-faceid', false); setOnbHidden(false); ['panel-login','panel-signup'].forEach(id => document.getElementById(id).reset()); openAuth(); });
   // Abertura: aparece ao abrir o aplicativo, antes do acesso; some sozinha ou ao toque.
   const splash = document.getElementById('app-splash');
