@@ -269,6 +269,26 @@
     dlg.showModal();
     dlg.querySelector('.fans-sheet').focus({ preventScroll: true });
   }
+  function openCongrats(btn) {
+    const name = btn.closest('.bday').querySelector('.bday-text strong').textContent; const first = name.split(' ')[0];
+    let dlg = document.getElementById('congrats-dialog');
+    if (!dlg) { dlg = document.createElement('dialog'); dlg.id = 'congrats-dialog'; dlg.setAttribute('aria-labelledby', 'congrats-title'); document.body.append(dlg); dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); }); }
+    const chips = ['Feliz aniversário! 🎉', 'Deus te abençoe muito!', 'Muitas felicidades!', 'Que Deus continue te usando!'];
+    dlg.innerHTML = `<form class="fans-sheet congrats-sheet" method="dialog" tabindex="-1"><span class="fans-grip" aria-hidden="true"></span><div class="fans-head"><div><h2 id="congrats-title">Parabéns para ${escape(first)}</h2><p>A mensagem é opcional</p></div><button type="button" class="fans-close" data-congrats-close="1" aria-label="Fechar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12 M18 6 6 18"/></svg></button></div><div class="congrats-chips">${chips.map(c => `<button type="button" class="congrats-chip" data-chip="${escape(c)}">${escape(c)}</button>`).join('')}</div><label class="visually-hidden" for="congrats-msg">Mensagem</label><textarea id="congrats-msg" class="congrats-msg" maxlength="140" rows="3" placeholder="Escreva uma mensagem para ${escape(first)}"></textarea><div class="congrats-count"><span>Só ${escape(first)} vê a mensagem.</span><span id="congrats-n">0/140</span></div><button type="submit" class="congrats-send">Enviar parabéns</button></form>`;
+    const msg = dlg.querySelector('#congrats-msg'), n = dlg.querySelector('#congrats-n');
+    const count = () => { n.textContent = msg.value.length + '/140'; };
+    msg.addEventListener('input', count);
+    dlg.querySelectorAll('.congrats-chip').forEach(c => c.addEventListener('click', () => { msg.value = c.dataset.chip; count(); dlg.querySelectorAll('.congrats-chip').forEach(o => o.classList.toggle('is-on', o === c)); }));
+    dlg.querySelector('[data-congrats-close]').addEventListener('click', () => dlg.close());
+    dlg.querySelector('form').addEventListener('submit', e => {
+      const text = msg.value.trim();
+      if (text && NibModeration.offensive(text)) { e.preventDefault(); msg.setAttribute('aria-invalid', 'true'); return announce('Sua mensagem tem palavras ofensivas ou de baixo calão. Revise o texto.', 'warning'); }
+      const k = btn.dataset.congrats; state.congrats[k] = text || true;
+      e.preventDefault(); dlg.close(); btn.classList.add('is-sent'); btn.setAttribute('aria-pressed', 'true'); btn.textContent = 'Parabéns enviado';
+      announce(`Parabéns enviado para ${first} (teste). Na versão real, a pessoa recebe uma notificação${text ? ' com a sua mensagem' : ''}.`, 'success', false);
+    });
+    dlg.showModal(); dlg.querySelector('form').focus({ preventScroll: true });
+  }
   function myBirthdayPopup(tries = 0) {
     const me = admin.birthdays().find(b => b.today && b.name === state.member.full);
     if (!me || state.birthdayShown || isManagement() || state.view !== 'inicio') return;
@@ -384,7 +404,7 @@
     if (action.dataset.fansOpen) { openFans(); return; }
     if (action.dataset.fansClose) { const d = document.getElementById('fans-dialog'); if (d) d.close(); return; }
     if (action.dataset.bdayClose) { const d = document.getElementById('bday-dialog'); if (d) d.close(); return; }
-    if (action.dataset.congrats) { state.congrats = state.congrats || {}; const k = action.dataset.congrats; state.congrats[k] = !state.congrats[k]; action.classList.toggle('is-sent', state.congrats[k]); action.setAttribute('aria-pressed', String(state.congrats[k])); action.textContent = state.congrats[k] ? 'Parabéns enviado' : 'Dar parabéns'; if (state.congrats[k]) announce('Parabéns enviado (teste). Na versão real, a pessoa recebe uma notificação.', 'success', false); return; }
+    if (action.dataset.congrats) { state.congrats = state.congrats || {}; const k = action.dataset.congrats; if (!state.congrats[k]) return openCongrats(action); state.congrats[k] = false; action.classList.toggle('is-sent', state.congrats[k]); action.setAttribute('aria-pressed', String(state.congrats[k])); action.textContent = state.congrats[k] ? 'Parabéns enviado' : 'Dar parabéns'; if (state.congrats[k]) announce('Parabéns enviado (teste). Na versão real, a pessoa recebe uma notificação.', 'success', false); return; }
     if (action.dataset.checkin) { const c = nextService(); if (c) admin.addCheckin({ day: c.day, name: c.name, who: state.member.full }); show('inicio', false, false); announce('Check-in feito. Sua presença no culto foi registrada (teste).', 'success', false); const t = content.querySelector('#checkin-title'); if (t) t.focus({preventScroll:true}); return; }
     if (action.id === 'header-notices') { markNoticesSeen(); notices.showModal(); root.classList.add('nib-dialog-open'); document.getElementById('notices-close').focus(); return; }
     if (action.id === 'notices-close') { notices.close(); return; }
