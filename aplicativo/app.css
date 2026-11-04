@@ -1537,3 +1537,15 @@ html{scrollbar-gutter:stable}
  #nib-proposta .home-events h3{font-size:16px}
  #nib-proposta main .home-events .event .button{min-height:38px;font-size:12.5px}
 }
+/* Caderno compacto na tela inicial */
+#nib-proposta .community-prayer .prayer-feed{grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:16px}
+#nib-proposta .community-prayer .prayer-post{padding:16px 18px;border-radius:18px}
+#nib-proposta .community-prayer .prayer-post-author{margin-bottom:10px;gap:10px}
+#nib-proposta .community-prayer .prayer-post-author .profile-avatar{width:32px;height:32px;flex-basis:32px;font-size:14px}
+#nib-proposta .community-prayer .prayer-post-author strong{font-size:14px}
+#nib-proposta .community-prayer .prayer-post-author small{margin-top:2px}
+#nib-proposta .community-prayer .prayer-post h3{font-size:16px;line-height:1.35;margin:0 0 6px}
+#nib-proposta .community-prayer .prayer-post p{font-size:14px;line-height:1.5;margin:0}
+#nib-proposta .community-prayer .prayer-post-footer{padding-top:12px;margin-top:12px}
+@media(max-width:1150px){#nib-proposta .community-prayer .prayer-feed{grid-template-columns:1fr}}
+@media(max-width:820px){#nib-proposta .community-prayer .prayer-post{padding:14px 16px}}
