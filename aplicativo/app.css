@@ -1439,11 +1439,6 @@ html{scrollbar-gutter:stable}
 #nib-proposta .my-bday-fans b{color:#041e42}
 #nib-proposta .fan-chev{font-size:24px;line-height:1;color:#65768e}
 @media(hover:hover){#nib-proposta .my-bday-fans:hover{border-color:#9fb3cc}}
-#nib-proposta .bday-me{display:inline-flex;align-items:center;gap:8px;flex:0 0 auto;padding:4px 10px 4px 4px;border:1px solid #ffc6a6;border-radius:999px;background:#fff;cursor:pointer;font:inherit}
-#nib-proposta .bday-me .fan-av{width:26px;height:26px;font-size:11px;margin-left:-8px}
-#nib-proposta .bday-me .fan-stack .fan-av:first-child{margin-left:0}
-#nib-proposta .bday-me .fan-av.more{display:none}
-#nib-proposta .bday-me .fan-count{font-size:13px;font-weight:700;color:#c2531a}
 /* lista */
 #nib-proposta #fans-dialog{box-sizing:border-box;position:fixed;inset:auto 0 0;margin:0 auto;width:min(480px,100%);max-height:min(78dvh,640px);padding:0;border:0;border-radius:24px 24px 0 0;background:#fff;color:#041e42;box-shadow:0 -20px 60px #041e4233;overflow:hidden}
 #nib-proposta #fans-dialog::backdrop{background:#041e4233;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
@@ -1471,3 +1466,20 @@ html{scrollbar-gutter:stable}
 #nib-proposta .bday-text small.is-me{text-transform:none}
 #nib-proposta .fans-close:focus:not(:focus-visible){outline:none;box-shadow:none}
 #nib-proposta .fans-sheet:focus{outline:none}
+#nib-proposta .bday.bday-mine{display:block;margin:10px -12px 6px;padding:14px 14px 12px;border:1px solid #ffd9c2;border-radius:18px;background:linear-gradient(135deg,#fff6ef 0%,#fffaf6 60%,#fff 100%)}
+#nib-proposta .bday.bday-mine+.bday{border-top:0}
+#nib-proposta .bday-mine-top{display:flex;align-items:center;gap:12px;min-width:0}
+#nib-proposta .bday.bday-mine .profile-avatar{position:relative;flex:0 0 44px;width:44px;height:44px;font-size:17px;background:linear-gradient(135deg,#ff9a62,#e85d16);color:#fff;box-shadow:0 6px 16px #e85d1640}
+#nib-proposta .bday-mine .profile-avatar i{position:absolute;right:-4px;bottom:-4px;display:grid;place-items:center;width:20px;height:20px;border-radius:50%;background:#fff;color:#c2531a;box-shadow:0 0 0 1px #ffd9c2}
+#nib-proposta .bday-mine .profile-avatar i svg{width:12px;height:12px}
+#nib-proposta .bday-mine .bday-text strong{font-size:15px}
+#nib-proposta .bday.bday-mine .bday-text small{color:#c2531a;font-weight:600}
+#nib-proposta .bday-mine-tag{flex:0 0 auto;padding:5px 10px;border-radius:999px;background:#ff7f40;color:#fff;font-size:11px;font-weight:700;letter-spacing:.02em}
+#nib-proposta .bday-mine-fans{display:flex;align-items:center;gap:10px;width:100%;margin-top:12px;padding:9px 12px;border:1px solid #f1e4da;border-radius:14px;background:#ffffffd9;color:#536176;font:inherit;text-align:left;cursor:pointer}
+#nib-proposta .bday-mine-fans .fan-av{width:26px;height:26px;font-size:11px;margin-left:-8px}
+#nib-proposta .bday-mine-fans .fan-stack .fan-av:first-child{margin-left:0}
+#nib-proposta .bday-mine-fans .fan-av.more{font-size:9.5px}
+#nib-proposta .bday-mine-fans .fan-text{flex:1;min-width:0;font-size:12.5px;line-height:1.35}
+#nib-proposta .bday-mine-fans b{color:#041e42}
+#nib-proposta .bday-mine-fans .fan-chev{font-size:20px;line-height:1;color:#9aa6b8}
+@media(hover:hover){#nib-proposta .bday-mine-fans:hover{border-color:#ffc6a6}}
