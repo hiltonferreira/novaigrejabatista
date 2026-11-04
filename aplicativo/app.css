@@ -1748,3 +1748,4 @@ html{scrollbar-gutter:stable}
 #nib-proposta .tes-budget-grid{align-items:start}
 #nib-proposta .tes-value{font-size:clamp(19px,1.7vw,24px)}
 @media(max-width:600px){#nib-proposta .tes-value{font-size:20px}}
+#nib-proposta .tes-table .tes-link{display:block;margin:6px 0 0}
