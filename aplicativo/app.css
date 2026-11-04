@@ -1732,3 +1732,19 @@ html{scrollbar-gutter:stable}
   #nib-proposta .tes-print-btn,#nib-proposta .tes-noprint{display:none!important}
 }
 #nib-proposta .tes-tasks .admin-task-text strong,#nib-proposta .tes-tasks .admin-task-text small{white-space:normal;overflow:visible;text-overflow:clip}
+/* Tesouraria: cores padronizadas de entrada (verde) e saída (vermelho) */
+#nib-proposta .tes-pos,#nib-proposta .tes-amount{color:#1b7a4b}
+#nib-proposta .tes-neg,#nib-proposta .tes-amount.is-out{color:#c0392b}
+#nib-proposta .tes-bar-in{fill:#1b7a4b}
+#nib-proposta .tes-bar-out{fill:#c0392b}
+#nib-proposta .sw.is-in{background:#1b7a4b}
+#nib-proposta .sw.is-out,#nib-proposta .tes-fill-real{background:#c0392b}
+#nib-proposta .sw.is-out-soft,#nib-proposta .tes-fill-pend{background:#efb3aa}
+#nib-proposta .tes-miss{color:#b4501c;font-weight:600}
+#nib-proposta .tes-lines>.box{margin:0}
+#nib-proposta .tes-decl{scroll-margin-top:100px}
+#nib-proposta .tes-identify-exp{margin-top:12px;padding:12px 14px;border-radius:12px;background:#f6f8fb;border:1px solid #e3e8ef}
+#nib-proposta .tes-identify-exp .note{margin:10px 0 0}
+#nib-proposta .tes-budget-grid{align-items:start}
+#nib-proposta .tes-value{font-size:clamp(19px,1.7vw,24px)}
+@media(max-width:600px){#nib-proposta .tes-value{font-size:20px}}
