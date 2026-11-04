@@ -1749,3 +1749,31 @@ html{scrollbar-gutter:stable}
 #nib-proposta .tes-value{font-size:clamp(19px,1.7vw,24px)}
 @media(max-width:600px){#nib-proposta .tes-value{font-size:20px}}
 #nib-proposta .tes-table .tes-link{display:block;margin:6px 0 0}
+/* Entrada no computador: foto em tela cheia à esquerda, formulário à direita */
+#nib-proposta .auth-hero-copy{display:none}
+@media(min-width:1024px){
+  #nib-proposta .app-auth:not([hidden]){display:grid;grid-template-columns:minmax(0,1fr) minmax(480px,42%);grid-template-rows:100%;overflow:hidden}
+  #nib-proposta .auth-hero{height:100%}
+  #nib-proposta .auth-hero-photo{object-position:0% 50%}
+  #nib-proposta .auth-hero::after{background:linear-gradient(180deg,#041e4280 0%,#041e4200 30%,#041e4200 55%,#041e42e6 100%)}
+  #nib-proposta .auth-logo{left:48px;top:40px;width:150px}
+  #nib-proposta .auth-hero-copy{display:block;position:absolute;z-index:1;left:48px;right:48px;bottom:44px;margin:0;color:#fff}
+  #nib-proposta .auth-hero-copy strong{display:block;font:700 clamp(30px,2.6vw,42px)/1.1 "NIB Acumin Mobile",Arial,sans-serif;letter-spacing:-.01em}
+  #nib-proposta .auth-hero-copy span{display:block;margin-top:8px;font-size:16px;color:#dbe4ef}
+  #nib-proposta .auth-sheet{max-width:none;width:100%;margin:0;height:100%;min-height:0;border-radius:0;box-shadow:none;overflow-y:auto;display:flex;flex-direction:column;justify-content:safe center;padding:56px max(48px,calc((100% - 440px) / 2))}
+  #nib-proposta .auth-sheet h1{font-size:36px}
+  #nib-proposta .auth-lead{font-size:16px}
+}
+@media(min-width:1024px){#nib-proposta .face-offer{align-items:center}#nib-proposta .face-offer-sheet{border-radius:28px;padding:32px 32px 28px;box-shadow:0 24px 60px #041e4240}}
+/* Apresentação no computador: conteúdo centralizado e proporcional */
+@media(min-width:1024px){
+  #nib-proposta .onb-slide{gap:64px;padding:64px max(48px,calc((100% - 1180px) / 2)) 24px}
+  #nib-proposta .onb-media{flex:1.15;height:min(64vh,560px)}
+  #nib-proposta .onb-copy{flex:1}
+  #nib-proposta .onb-copy h2{font-size:clamp(36px,3vw,46px);margin:12px 0 16px}
+  #nib-proposta .onb-copy p{font-size:18px;max-width:440px}
+  #nib-proposta .onb-step{font-size:14px}
+  #nib-proposta .onb-footer{width:100%;max-width:1180px;margin:0 auto;padding:16px 0 40px}
+  #nib-proposta .onb-skip{right:max(24px,calc((100% - 1180px) / 2));top:20px}
+}
+@media(min-width:1024px) and (max-width:1276px){#nib-proposta .onb-footer{padding:16px 48px 40px}}
