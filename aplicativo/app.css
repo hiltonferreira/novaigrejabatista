@@ -1524,9 +1524,7 @@ html{scrollbar-gutter:stable}
  #nib-proposta main .quick-action .home-action-icon{width:32px;height:32px;border-radius:10px}
  #nib-proposta .home-action-icon svg{width:20px;height:20px}
  #nib-proposta main .quick-action strong{font-size:15px;line-height:1.3}
- #nib-proposta main .quick-action .home-action-description{font-size:12px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
- #nib-proposta .social-card{min-height:220px;aspect-ratio:4/3}
- #nib-proposta .social-title{font-size:26px}
+ #nib-proposta main .quick-action .home-action-description{font-size:12px;line-height:1.4}
 }
 @media(min-width:821px){#nib-proposta main .quick-action{min-height:112px;padding:18px 20px}}
 #nib-proposta .home-agenda .note{display:none}
