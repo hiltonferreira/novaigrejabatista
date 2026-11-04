@@ -100,6 +100,8 @@
   const calendarKind = item => item.type==='Minha célula'?'celula':item.type==='Culto'?'culto':item.type==='Programação semanal'?'escola':'evento';
   const calendarDot = kind => `<i class="calendar-dot" data-kind="${kind}" aria-hidden="true"></i>`;
   function calendarAnnouncement() { const items=monthItems(state.calendarMonth).filter(x=>x.day===state.calendarDay); return fullDate(state.calendarDay)+': '+(items.length?items.length+' encontro(s). '+items.map(x=>x.name+', '+(x.time||'horário a confirmar')).join('. '):'Nenhum encontro de referência.'); }
+  const deskQuery = typeof matchMedia === 'function' ? matchMedia('(min-width: 1100px)') : null;
+  const isDesk = () => !!(deskQuery && deskQuery.matches);
   function calendarPage() {
     const month = state.calendarMonth;
     const {count,offset} = NibDaily.monthInfo(month);
@@ -364,7 +366,7 @@
       if (active) item.setAttribute('aria-current', 'page'); else item.removeAttribute('aria-current');
       });
     }
-    document.getElementById('member-shortcuts').hidden = isManagement();
+    const ms = document.getElementById('member-shortcuts'); if (ms) ms.hidden = isManagement();
     document.getElementById('menu-profile').innerHTML = isManagement() ? '<div class="menu-profile-card"><strong>' + admin.profiles[state.context].name + '</strong><span>Experiência de teste</span></div>' : '<a class="menu-profile-card" href="#cadastro" data-view="cadastro"><span class="profile-avatar" aria-hidden="true">' + escape(state.member.first.charAt(0).toUpperCase()) + '</span><span><strong>' + escape(state.member.full) + '</strong><small>' + escape(state.member.email) + '</small></span><span class="profile-demo">Teste</span></a>';
     renderBar();
   }
@@ -382,14 +384,19 @@
     document.getElementById('description').textContent = description;
     feedback.textContent = ''; feedback.dataset.tone='info';
     const pages = {
-      inicio: () => `${dailyBlocks(false,'verse')}${checkinCard()}<section aria-labelledby="quick-title"><div class="section-heading"><h2 id="quick-title">O que você precisa está aqui</h2></div><div class="quick-actions">${[
+      inicio: () => {
+        const quick = `<section aria-labelledby="quick-title"><div class="section-heading"><h2 id="quick-title">O que você precisa está aqui</h2></div><div class="quick-actions">${[
         ['cadastro', 'Meu cadastro', 'Consulte seus dados e solicite uma atualização.'],
         ['eventos', 'Eventos e inscrições', 'Veja os encontros e acompanhe suas inscrições.'],
         ['generosidade', 'Dízimos e ofertas', 'Encontre as opções para contribuir e as campanhas.'],
         ['celulas', 'Células', 'Saiba como acessar a plataforma de células.'],
         ['informacoes', 'Programação e avisos', 'Consulte as informações e os canais da igreja.'],
         ['caderno', 'Caderno de oração', 'Compartilhe seus pedidos e ore com a comunidade.']
-      ].map(([view, title, text]) => `<button type="button" class="quick-action admin-quick" data-view="${view}"><span class="home-action-icon" aria-hidden="true">${navIcon(view)}</span>${view === 'informacoes' && unreadNotices() ? `<span class="admin-badge notice-badge" aria-label="${unreadNotices()} ${unreadNotices() === 1 ? 'aviso novo' : 'avisos novos'}">${unreadNotices()}</span>` : ''}<strong>${title}</strong><span class="home-action-description">${text}</span></button>`).join('')}</div></section>${socialBanners()}${homeNotice()}${dailyBlocks(false,'agenda')}${birthdayBlock()}<section class="home-events-block" aria-labelledby="home-events-title"><div class="section-heading"><div><span class="label">PARTICIPE COM A GENTE</span><h2 id="home-events-title">Próximo evento</h2></div>${button('Ver todos', 'eventos')}</div>${eventCards(true)}</section>${communityBlock()}`,
+      ].map(([view, title, text]) => `<button type="button" class="quick-action admin-quick" data-view="${view}"><span class="home-action-icon" aria-hidden="true">${navIcon(view)}</span>${view === 'informacoes' && unreadNotices() ? `<span class="admin-badge notice-badge" aria-label="${unreadNotices()} ${unreadNotices() === 1 ? 'aviso novo' : 'avisos novos'}">${unreadNotices()}</span>` : ''}<strong>${title}</strong><span class="home-action-description">${text}</span></button>`).join('')}</div></section>`;
+        const events = `<section class="home-events-block" aria-labelledby="home-events-title"><div class="section-heading"><div><span class="label">PARTICIPE COM A GENTE</span><h2 id="home-events-title">Próximo evento</h2></div>${button('Ver todos', 'eventos')}</div>${eventCards(true)}</section>`;
+        if (isDesk()) return `<div class="home-desk"><div class="home-col">${dailyBlocks(false,'verse')}${quick}${socialBanners()}${communityBlock()}</div><div class="home-rail">${checkinCard()}${homeNotice()}${dailyBlocks(false,'agenda')}${birthdayBlock()}${events}</div></div>`;
+        return `${dailyBlocks(false,'verse')}${checkinCard()}${quick}${socialBanners()}${homeNotice()}${dailyBlocks(false,'agenda')}${birthdayBlock()}${events}${communityBlock()}`;
+      },
       agenda: () => calendarPage(),
       caderno: () => notebookPage(),
       cadastro: () => `<div class="profile-layout"><section class="box profile-summary"><span class="tag">Membro · exemplo</span><h2>${escape(state.member.full)}</h2><p>Confira seu cadastro na igreja.</p><dl class="profile"><dt>E-mail</dt><dd>jessica@example.com</dd><dt>Tratamento</dt><dd>${g('Masculino', 'Feminino')}</dd><dt>Telefone</dt><dd>Não informado</dd><dt>Endereço</dt><dd>Não informado</dd><dt>Apresentação no culto</dt><dd>Apresentação registrada · exemplo</dd></dl><label class="check profile-bday"><input type="checkbox" id="bday-visible"${state.hideBirthday ? '' : ' checked'}><span>Mostrar meu aniversário (dia e mês) na tela inicial da igreja</span></label><p class="note">As alterações são encaminhadas para conferência da Secretaria.</p></section><section class="box profile-edit"><h2>O que você deseja atualizar?</h2><p>Preencha somente os dados que precisam mudar.</p><form id="profile-form"><fieldset><legend>Dados para atualização</legend><div class="form-grid"><div><label for="new-name">Nome completo</label><input id="new-name" name="newName" autocomplete="off" placeholder="Informe o nome corrigido" maxlength="160"></div><div><label for="new-email">Novo e-mail</label><input id="new-email" name="newEmail" type="email" autocomplete="off" placeholder="nome@exemplo.com" maxlength="160"></div><div><label for="new-phone">Novo telefone / WhatsApp</label><input id="new-phone" name="newPhone" type="tel" inputmode="tel" autocomplete="off" placeholder="(69) 99999-9999" maxlength="25"></div><div><label for="new-address">Endereço</label><input id="new-address" name="newAddress" autocomplete="off" placeholder="Rua, número, bairro e cidade" maxlength="250"></div></div></fieldset><fieldset><legend>Contato e observações</legend><label for="contact-email">E-mail para retorno</label><input id="contact-email" name="email" type="email" autocomplete="email" value="${escape(state.member.email)}" placeholder="exemplo@example.com" maxlength="160" required><label for="contact-note">Outra alteração ou observação (opcional)</label><textarea id="contact-note" name="note" placeholder="Descreva o que a Secretaria precisa conferir." maxlength="500"></textarea></fieldset><div class="form-actions"><button class="action" type="submit">Enviar solicitação de teste</button><button type="reset">Limpar alterações</button></div></form><p class="note">Use dados fictícios. A solicitação fica nesta sessão; nenhum cadastro real é alterado.</p></section></div>${myRequestsBox()}`,
@@ -400,6 +407,7 @@
       informacoes: () => `${admin.infoProgram()}<section class="box church-contact"><h2>Endereço e contato</h2><p class="church-address"><strong>Nova Igreja Batista</strong>Rua França, 1409 · Áreas Especiais 01<br>Ariquemes, RO · 76870-013</p><div class="form-actions"><a class="button button-go" href="https://www.google.com/maps/search/?api=1&amp;query=Nova%20Igreja%20Batista%20Rua%20Fran%C3%A7a%201409%20Ariquemes%20RO" target="_blank" rel="noopener">Abrir no mapa ${arrow}</a><a class="button button-go" href="https://www.instagram.com/nibcasadedeus/" target="_blank" rel="noopener">Instagram ${arrow}</a><a class="button button-go" href="https://www.youtube.com/@nibcasadedeus" target="_blank" rel="noopener">YouTube ${arrow}</a></div><p class="note">O WhatsApp da Secretaria entra aqui quando a igreja definir o número oficial.</p></section>`
     };
     content.innerHTML = (isManagement() && admin.pages[state.view] ? admin.pages[state.view] : pages[state.view])();
+    content.dataset.view = state.view;
     content.querySelectorAll('[data-w]').forEach(el => el.style.setProperty('width', el.dataset.w + '%'));
     if (state.view === 'inicio') myBirthdayPopup();
     if (state.view === 'informacoes' && !isManagement()) { state.noticesSeen = admin.noticesCount(); refreshNotices(); }
@@ -563,6 +571,7 @@
   document.addEventListener('visibilitychange', () => { if (!document.hidden) refreshDailyDate(); });
   document.getElementById('demo-context').value = 'membro';
   show('inicio', false);
+  if (deskQuery && deskQuery.addEventListener) deskQuery.addEventListener('change', () => show(state.view, false, false));
   // Fluxo de entrada de teste: abertura → acesso (entrar ou criar cadastro) → orientação → inicial.
   // Nada é enviado: a CSP bloqueia conexões e os dados ficam só na memória desta aba.
   const auth = document.getElementById('app-auth');
