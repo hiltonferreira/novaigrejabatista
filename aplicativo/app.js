@@ -499,6 +499,8 @@
   const onboarding = document.getElementById('app-onboarding');
   const appParts = [root.querySelector(':scope > header'), root.querySelector(':scope > .layout'), document.getElementById('bottom-nav')];
   const readFlag = key => { try { return sessionStorage.getItem(key) === '1'; } catch (_) { return false; } };
+  const onbHidden = () => { try { return localStorage.getItem('nib-onb-hide') === '1'; } catch (_) { return false; } };
+  const setOnbHidden = on => { try { on ? localStorage.setItem('nib-onb-hide', '1') : localStorage.removeItem('nib-onb-hide'); } catch (_) {} };
   const writeFlag = (key, on) => { try { on ? sessionStorage.setItem(key,'1') : sessionStorage.removeItem(key); } catch (_) {} };
   const gate = on => { root.classList.toggle('nib-gated', on); appParts.forEach(el => { if (el) el.inert = on; }); };
   function openAuth() { gate(true); onboarding.hidden = true; auth.hidden = false; auth.scrollTop = 0; setTab('login', false); requestAnimationFrame(() => document.getElementById('auth-title').focus({preventScroll:true})); }
@@ -587,6 +589,8 @@
     renderNavigation(); show('inicio', false, false);
     document.getElementById('account').textContent = state.member.full + ' · Membro';
     onboarding.hidden = false; goSlide(0);
+    // Quem tocou em "Não mostrar novamente" vai direto para a inicial, com a animação do brasão.
+    if (onbHidden()) { closeOnboarding(); return; }
     requestAnimationFrame(() => document.getElementById('onb-next').focus({preventScroll:true}));
   }
   const track = document.getElementById('onb-track');
@@ -645,9 +649,9 @@
     }).then(() => { enter.getAnimations({subtree:true}).forEach(a => a.cancel()); done(); });
   }
   next.addEventListener('click', () => { if (slide === slides.length - 1) closeOnboarding(); else goSlide(slide + 1); });
-  document.getElementById('onb-skip').addEventListener('click', closeOnboarding);
+  document.getElementById('onb-skip').addEventListener('click', () => { setOnbHidden(true); closeOnboarding(); });
   onboarding.addEventListener('keydown', e => { if (e.key === 'ArrowRight') goSlide(slide + 1); if (e.key === 'ArrowLeft') goSlide(slide - 1); if (e.key === 'Escape') closeOnboarding(); });
-  document.getElementById('replay-flow').addEventListener('click', () => { document.querySelector('.test-options').open = false; writeFlag('nib-auth', false); writeFlag('nib-faceid', false); ['panel-login','panel-signup'].forEach(id => document.getElementById(id).reset()); openAuth(); });
+  document.getElementById('replay-flow').addEventListener('click', () => { document.querySelector('.test-options').open = false; writeFlag('nib-auth', false); writeFlag('nib-faceid', false); setOnbHidden(false); ['panel-login','panel-signup'].forEach(id => document.getElementById(id).reset()); openAuth(); });
   // Abertura: aparece ao abrir o aplicativo, antes do acesso; some sozinha ou ao toque.
   const splash = document.getElementById('app-splash');
   const afterSplash = () => { if (!readFlag('nib-auth')) openAuth(); };
