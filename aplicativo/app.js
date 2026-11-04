@@ -505,7 +505,8 @@
     document.getElementById('demo-context').value = state.context;
     document.getElementById('demo-context-mobile').value = state.context;
   }
-  root.addEventListener('change', e => { if (e.target.id === 'bday-visible') { state.hideBirthday = !e.target.checked; announce(e.target.checked ? 'Seu aniversário aparece para a igreja (teste).' : 'Seu aniversário não aparece mais para a igreja (teste).', 'success', false); } });
+  root.addEventListener('input', e => { if (isManagement() && admin.input && e.target.id === 'mem-q') admin.input(e.target); });
+  root.addEventListener('change', e => { if (isManagement() && admin.input && e.target.id === 'mem-cell') { admin.input(e.target); return; } if (e.target.id === 'bday-visible') { state.hideBirthday = !e.target.checked; announce(e.target.checked ? 'Seu aniversário aparece para a igreja (teste).' : 'Seu aniversário não aparece mais para a igreja (teste).', 'success', false); } });
   document.getElementById('demo-context').addEventListener('change', changeContext);
   document.getElementById('demo-context-mobile').addEventListener('change', changeContext);
   document.getElementById('sidebar-toggle').addEventListener('click', event => {

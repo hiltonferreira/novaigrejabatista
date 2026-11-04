@@ -12,7 +12,7 @@
   const profiles = {
     secretaria: {
       name: 'Secretaria da igreja', short: 'Secretaria',
-      views: [['gestao', 'Painel'], ['membresia', 'Membresia'], ['recepcao', 'Check-in e visitantes'], ['solicitacoes', 'Cadastros'], ['programacao', 'Agenda'], ['comunicados', 'Avisos'], ['palavra', 'Palavra do dia'], ['cuidado', 'Caderno de oração'], ['informacoes', 'Informações']],
+      views: [['gestao', 'Painel'], ['membresia', 'Membresia'], ['membros', 'Membros'], ['recepcao', 'Check-in e visitantes'], ['solicitacoes', 'Cadastros'], ['programacao', 'Agenda'], ['comunicados', 'Avisos'], ['palavra', 'Palavra do dia'], ['cuidado', 'Caderno de oração'], ['informacoes', 'Informações']],
       bar: [['gestao', 'Painel'], ['membresia', 'Membresia'], ['solicitacoes', 'Cadastros'], ['programacao', 'Agenda'], ['comunicados', 'Avisos']]
     },
     tesouraria: {
@@ -22,12 +22,13 @@
     },
     pastoral: {
       name: 'Liderança Pastoral', short: 'Liderança Pastoral',
-      views: [['gestao', 'Painel'], ['membresia', 'Membresia'], ['recepcao', 'Check-in e visitantes'], ['cuidado', 'Cuidado e oração'], ['aprovacoes', 'Aprovar despesas'], ['palavra', 'Palavra do dia'], ['comunicados', 'Avisos'], ['solicitacoes', 'Cadastros'], ['informacoes', 'Informações']],
+      views: [['gestao', 'Painel'], ['membresia', 'Membresia'], ['membros', 'Membros'], ['recepcao', 'Check-in e visitantes'], ['cuidado', 'Cuidado e oração'], ['aprovacoes', 'Aprovar despesas'], ['palavra', 'Palavra do dia'], ['comunicados', 'Avisos'], ['solicitacoes', 'Cadastros'], ['informacoes', 'Informações']],
       bar: [['gestao', 'Painel'], ['membresia', 'Membresia'], ['cuidado', 'Cuidado'], ['palavra', 'Palavra'], ['comunicados', 'Avisos']]
     }
   };
   const labels = {
     gestao: ['ADMINISTRAÇÃO', 'Painel', 'O que precisa da sua atenção hoje.'],
+    membros: ['MEMBROS', 'Membros da igreja', 'Busque, veja a ficha de cada pessoa e exporte a lista.'],
     membresia: ['MEMBRESIA', 'Integração de novos membros', 'Acompanhe o formulário, a reunião de integração e a apresentação no culto.'],
     confirmar: ['MEMBRESIA', 'Registrar apresentação', 'O registro documenta a apresentação já realizada no culto.'],
     solicitacoes: ['CADASTROS', 'Solicitações de atualização', 'Pedidos enviados pelos membros em Meu cadastro.'],
@@ -45,7 +46,7 @@
     fechamento: ['TESOURARIA', 'Fechamento do mês', 'Feche o mês conciliado e gere o arquivo para a contabilidade.'],
     cuidado: ['CUIDADO PASTORAL', 'Cuidado e oração', 'Acompanhe os pedidos do caderno de oração e cuide do mural.']
   };
-  const descriptions = { conferencia: 'Extrato e conciliação', lancamentos: 'Dízimos, ofertas e espécie', saidas: 'Contas a pagar', orcamento: 'Previsto e realizado', contribuintes: 'Histórico e declaração', relatorios: 'Demonstrativo e prestação de contas', aprovacoes: 'Despesas para aprovar', fechamento: 'Mês e contabilidade', recepcao: 'Presença e visitantes', gestao: 'O que precisa de atenção', membresia: 'Integração e apresentação', solicitacoes: 'Atualizações de cadastro', programacao: 'Calendário dos membros', comunicados: 'Avisos no sino do app', palavra: 'Versículo escolhido', cuidado: 'Pedidos de oração' };
+  const descriptions = { membros: 'Lista, ficha e exportação', conferencia: 'Extrato e conciliação', lancamentos: 'Dízimos, ofertas e espécie', saidas: 'Contas a pagar', orcamento: 'Previsto e realizado', contribuintes: 'Histórico e declaração', relatorios: 'Demonstrativo e prestação de contas', aprovacoes: 'Despesas para aprovar', fechamento: 'Mês e contabilidade', recepcao: 'Presença e visitantes', gestao: 'O que precisa de atenção', membresia: 'Integração e apresentação', solicitacoes: 'Atualizações de cadastro', programacao: 'Calendário dos membros', comunicados: 'Avisos no sino do app', palavra: 'Versículo escolhido', cuidado: 'Pedidos de oração' };
   const icons = NibIcons.paths;
 
   function create(api) {
@@ -564,6 +565,7 @@
         palavra: (verse[2] ? 'Hoje: escolhido pela igreja · ' : 'Hoje: lista automática · ') + verse[1],
         cuidado: isPas() ? 'Acompanhe os pedidos e cuide do mural.' : 'Veja os pedidos publicados pelos membros.',
         recepcao: 'QR Code da recepção, presença e visitantes do culto.',
+        membros: isSec() ? 'Lista completa, ficha de cada pessoa e exportação.' : 'Lista completa e ficha de cada pessoa.',
         aprovacoes: awaitingApproval().length ? `${awaitingApproval().length} despesa${awaitingApproval().length === 1 ? '' : 's'} esperando sua decisão.` : 'Nenhuma despesa aguardando.',
         informacoes: 'Veja a página Programação e avisos como os membros veem.'
       };
@@ -593,6 +595,7 @@
     function membership() {
       const open = data.people.filter(p => !p.steps.presented), done = data.people.filter(p => p.steps.presented);
       return `<div class="admin-intro"><p>As três etapas seguem uma ordem obrigatória: formulário, reunião de integração e apresentação no culto. Toque no botão para registrar a próxima. ${isPas() ? 'A Liderança Pastoral e a Secretaria podem registrar.' : 'A Secretaria e a Liderança Pastoral podem registrar.'}</p></div>
+      <div class="mem-link-row">${button('Ver todos os membros', 'membros')}</div>
       <div class="admin-people">${open.map(personCard).join('') || '<section class="box"><p>Ninguém em integração no momento.</p></section>'}</div>
       ${done.length ? `<h2 class="admin-subtitle">Apresentados</h2><div class="admin-people">${done.map(personCard).join('')}</div>` : ''}
       <p class="note">O reconhecimento como membro decorre da apresentação no culto. Não há aprovação pastoral obrigatória depois da Secretaria.</p>`;
@@ -667,10 +670,170 @@
       return `<dl class="admin-stats"><div><dt>Pedidos</dt><dd>${total}</dd></div><div><dt>Orando</dt><dd>${praying}</dd></div><div><dt>Atendidos</dt><dd>${answered}</dd></div></dl><div class="admin-intro"><p>${isPas() ? 'Marque “Acompanhar” para lembrar do cuidado pastoral. Isso só aparece para a gestão. Use “Ocultar do mural” para um pedido que não deve ficar público.' : 'Use “Ocultar do mural” para um pedido que não deve ficar público. O acompanhamento pastoral fica com a Liderança Pastoral.'} Os pedidos são publicados sem aprovação, com um filtro automático de palavras ofensivas.</p></div><div class="admin-people">${visible.map(card).join('')}</div>`;
     }
 
-    const pages = { conferencia: reconcilePage, lancamentos: entriesPage, saidas: expensesPage, aprovacoes: approvalsPage, orcamento: deskOnly('orcamento', budgetPage), contribuintes: deskOnly('contribuintes', giversPage), relatorios: deskOnly('relatorios', reportsPage), fechamento: deskOnly('fechamento', closingPage), recepcao: reception, gestao: () => isTes() ? treasuryPanel() : panel(), membresia: membership, confirmar: confirmPage, solicitacoes: requests, programacao: agendaAdmin, comunicados: noticesAdmin, palavra: verse, cuidado: care };
+    // ---------- Membros: lista completa, ficha e exportação ----------
+    // Cadastros fictícios gerados de forma fixa (os mesmos a cada abertura).
+    const CELLS = ['Célula Exemplo', 'Célula Esperança', 'Célula Vida Nova', 'Célula Ágape', 'Célula Betel'];
+    const BAIRROS = ['Setor 01', 'Setor 02', 'Jardim Exemplo', 'Áreas Especiais', 'Setor 05', 'Bairro Modelo'];
+    const MINS = ['Louvor', 'Infantil', 'Recepção', 'Mídia', 'Ação social', 'Intercessão', 'Jovens'];
+    const ROSTER = [
+      ['Jéssica Exemplo', 'f'], ['Ana Exemplo', 'f'], ['Paulo Exemplo', 'm'], ['Lúcia Exemplo', 'f'], ['Marcos Exemplo', 'm'], ['Carlos Exemplo', 'm'], ['Roberto Exemplo', 'm'], ['Sandra Exemplo', 'f'],
+      ['Bruno Exemplo', 'm'], ['Carla Exemplo', 'f'], ['Ana Paula Exemplo', 'f'], ['Antônio Exemplo', 'm'], ['Beatriz Exemplo', 'f'], ['Caio Exemplo', 'm'], ['Daniela Exemplo', 'f'], ['Davi Exemplo', 'm'],
+      ['Débora Exemplo', 'f'], ['Eduardo Exemplo', 'm'], ['Elaine Exemplo', 'f'], ['Felipe Exemplo', 'm'], ['Fernanda Exemplo', 'f'], ['Gabriel Exemplo', 'm'], ['Giovana Exemplo', 'f'], ['Gustavo Exemplo', 'm'],
+      ['Helena Exemplo', 'f'], ['Igor Exemplo', 'm'], ['Isabela Exemplo', 'f'], ['José Carlos Exemplo', 'm'], ['Juliana Exemplo', 'f'], ['Lucas Exemplo', 'm'], ['Larissa Exemplo', 'f'], ['Mateus Exemplo', 'm'],
+      ['Natália Exemplo', 'f'], ['Otávio Exemplo', 'm'], ['Priscila Exemplo', 'f'], ['Rafael Exemplo', 'm'], ['Rebeca Exemplo', 'f'], ['Samuel Exemplo', 'm'], ['Tatiane Exemplo', 'f'], ['Vinícius Exemplo', 'm'],
+      ['João Exemplo', 'm'], ['Maria Exemplo', 'f'], ['Pedro Exemplo', 'm'], ['Bianca Exemplo', 'f']
+    ];
+    const pad = (n, l = 2) => String(n).padStart(l, '0');
+    function buildMembers() {
+      const today = new Date(todayKey() + 'T12:00:00-04:00'), bd = {};
+      birthdays().forEach(b => { bd[b.name] = b.key; });
+      return ROSTER.map(([name, g], i) => {
+        const r = k => (i * 37 + k * 11 + 7) % 97;
+        const status = ['João Exemplo', 'Maria Exemplo', 'Pedro Exemplo'].includes(name) ? 'Em integração' : ['Rafael Exemplo', 'Bianca Exemplo', 'Igor Exemplo', 'Larissa Exemplo', 'Otávio Exemplo', 'Tatiane Exemplo'].includes(name) ? 'Frequentador' : 'Membro';
+        const year = 1958 + r(1) % 48, bkey = bd[name] ? year + bd[name].slice(4) : `${year}-${pad(1 + r(2) % 12)}-${pad(1 + r(3) % 28)}`;
+        const sinceY = 2008 + r(4) % 18;
+        const phone = `(69) 9${pad(8000 + r(5) * 13 % 2000, 4)}-${pad(1000 + i * 211 % 9000, 4)}`;
+        const first = name.split(' ')[0].normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+        return {
+          id: name === state.member.full ? 'M0201' : 'M' + pad(i + 1, 4), name, g, status,
+          birth: bkey, phone, whats: r(6) % 5 !== 0, email: name === state.member.full ? state.member.email : `${first}${i + 1}@example.com`,
+          street: `Rua Exemplo, ${100 + r(7) * 17 % 1900}`, bairro: BAIRROS[r(8) % BAIRROS.length], city: 'Ariquemes/RO', cep: `76870-${pad(r(9) * 9 % 1000, 3)}`,
+          civil: ['Solteiro(a)', 'Casado(a)', 'Casado(a)', 'Viúvo(a)', 'Divorciado(a)'][r(10) % 5],
+          cell: name === state.member.full ? CELLS[0] : r(11) % 4 === 0 ? '' : CELLS[r(12) % CELLS.length],
+          since: status === 'Membro' ? `${sinceY}-${pad(1 + r(13) % 12)}-${pad(1 + r(14) % 28)}` : '',
+          admission: status === 'Membro' ? ['Batismo', 'Batismo', 'Carta de transferência', 'Aclamação'][r(15) % 4] : '',
+          baptism: status === 'Membro' ? `${sinceY - (r(16) % 3)}-${pad(1 + r(17) % 12)}-${pad(1 + r(18) % 28)}` : '',
+          ministries: status === 'Membro' && r(19) % 3 ? [MINS[r(20) % MINS.length], ...(r(21) % 4 === 0 ? [MINS[(r(20) + 3) % MINS.length]] : [])] : [],
+          last: (() => { const d = new Date(today); d.setUTCDate(d.getUTCDate() - (name === 'Roberto Exemplo' ? 35 : (r(22) % 3) * 7 + (today.getUTCDay() || 7) % 7)); return api.NibDaily.dayKey(d); })(),
+          showBday: r(23) % 9 !== 0
+        };
+      }).sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'));
+    }
+    let membersCache = null;
+    const members = () => membersCache || (membersCache = buildMembers());
+    const fold2 = s => String(s).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+    const day2 = d => d ? d.slice(8, 10) + '/' + d.slice(5, 7) + '/' + d.slice(0, 4) : '';
+    const statusClass = s => s === 'Membro' ? 'status-active' : s === 'Frequentador' ? 'mem-tag-reg' : 'is-wait';
+    function memFiltered() {
+      const q = fold2(state.memQ || ''), digits = (state.memQ || '').replace(/\D/g, ''), st = state.memStatus || 'todos', cell = state.memCell || '', month = todayKey().slice(5, 7);
+      return members().filter(m => (st === 'todos' || m.status === st) && (!cell || (cell === '-' ? !m.cell : m.cell === cell)) && (!state.memBday || m.birth.slice(5, 7) === month)
+        && (!q || fold2(m.name).includes(q) || m.id.toLowerCase() === q || (digits.length >= 4 && m.phone.replace(/\D/g, '').includes(digits))));
+    }
+    const EXPORT_GROUPS = [
+      ['contato', 'Contato', 'telefone, WhatsApp e e-mail', m => [m.phone, m.whats ? 'sim' : 'não', m.email], ['telefone', 'whatsapp', 'email']],
+      ['endereco', 'Endereço', 'rua, bairro, cidade e CEP', m => [m.street, m.bairro, m.city, m.cep], ['endereco', 'bairro', 'cidade', 'cep']],
+      ['igreja', 'Vida na igreja', 'célula, membro desde, admissão, batismo e ministérios', m => [m.cell || 'sem célula', day2(m.since), m.admission, day2(m.baptism), m.ministries.join(', ')], ['celula', 'membro_desde', 'admissao', 'batismo', 'ministerios']],
+      ['pessoal', 'Dados pessoais', 'nascimento e estado civil', m => [day2(m.birth), m.civil], ['nascimento', 'estado_civil']]
+    ];
+    function memberCard(m) {
+      return `<li><button type="button" class="mem-row" data-mem-open="${m.id}"><span class="profile-avatar" aria-hidden="true">${escape(m.name.charAt(0))}</span><span class="mem-row-text"><strong>${escape(m.name)}</strong><small>${m.id} · ${escape(m.cell || 'Sem célula')}</small></span><span class="tag ${statusClass(m.status)}">${escape(m.status)}</span>${chevron}</button></li>`;
+    }
+    function memberDetail(m) {
+      const integ = data.people.find(p => p.name === m.name);
+      const wa = '55' + m.phone.replace(/\D/g, '');
+      const kv = rows => `<dl class="mem-kv">${rows.filter(r => r[1] !== null).map(([k, v]) => `<div><dt>${k}</dt><dd>${v === '' ? '<span class="mem-empty">Não informado</span>' : v}</dd></div>`).join('')}</dl>`;
+      const edit = state.memEdit === m.id && isSec();
+      const form = edit ? `<form id="mem-edit-form" class="box mem-edit" data-mem="${m.id}" autocomplete="off"><h3>Editar dados</h3><label>Telefone<input name="phone" value="${escape(m.phone)}" inputmode="tel" maxlength="20" required></label><label>E-mail<input name="email" type="email" value="${escape(m.email)}" maxlength="80"></label><label>Endereço<input name="street" value="${escape(m.street)}" maxlength="80"></label><label>Bairro<input name="bairro" value="${escape(m.bairro)}" maxlength="40"></label><label>Célula<select name="cell"><option value="">Sem célula</option>${CELLS.map(c => `<option${c === m.cell ? ' selected' : ''}>${escape(c)}</option>`).join('')}</select></label><label>Situação<select name="status">${['Membro', 'Frequentador', 'Em integração'].map(s => `<option${s === m.status ? ' selected' : ''}>${s}</option>`).join('')}</select></label><p class="note">Membresia por apresentação no culto: mude a situação só depois do registro em Membresia.</p><div class="form-actions"><button type="submit" class="action primary">Salvar</button><button type="button" class="action admin-secondary" data-mem-edit="">Cancelar</button></div></form>` : '';
+      return `<div class="gift-backrow"><button type="button" class="button-back gift-back" data-mem-open="">${api.backArrow}<span>Voltar à lista</span></button></div>
+      <section class="box mem-card"><div class="admin-person-head"><span class="profile-avatar" aria-hidden="true">${escape(m.name.charAt(0))}</span><div><h2>${escape(m.name)}</h2><small>Código ${m.id}</small></div><span class="tag ${statusClass(m.status)}">${escape(m.status)}</span></div>
+      <div class="mem-actions"><a class="mem-act" href="tel:${m.phone.replace(/\D/g, '')}">${svg('telefone')}<span>Ligar</span></a>${m.whats ? `<a class="mem-act" href="https://wa.me/${wa}" target="_blank" rel="noopener">${svg('whatsapp')}<span>WhatsApp</span></a>` : ''}${m.email ? `<a class="mem-act" href="mailto:${escape(m.email)}">${svg('email')}<span>E-mail</span></a>` : ''}</div>
+      ${isSec() && !edit ? `<button type="button" class="action admin-secondary mem-edit-btn" data-mem-edit="${m.id}">Editar dados</button>` : ''}</section>
+      ${form}
+      <section class="box"><h3 class="mem-h">Contato</h3>${kv([['Telefone', escape(m.phone) + (m.whats ? ' · WhatsApp' : '')], ['E-mail', escape(m.email)]])}</section>
+      <section class="box"><h3 class="mem-h">Endereço</h3>${kv([['Rua', escape(m.street)], ['Bairro', escape(m.bairro)], ['Cidade', escape(m.city)], ['CEP', escape(m.cep)]])}</section>
+      <section class="box"><h3 class="mem-h">Dados pessoais</h3>${kv([['Nascimento', day2(m.birth)], ['Tratamento', m.g === 'f' ? 'Feminino' : 'Masculino'], ['Estado civil', escape(m.civil)], ['Aniversário na tela inicial', m.showBday ? 'Aparece' : 'Não aparece (escolha da pessoa)']])}</section>
+      <section class="box"><h3 class="mem-h">Vida na igreja</h3>${kv([['Situação', escape(m.status)], ['Célula', escape(m.cell || 'Sem célula')], ['Membro desde', m.status === 'Membro' ? day2(m.since) : null], ['Forma de admissão', m.status === 'Membro' ? escape(m.admission) : null], ['Batismo', m.status === 'Membro' ? day2(m.baptism) : null], ['Ministérios', m.status === 'Membro' ? escape(m.ministries.join(', ')) : null], ['Última presença', day2(m.last)]])}
+      ${integ ? `<p class="note">Integração: ${stepNames.map(([k, l]) => `${l} ${integ.steps[k] ? 'feito em ' + escape(integ.steps[k].at) : 'pendente'}`).join(' · ')}. ${button('Ver em Membresia', 'membresia')}</p>` : ''}</section>
+      <p class="note">${isSec() ? 'Cada consulta e alteração fica registrada com quem fez e quando.' : 'A Liderança Pastoral vê a ficha. Alterações ficam com a Secretaria.'}</p>`;
+    }
+    function exportBox(list) {
+      const groups = state.memGroups || ['contato', 'igreja'];
+      const recent = (data.memExports || []).slice(-3).reverse();
+      if (!isSec()) return `<p class="note mem-note">Só a Secretaria exporta a lista. A Liderança Pastoral consulta pelo app.</p>`;
+      return `<details class="box mem-export"${state.memExportOpen ? ' open' : ''}><summary>${svg('relatorios')}<span><strong>Exportar lista</strong><small>${list.length} pessoa${list.length === 1 ? '' : 's'} do filtro atual · planilha ou PDF</small></span></summary>
+      <form id="mem-export-form" autocomplete="off"><fieldset><legend>O que vai no arquivo</legend><p class="note">Sempre vão código, nome e situação.</p>${EXPORT_GROUPS.map(([k, l, d]) => `<label class="mem-check"><input type="checkbox" name="g" value="${k}"${groups.includes(k) ? ' checked' : ''}><span><strong>${l}</strong><small>${d}</small></span></label>`).join('')}</fieldset>
+      <fieldset><legend>Formato</legend><div class="mem-formats"><label class="mem-format"><input type="radio" name="format" value="csv" checked><span><strong>Planilha</strong><small>CSV, abre no Excel</small></span></label><label class="mem-format"><input type="radio" name="format" value="pdf"><span><strong>PDF</strong><small>Imprimir ou salvar</small></span></label></div></fieldset>
+      <label class="mem-check mem-consent"><input type="checkbox" name="ok" required><span>Uso interno da igreja. Não vou compartilhar o arquivo fora da equipe.</span></label>
+      <button type="submit" class="action primary">Exportar ${list.length} pessoa${list.length === 1 ? '' : 's'}</button></form>
+      ${recent.length ? `<div class="mem-log"><h3>Últimas exportações</h3><ul>${recent.map(x => `<li>${escape(x.at)} · ${escape(x.by)} · ${x.n} pessoas · ${x.format === 'pdf' ? 'PDF' : 'planilha'}</li>`).join('')}</ul></div>` : ''}</details>`;
+    }
+    function membersPage() {
+      const all = members();
+      const sel = state.memSel && all.find(m => m.id === state.memSel);
+      if (sel) return memberDetail(sel);
+      const list = memFiltered(), st = state.memStatus || 'todos', shown = list.slice(0, state.memMore ? list.length : 25);
+      const count = s => s === 'todos' ? all.length : all.filter(m => m.status === s).length;
+      const chips = [['todos', 'Todos'], ['Membro', 'Membros'], ['Frequentador', 'Frequentadores'], ['Em integração', 'Em integração']].map(([k, l]) => `<button type="button" class="mem-chip${st === k ? ' is-active' : ''}" data-mem-status="${k}" aria-pressed="${st === k}">${l}<b>${count(k)}</b></button>`).join('');
+      const pr = state.memPrint ? `<section class="tes-print mem-print" aria-hidden="true"><div class="tes-decl-head"><img src="assets/logo.svg" alt="" width="90" height="38"><div><strong>Nova Igreja Batista</strong><small>Lista de membros · ${escape(state.memPrint.at)} · ${state.memPrint.rows.length} pessoas · uso interno</small></div></div><table class="tes-table is-compact"><thead><tr>${state.memPrint.head.map(h => `<th>${escape(h)}</th>`).join('')}</tr></thead><tbody>${state.memPrint.rows.map(r => `<tr>${r.map(c => `<td>${escape(c)}</td>`).join('')}</tr>`).join('')}</tbody></table></section>` : '';
+      return `<p class="admin-rule">Dados pessoais protegidos pela LGPD. ${isSec() ? 'A Secretaria consulta, atualiza e exporta.' : 'A Liderança Pastoral consulta. Alterações e exportação ficam com a Secretaria.'}</p>
+      <div class="mem-chips" role="group" aria-label="Situação">${chips}</div>
+      <div class="mem-filters"><label class="visually-hidden" for="mem-q">Buscar por nome, código ou telefone</label><input id="mem-q" type="search" value="${escape(state.memQ || '')}" placeholder="Buscar nome, código ou telefone" autocomplete="off" enterkeyhint="search">
+      <div class="mem-filter-row"><label class="visually-hidden" for="mem-cell">Célula</label><select id="mem-cell"><option value="">Todas as células</option>${CELLS.map(c => `<option${state.memCell === c ? ' selected' : ''}>${escape(c)}</option>`).join('')}<option value="-"${state.memCell === '-' ? ' selected' : ''}>Sem célula</option></select><button type="button" class="mem-chip${state.memBday ? ' is-active' : ''}" data-mem-bday="1" aria-pressed="${!!state.memBday}">Aniversário no mês</button></div></div>
+      ${exportBox(list)}
+      <div class="mem-count" aria-live="polite">${list.length} pessoa${list.length === 1 ? '' : 's'}${state.memQ || state.memCell || state.memBday || st !== 'todos' ? ` · <button type="button" class="mem-clear" data-mem-clear="1">Limpar filtros</button>` : ''}</div>
+      <ul class="mem-list">${shown.map(memberCard).join('') || '<li class="box tes-empty">Ninguém encontrado com esses filtros.</li>'}</ul>
+      ${list.length > shown.length ? `<button type="button" class="action admin-secondary mem-more" data-mem-more="1">Mostrar todas as ${list.length}</button>` : ''}
+      <p class="note">Lista de teste com ${all.length} pessoas fictícias. Na versão real aparecem todos os cadastros da igreja.</p>${pr}`;
+    }
+    function memExport(values) {
+      const groups = values.getAll('g'), format = String(values.get('format')), list = memFiltered();
+      const sel = EXPORT_GROUPS.filter(([k]) => groups.includes(k));
+      const head = ['codigo', 'nome', 'situacao', ...sel.flatMap(g => g[4])];
+      const rows = list.map(m => [m.id, m.name, m.status, ...sel.flatMap(g => g[3](m))]);
+      state.memGroups = groups; data.memExports = data.memExports || [];
+      data.memExports.push({ at: now(), by: actor(), n: rows.length, format, groups });
+      if (format === 'pdf') {
+        const LBL = { codigo: 'Código', nome: 'Nome', situacao: 'Situação', telefone: 'Telefone', whatsapp: 'WhatsApp', email: 'E-mail', endereco: 'Endereço', bairro: 'Bairro', cidade: 'Cidade', cep: 'CEP', celula: 'Célula', membro_desde: 'Membro desde', admissao: 'Admissão', batismo: 'Batismo', ministerios: 'Ministérios', nascimento: 'Nascimento', estado_civil: 'Estado civil' };
+        state.memPrint = { at: now(), head: head.map(h => LBL[h] || h), rows }; api.show('membros', false, false);
+        setTimeout(() => { if (typeof print === 'function') print(); }, 60);
+        api.announce(`PDF com ${rows.length} pessoas pronto. Escolha “Salvar como PDF” na impressão.`, 'success', false); return;
+      }
+      const q = v => /[;"\n]/.test(String(v)) ? '"' + String(v).replace(/"/g, '""') + '"' : String(v);
+      const csv = '﻿' + [head, ...rows].map(r => r.map(q).join(';')).join('\r\n');
+      try {
+        const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' })), a = document.createElement('a');
+        a.href = url; a.download = `nib-membros-${todayKey()}.csv`; document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 4000);
+      } catch (e) { /* navegador sem download: o registro continua */ }
+      state.memExportOpen = true; api.show('membros', false, false);
+      api.announce(`Planilha com ${rows.length} pessoas baixada. A exportação ficou registrada.`, 'success', false);
+    }
+    function memClick(d) {
+      if (d.memOpen !== undefined) { state.memSel = d.memOpen || null; state.memEdit = null; api.show('membros', false, false); window.scrollTo({ top: 0, behavior: 'instant' }); return true; }
+      if (d.memStatus) { state.memStatus = d.memStatus; state.memMore = false; api.show('membros', false, false); const b = document.querySelector(`[data-mem-status="${d.memStatus}"]`); if (b) b.focus({ preventScroll: true }); return true; }
+      if (d.memBday) { state.memBday = !state.memBday; api.show('membros', false, false); const b = document.querySelector('[data-mem-bday]'); if (b) b.focus({ preventScroll: true }); return true; }
+      if (d.memClear) { state.memQ = ''; state.memCell = ''; state.memBday = false; state.memStatus = 'todos'; api.show('membros', false, false); return true; }
+      if (d.memMore) { state.memMore = true; api.show('membros', false, false); return true; }
+      if (d.memEdit !== undefined) { state.memEdit = isSec() ? d.memEdit || null : null; api.show('membros', false, false); const f = document.querySelector('#mem-edit-form input'); if (f) f.focus(); return true; }
+      return false;
+    }
+    function memSubmit(form, values) {
+      if (form.id === 'mem-export-form') { if (!isSec()) return true; memExport(values); return true; }
+      if (form.id === 'mem-edit-form') {
+        const m = members().find(x => x.id === form.dataset.mem); if (!m || !isSec()) return true;
+        const get = k => String(values.get(k) || '').trim();
+        if (get('phone').replace(/\D/g, '').length < 10) { api.announce('Informe um telefone com DDD.', 'warning'); return true; }
+        Object.assign(m, { phone: get('phone').slice(0, 20), email: get('email').slice(0, 80), street: get('street').slice(0, 80), bairro: get('bairro').slice(0, 40), cell: get('cell'), status: get('status') });
+        if (m.status === 'Membro' && !m.since) { m.since = todayKey(); m.admission = 'Aclamação'; }
+        state.memEdit = null; api.show('membros', false, false); api.announce('Dados de ' + m.name + ' atualizados (teste).', 'success', false); return true;
+      }
+      return false;
+    }
+    function memInput(el) {
+      if (el.id !== 'mem-q' && el.id !== 'mem-cell') return false;
+      if (el.id === 'mem-q') state.memQ = el.value.slice(0, 60); else state.memCell = el.value;
+      state.memMore = false;
+      const pos = el.selectionStart;
+      api.show('membros', false, false);
+      const again = document.getElementById(el.id);
+      if (again) { again.focus({ preventScroll: true }); if (el.id === 'mem-q' && pos != null) try { again.setSelectionRange(pos, pos); } catch (e) {} }
+      return true;
+    }
+
+    const pages = { membros: membersPage, conferencia: reconcilePage, lancamentos: entriesPage, saidas: expensesPage, aprovacoes: approvalsPage, orcamento: deskOnly('orcamento', budgetPage), contribuintes: deskOnly('contribuintes', giversPage), relatorios: deskOnly('relatorios', reportsPage), fechamento: deskOnly('fechamento', closingPage), recepcao: reception, gestao: () => isTes() ? treasuryPanel() : panel(), membresia: membership, confirmar: confirmPage, solicitacoes: requests, programacao: agendaAdmin, comunicados: noticesAdmin, palavra: verse, cuidado: care };
 
     function click(action) {
       const d = action.dataset;
+      if (memClick(d)) return true;
       if (d.adminVisit) { openVisitor(); return true; }
       if (d.adminVisitClose) { const dlg = document.getElementById('visit-dialog'); if (dlg) dlg.close(); if (state.view === 'recepcao' || state.view === 'gestao') api.show(state.view, false, false); return true; }
       if (d.adminContact) { if (!isSec()) return true; const v = data.visitors.find(x => x.id === d.adminContact); if (v) v.contacted = !v.contacted; api.show('recepcao', false, false); return true; }
@@ -703,6 +866,7 @@
       return false;
     }
     function submit(form, values) {
+      if (memSubmit(form, values)) return true;
       if (form.id === 'visit-form') {
         const name = String(values.get('name') || '').trim(), phone = String(values.get('phone') || '').trim();
         if (!name || phone.replace(/\D/g, '').length < 10) { const f = form.querySelector('#vf-phone'); f.setAttribute('aria-invalid', 'true'); f.focus(); return true; }
@@ -800,7 +964,7 @@
     function addRequest(r) { data.requests.push({ id: 'r' + (++data.seq), name: r.name, email: r.email, note: r.note, at: now(), status: 'pendente' }); }
     const badge = () => isTes() ? pendingEntries().length + bankOpen().length : isSec() ? pendingRequests().length : pendingPeople().length + awaitingApproval().length;
 
-    return { birthdays, addCheckin, checkins: () => data.checkins, infoProgram, profiles, labels, descriptions, icons, views, allowed, pageLabels, pages, click, submit, addRequest, addAppPix, myRequests, memberNotices, latestNotice, noticesCount: () => data.notices.length, badge, bar: () => (profiles[state.context] || profiles.secretaria).bar };
+    return { birthdays, addCheckin, checkins: () => data.checkins, infoProgram, profiles, labels, descriptions, icons, views, allowed, pageLabels, pages, click, submit, input: memInput, addRequest, addAppPix, myRequests, memberNotices, latestNotice, noticesCount: () => data.notices.length, badge, bar: () => (profiles[state.context] || profiles.secretaria).bar };
   }
   scope.NibAdmin = { create };
 })(window);

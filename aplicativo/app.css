@@ -1908,3 +1908,81 @@ html{scrollbar-gutter:stable}
 #nib-proposta .admin-log>summary{display:flex;align-items:center;min-height:40px}
 #nib-proposta .attention-btn{min-height:40px}
 #nib-proposta .calendar-now small{align-items:flex-start}#nib-proposta .calendar-now small>.calendar-dot{margin-top:5px;flex:0 0 auto}
+/* Membros: lista, ficha e exportação (celular primeiro) */
+#nib-proposta .mem-link-row{margin:0 0 16px}
+#nib-proposta .mem-chips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin:0 -18px 12px;padding:2px 18px}
+#nib-proposta .mem-chips::-webkit-scrollbar{display:none}
+#nib-proposta main button.mem-chip{flex:0 0 auto;display:inline-flex;align-items:center;gap:8px;min-height:40px;margin:0;padding:8px 14px;border:1px solid #c9d2de;border-radius:999px;background:#fff;color:#041e42;font:600 13.5px/1.2 var(--nib-font);box-shadow:none;white-space:nowrap}
+#nib-proposta main button.mem-chip b{font-size:12px;font-weight:700;color:#536176}
+#nib-proposta main button.mem-chip.is-active{background:#041e42;border-color:#041e42;color:#fff}
+#nib-proposta main button.mem-chip.is-active b{color:#c9d6ea}
+#nib-proposta .mem-filters{display:grid;gap:10px;margin-bottom:14px}
+#nib-proposta .mem-filter-row{display:flex;gap:8px;align-items:center}
+#nib-proposta .mem-filter-row select{flex:1;min-width:0}
+#nib-proposta .mem-count{display:flex;align-items:center;gap:8px;margin:16px 2px 8px;font-size:13px;font-weight:600;color:#41506a}
+#nib-proposta main button.mem-clear{min-height:32px;margin:0;padding:4px 6px;border:0;background:none;color:#1f4fc2;font:600 13px var(--nib-font);text-decoration:underline;box-shadow:none}
+#nib-proposta .mem-list{list-style:none;margin:0;padding:0;background:#fff;border:1px solid #dce3eb;border-radius:16px;overflow:hidden}
+#nib-proposta .mem-list>li+li{border-top:1px solid #eef1f5}
+#nib-proposta main button.mem-row{display:flex;align-items:center;gap:12px;width:100%;min-height:64px;margin:0;padding:10px 14px;border:0;border-radius:0;background:none;color:#041e42;text-align:left;font:inherit;box-shadow:none}
+#nib-proposta .mem-row .profile-avatar{width:38px;height:38px;flex:0 0 38px;font-size:15px}
+#nib-proposta .mem-row-text{flex:1;min-width:0}
+#nib-proposta .mem-row-text strong{display:block;font-size:15px;line-height:1.3;overflow-wrap:anywhere}
+#nib-proposta .mem-row-text small{display:block;margin-top:2px;font-size:12.5px;color:#65728a}
+#nib-proposta .mem-row .tag,#nib-proposta .mem-card .tag{flex:0 0 auto;font-size:10.5px;font-weight:700;padding:4px 9px;border-radius:999px;background:#eef1f5;color:#41506a;white-space:nowrap}
+#nib-proposta .mem-row .tag.status-active,#nib-proposta .mem-card .tag.status-active{background:#e9f3ed;color:#24674e}
+#nib-proposta .mem-row .tag.mem-tag-reg,#nib-proposta .mem-card .tag.mem-tag-reg{background:#eaf0fb;color:#1f4fc2}
+#nib-proposta .mem-row .tag.is-wait,#nib-proposta .mem-card .tag.is-wait{background:#fff6e5;color:#8a5a00}
+#nib-proposta .mem-row .admin-chevron{flex:0 0 auto;width:18px;height:18px;color:#8a97ab}
+@media(hover:hover){#nib-proposta main button.mem-row:hover{background:#f6f8fb}}
+#nib-proposta main .mem-more{width:100%;margin-top:12px}
+#nib-proposta .mem-note{margin:0 0 4px}
+/* Exportar */
+#nib-proposta .box.mem-export{padding:0;margin:0}
+#nib-proposta .mem-export>summary{display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;list-style:none;color:#041e42}
+#nib-proposta .mem-export>summary::-webkit-details-marker{display:none}
+#nib-proposta .mem-export>summary svg{width:22px;height:22px;flex:0 0 22px;color:#1f4fc2}
+#nib-proposta .mem-export>summary strong{display:block;font-size:15px}
+#nib-proposta .mem-export>summary small{display:block;font-size:12.5px;color:#65728a;margin-top:2px}
+#nib-proposta .mem-export[open]>summary{border-bottom:1px solid #eef1f5}
+#nib-proposta .mem-export form{display:grid;gap:16px;padding:16px}
+#nib-proposta .mem-export fieldset{border:0;margin:0;padding:0;display:grid;gap:8px;min-width:0}
+#nib-proposta .mem-export legend{padding:0;margin-bottom:6px;font-size:13px;font-weight:700;color:#31445f}
+#nib-proposta .mem-export fieldset>.note{margin:-4px 0 2px}
+#nib-proposta .mem-check,#nib-proposta .mem-format{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border:1px solid #dce3eb;border-radius:12px;background:#fff;cursor:pointer}
+#nib-proposta .mem-check input,#nib-proposta .mem-format input{width:20px;height:20px;min-height:0;flex:0 0 20px;margin:1px 0 0;accent-color:#041e42}
+#nib-proposta .mem-check strong,#nib-proposta .mem-format strong{display:block;font-size:14px;color:#041e42}
+#nib-proposta .mem-check small,#nib-proposta .mem-format small{display:block;font-size:12px;color:#65728a;margin-top:1px}
+#nib-proposta .mem-check:has(input:checked),#nib-proposta .mem-format:has(input:checked){border-color:#041e42;background:#f6f8fb}
+#nib-proposta .mem-formats{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+#nib-proposta .mem-consent{font-size:13px;color:#31445f;border-style:dashed}
+#nib-proposta .mem-consent:has(input:checked){border-style:solid}
+#nib-proposta .mem-export form .action{width:100%;margin:0}
+#nib-proposta .mem-log{padding:0 16px 16px}
+#nib-proposta .mem-log h3{font-size:13px;margin:0 0 6px;color:#31445f}
+#nib-proposta .mem-log ul{list-style:none;margin:0;padding:0;font-size:12.5px;color:#536176;display:grid;gap:4px}
+/* Ficha */
+#nib-proposta .mem-card{margin-bottom:12px}
+#nib-proposta .mem-card .admin-person-head h2{margin:0;font-size:20px;line-height:1.25}
+#nib-proposta .mem-card .admin-person-head small{display:block;font-size:12.5px;color:#65728a;margin-top:2px}
+#nib-proposta .mem-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:16px}
+#nib-proposta a.mem-act{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 6px;border:1px solid #dce3eb;border-radius:12px;background:#f6f8fb;color:#041e42;font-size:12.5px;font-weight:600;text-decoration:none}
+#nib-proposta a.mem-act svg{width:22px;height:22px}
+#nib-proposta main .mem-edit-btn{width:100%;margin:12px 0 0}
+#nib-proposta .mem-h{margin:0 0 6px;font-size:15px;color:#041e42}
+#nib-proposta #content[data-view=membros] section.box+section.box{margin-top:12px}
+#nib-proposta .mem-kv{margin:0;display:grid}
+#nib-proposta .mem-kv>div{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:10px 0;border-top:1px solid #eef1f5}
+#nib-proposta .mem-kv>div:first-child{border-top:0}
+#nib-proposta .mem-kv dt{font-size:13px;color:#65728a;flex:0 0 auto}
+#nib-proposta .mem-kv dd{margin:0;font-size:14px;color:#041e42;text-align:right;overflow-wrap:anywhere;min-width:0}
+#nib-proposta .mem-empty{color:#8a97ab}
+#nib-proposta .mem-edit{display:grid;gap:12px;margin-bottom:12px}
+#nib-proposta .mem-edit h3{margin:0;font-size:16px}
+#nib-proposta .mem-edit label{display:grid;gap:6px;font-size:13px;font-weight:600;color:#31445f}
+#nib-proposta .mem-print{display:none}
+@media print{#nib-proposta .mem-print{display:block}#nib-proposta .mem-print table{font-size:10px}}
+@media(min-width:821px){
+  #nib-proposta .mem-chips{margin:0 0 12px;padding:2px 0;flex-wrap:wrap}
+  #nib-proposta .mem-filters{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+  #nib-proposta #content[data-view=membros] .mem-card~.box,#nib-proposta #content[data-view=membros] .mem-card{max-width:760px}
+}
