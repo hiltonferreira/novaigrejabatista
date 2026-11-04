@@ -1532,7 +1532,7 @@ html{scrollbar-gutter:stable}
  #nib-proposta .home-events{max-width:none}
  #nib-proposta .home-events .event{display:grid;grid-template-columns:118px minmax(0,1fr);align-items:stretch}
  #nib-proposta .home-events .event-cover{border-bottom:0;border-right:1px solid #dce3eb;height:100%}
- #nib-proposta .home-events .event-cover img{height:100%;object-fit:cover;object-position:30% 50%}
+ #nib-proposta .home-events .event-cover img{height:100%;object-fit:cover;object-position:0 50%}
  #nib-proposta .home-events .event-content{padding:12px 14px;gap:6px}
  #nib-proposta .home-events h3{font-size:16px}
  #nib-proposta main .home-events .event .button{min-height:38px;font-size:12.5px}
@@ -1899,3 +1899,12 @@ html{scrollbar-gutter:stable}
   #nib-proposta .layout>main{max-width:1440px;padding-left:48px;padding-right:48px}
   #nib-proposta .home-desk{grid-template-columns:minmax(0,1fr) 380px;gap:32px}
 }
+
+/* Pente fino celular (2026-11-04): textos inteiros, sem reticências */
+#nib-proposta .calendar-now small>span{overflow:visible;text-overflow:clip;white-space:normal}
+#nib-proposta .gift-payer small,#nib-proposta .admin-task-text small,#nib-proposta .bday-text strong{overflow:visible;text-overflow:clip;white-space:normal;overflow-wrap:anywhere}
+#nib-proposta .dash-tile-label{white-space:normal;overflow:visible;text-overflow:clip}
+#nib-proposta .tes-wait-list li>.tag{flex:0 0 auto;min-width:0}
+#nib-proposta .admin-log>summary{display:flex;align-items:center;min-height:40px}
+#nib-proposta .attention-btn{min-height:40px}
+#nib-proposta .calendar-now small{align-items:flex-start}#nib-proposta .calendar-now small>.calendar-dot{margin-top:5px;flex:0 0 auto}
