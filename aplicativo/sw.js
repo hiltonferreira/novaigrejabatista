@@ -2,7 +2,7 @@
    Guarda os arquivos do app no celular para abrir rápido e funcionar com internet fraca.
    Ao mudar qualquer arquivo do app, aumente VERSION: o celular baixa a versão nova
    e mostra "Nova versão do app disponível". Dados de fora (obra.json, site) não ficam guardados. */
-const VERSION = 'nib-app-a2259e4b3c';
+const VERSION = 'nib-app-7e194d01e9';
 const FILES = [
   './', 'index.html', 'conheca.html', 'manifest.webmanifest',
   'app.css', 'install.css', 'conheca.css', 'app.js', 'admin.js', 'icons.js', 'install.js', 'site-data.js', 'conta.js', 'moderation.js', 'daily-content.js', 'verses.js', 'pix.js',
@@ -38,17 +38,14 @@ self.addEventListener('fetch', e => {
   if (url.pathname.includes('/api/')) return; // dados do servidor nunca ficam guardados
 
   if (req.mode === 'navigate') {
-    // Página: tenta a internet (até 4 s) e, sem conexão, abre a cópia guardada.
+    // Página: usa a cópia guardada junto com os demais arquivos desta versão, para a página e o
+    // app.js/app.css serem sempre da mesma versão (página nova com arquivos antigos quebrava a tela).
+    // A versão nova chega pelo aviso "Nova versão do app disponível". Sem cópia guardada, vem da internet.
     const page = url.pathname.endsWith('conheca.html') ? 'conheca.html' : 'index.html';
     e.respondWith((async () => {
       const cached = await caches.match(page, { ignoreSearch: true });
-      try {
-        const net = fetch(req);
-        const res = cached ? await Promise.race([net, new Promise((_, no) => setTimeout(no, 4000))]) : await net;
-        return res;
-      } catch (_) {
-        return cached || Response.error();
-      }
+      if (cached) return cached;
+      try { return await fetch(req); } catch (_) { return Response.error(); }
     })());
     return;
   }

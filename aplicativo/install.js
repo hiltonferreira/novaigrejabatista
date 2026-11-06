@@ -80,6 +80,9 @@
   // Service worker: guarda o app no celular e avisa sobre versão nova.
   function showUpdate(worker) {
     window.__nibWaiting = worker;
+    // Na abertura ou na tela de entrar não há nada para perder: atualiza sozinho.
+    const preso = ['app-splash', 'app-auth', 'app-onboarding'].some(id => { const el = document.getElementById(id); return el && !el.hidden; });
+    if (preso && !window.__nibUpdating) { window.__nibUpdating = true; worker.postMessage('skip'); return; }
     if (document.getElementById('sw-update')) return;
     const bar = document.createElement('div');
     bar.id = 'sw-update'; bar.className = 'sw-update'; bar.setAttribute('role', 'status');
