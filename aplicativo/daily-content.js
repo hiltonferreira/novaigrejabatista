@@ -30,7 +30,7 @@
       if(weekday===0){items.push({day,time:'09:30',name:'EBS · Escola Bíblica de Sabedoria',type:'Programação semanal'});items.push({day,time:'19:00',name:'Noite de Glória',type:'Culto'});}
       if(weekday===4) items.push({day,time:'19:30',name:'Culto da Fé',type:'Culto'});
     }
-    for(const day of ['2026-11-21','2026-11-22']) if(day>=key) items.push({day,time:'',name:'NXT CAMP',type:'Evento',view:'eventos'});
+    for(const [day,place] of [['2026-11-21','Início do acampamento'],['2026-11-22','Encerramento do acampamento']]) if(day>=key) items.push({day,time:'14:00',name:'NXT CAMP',type:'Evento',place,view:'eventos'});
     const last = dayKey(new Date(base.getTime()+(days-1)*864e5));
     // Itens de vários dias aparecem em cada dia do período.
     for(const x of extras){

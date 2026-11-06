@@ -3,6 +3,7 @@
   const root = document.getElementById('nib-proposta');
   const content = document.getElementById('content');
   const feedback = document.getElementById('feedback');
+  const srStatus = document.getElementById('sr-status') || feedback;
   // Estado fictício em memória: nunca importar participantes ou dados reais aqui.
   // Versão pública (endereço oficial): só informações reais da igreja, sem login e sem dados de exemplo.
   // Onde vale cada versão: no endereço oficial abre a pública (a demonstração fica em /app/?demo);
@@ -70,12 +71,13 @@
   const siteUrl = u => !u ? 'https://novaigrejabatista.com.br/' : /^https:\/\//.test(u) ? u : 'https://novaigrejabatista.com.br' + u;
   function eventDate(e) {
     const fmt = (v, o) => new Intl.DateTimeFormat('pt-BR', { timeZone: 'America/Porto_Velho', ...o }).format(new Date(v.slice(0, 10) + 'T12:00:00-04:00'));
+    const hr = v => !e.tbd && v && v.length > 10 && v.slice(11, 16) !== '00:00' ? ', ' + v.slice(11, 16).replace(':', 'h').replace('h00', 'h') : '';
     let t = fmt(e.start, { day: '2-digit', month: 'long' });
-    if (e.end && e.end.slice(0, 10) !== e.start.slice(0, 10)) t += ' a ' + fmt(e.end, { day: '2-digit', month: 'long' });
-    if (!e.tbd && e.start.length > 10 && (!e.end || e.end.slice(0, 10) === e.start.slice(0, 10))) t += ', ' + e.start.slice(11, 16).replace(':', 'h').replace('h00', 'h');
+    if (e.end && e.end.slice(0, 10) !== e.start.slice(0, 10)) { const a = hr(e.start), b = hr(e.end); t += a || b ? a + ' a ' + fmt(e.end, { day: '2-digit', month: 'long' }) + b : ' a ' + fmt(e.end, { day: '2-digit', month: 'long' }); }
+    else t += hr(e.start);
     return t;
   }
-  const knownEvents = () => events.filter(e => e.active).map(e => ({ name: e.name, category: 'Acampamento', summary: 'Dois dias de palavra, worship, gincanas e comunhão para adolescentes de 12 a 17 anos.', start: '2026-11-21', end: '2026-11-22', tbd: true, location: '', price: 'R$ 80,00', cta: 'Ver inscrição', open: true, url: '/next/camp-sbgp1-nov26/inscricao.html', image: e.image }));
+  const knownEvents = () => events.filter(e => e.active).map(e => ({ name: e.name, category: 'Acampamento', summary: 'Dois dias de palavra, worship, gincanas e comunhão para adolescentes de 12 a 17 anos.', start: '2026-11-21T14:00', end: '2026-11-22T14:00', tbd: false, location: '', price: 'R$ 80,00', cta: 'Ver inscrição', open: true, url: '/next/camp-sbgp1-nov26/inscricao.html', image: e.image }));
   function eventCards(compact = false) {
     if (!PUBLIC) return demoEventCards(compact);
     const loaded = window.NibSite && NibSite.eventos();
@@ -553,9 +555,9 @@
       announce('Compartilhamento indisponível neste navegador.', 'info', false); return;
     }
     if (action.id === 'mobile-back') { event.preventDefault(); show(viewHistory.pop() || (isManagement() ? 'gestao' : 'inicio'), true, false); return; }
-    if (action.dataset.month) { state.calendarMonth=NibDaily.moveMonth(state.calendarMonth,Number(action.dataset.month)); state.calendarDay=state.calendarMonth+'-01'; show('agenda',false,false); content.querySelector('[data-month="'+action.dataset.month+'"]').focus({preventScroll:true}); feedback.textContent=content.querySelector('.calendar-toolbar h2').textContent; return; }
-    if (action.dataset.day) { state.calendarDay=action.dataset.day; show('agenda',false,false); content.querySelector('[data-day="'+state.calendarDay+'"]').focus({preventScroll:true}); feedback.textContent=calendarAnnouncement(); return; }
-    if (action.id==='calendar-today') { state.calendarDay=NibDaily.dayKey(new Date()); state.calendarMonth=state.calendarDay.slice(0,7); show('agenda',false,false); content.querySelector('#calendar-today').focus({preventScroll:true}); feedback.textContent=calendarAnnouncement(); return; }
+    if (action.dataset.month) { state.calendarMonth=NibDaily.moveMonth(state.calendarMonth,Number(action.dataset.month)); state.calendarDay=state.calendarMonth+'-01'; show('agenda',false,false); content.querySelector('[data-month="'+action.dataset.month+'"]').focus({preventScroll:true}); srStatus.textContent=content.querySelector('.calendar-toolbar h2').textContent; return; }
+    if (action.dataset.day) { state.calendarDay=action.dataset.day; show('agenda',false,false); content.querySelector('[data-day="'+state.calendarDay+'"]').focus({preventScroll:true}); srStatus.textContent=calendarAnnouncement(); return; }
+    if (action.id==='calendar-today') { state.calendarDay=NibDaily.dayKey(new Date()); state.calendarMonth=state.calendarDay.slice(0,7); show('agenda',false,false); content.querySelector('#calendar-today').focus({preventScroll:true}); srStatus.textContent=calendarAnnouncement(); return; }
     if (action.id==='verse-clear') { NibDaily.setCurated(NibDaily.dayKey(new Date())); show(isManagement() ? 'palavra' : 'inicio',false,false); announce('Hoje volta a usar a lista automática.','success',false); return; }
     if (action.dataset.prayerSupport) {
       const p=state.prayers.find(x=>x.id===action.dataset.prayerSupport); if(!p||isManagement()) return;
