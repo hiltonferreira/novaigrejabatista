@@ -397,8 +397,9 @@
         ['caderno', 'Caderno de oração', 'Compartilhe seus pedidos e ore com a comunidade.']
       ].map(([view, title, text]) => `<button type="button" class="quick-action admin-quick" data-view="${view}"><span class="home-action-icon" aria-hidden="true">${navIcon(view)}</span>${view === 'informacoes' && unreadNotices() ? `<span class="admin-badge notice-badge" aria-label="${unreadNotices()} ${unreadNotices() === 1 ? 'aviso novo' : 'avisos novos'}">${unreadNotices()}</span>` : ''}<strong>${title}</strong><span class="home-action-description">${text}</span></button>`).join('')}</div></section>`;
         const events = `<section class="home-events-block" aria-labelledby="home-events-title"><div class="section-heading"><div><span class="label">PARTICIPE COM A GENTE</span><h2 id="home-events-title">Próximo evento</h2></div>${button('Ver todos', 'eventos')}</div>${eventCards(true)}</section>`;
-        if (isDesk()) return `<div class="home-desk"><div class="home-col">${dailyBlocks(false,'verse')}${quick}${socialBanners()}${communityBlock()}</div><div class="home-rail">${checkinCard()}${homeNotice()}${dailyBlocks(false,'agenda')}${birthdayBlock()}${events}</div></div>`;
-        return `${dailyBlocks(false,'verse')}${checkinCard()}${quick}${socialBanners()}${homeNotice()}${dailyBlocks(false,'agenda')}${birthdayBlock()}${events}${communityBlock()}`;
+        const install = window.NibInstall ? NibInstall.card() : '';
+        if (isDesk()) return `<div class="home-desk"><div class="home-col">${dailyBlocks(false,'verse')}${quick}${socialBanners()}${communityBlock()}</div><div class="home-rail">${checkinCard()}${install}${homeNotice()}${dailyBlocks(false,'agenda')}${birthdayBlock()}${events}</div></div>`;
+        return `${dailyBlocks(false,'verse')}${checkinCard()}${install}${quick}${socialBanners()}${homeNotice()}${dailyBlocks(false,'agenda')}${birthdayBlock()}${events}${communityBlock()}`;
       },
       agenda: () => calendarPage(),
       caderno: () => notebookPage(),
@@ -510,6 +511,7 @@
   }
   root.addEventListener('input', e => { if (isManagement() && admin.input && e.target.id === 'mem-q') admin.input(e.target); });
   root.addEventListener('change', e => { if (isManagement() && admin.input && e.target.id === 'mem-cell') { admin.input(e.target); return; } if (e.target.id === 'bday-visible') { state.hideBirthday = !e.target.checked; announce(e.target.checked ? 'Seu aniversário aparece para a igreja (teste).' : 'Seu aniversário não aparece mais para a igreja (teste).', 'success', false); } });
+  document.addEventListener('nib-install-change', () => { if (state.view === 'inicio' && !isManagement()) show('inicio', false, false); });
   document.getElementById('demo-context').addEventListener('change', changeContext);
   document.getElementById('demo-context-mobile').addEventListener('change', changeContext);
   document.getElementById('sidebar-toggle').addEventListener('click', event => {
