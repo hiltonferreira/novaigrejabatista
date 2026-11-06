@@ -771,7 +771,7 @@
     document.getElementById('demo-context').value = state.context;
     document.getElementById('demo-context-mobile').value = state.context;
   }
-  root.addEventListener('change', e => { if (PUBLIC && e.target.matches('[data-push-caderno]')) pushCaderno(e.target); });
+  root.addEventListener('change', e => { if (PUBLIC && e.target.matches('[data-push-caderno]')) pushCaderno(e.target); if (PUBLIC && e.target.matches('[data-push-lembretes]')) pushLembretes(e.target); });
   root.addEventListener('input', e => { if (e.target.id !== 'acc-cpf') return; const d = e.target.value.replace(/\D/g, '').slice(0, 11); e.target.value = d.replace(/^(\d{3})(\d)/, '$1.$2').replace(/^(\d{3})\.(\d{3})(\d)/, '$1.$2.$3').replace(/\.(\d{3})(\d{1,2})$/, '.$1-$2'); });
   root.addEventListener('input', e => { if (isManagement() && admin.input && e.target.id === 'mem-q') admin.input(e.target); if (e.target.id === 'team-q') teamFilterList(e.target.value); });
   root.addEventListener('change', e => { if (isManagement() && admin.input && e.target.id === 'mem-cell') { admin.input(e.target); return; } if (e.target.id === 'bday-visible') { state.hideBirthday = !e.target.checked; announce(e.target.checked ? 'Seu aniversário aparece para a igreja (teste).' : 'Seu aniversário não aparece mais para a igreja (teste).', 'success', false); } });
@@ -1161,7 +1161,7 @@
   const b64uBytes = s => { const b = atob(s.replace(/-/g, '+').replace(/_/g, '/') + '==='.slice((s.length + 3) % 4)); return Uint8Array.from(b, c => c.charCodeAt(0)); };
   async function pushSub() { if (!pushOk()) return null; const reg = await navigator.serviceWorker.getRegistration(); return reg ? reg.pushManager.getSubscription() : null; }
   async function pushRefresh() {
-    try { const sub = await pushSub(); if (!sub) { state.push = { on: false }; } else { const e = await NibConta.pushEstado(sub.endpoint); state.push = { on: e.inscrito, caderno: e.caderno }; if (!e.inscrito) await NibConta.push('push-inscrever', sub.toJSON()).then(() => { state.push = { on: true, caderno: false }; }); } }
+    try { const sub = await pushSub(); if (!sub) { state.push = { on: false }; } else { const e = await NibConta.pushEstado(sub.endpoint); state.push = { on: e.inscrito, caderno: e.caderno, lembretes: e.lembretes !== false }; if (!e.inscrito) await NibConta.push('push-inscrever', sub.toJSON()).then(() => { state.push = { on: true, caderno: false, lembretes: true }; }); } }
     catch (_) { state.push = { on: false }; }
     if (state.view === 'cadastro') show('cadastro', false, false);
   }
@@ -1173,11 +1173,12 @@
       const reg = await navigator.serviceWorker.ready;
       const sub = (await reg.pushManager.getSubscription()) || await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64uBytes(await NibConta.pushChave()) });
       await NibConta.push('push-inscrever', sub.toJSON());
-      state.push = { on: true, caderno: false }; show('cadastro', false, false); announce('Notificações ativadas neste celular.', 'success', false);
+      state.push = { on: true, caderno: false, lembretes: true }; show('cadastro', false, false); announce('Notificações ativadas neste celular.', 'success', false);
     } catch (e) { announce(e.message || 'Não foi possível ativar as notificações neste aparelho.', 'error'); }
     finally { btn.disabled = false; }
   }
   async function pushOffCall() { try { const sub = await pushSub(); if (sub) { await NibConta.push('push-sair', { endpoint: sub.endpoint }).catch(() => {}); await sub.unsubscribe(); } } catch (_) {} state.push = { on: false }; show('cadastro', false, false); announce('Notificações desligadas neste celular.', 'success', false); }
+  async function pushLembretes(input) { try { const sub = await pushSub(); if (!sub) return; await NibConta.push('push-preferencia', { endpoint: sub.endpoint, lembretes: input.checked }); state.push.lembretes = input.checked; announce(input.checked ? 'Você vai receber o lembrete no dia dos cultos, da sua célula e dos eventos.' : 'Os lembretes do dia foram desligados neste celular.', 'success', false); } catch (e) { input.checked = !input.checked; announce(e.message, 'error'); } }
   async function pushCaderno(input) { try { const sub = await pushSub(); if (!sub) return; await NibConta.push('push-preferencia', { endpoint: sub.endpoint, caderno: input.checked }); state.push.caderno = input.checked; announce(input.checked ? 'Você vai receber os novos pedidos de oração.' : 'Os pedidos de oração não vão mais gerar notificação.', 'success', false); } catch (e) { input.checked = !input.checked; announce(e.message, 'error'); } }
   function pushBox() {
     const head = '<section class="box push-box" aria-labelledby="push-title"><span class="label">NOTIFICAÇÕES</span><h2 id="push-title">Avisos no seu celular</h2>';
@@ -1185,7 +1186,7 @@
     if (!pushOk()) return head + '<p>Este navegador não recebe notificações. Instale o app na tela inicial do celular para ativar.</p></section>';
     if (!state.push) { pushRefresh(); return head + '<p>Conferindo…</p></section>'; }
     if (!state.push.on) return head + '<p>Receba no celular os avisos da igreja, como a confirmação da sua membresia.</p><div class="form-actions"><button type="button" class="action" data-push="on">Ativar notificações</button></div></section>';
-    return head + `<p>Ativadas neste celular. Você recebe os avisos da igreja e da sua membresia.</p><label class="check"><input type="checkbox" data-push-caderno${state.push.caderno ? ' checked' : ''}><span>Também quero receber cada novo pedido do Caderno de oração</span></label><div class="form-actions"><button type="button" class="button" data-push="off">Desligar neste celular</button></div></section>`;
+    return head + `<p>Ativadas neste celular. Você recebe os avisos da igreja e da sua membresia.</p><label class="check"><input type="checkbox" data-push-lembretes${state.push.lembretes !== false ? ' checked' : ''}><span>Lembrete no dia dos cultos, da minha célula e dos eventos, com o horário</span></label><label class="check"><input type="checkbox" data-push-caderno${state.push.caderno ? ' checked' : ''}><span>Também quero receber cada novo pedido do Caderno de oração</span></label><div class="form-actions"><button type="button" class="button" data-push="off">Desligar neste celular</button></div></section>`;
   }
   function accountPage() {
     const p = account(); if (!p) return '';

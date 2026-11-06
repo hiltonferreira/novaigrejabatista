@@ -63,7 +63,7 @@ function nib_push_cifrar(string $texto, string $p256dh, string $auth): string {
 // Envia para as pessoas indicadas (ids) ou para todos (null), menos quem estiver em $exceto.
 function nib_push_enviar(?array $pessoas, array $msg, array $exceto = []): int {
   $db = nib_db();
-  $sql = 'SELECT id, endpoint, p256dh, auth FROM nib_push WHERE 1=1' . (($msg['tipo'] ?? '') === 'caderno' ? ' AND caderno = 1' : '');
+  $sql = 'SELECT id, endpoint, p256dh, auth FROM nib_push WHERE 1=1' . (($msg['tipo'] ?? '') === 'caderno' ? ' AND caderno = 1' : '') . (($msg['tipo'] ?? '') === 'lembrete' ? ' AND lembretes = 1' : '');
   $args = [];
   if ($pessoas !== null) { if (!$pessoas) return 0; $sql .= ' AND pessoa_id IN (' . implode(',', array_fill(0, count($pessoas), '?')) . ')'; $args = array_values($pessoas); }
   if ($exceto) { $sql .= ' AND pessoa_id NOT IN (' . implode(',', array_fill(0, count($exceto), '?')) . ')'; $args = array_merge($args, array_values($exceto)); }

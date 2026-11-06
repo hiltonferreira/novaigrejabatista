@@ -216,15 +216,15 @@ try {
     case 'post:push-preferencia': {
       if (!$eu) nib_erro('Entre na sua conta.', 401);
       $ep = is_string($d['endpoint'] ?? null) ? trim($d['endpoint']) : '';
-      $db->prepare('UPDATE nib_push SET caderno = ? WHERE endpoint_hash = ? AND pessoa_id = ?')->execute([!empty($d['caderno']) ? 1 : 0, hash('sha256', $ep), $eu['id']]);
+      foreach (['caderno', 'lembretes'] as $campo) if (array_key_exists($campo, $d)) $db->prepare("UPDATE nib_push SET $campo = ? WHERE endpoint_hash = ? AND pessoa_id = ?")->execute([!empty($d[$campo]) ? 1 : 0, hash('sha256', $ep), $eu['id']]);
       nib_json(200, ['ok' => true]);
     }
 
     case 'get:push-estado': {
       if (!$eu) nib_erro('Entre na sua conta.', 401);
       $ep = is_string($_GET['endpoint'] ?? null) ? $_GET['endpoint'] : '';
-      $q = $db->prepare('SELECT caderno FROM nib_push WHERE endpoint_hash = ? AND pessoa_id = ?'); $q->execute([hash('sha256', $ep), $eu['id']]);
-      $r = $q->fetch(); nib_json(200, ['ok' => true, 'inscrito' => (bool)$r, 'caderno' => $r ? (bool)$r['caderno'] : false]);
+      $q = $db->prepare('SELECT caderno, lembretes FROM nib_push WHERE endpoint_hash = ? AND pessoa_id = ?'); $q->execute([hash('sha256', $ep), $eu['id']]);
+      $r = $q->fetch(); nib_json(200, ['ok' => true, 'inscrito' => (bool)$r, 'caderno' => $r ? (bool)$r['caderno'] : false, 'lembretes' => $r ? (bool)$r['lembretes'] : true]);
     }
 
     case 'post:push-sair': {
