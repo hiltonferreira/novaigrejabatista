@@ -2036,3 +2036,18 @@ html{scrollbar-gutter:stable}
 #nib-proposta .push-box{margin-bottom:18px}
 #nib-proposta .push-box h2{margin:6px 0 6px}
 #nib-proposta .push-box .check{margin:14px 0 0}
+/* Endereço da igreja (Informações) */
+#nib-proposta .place-card{display:flex;gap:14px;align-items:flex-start;margin:14px 0 16px;padding:16px;border-radius:18px;background:#f3f6f9}
+#nib-proposta .place-pin{flex:none;display:grid;place-items:center;width:44px;height:44px;border-radius:14px;background:#041e42;color:#fff}
+#nib-proposta .place-pin svg{width:22px;height:22px}
+#nib-proposta .place-card strong{display:block;font-size:16px;color:#041e42;margin-bottom:2px}
+#nib-proposta .place-card span:not(.place-pin){display:block;font-size:14px;line-height:1.5;color:#536176}
+#nib-proposta .place-route{display:flex;align-items:center;justify-content:center;gap:10px;min-height:52px;border-radius:16px;background:#041e42;color:#fff;font-weight:600;font-size:16px;text-decoration:none}
+#nib-proposta .place-route svg{width:20px;height:20px}
+#nib-proposta .place-links{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+#nib-proposta .place-links a{display:flex;align-items:center;gap:10px;min-height:60px;padding:10px 12px;border:1px solid #dce3eb;border-radius:16px;background:#fff;color:#041e42;text-decoration:none;min-width:0}
+#nib-proposta .place-links svg{flex:none;width:24px;height:24px}
+#nib-proposta .place-links strong{display:block;font-size:15px;line-height:1.2}
+#nib-proposta .place-links small{display:block;font-size:12px;color:#536176;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#nib-proposta .place-links span{min-width:0}
+@media(hover:hover){#nib-proposta .place-route:hover{background:#0b2d5c}#nib-proposta .place-links a:hover{background:#f3f6f9}}
