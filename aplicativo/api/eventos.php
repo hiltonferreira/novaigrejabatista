@@ -20,6 +20,8 @@ try {
     $mode = (string)($e['mode'] ?? '');
     $price = $mode === 'pago' ? nibe_money((int)($e['amount_cents'] ?? 0)) : ($mode === 'gratuito' ? 'Gratuita' : ($mode === 'externo' ? 'Inscrição externa' : 'Entrada livre'));
     $url = $mode === 'externo' && !empty($e['external_url']) ? (string)$e['external_url'] : nibe_page($e);
+    // Eventos com página própria (ex.: /next/camp-.../): com inscrições abertas, o app vai direto ao formulário (inscricao.html), sem a página de apresentação.
+    if (!empty($e['legacy']) && nibe_open($e) && preg_match('~^/[A-Za-z0-9_./-]+/$~D', $url) && !str_contains($url, '..') && is_file(rtrim((string)($_SERVER['DOCUMENT_ROOT'] ?? ''), '/') . $url . 'inscricao.html')) $url .= 'inscricao.html';
     $banner = (string)($e['banner'] ?? '');
     $out[] = [
       'name' => (string)$e['name'],

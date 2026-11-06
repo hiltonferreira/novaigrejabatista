@@ -75,7 +75,7 @@
     if (!e.tbd && e.start.length > 10 && (!e.end || e.end.slice(0, 10) === e.start.slice(0, 10))) t += ', ' + e.start.slice(11, 16).replace(':', 'h').replace('h00', 'h');
     return t;
   }
-  const knownEvents = () => events.filter(e => e.active).map(e => ({ name: e.name, category: 'Acampamento', summary: 'Dois dias de palavra, worship, gincanas e comunhão para adolescentes de 12 a 17 anos.', start: '2026-11-21', end: '2026-11-22', tbd: true, location: '', price: 'R$ 80,00', cta: 'Ver inscrição', open: true, url: '/next/camp-sbgp1-nov26/', image: e.image }));
+  const knownEvents = () => events.filter(e => e.active).map(e => ({ name: e.name, category: 'Acampamento', summary: 'Dois dias de palavra, worship, gincanas e comunhão para adolescentes de 12 a 17 anos.', start: '2026-11-21', end: '2026-11-22', tbd: true, location: '', price: 'R$ 80,00', cta: 'Ver inscrição', open: true, url: '/next/camp-sbgp1-nov26/inscricao.html', image: e.image }));
   function eventCards(compact = false) {
     if (!PUBLIC) return demoEventCards(compact);
     const loaded = window.NibSite && NibSite.eventos();
