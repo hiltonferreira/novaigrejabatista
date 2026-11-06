@@ -959,7 +959,7 @@
   document.getElementById('simulate-service').addEventListener('change', e => { state.simulateService = e.target.checked; document.querySelector('.test-options').open = false; if (!isManagement()) show('inicio', false, false); });
   document.addEventListener('click', e => {
     if (!e.target.closest('[data-logout]')) return;
-    if (PUBLIC) { closeDrawer(); NibConta.sair().finally(() => { applyAccount(); show('inicio', false, false); announce('Você saiu da sua conta.', 'success', false); }); return; }
+    if (PUBLIC) { closeDrawer(); NibConta.sair().finally(() => { applyAccount(); show('inicio', false, false); if (LOGIN_REQUIRED) { ['panel-login','panel-signup'].forEach(id => document.getElementById(id).reset()); requireLogin(); } else announce('Você saiu da sua conta.', 'success', false); }); return; }
     closeDrawer(); writeFlag('nib-auth', false); writeFlag('nib-faceid', false);
     if (state.context !== 'membro') { const s = document.getElementById('demo-context'); s.value = 'membro'; changeContext({ target: s }); }
     ['panel-login','panel-signup'].forEach(id => document.getElementById(id).reset()); openAuth();
@@ -967,10 +967,16 @@
   document.getElementById('replay-flow').addEventListener('click', () => { document.querySelector('.test-options').open = false; writeFlag('nib-auth', false); writeFlag('nib-faceid', false); setOnbHidden(false); ['panel-login','panel-signup'].forEach(id => document.getElementById(id).reset()); openAuth(); });
   // Abertura: aparece ao abrir o aplicativo, antes do acesso; some sozinha ou ao toque.
   const splash = document.getElementById('app-splash');
-  // Versão pública: sem login. Na primeira visita mostra a orientação; depois vai direto para a inicial.
+  // Versão oficial: é preciso entrar. Sem conta, abre direto a tela de entrar/criar cadastro.
+  const LOGIN_REQUIRED = PUBLIC && !!window.NibConta && NibConta.available();
+  const authReady = LOGIN_REQUIRED ? NibConta.eu() : Promise.resolve(null);
+  function requireLogin() { publicAuthChrome(); openAuth(); }
+  // Com conta: na primeira visita mostra a orientação; depois vai direto para a inicial.
   function publicStart() {
+    if (LOGIN_REQUIRED && !account()) { gate(true); authReady.then(() => { if (account()) publicStart(); else requireLogin(); }); return; }
+    if (!auth.hidden) auth.hidden = true;
     if (onbHidden()) { gate(false); return; }
-    gate(true); onboarding.querySelectorAll('[data-member-first]').forEach(el => { el.parentNode.textContent = 'Boas-vindas à Nib'; });
+    gate(true); onboarding.querySelectorAll('[data-member-first]').forEach(el => { el.parentNode.textContent = account() ? `Boas-vindas, ${account().primeiro}` : 'Boas-vindas à Nib'; });
     onboarding.hidden = false; goSlide(0, false); requestAnimationFrame(() => document.getElementById('onb-next').focus({preventScroll:true}));
   }
   const afterSplash = () => { if (PUBLIC) publicStart(); else if (!readFlag('nib-auth')) openAuth(); };
@@ -991,8 +997,9 @@
   const statusLabel = { confirmado: 'Membro confirmado', pendente: 'Aguardando confirmação da Secretaria', nao: 'Não é membro' };
   const vinculoLabel = { membro: 'Membro', frequento: 'Frequenta a igreja', visitante: 'Conhecendo a igreja' };
   function publicAuthChrome() {
-    if (auth.querySelector('.auth-close')) return;
-    const lead = auth.querySelector('.auth-lead'); if (lead) lead.textContent = 'Entre ou crie seu cadastro para manter seus dados em dia com a igreja.';
+    if (auth.dataset.chrome) return; auth.dataset.chrome = '1';
+    const lead = auth.querySelector('.auth-lead'); if (lead) lead.textContent = LOGIN_REQUIRED ? 'Entre ou crie seu cadastro para acessar o app da Nova Igreja Batista.' : 'Entre ou crie seu cadastro para manter seus dados em dia com a igreja.';
+    if (LOGIN_REQUIRED) return;
     const close = document.createElement('button'); close.type = 'button'; close.className = 'auth-close'; close.textContent = 'Voltar ao app';
     close.addEventListener('click', closeAccount);
     auth.querySelector('.auth-sheet').prepend(close);
@@ -1009,7 +1016,7 @@
     try {
       await fn();
       closeAccount(); ['panel-login','panel-signup'].forEach(id => document.getElementById(id).reset()); refreshPass();
-      applyAccount(); show('inicio', false, false);
+      applyAccount(); show('inicio', false, false); if (LOGIN_REQUIRED) publicStart();
       const p = account(); announce(form.id === 'panel-signup' ? `Cadastro criado. Boas-vindas, ${p.primeiro}!` + (p.membro_status === 'pendente' ? ' A Secretaria vai confirmar sua membresia.' : '') : `Que bom ver você, ${p.primeiro}!`, 'success', false);
     } catch (e) { err.textContent = e.message; }
     finally { btn.disabled = false; }
@@ -1080,7 +1087,7 @@
       if (!passRules(values.nova || '').every(Boolean)) { err.textContent = 'A nova senha ainda não atende a todos os critérios.'; return true; }
       run(() => NibConta.senha(values.atual, values.nova), () => { form.reset(); announce('Senha alterada.', 'success'); });
     }
-    if (form.id === 'delete-form') run(() => NibConta.excluir(values.senha), () => { applyAccount(); show('inicio', false, false); announce('Sua conta foi excluída.', 'success', false); });
+    if (form.id === 'delete-form') run(() => NibConta.excluir(values.senha), () => { applyAccount(); show('inicio', false, false); if (LOGIN_REQUIRED) requireLogin(); announce('Sua conta foi excluída.', 'success', false); });
     return true;
   }
   function teamPage() {
@@ -1115,14 +1122,14 @@
       if (!passRules(a).every(Boolean)) { err.textContent = 'A senha ainda não atende a todos os critérios.'; return; }
       if (a !== b) { err.textContent = 'As senhas não são iguais.'; return; }
       btn.disabled = true; err.textContent = '';
-      try { await NibConta.redefinir(token, a); clean(); applyAccount(); announce('Senha criada. Você já entrou na sua conta.', 'success', false); }
+      try { await NibConta.redefinir(token, a); clean(); applyAccount(); if (LOGIN_REQUIRED) { auth.hidden = true; publicStart(); } announce('Senha criada. Você já entrou na sua conta.', 'success', false); }
       catch (e2) { err.textContent = e2.message; btn.disabled = false; }
     });
     d.showModal();
   }
   if (PUBLIC && window.NibConta && NibConta.available()) {
     const goHash = () => { const v = location.hash.slice(1); if (v && allowedPublic().includes(v)) show(v, false, false); };
-    NibConta.eu().then(() => { if (account()) applyAccount(); goHash(); });
+    authReady.then(() => { if (account()) applyAccount(); goHash(); });
     if ('serviceWorker' in navigator) navigator.serviceWorker.addEventListener('message', e => { const v = e.data && e.data.nibView; if (typeof v === 'string' && allowedPublic().includes(v)) { if (v === 'caderno') { state.prayersLoaded = false; } if (v === 'avisos') { state.avisos = null; } show(v, false, false); } });
     const token = new URLSearchParams(location.search).get('redefinir');
     if (token && /^[a-f0-9]{64}$/.test(token)) resetDialog(token);
