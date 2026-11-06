@@ -44,6 +44,11 @@
     <label><input type="radio" name="vinculo" value="frequento"><span>Frequento</span></label>
     <label><input type="radio" name="vinculo" value="visitante"><span>Conhecendo</span></label>
    </fieldset>
+   <fieldset class="auth-choice"><legend>Você participa de uma célula?</legend>
+    <label><input type="radio" name="tem_celula" value="sim"><span>Sim</span></label>
+    <label><input type="radio" name="tem_celula" value="nao" checked><span>Ainda não</span></label>
+   </fieldset>
+   <div id="signup-cell-wrap" hidden><label for="signup-cell">Qual célula?</label><select id="signup-cell" name="celula" class="auth-select"><option value="">Escolha sua célula</option></select></div>
    <label for="signup-pass">Crie uma senha</label>
    <div class="auth-pass"><input id="signup-pass" name="senha" type="password" autocomplete="off" minlength="8" aria-describedby="signup-pass-hint" aria-required="true"><button type="button" class="auth-eye" data-toggle-pass="signup-pass" aria-label="Mostrar senha" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
    <ul class="pass-rules" id="signup-pass-hint" aria-label="A senha precisa ter"><li data-rule="len">Pelo menos 8 caracteres</li><li data-rule="upper">Uma letra maiúscula</li><li data-rule="lower">Uma letra minúscula</li><li data-rule="digit">Um número</li><li data-rule="symbol">Um símbolo, como ! @ # ou $</li></ul>

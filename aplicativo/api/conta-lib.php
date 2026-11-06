@@ -28,7 +28,16 @@ function nib_db(): PDO {
 function nib_migrar(PDO $db): void {
   $db->exec("CREATE TABLE IF NOT EXISTS nib_versao (v INT NOT NULL) ENGINE=InnoDB");
   $v = (int)($db->query('SELECT MAX(v) FROM nib_versao')->fetchColumn() ?: 0);
-  if ($v >= 1) return;
+  if ($v < 1) nib_migrar_v1($db);
+  if ($v < 2) {
+    // v2: célula escolhida no cadastro ("Dia|Nome", da lista de células do site).
+    $tem = $db->query("SHOW COLUMNS FROM nib_pessoas LIKE 'celula'")->fetch();
+    if (!$tem) $db->exec('ALTER TABLE nib_pessoas ADD COLUMN celula VARCHAR(160) NULL AFTER vinculo');
+    $db->exec('INSERT INTO nib_versao (v) VALUES (2)');
+  }
+}
+
+function nib_migrar_v1(PDO $db): void {
   $db->exec("CREATE TABLE IF NOT EXISTS nib_pessoas (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(120) NOT NULL,
@@ -150,8 +159,12 @@ function nib_fechar_sessao(): void {
 }
 function nib_publico(array $p): array {
   return ['id' => (int)$p['id'], 'nome' => $p['nome'], 'primeiro' => explode(' ', $p['nome'])[0], 'email' => $p['email'], 'celular' => $p['celular'],
-    'sexo' => $p['sexo'], 'vinculo' => $p['vinculo'], 'membro_status' => $p['membro_status'], 'papel' => $p['papel'],
+    'sexo' => $p['sexo'], 'vinculo' => $p['vinculo'], 'celula' => $p['celula'] ?? '', 'membro_status' => $p['membro_status'], 'papel' => $p['papel'],
     'nascimento' => $p['nascimento'], 'endereco' => $p['endereco'] ?? '', 'mostrar_aniversario' => (bool)$p['mostrar_aniversario'], 'criado_em' => $p['criado_em']];
+}
+function nib_celula($v): string {
+  $t = nib_texto(is_string($v) ? $v : '', 160);
+  return preg_match('/^[^|]{3,40}\|[^|]{2,100}$/u', $t) ? $t : '';
 }
 function nib_equipe(array $p): bool { return in_array($p['papel'], ['secretaria', 'pastoral', 'admin'], true); }
 

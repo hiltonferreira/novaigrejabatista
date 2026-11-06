@@ -37,8 +37,8 @@ try {
       $q = $db->prepare('SELECT id FROM nib_pessoas WHERE email = ?'); $q->execute([$email]);
       if ($q->fetch()) nib_erro('Já existe um cadastro com este e-mail. Entre com a sua senha ou use "Esqueci minha senha".', 409);
       $agora = nib_agora();
-      $db->prepare('INSERT INTO nib_pessoas (nome, email, celular, sexo, vinculo, membro_status, senha_hash, consentimento_em, consentimento_versao, criado_em, atualizado_em) VALUES (?,?,?,?,?,?,?,?,?,?,?)')
-        ->execute([$nome, $email, $cel, $sexo, $vinculo, $vinculo === 'membro' ? 'pendente' : 'nao', password_hash($senha, PASSWORD_DEFAULT), $agora, NIB_POLITICA, $agora, $agora]);
+      $db->prepare('INSERT INTO nib_pessoas (nome, email, celular, sexo, vinculo, celula, membro_status, senha_hash, consentimento_em, consentimento_versao, criado_em, atualizado_em) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)')
+        ->execute([$nome, $email, $cel, $sexo, $vinculo, nib_celula($d['celula'] ?? '') ?: null, $vinculo === 'membro' ? 'pendente' : 'nao', password_hash($senha, PASSWORD_DEFAULT), $agora, NIB_POLITICA, $agora, $agora]);
       $id = (int)$db->lastInsertId();
       nib_registrar($id, 'cadastro', $id, $vinculo);
       nib_abrir_sessao($id);
@@ -70,11 +70,12 @@ try {
       $end = nib_texto($d['endereco'] ?? ($eu['endereco'] ?? ''), 250);
       $nasc = nib_texto($d['nascimento'] ?? ($eu['nascimento'] ?? ''), 10);
       if ($nasc !== '') { $dt = DateTimeImmutable::createFromFormat('!Y-m-d', $nasc); if (!$dt || $dt->format('Y-m-d') !== $nasc || $nasc < '1900-01-01' || $nasc > date('Y-m-d')) nib_erro('Data de nascimento inválida.'); }
+      $celula = array_key_exists('celula', $d) ? nib_celula($d['celula']) : (string)($eu['celula'] ?? '');
       $mostrar = array_key_exists('mostrar_aniversario', $d) ? (bool)$d['mostrar_aniversario'] : (bool)$eu['mostrar_aniversario'];
       if (count(explode(' ', $nome)) < 2) nib_erro('Escreva seu nome e sobrenome.');
       if (strlen($cel) < 10) nib_erro('Informe um celular com DDD.');
-      $db->prepare('UPDATE nib_pessoas SET nome = ?, celular = ?, sexo = ?, endereco = ?, nascimento = ?, mostrar_aniversario = ?, atualizado_em = ? WHERE id = ?')
-        ->execute([$nome, $cel, $sexo, $end !== '' ? $end : null, $nasc !== '' ? $nasc : null, $mostrar ? 1 : 0, nib_agora(), $eu['id']]);
+      $db->prepare('UPDATE nib_pessoas SET nome = ?, celular = ?, sexo = ?, celula = ?, endereco = ?, nascimento = ?, mostrar_aniversario = ?, atualizado_em = ? WHERE id = ?')
+        ->execute([$nome, $cel, $sexo, $celula !== '' ? $celula : null, $end !== '' ? $end : null, $nasc !== '' ? $nasc : null, $mostrar ? 1 : 0, nib_agora(), $eu['id']]);
       $q = $db->prepare('SELECT * FROM nib_pessoas WHERE id = ?'); $q->execute([$eu['id']]);
       nib_json(200, ['ok' => true, 'pessoa' => nib_publico($q->fetch())]);
     }
@@ -140,7 +141,7 @@ try {
     // Equipe (Secretaria, Pastoral, administração): quem se cadastrou e confirmação de membro.
     case 'get:cadastros': {
       if (!$eu || !nib_equipe($eu)) nib_erro('Acesso só para a equipe da igreja.', 403);
-      $rows = $db->query('SELECT id, nome, email, celular, vinculo, membro_status, papel, criado_em, ultimo_acesso, confirmado_em FROM nib_pessoas ORDER BY criado_em DESC LIMIT 2000')->fetchAll();
+      $rows = $db->query('SELECT id, nome, email, celular, vinculo, celula, membro_status, papel, criado_em, ultimo_acesso, confirmado_em FROM nib_pessoas ORDER BY criado_em DESC LIMIT 2000')->fetchAll();
       nib_json(200, ['ok' => true, 'pessoas' => $rows]);
     }
     case 'post:confirmar': {
