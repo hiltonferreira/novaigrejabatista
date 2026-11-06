@@ -2350,4 +2350,12 @@ dialog.ck-telao::backdrop{background:#041e42}
 #nib-proposta .seg-auto>button small{display:block;margin:0;font-size:11px;font-weight:500;line-height:1.1;color:#536176;opacity:1}
 #nib-proposta .seg-auto>button>:is(span,b){margin:0}
 @media(hover:hover){#nib-proposta .seg-auto>button:hover{color:#041e42}}
-@media(max-width:420px){#nib-proposta .seg-auto>button,#nib-proposta main .seg-auto>button.mem-chip{font-size:13px;padding:6px 4px;white-space:normal;overflow-wrap:anywhere;hyphens:auto}}
+@media(max-width:420px){#nib-proposta .seg-auto>button,#nib-proposta main .seg-auto>button.mem-chip,#nib-proposta .seg-auto>button.is-active,#nib-proposta main .seg-auto>button.mem-chip.is-active{font-size:12.5px;padding:6px 2px;gap:3px;letter-spacing:-.01em}}
+/* Números ao lado do nome nas opções (Cadastros, Células, painel), pedido de Hilton 06/11/2026 */
+#nib-proposta .seg-auto>button,#nib-proposta main .seg-auto>button.mem-chip,#nib-proposta .seg-auto>button.is-active,#nib-proposta main .seg-auto>button.mem-chip.is-active,#nib-proposta .day-pick.seg .day-pick-btn{flex-direction:row;white-space:nowrap;align-items:center;justify-content:center;gap:5px}
+#nib-proposta .seg-auto>button small,#nib-proposta .day-pick.seg .day-pick-btn small{font-size:12px;font-weight:600;line-height:1;color:#5b6b80;font-variant-numeric:tabular-nums}
+#nib-proposta .seg-auto>button.is-active small,#nib-proposta .day-pick.seg .day-pick-btn.is-active small{color:#536176}
+#nib-proposta .day-pick.seg .day-pick-btn{min-height:48px}
+#nib-proposta .day-pick.seg .day-pick-btn.is-today::after{top:6px;right:8px}
+@media(max-width:420px){#nib-proposta .seg-auto>button small,#nib-proposta .day-pick.seg .day-pick-btn small{font-size:11px}#nib-proposta .day-pick.seg .day-pick-btn strong{font-size:14px}}
+@media(max-width:370px){#nib-proposta .seg-auto>button,#nib-proposta main .seg-auto>button.mem-chip,#nib-proposta .seg-auto>button.is-active{font-size:11.5px;gap:2px}#nib-proposta .seg-auto>button small{font-size:10.5px}}
