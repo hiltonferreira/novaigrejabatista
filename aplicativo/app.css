@@ -2379,3 +2379,8 @@ dialog.ck-telao::backdrop{background:#041e42}
 /* v127: dias das Células com o mesmo arredondamento de pílula dos outros seletores */
 #nib-proposta .day-pick.seg,#nib-proposta .day-pick.seg>.seg-pill,#nib-proposta .day-pick.seg .day-pick-btn{border-radius:999px}
 #nib-proposta .day-pick.seg .day-pick-btn.is-today::after{top:5px;right:auto;left:calc(50% - 3px)}
+/* v128: seletores com contagem (dias das Células, filtros de Cadastros/Membros, anos) voltam à pílula branca do login (Hilton, 06/11/2026) */
+#nib-proposta .seg-auto>.seg-pill,#nib-proposta .day-pick.seg>.seg-pill{background:#fff;box-shadow:0 2px 8px #041e421a}
+#nib-proposta .seg-auto>button.is-active,#nib-proposta .seg-auto>button.is-active:hover,#nib-proposta main .seg-auto>button.mem-chip.is-active,#nib-proposta main .seg-auto>button.mem-chip.is-active:hover,
+#nib-proposta .day-pick.seg .day-pick-btn.is-active,#nib-proposta .day-pick.seg .day-pick-btn.is-active:hover{color:#041e42}
+#nib-proposta .seg-auto>button.is-active small,#nib-proposta .day-pick.seg .day-pick-btn.is-active small{color:#536176}
