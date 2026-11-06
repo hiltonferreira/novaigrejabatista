@@ -2032,7 +2032,6 @@ html{scrollbar-gutter:stable}
 #nib-proposta.is-public .my-cell.is-empty{border:1px dashed #9aa7b8}
 #nib-proposta.is-public .my-cell .form-actions{margin-top:16px}
 #nib-proposta .cell-card.is-mine{border-color:#041e42;box-shadow:0 0 0 1px #041e42}
-#nib-proposta .cell-card h3 .tag{margin-left:6px;vertical-align:middle}
 #nib-proposta .push-box{margin-bottom:18px}
 #nib-proposta .push-box h2{margin:6px 0 6px}
 #nib-proposta .push-box .check{margin:14px 0 0}
@@ -2072,3 +2071,9 @@ html{scrollbar-gutter:stable}
 #nib-proposta .day-pick-btn.is-today::after{content:"";position:absolute;top:7px;right:calc(50% - 22px);width:6px;height:6px;border-radius:50%;background:#2e7d4f}
 #nib-proposta .day-pick-btn:focus-visible{outline:2px solid #041e42;outline-offset:2px}
 @media(max-width:360px){#nib-proposta .day-pick-btn small{font-size:10px}}
+/* Selo "Sua célula" no canto superior direito do cartão (v98) */
+#nib-proposta .cell-card{position:relative}
+#nib-proposta .cell-card.is-mine h3{padding-right:112px}
+#nib-proposta .cell-mine-tag{position:absolute;top:16px;right:16px;display:inline-flex;align-items:center;gap:5px;padding:5px 10px 5px 8px;border-radius:999px;background:var(--mine-bg,#e9f3ed);color:var(--mine-fg,#24674e);font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;line-height:1.2;white-space:nowrap}
+#nib-proposta .cell-mine-tag svg{width:13px;height:13px;flex:0 0 auto}
+#nib-proposta .cell-card.is-mine{border-color:var(--mine-line,#24674e);box-shadow:0 0 0 1px var(--mine-line,#24674e)}
