@@ -83,7 +83,7 @@
     if (document.getElementById('sw-update')) return;
     const bar = document.createElement('div');
     bar.id = 'sw-update'; bar.className = 'sw-update'; bar.setAttribute('role', 'status');
-    bar.innerHTML = '<span>Nova versão do app disponível.</span><button type="button" data-sw-update="1">Atualizar</button>';
+    bar.innerHTML = '<span class="sw-update-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.3-5.6 M20 4v4h-4"/></svg></span><span class="sw-update-text"><strong>Nova versão do app</strong><small>Atualize para ver as novidades.</small></span><button type="button" data-sw-update="1">Atualizar</button>';
     document.body.append(bar);
   }
   const canSW = 'serviceWorker' in navigator && window.isSecureContext && window.top === window.self;
