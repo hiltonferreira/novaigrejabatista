@@ -2362,3 +2362,9 @@ dialog.ck-telao::backdrop{background:#041e42}
 @media(max-width:420px){#nib-proposta .seg-auto>button small,#nib-proposta .day-pick.seg .day-pick-btn small{font-size:11px}#nib-proposta .day-pick.seg .day-pick-btn strong{font-size:14px}}
 @media(max-width:370px){#nib-proposta .seg-auto>button,#nib-proposta main .seg-auto>button.mem-chip,#nib-proposta .seg-auto>button.is-active{font-size:11.5px;gap:2px}#nib-proposta .seg-auto>button small{font-size:10.5px}}
 #nib-proposta #signup-cell-wrap>label{display:block;margin:0 0 6px;font:600 14px/1.3 "NIB Acumin Mobile",Arial,sans-serif;color:#041e42}
+/* Formulários: legenda com o mesmo respiro dos rótulos (6 px) e textos no mesmo peso/tamanho */
+#nib-proposta .auth-choice:has(>.choice-seg){gap:0}
+#nib-proposta .auth-choice:has(>.choice-seg)>legend{margin:0 0 6px;padding:0}
+#nib-proposta .choice-seg span,#nib-proposta .choice-seg input:checked+span{font:600 15px/1 "NIB Acumin Mobile",Arial,sans-serif}
+#nib-proposta .auth-form input[type=date]{font:400 16px/1.2 "NIB Acumin Mobile",Arial,sans-serif;color:#041e42}
+#nib-proposta .auth-form input[type=date]:invalid::-webkit-datetime-edit{color:#6b7a8f}
