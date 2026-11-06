@@ -2384,3 +2384,6 @@ dialog.ck-telao::backdrop{background:#041e42}
 #nib-proposta .seg-auto>button.is-active,#nib-proposta .seg-auto>button.is-active:hover,#nib-proposta main .seg-auto>button.mem-chip.is-active,#nib-proposta main .seg-auto>button.mem-chip.is-active:hover,
 #nib-proposta .day-pick.seg .day-pick-btn.is-active,#nib-proposta .day-pick.seg .day-pick-btn.is-active:hover{color:#041e42}
 #nib-proposta .seg-auto>button.is-active small,#nib-proposta .day-pick.seg .day-pick-btn.is-active small{color:#536176}
+/* v131: tipos de Sugestões no mesmo padrão do Gênero (pílula azul, letra branca, 600 15px) */
+#nib-proposta .sug-tipos button{font:600 15px/1 "NIB Acumin Mobile",Arial,sans-serif}
+#nib-proposta .sug-tipos button[aria-checked=true],#nib-proposta .sug-tipos button[aria-checked=true]:hover,#nib-proposta .sug-tipos button[aria-checked=true]:focus{color:#fff}
