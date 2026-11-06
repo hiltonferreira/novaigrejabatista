@@ -2376,3 +2376,6 @@ dialog.ck-telao::backdrop{background:#041e42}
 #nib-proposta .seg-auto>button.is-active small,#nib-proposta .day-pick.seg .day-pick-btn.is-active small{color:#ffffffc7}
 #nib-proposta .choice-seg input:focus-visible+span{outline:3px solid #041e42;outline-offset:2px}
 #nib-proposta .auth-tabs.seg>.seg-pill{background:#fff;box-shadow:0 2px 8px #041e421a}
+/* v127: dias das Células com o mesmo arredondamento de pílula dos outros seletores */
+#nib-proposta .day-pick.seg,#nib-proposta .day-pick.seg>.seg-pill,#nib-proposta .day-pick.seg .day-pick-btn{border-radius:999px}
+#nib-proposta .day-pick.seg .day-pick-btn.is-today::after{top:5px;right:auto;left:calc(50% - 3px)}
