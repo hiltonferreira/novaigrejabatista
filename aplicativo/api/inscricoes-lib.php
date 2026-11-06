@@ -36,6 +36,7 @@ function nib_insc_eventos(string $base): array {
 }
 
 function nib_minhas_inscricoes(string $celular): array {
+  if (!NIB_INSCRICOES_AUTOMATICAS) throw new RuntimeException('inscricoes automaticas desligadas'); // trava dupla: não depende só do conta.php
   $tel = nib_insc_tel($celular); if (!preg_match('/^[1-9][0-9]{9,10}$/D', $tel)) return [];
   $base = nib_insc_base(); $out = [];
   foreach (nib_insc_eventos($base) as $slug => $ev) {
