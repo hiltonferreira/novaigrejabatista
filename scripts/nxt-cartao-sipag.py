@@ -2,6 +2,7 @@
 """Adiciona o pagamento com cartão (link Sipag) ao formulário do NXT CAMP.
 
 Uso: python3 scripts/nxt-cartao-sipag.py CAMINHO/inscricao.html [--apply]
+     python3 scripts/nxt-cartao-sipag.py CAMINHO/index.html [--apply]   (página do evento)
 Edita o arquivo de PRODUÇÃO por troca de trechos (ele difere do repositório).
 Sem --apply só confere se todos os trechos existem uma vez. Faça backup antes.
 Pedido de Hilton (06/11/2026): R$ 80 no crédito em até 2x ou no débito, informado já no preenchimento.
@@ -47,14 +48,24 @@ TROCAS = [
   ('<label for="payer">Nome de quem fez o Pix</label>', '<label for="payer">Nome de quem pagou</label>'),
 ]
 
+# Página do evento (index.html): os dois textos que citavam só o Pix.
+TROCAS_PAGINA = [
+  ('faça o pagamento via Pix e envie o comprovante', 'faça o pagamento (Pix ou cartão) e envie o comprovante', 2),
+]
+
 def main():
   if len(sys.argv) < 2: sys.exit(__doc__)
   path, apply = sys.argv[1], '--apply' in sys.argv
   s = open(path, encoding='utf-8').read()
-  if 'id="nib-cartao"' in s: sys.exit('JA_APLICADO')
-  for a, b in TROCAS:
+  if path.endswith('inscricao.html'):
+    if 'id="nib-cartao"' in s: sys.exit('JA_APLICADO')
+    trocas = [(a, b, 1) for a, b in TROCAS]
+  else:
+    if 'pagamento (Pix ou cartão)' in s: sys.exit('JA_APLICADO')
+    trocas = TROCAS_PAGINA
+  for a, b, esperado in trocas:
     n = s.count(a)
-    if n != 1: sys.exit(f'TRECHO_NAO_ENCONTRADO ({n}x): {a[:70]}')
+    if n != esperado: sys.exit(f'TRECHO_NAO_ENCONTRADO ({n}x): {a[:70]}')
     s = s.replace(a, b)
   if apply:
     open(path, 'w', encoding='utf-8').write(s); print('APLICADO')
