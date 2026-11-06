@@ -580,6 +580,7 @@
     if (action.dataset.giftAmount) { const input = content.querySelector('#gift-value'); input.value = action.dataset.giftAmount; content.querySelectorAll('[data-gift-amount]').forEach(b => b.setAttribute('aria-pressed', String(b === action))); return; }
     if (PUBLIC && (action.dataset.view === 'entrar' || action.dataset.accountOpen)) { event.preventDefault(); openAccount(action.dataset.accountOpen || 'login'); return; }
     if (action.dataset.teamStatus) { teamSet(action); return; }
+    if (PUBLIC && action.dataset.push) { if (action.dataset.push === 'on') pushOn(action); else pushOffCall(); return; }
     if (action.dataset.teamFilter !== undefined) { state.teamFilter = action.dataset.teamFilter; show('cadastros', false, false); return; }
     if (action.dataset.openUrl) { window.open(action.dataset.openUrl, '_blank', 'noopener'); return; }
     if (action.dataset.cellDay !== undefined) { state.cellDay = action.dataset.cellDay; show('celulas', false, false); const b = content.querySelector('[data-cell-day="' + state.cellDay + '"]'); if (b) b.focus({preventScroll:true}); return; }
@@ -634,6 +635,7 @@
     document.getElementById('demo-context').value = state.context;
     document.getElementById('demo-context-mobile').value = state.context;
   }
+  root.addEventListener('change', e => { if (PUBLIC && e.target.matches('[data-push-caderno]')) pushCaderno(e.target); });
   root.addEventListener('input', e => { if (isManagement() && admin.input && e.target.id === 'mem-q') admin.input(e.target); if (e.target.id === 'team-q') teamFilterList(e.target.value); });
   root.addEventListener('change', e => { if (isManagement() && admin.input && e.target.id === 'mem-cell') { admin.input(e.target); return; } if (e.target.id === 'bday-visible') { state.hideBirthday = !e.target.checked; announce(e.target.checked ? 'Seu aniversário aparece para a igreja (teste).' : 'Seu aniversário não aparece mais para a igreja (teste).', 'success', false); } });
   document.addEventListener('nib-install-change', () => { if (state.view === 'inicio' && !isManagement()) show('inicio', false, false); });
@@ -676,6 +678,7 @@
     const out = [], today = NibDaily.dayKey(new Date()), p = account();
     if (p && p.vinculo === 'membro' && p.membro_status === 'pendente') out.push({ id: 'membro-pendente', kind: 'info', title: 'Cadastro em análise', text: 'A Secretaria vai confirmar sua membresia. Você recebe o aviso aqui.', view: 'cadastro', action: 'Ver meu cadastro' });
     if (p && p.membro_status === 'confirmado') out.push({ id: 'membro-ok-' + p.id, kind: 'ok', title: 'Membresia confirmada', text: 'A Secretaria confirmou que você é membro da Nova Igreja Batista. Seja bem-vindo!', view: 'cadastro', action: 'Ver meu cadastro' });
+    if (p && pushOk() && state.push && !state.push.on) out.push({ id: 'push-oferta', kind: 'info', title: 'Receba os avisos no celular', text: 'Ative as notificações para saber na hora quando houver novidade.', view: 'cadastro', action: 'Ativar notificações' });
     if (p && !p.celula) out.push({ id: 'sem-celula', kind: 'info', title: 'Participa de uma célula?', text: 'Informe sua célula em Meu cadastro para ver os encontros no calendário.', view: 'celulas', action: 'Ver células' });
     const hoje = withCell(NibDaily.agenda(today, 1), today, 1).filter(x => x.day === today);
     hoje.forEach(x => out.push({ id: 'hoje-' + today + '-' + x.name, kind: x.type === 'Minha célula' ? 'cell' : 'info', title: x.type === 'Minha célula' ? 'Hoje tem célula' : 'Hoje na igreja', text: x.name + (x.time ? ', às ' + x.time : '') + (x.place ? ' · ' + x.place : ''), view: 'agenda', action: 'Ver na agenda' }));
@@ -964,14 +967,47 @@
     root.classList.toggle('has-account', !!account());
     const who = account() ? account().id + '-' + account().papel : '';
     refreshNotices();
-    if (state.accountKey !== who) { state.accountKey = who; state.team = null; state.prayers = []; state.prayersLoaded = false; if (who) loadPrayers().then(() => { if (state.view === 'inicio') show('inicio', false, false); }); }
+    if (state.accountKey !== who) { state.accountKey = who; state.push = null; if (who) pushRefresh().then(refreshNotices); state.team = null; state.prayers = []; state.prayersLoaded = false; if (who) loadPrayers().then(() => { if (state.view === 'inicio') show('inicio', false, false); }); }
     renderNavigation();
     show(state.view, false, false);
+  }
+  // Notificações no celular (Web Push): só no app oficial, com conta, e a pessoa autoriza.
+  const pushOk = () => 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
+  const isIOS = () => /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const standalone = () => matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+  const b64uBytes = s => { const b = atob(s.replace(/-/g, '+').replace(/_/g, '/') + '==='.slice((s.length + 3) % 4)); return Uint8Array.from(b, c => c.charCodeAt(0)); };
+  async function pushSub() { if (!pushOk()) return null; const reg = await navigator.serviceWorker.getRegistration(); return reg ? reg.pushManager.getSubscription() : null; }
+  async function pushRefresh() {
+    try { const sub = await pushSub(); if (!sub) { state.push = { on: false }; } else { const e = await NibConta.pushEstado(sub.endpoint); state.push = { on: e.inscrito, caderno: e.caderno }; if (!e.inscrito) await NibConta.push('push-inscrever', sub.toJSON()).then(() => { state.push = { on: true, caderno: false }; }); } }
+    catch (_) { state.push = { on: false }; }
+    if (state.view === 'cadastro') show('cadastro', false, false);
+  }
+  async function pushOn(btn) {
+    btn.disabled = true;
+    try {
+      const perm = await Notification.requestPermission();
+      if (perm !== 'granted') { announce('As notificações foram bloqueadas. Para ativar, libere nas configurações do celular para este app.', 'warning'); return; }
+      const reg = await navigator.serviceWorker.ready;
+      const sub = (await reg.pushManager.getSubscription()) || await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64uBytes(await NibConta.pushChave()) });
+      await NibConta.push('push-inscrever', sub.toJSON());
+      state.push = { on: true, caderno: false }; show('cadastro', false, false); announce('Notificações ativadas neste celular.', 'success', false);
+    } catch (e) { announce(e.message || 'Não foi possível ativar as notificações neste aparelho.', 'error'); }
+    finally { btn.disabled = false; }
+  }
+  async function pushOffCall() { try { const sub = await pushSub(); if (sub) { await NibConta.push('push-sair', { endpoint: sub.endpoint }).catch(() => {}); await sub.unsubscribe(); } } catch (_) {} state.push = { on: false }; show('cadastro', false, false); announce('Notificações desligadas neste celular.', 'success', false); }
+  async function pushCaderno(input) { try { const sub = await pushSub(); if (!sub) return; await NibConta.push('push-preferencia', { endpoint: sub.endpoint, caderno: input.checked }); state.push.caderno = input.checked; announce(input.checked ? 'Você vai receber os novos pedidos de oração.' : 'Os pedidos de oração não vão mais gerar notificação.', 'success', false); } catch (e) { input.checked = !input.checked; announce(e.message, 'error'); } }
+  function pushBox() {
+    const head = '<section class="box push-box" aria-labelledby="push-title"><span class="label">NOTIFICAÇÕES</span><h2 id="push-title">Avisos no seu celular</h2>';
+    if (isIOS() && !standalone()) return head + '<p>No iPhone, as notificações funcionam com o app instalado. No Safari, toque em Compartilhar e depois em “Adicionar à Tela de Início”. Abra o app pelo ícone e volte aqui.</p></section>';
+    if (!pushOk()) return head + '<p>Este navegador não recebe notificações. Instale o app na tela inicial do celular para ativar.</p></section>';
+    if (!state.push) { pushRefresh(); return head + '<p>Conferindo…</p></section>'; }
+    if (!state.push.on) return head + '<p>Receba no celular os avisos da igreja, como a confirmação da sua membresia.</p><div class="form-actions"><button type="button" class="action" data-push="on">Ativar notificações</button></div></section>';
+    return head + `<p>Ativadas neste celular. Você recebe os avisos da igreja e da sua membresia.</p><label class="check"><input type="checkbox" data-push-caderno${state.push.caderno ? ' checked' : ''}><span>Também quero receber cada novo pedido do Caderno de oração</span></label><div class="form-actions"><button type="button" class="button" data-push="off">Desligar neste celular</button></div></section>`;
   }
   function accountPage() {
     const p = account(); if (!p) return '';
     const status = p.vinculo === 'membro' || p.membro_status === 'confirmado' ? `<dt>Membresia</dt><dd>${escape(statusLabel[p.membro_status] || '')}</dd>` : '';
-    return `<div class="profile-layout"><section class="box profile-summary"><span class="tag">${escape(vinculoLabel[p.vinculo] || 'Cadastro')}</span><h2>${escape(p.nome)}</h2><dl class="profile"><dt>E-mail</dt><dd>${escape(p.email)}</dd><dt>Celular</dt><dd>${escape(fmtPhone(p.celular)) || 'Não informado'}</dd><dt>Endereço</dt><dd>${escape(p.endereco || 'Não informado')}</dd><dt>Nascimento</dt><dd>${escape(fmtDay(p.nascimento) || 'Não informado')}</dd><dt>Célula</dt><dd>${escape(p.celula ? p.celula.split('|').reverse().join(' · ') : 'Não participa')}</dd>${status}<dt>Cadastro desde</dt><dd>${escape(fmtDay(p.criado_em))}</dd></dl><button type="button" class="button account-logout" data-logout="1">Sair da conta</button></section>
+    return `${pushBox()}<div class="profile-layout"><section class="box profile-summary"><span class="tag">${escape(vinculoLabel[p.vinculo] || 'Cadastro')}</span><h2>${escape(p.nome)}</h2><dl class="profile"><dt>E-mail</dt><dd>${escape(p.email)}</dd><dt>Celular</dt><dd>${escape(fmtPhone(p.celular)) || 'Não informado'}</dd><dt>Endereço</dt><dd>${escape(p.endereco || 'Não informado')}</dd><dt>Nascimento</dt><dd>${escape(fmtDay(p.nascimento) || 'Não informado')}</dd><dt>Célula</dt><dd>${escape(p.celula ? p.celula.split('|').reverse().join(' · ') : 'Não participa')}</dd>${status}<dt>Cadastro desde</dt><dd>${escape(fmtDay(p.criado_em))}</dd></dl><button type="button" class="button account-logout" data-logout="1">Sair da conta</button></section>
 <section class="box profile-edit"><h2>Atualizar meus dados</h2><form id="account-form" novalidate><div class="form-grid"><div><label for="acc-nome">Nome completo</label><input id="acc-nome" name="nome" maxlength="120" value="${escape(p.nome)}" required></div><div><label for="acc-cel">Celular com WhatsApp</label><input id="acc-cel" name="celular" type="tel" inputmode="tel" maxlength="25" value="${escape(fmtPhone(p.celular))}" required></div><div><label for="acc-nasc">Data de nascimento</label><input id="acc-nasc" name="nascimento" type="date" min="1900-01-01" value="${escape(p.nascimento || '')}"></div><div><label for="acc-end">Endereço</label><input id="acc-end" name="endereco" maxlength="250" value="${escape(p.endereco || '')}" placeholder="Rua, número, bairro"></div><div><label for="acc-cel-cell">Célula</label><select id="acc-cel-cell" name="celula"><option value="">Não participo de célula</option>${cellOptions(p.celula)}${p.celula && !findCell(p.celula) ? `<option value="${escape(p.celula)}" selected>${escape(p.celula.split('|').reverse().join(' · '))} (fora da lista)</option>` : ''}</select></div></div><fieldset class="auth-choice"><legend>Tratamento no app</legend><label><input type="radio" name="sexo" value="f"${p.sexo !== 'm' ? ' checked' : ''}><span>Feminino</span></label><label><input type="radio" name="sexo" value="m"${p.sexo === 'm' ? ' checked' : ''}><span>Masculino</span></label></fieldset><label class="check"><input type="checkbox" name="mostrar"${p.mostrar_aniversario ? ' checked' : ''}><span>Mostrar meu aniversário (dia e mês) para a igreja</span></label><p class="form-error" role="alert"></p><div class="form-actions"><button class="action" type="submit">Salvar alterações</button></div><p class="note">Para trocar o e-mail, fale com a Secretaria.</p></form></section>
 <section class="box"><h2>Trocar senha</h2><form id="password-form" novalidate><label for="pw-atual">Senha atual</label><input id="pw-atual" name="atual" type="password" autocomplete="current-password" required><label for="pw-nova">Nova senha</label><input id="pw-nova" name="nova" type="password" autocomplete="new-password" required><p class="note">Pelo menos 8 caracteres, com letra maiúscula, minúscula, número e símbolo.</p><p class="form-error" role="alert"></p><div class="form-actions"><button class="action" type="submit">Trocar senha</button></div></form>
 <details class="account-delete"><summary>Excluir minha conta</summary><form id="delete-form" novalidate><p>Seus dados do app serão apagados. Essa ação não pode ser desfeita.</p><label for="del-senha">Confirme com sua senha</label><input id="del-senha" name="senha" type="password" autocomplete="current-password" required><p class="form-error" role="alert"></p><button class="button danger" type="submit">Excluir minha conta</button></form></details></section></div>`;
@@ -1027,7 +1063,9 @@
     d.showModal();
   }
   if (PUBLIC && window.NibConta && NibConta.available()) {
-    NibConta.eu().then(() => { if (account()) applyAccount(); });
+    const goHash = () => { const v = location.hash.slice(1); if (v && allowedPublic().includes(v)) show(v, false, false); };
+    NibConta.eu().then(() => { if (account()) applyAccount(); goHash(); });
+    if ('serviceWorker' in navigator) navigator.serviceWorker.addEventListener('message', e => { const v = e.data && e.data.nibView; if (typeof v === 'string' && allowedPublic().includes(v)) { if (v === 'caderno') { state.prayersLoaded = false; } show(v, false, false); } });
     const token = new URLSearchParams(location.search).get('redefinir');
     if (token && /^[a-f0-9]{64}$/.test(token)) resetDialog(token);
   }

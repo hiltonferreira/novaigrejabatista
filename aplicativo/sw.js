@@ -2,7 +2,7 @@
    Guarda os arquivos do app no celular para abrir rápido e funcionar com internet fraca.
    Ao mudar qualquer arquivo do app, aumente VERSION: o celular baixa a versão nova
    e mostra "Nova versão do app disponível". Dados de fora (obra.json, site) não ficam guardados. */
-const VERSION = 'nib-app-333b4b3ee5';
+const VERSION = 'nib-app-eddbd0d982';
 const FILES = [
   './', 'index.html', 'conheca.html', 'manifest.webmanifest',
   'app.css', 'install.css', 'conheca.css', 'app.js', 'admin.js', 'icons.js', 'install.js', 'site-data.js', 'conta.js', 'moderation.js', 'daily-content.js', 'verses.js', 'pix.js',
@@ -58,4 +58,21 @@ self.addEventListener('fetch', e => {
     if (res.ok && res.type === 'basic') { const copy = res.clone(); caches.open(VERSION).then(c => c.put(req, copy)); }
     return res;
   })));
+});
+
+// Notificações no celular: o servidor manda título, texto e o endereço a abrir.
+self.addEventListener('push', e => {
+  let d = {}; try { d = e.data ? e.data.json() : {}; } catch (_) { d = { body: e.data ? e.data.text() : '' }; }
+  const title = d.title || 'Nova Igreja Batista';
+  e.waitUntil(self.registration.showNotification(title, { body: d.body || 'Você tem um novo aviso no app.', icon: 'assets/icons/icon-192.png', badge: 'assets/icons/icon-96.png', tag: d.tag || 'nib', data: { url: d.url || './' } }));
+});
+self.addEventListener('notificationclick', e => {
+  e.notification.close();
+  const url = new URL((e.notification.data && e.notification.data.url) || './', self.registration.scope).href;
+  const view = new URL(url).hash.slice(1);
+  e.waitUntil(self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(list => {
+    const open = list.find(c => c.url.startsWith(self.registration.scope));
+    if (open) { if (view) open.postMessage({ nibView: view }); return open.focus(); }
+    return self.clients.openWindow(url);
+  }));
 });

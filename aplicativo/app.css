@@ -2033,3 +2033,6 @@ html{scrollbar-gutter:stable}
 #nib-proposta.is-public .my-cell .form-actions{margin-top:16px}
 #nib-proposta .cell-card.is-mine{border-color:#041e42;box-shadow:0 0 0 1px #041e42}
 #nib-proposta .cell-card h3 .tag{margin-left:6px;vertical-align:middle}
+#nib-proposta .push-box{margin-bottom:18px}
+#nib-proposta .push-box h2{margin:6px 0 6px}
+#nib-proposta .push-box .check{margin:14px 0 0}

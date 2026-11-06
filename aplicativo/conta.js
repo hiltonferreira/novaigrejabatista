@@ -7,7 +7,7 @@
     const opt = { credentials: 'same-origin', cache: 'no-store', headers: { 'X-Nib': '1' } };
     if (body !== undefined) { opt.method = 'POST'; opt.headers['Content-Type'] = 'application/json'; opt.body = JSON.stringify(body); }
     let r, d;
-    try { r = await fetch('api/' + arquivo + '.php?acao=' + encodeURIComponent(acao), opt); } catch (_) { throw new Error('Sem conexão. Confira a internet e tente de novo.'); }
+    try { r = await fetch('api/' + arquivo + '.php?acao=' + encodeURIComponent(acao.split('&')[0]) + acao.slice(acao.split('&')[0].length), opt); } catch (_) { throw new Error('Sem conexão. Confira a internet e tente de novo.'); }
     try { d = await r.json(); } catch (_) { d = null; }
     if (!r.ok || !d || !d.ok) throw new Error((d && d.erro) || 'Serviço indisponível no momento. Tente de novo em instantes.');
     return d;
@@ -28,6 +28,9 @@
     excluir: async senha => { await api('excluir', { senha }); pessoa = null; },
     cadastros: async () => (await api('cadastros')).pessoas,
     confirmar: async (id, status) => api('confirmar', { id, status }),
-    caderno: async (acao, body) => api(acao, body, 'caderno')
+    caderno: async (acao, body) => api(acao, body, 'caderno'),
+    pushChave: async () => (await api('push-chave')).chave,
+    push: async (acao, body) => api(acao, body),
+    pushEstado: async endpoint => api('push-estado&endpoint=' + encodeURIComponent(endpoint))
   };
 })();

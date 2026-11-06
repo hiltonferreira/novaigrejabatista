@@ -49,6 +49,17 @@ function nib_migrar(PDO $db): void {
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
     $db->exec('INSERT INTO nib_versao (v) VALUES (3)');
   }
+  if ($v < 4) {
+    // v4: notificações no celular (inscrições Web Push) e ajustes internos (chave VAPID criada sozinha).
+    $db->exec("CREATE TABLE IF NOT EXISTS nib_ajustes (chave VARCHAR(40) PRIMARY KEY, valor TEXT NOT NULL) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+    $db->exec("CREATE TABLE IF NOT EXISTS nib_push (
+      id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY, pessoa_id INT UNSIGNED NOT NULL, endpoint VARCHAR(700) NOT NULL, endpoint_hash CHAR(64) NOT NULL,
+      p256dh VARCHAR(120) NOT NULL, auth VARCHAR(40) NOT NULL, caderno TINYINT(1) NOT NULL DEFAULT 0, aparelho VARCHAR(120) NOT NULL DEFAULT '', criado_em DATETIME NOT NULL,
+      UNIQUE KEY uq_endpoint (endpoint_hash), KEY ix_pessoa (pessoa_id),
+      CONSTRAINT fk_push_pessoa FOREIGN KEY (pessoa_id) REFERENCES nib_pessoas(id) ON DELETE CASCADE
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+    $db->exec('INSERT INTO nib_versao (v) VALUES (4)');
+  }
 }
 
 function nib_migrar_v1(PDO $db): void {
@@ -190,6 +201,12 @@ function nib_nome_proprio(string $n): string {
 function nib_celula($v): string {
   $t = nib_texto(is_string($v) ? $v : '', 160);
   return preg_match('/^[^|]{3,40}\|[^|]{2,100}$/u', $t) ? $t : '';
+}
+// Só serviços de push conhecidos (Google, Mozilla, Apple, Microsoft); evita o servidor chamar endereços quaisquer.
+function nib_push_endpoint_ok(string $u): bool {
+  if (getenv('NIB_PUSH_TESTE') && str_starts_with($u, 'http://127.0.0.1:')) return true;
+  $p = parse_url($u); if (!$p || ($p['scheme'] ?? '') !== 'https' || empty($p['host'])) return false;
+  return (bool)preg_match('/(^|\.)(fcm\.googleapis\.com|android\.googleapis\.com|push\.services\.mozilla\.com|push\.apple\.com|notify\.windows\.com)$/', $p['host']);
 }
 function nib_equipe(array $p): bool { return in_array($p['papel'], ['secretaria', 'pastoral', 'admin'], true); }
 

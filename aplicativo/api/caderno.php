@@ -9,6 +9,7 @@ header('X-Content-Type-Options: nosniff');
 header('X-Robots-Tag: noindex');
 header('Referrer-Policy: same-origin');
 require __DIR__ . '/conta-lib.php';
+require __DIR__ . '/push-lib.php';
 
 // Mesmo filtro do moderation.js (lista lida do próprio arquivo, para haver uma só fonte).
 function nib_normalizar(string $t): string {
@@ -79,6 +80,7 @@ try {
       $db->prepare('INSERT INTO nib_pedidos (pessoa_id, titulo, motivo, criado_em, atualizado_em) VALUES (?,?,?,?,?)')->execute([$eu['id'], $titulo, $motivo, $agora, $agora]);
       $id = (int)$db->lastInsertId();
       nib_registrar((int)$eu['id'], 'pedido', $id);
+      nib_push_depois(null, ['title' => 'Novo pedido de oração', 'body' => explode(' ', nib_nome_proprio((string)$eu['nome']))[0] . ': ' . $titulo, 'url' => '/app/#caderno', 'tag' => 'nib-caderno', 'tipo' => 'caderno'], [(int)$eu['id']]);
       nib_json(201, ['ok' => true, 'id' => $id]);
     }
 

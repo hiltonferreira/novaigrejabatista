@@ -8,6 +8,7 @@ header('X-Content-Type-Options: nosniff');
 header('X-Robots-Tag: noindex');
 header('Referrer-Policy: same-origin');
 require __DIR__ . '/conta-lib.php';
+require __DIR__ . '/push-lib.php';
 
 $acao = is_string($_GET['acao'] ?? null) ? $_GET['acao'] : '';
 $post = ($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST';
@@ -153,6 +154,44 @@ try {
       $q->execute([$status, $status === 'confirmado' ? $eu['id'] : null, $status === 'confirmado' ? nib_agora() : null, nib_agora(), $id]);
       if (!$q->rowCount()) nib_erro('Cadastro não encontrado.', 404);
       nib_registrar((int)$eu['id'], 'membro-' . $status, $id);
+      if ($status === 'confirmado') nib_push_depois([$id], ['title' => 'Membresia confirmada', 'body' => 'A Secretaria confirmou que você é membro da Nova Igreja Batista. Seja bem-vindo!', 'url' => '/app/', 'tag' => 'nib-membro']);
+      nib_json(200, ['ok' => true]);
+    }
+
+    case 'get:push-chave':
+      nib_json(200, ['ok' => true, 'chave' => nib_vapid()['publica']]);
+
+    case 'post:push-inscrever': {
+      if (!$eu) nib_erro('Entre na sua conta.', 401);
+      $ep = is_string($d['endpoint'] ?? null) ? trim($d['endpoint']) : '';
+      $k = is_array($d['keys'] ?? null) ? $d['keys'] : [];
+      $p256 = is_string($k['p256dh'] ?? null) ? $k['p256dh'] : ''; $au = is_string($k['auth'] ?? null) ? $k['auth'] : '';
+      if (strlen($ep) > 700 || !nib_push_endpoint_ok($ep) || !preg_match('/^[A-Za-z0-9_-]{80,100}$/', $p256) || !preg_match('/^[A-Za-z0-9_-]{16,30}$/', $au)) nib_erro('Este aparelho não pode receber notificações.');
+      nib_limite('push', (string)$eu['id'], 20, 86400);
+      $db->prepare('INSERT INTO nib_push (pessoa_id, endpoint, endpoint_hash, p256dh, auth, aparelho, criado_em) VALUES (?,?,?,?,?,?,?)
+        ON DUPLICATE KEY UPDATE pessoa_id = VALUES(pessoa_id), p256dh = VALUES(p256dh), auth = VALUES(auth), aparelho = VALUES(aparelho)')
+        ->execute([$eu['id'], $ep, hash('sha256', $ep), $p256, $au, mb_substr((string)($_SERVER['HTTP_USER_AGENT'] ?? ''), 0, 120), nib_agora()]);
+      nib_push_depois([(int)$eu['id']], ['title' => 'Notificações ativadas', 'body' => 'Você vai receber aqui os avisos da Nova Igreja Batista.', 'url' => '/app/', 'tag' => 'nib-ativado']);
+      nib_json(200, ['ok' => true]);
+    }
+
+    case 'post:push-preferencia': {
+      if (!$eu) nib_erro('Entre na sua conta.', 401);
+      $ep = is_string($d['endpoint'] ?? null) ? trim($d['endpoint']) : '';
+      $db->prepare('UPDATE nib_push SET caderno = ? WHERE endpoint_hash = ? AND pessoa_id = ?')->execute([!empty($d['caderno']) ? 1 : 0, hash('sha256', $ep), $eu['id']]);
+      nib_json(200, ['ok' => true]);
+    }
+
+    case 'get:push-estado': {
+      if (!$eu) nib_erro('Entre na sua conta.', 401);
+      $ep = is_string($_GET['endpoint'] ?? null) ? $_GET['endpoint'] : '';
+      $q = $db->prepare('SELECT caderno FROM nib_push WHERE endpoint_hash = ? AND pessoa_id = ?'); $q->execute([hash('sha256', $ep), $eu['id']]);
+      $r = $q->fetch(); nib_json(200, ['ok' => true, 'inscrito' => (bool)$r, 'caderno' => $r ? (bool)$r['caderno'] : false]);
+    }
+
+    case 'post:push-sair': {
+      $ep = is_string($d['endpoint'] ?? null) ? trim($d['endpoint']) : '';
+      if ($ep !== '') $db->prepare('DELETE FROM nib_push WHERE endpoint_hash = ?')->execute([hash('sha256', $ep)]);
       nib_json(200, ['ok' => true]);
     }
 
