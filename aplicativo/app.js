@@ -1050,9 +1050,8 @@
     window.scrollTo(0,0);
     const done = () => { enter.hidden = true; auth.hidden = true; gate(false); document.getElementById('heading').focus({preventScroll:true}); };
     if (!enter.animate) { onboarding.hidden = true; done(); return; }
-    // O brasão nunca é pulado (pedido de Hilton, 06/11/2026). Com "reduzir movimento" ligado no celular,
-    // ele aparece e some só com esmaecimento, sem deslocamento nem reflexo.
-    const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    // O brasão nunca é pulado, com a animação completa mesmo com "reduzir movimento" ligado no celular
+    // (decisão de Hilton, 06/11/2026: sem movimento não faz sentido ter a animação).
     // Acabamento contido: o brasão assenta com desaceleração longa, um reflexo de luz atravessa
     // o desenho e a tela se dissolve sobre a inicial, que sobe de leve. Só transform e opacity.
     enter.hidden = false;
@@ -1065,10 +1064,6 @@
       return new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
     }).then(() => {
       const at = ms => ms / T;
-      if (still) return Promise.all([
-        mark.animate([{opacity:0},{opacity:1,offset:at(900)},{opacity:1,offset:at(1700)},{opacity:0}], {duration:T, fill:'forwards'}),
-        enter.animate([{opacity:1},{opacity:1,offset:at(1850)},{opacity:0}], {duration:T, fill:'forwards'})
-      ].map(a => a.finished));
       const runs = [
         halo.animate([{opacity:0,transform:'translate(-50%,-52%) scale(.7)'},{opacity:1,transform:'translate(-50%,-52%) scale(1)',offset:at(1300),easing:soft},{opacity:0,transform:'translate(-50%,-52%) scale(1.15)'}], {duration:T, easing:settle, fill:'forwards'}),
         mark.animate([
