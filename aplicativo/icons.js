@@ -16,7 +16,8 @@
     historico: 'M3 12a9 9 0 1 0 2.6-6.4 M3 4v4h4 M12 7v5l3 2',
     informacoes: 'M4 5h16v16H4z M8 3v4 M16 3v4 M4 9h16 M8 13h1 M11 13h5 M8 17h1 M11 17h5',
     agenda: calendar,
-    caderno: 'M5 3h12a2 2 0 0 1 2 2v16H7a2 2 0 0 1-2-2z M5 17a2 2 0 0 1 2-2h12 M12 12.5s-3-1.8-3-3.8a1.6 1.6 0 0 1 3-.8 1.6 1.6 0 0 1 3 .8c0 2-3 3.8-3 3.8z',
+    // Caderno de oração: mãos em oração.
+    caderno: 'M12 3.5c-1 0-1.7.7-1.9 1.7L9 11 6.2 14a2 2 0 0 0-.4 2.2L7 19 5 21 M12 3.5c1 0 1.7.7 1.9 1.7L15 11l2.8 3a2 2 0 0 1 .4 2.2L17 19l2 2 M12 3.5V17 M10.2 13.5 12 15.3 M13.8 13.5 12 15.3 M7 19h3.5L12 17l1.5 2H17',
     gestao: 'M3 3h7v9H3z M14 3h7v5h-7z M14 12h7v9h-7z M3 16h7v5H3z',
     membresia: 'M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z M2 21c0-3.5 3-6 7-6s7 2.5 7 6 M16 11l2 2 4-4',
     recepcao: 'M3 3h7v7H3z M14 3h7v7h-7z M3 14h7v7H3z M14 14h3v3h-3z M20 14v.01 M14 20h3 M20 17v4h-3',
@@ -62,7 +63,7 @@
     solicitacoes: { fill: 'M6 3h9l4 4v14H6z', cut: 'M9 12h7 M9 16h5' },
     programacao: { fill: 'M4 5h16v16H4z', stroke: 'M8 3v4 M16 3v4', cut: 'M4 10.5h16 M12 13.5v4.5 M9.8 15.8h4.4' },
     comunicados: { fill: 'M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9z', stroke: 'M10 21h4' },
-    cuidado: { fill: 'M5 3h12a2 2 0 0 1 2 2v16H7a2 2 0 0 1-2-2z', cut: 'M5 17a2 2 0 0 1 2-2h12 M12 12.5s-3-1.8-3-3.8a1.6 1.6 0 0 1 3-.8 1.6 1.6 0 0 1 3 .8c0 2-3 3.8-3 3.8z' },
+    cuidado: { fill: 'M12 3.5c-1 0-1.7.7-1.9 1.7L9 11 6.2 14a2 2 0 0 0-.4 2.2L7 19h3.5L12 17z M12 3.5c1 0 1.7.7 1.9 1.7L15 11l2.8 3a2 2 0 0 1 .4 2.2L17 19h-3.5L12 17z', cut: 'M12 4v12.5 M10.2 13.3 12 15.1 M13.8 13.3 12 15.1', stroke: 'M7 19l-2 2 M17 19l2 2' },
     palavra: { fill: 'M12 6.5C10.2 5 7.6 4.5 4 4.5v13c3.6 0 6.2.5 8 2 1.8-1.5 4.4-2 8-2v-13c-3.6 0-6.2.5-8 2Z', cut: 'M12 7v12' },
     conferencia: { fill: 'M12 3l9 5H3z M4 10h2v7H4z M8 10h2v7H8z M14 10h2v4h-2z', stroke: 'M3 21h10 M16 19l2 2 4-4' },
     lancamentos: { fill: 'M5 4h14v17H5z', cut: 'M8 8h8 M8 12h8 M8 16h5' },
