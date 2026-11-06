@@ -2105,3 +2105,30 @@ html{scrollbar-gutter:stable}
 #nib-proposta .aviso-card>p{margin:12px 0 0;color:#2a3a52;line-height:1.55}
 #nib-proposta .aviso-card .button-go{margin-top:12px}
 #nib-proposta .aviso-remove{display:block;margin-top:12px;padding:0;border:0;background:none;color:#b3261e;font:inherit;font-size:13px;font-weight:600;cursor:pointer}
+/* Bloco de avisos na tela inicial (v105) */
+#nib-proposta .home-avisos{margin:0 0 22px}
+#nib-proposta .home-aviso{display:flex;gap:12px;align-items:flex-start;padding:16px;margin-top:10px;border:1px solid #dce3eb;border-radius:20px;background:#fff}
+#nib-proposta .home-aviso.is-pinned{border-color:#ff7f40;box-shadow:0 0 0 1px #ff7f40}
+#nib-proposta .home-aviso>div{min-width:0;flex:1}
+#nib-proposta .home-aviso-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+#nib-proposta .home-aviso h3{margin:0;font-size:16.5px;line-height:1.3;color:#041e42}
+#nib-proposta .home-aviso-new{flex:0 0 auto;padding:3px 9px;border-radius:999px;background:#fff1e8;color:#c2531a;font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+#nib-proposta .home-aviso p{margin:6px 0 0;color:#2a3a52;line-height:1.5;font-size:14.5px}
+#nib-proposta .home-aviso small{display:block;margin-top:8px;color:#5b6b80;font-size:12.5px}
+#nib-proposta .home-aviso-link{display:inline-flex;align-items:center;gap:6px;margin-top:8px;color:#041e42;font-weight:700;font-size:14px;text-decoration:none}
+#nib-proposta .home-aviso-link .button-arrow{width:16px;height:16px}
+/* Cartões do sino na versão oficial (v105) */
+#nib-proposta .pub-notifs{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+#nib-proposta .pub-notif{display:flex;gap:12px;align-items:flex-start;padding:14px;border:1px solid #e3e8ef;border-radius:18px;background:#fff;border-left-width:1px!important}
+#nib-proposta .pub-notif.is-new{border-color:#c9d2de;box-shadow:0 1px 0 rgba(4,30,66,.04)}
+#nib-proposta .pub-notif-icon{flex:0 0 40px;width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:#eef2f7;color:#041e42}
+#nib-proposta .pub-notif-icon svg{width:20px;height:20px}
+#nib-proposta .pub-notif.is-ok .pub-notif-icon{background:#e9f3ed;color:#24674e}
+#nib-proposta .pub-notif.is-aviso .pub-notif-icon,#nib-proposta .pub-notif.is-cell .pub-notif-icon{background:#fff1e8;color:#c2531a}
+#nib-proposta .pub-notif.is-event .pub-notif-icon{background:#eaf2fb;color:#0a5cc2}
+#nib-proposta .pub-notif-body{min-width:0;flex:1}
+#nib-proposta .pub-notif-body strong{display:block;font-size:15.5px;line-height:1.3;color:#041e42}
+#nib-proposta .pub-notif-body p{margin:4px 0 0;font-size:14px;line-height:1.45;color:#46556c}
+#nib-proposta .pub-notif-go{display:inline-flex;align-items:center;gap:6px;margin-top:8px;padding:0;border:0;background:none;color:#041e42;font:700 13.5px/1.2 var(--nib-font);cursor:pointer}
+#nib-proposta .pub-notif-go .button-arrow{width:15px;height:15px}
+#nib-proposta .pub-notif.is-new .pub-notif-body strong::after{content:"";display:inline-block;width:7px;height:7px;margin-left:7px;border-radius:50%;background:#ff7f40;vertical-align:middle}
