@@ -2342,3 +2342,12 @@ dialog.ck-telao::backdrop{background:#041e42}
   #nib-proposta #content[data-view=eventos]>.cards>.event:only-child{grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:stretch}
   #nib-proposta #content[data-view=eventos]>.cards>.event:only-child .event-cover{background:#041e42}
 }
+
+/* v122 · Grupos de opções (data-seg) no padrão Entrar/Criar cadastro: trilho cinza + pílula branca deslizante */
+#nib-proposta .seg-auto{display:grid!important;grid-template-columns:repeat(var(--n),minmax(0,1fr));flex-wrap:nowrap;overflow:visible;width:100%;max-width:640px;margin:0 0 16px;padding:4px;border:0;border-radius:999px;background:#e6ebf2}
+#nib-proposta .seg-auto>button,#nib-proposta main .seg-auto>button.mem-chip,#nib-proposta .seg-auto>button.is-active,#nib-proposta main .seg-auto>button.mem-chip.is-active{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;min-width:0;min-height:44px;margin:0;padding:6px 6px;border:0;border-radius:999px;background:transparent!important;box-shadow:none;color:#536176;font:600 14px/1.15 var(--nib-font);text-align:center;white-space:nowrap;cursor:pointer;transition:color .2s}
+#nib-proposta .seg-auto>button.is-active,#nib-proposta main .seg-auto>button.mem-chip.is-active{color:#041e42}
+#nib-proposta .seg-auto>button small{display:block;margin:0;font-size:11px;font-weight:500;line-height:1.1;color:#536176;opacity:1}
+#nib-proposta .seg-auto>button>:is(span,b){margin:0}
+@media(hover:hover){#nib-proposta .seg-auto>button:hover{color:#041e42}}
+@media(max-width:420px){#nib-proposta .seg-auto>button,#nib-proposta main .seg-auto>button.mem-chip{font-size:13px;padding:6px 4px;white-space:normal;overflow-wrap:anywhere;hyphens:auto}}

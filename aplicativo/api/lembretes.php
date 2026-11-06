@@ -53,19 +53,21 @@ if (preg_match('/SNAPSHOT_CELULAS\s*=\s*(\[.*?\]);\s*\n/s', $js, $m)) {
 }
 
 // Mensagem de ação no fim (pedido de Hilton) e tela que abre ao tocar.
-const NIB_ACAO = ['celula' => 'Convide alguém para ir com você!', 'culto' => 'Convide alguém e venha com a gente!', 'evento' => 'Toque para ver os detalhes. Te esperamos!'];
+const NIB_ACAO = ['celula' => 'Leve alguém com você!', 'culto' => 'Convide alguém e venha!', 'evento' => 'Te esperamos!'];
 const NIB_TELA = ['celula' => 'celulas', 'culto' => 'agenda', 'evento' => 'eventos'];
 function nib_lembrete_msg(array $itens): array {
   $tipos = array_unique(array_column($itens, 0));
   $principal = in_array('celula', $tipos, true) ? 'celula' : (in_array('evento', $tipos, true) ? 'evento' : 'culto');
-  $acao = count($tipos) > 1 ? 'Convide alguém e venha com a gente!' : NIB_ACAO[$principal];
+  $acao = count($tipos) > 1 ? 'Convide alguém e venha!' : NIB_ACAO[$principal];
   if (count($itens) === 1) {
     [$tipo, $txt] = $itens[0];
     $partes = explode(' às ', $txt, 2);
     $quando = isset($partes[1]) ? 'Às ' . $partes[1] . '. ' : ''; // sem endereço (Hilton, 06/11/2026)
     $msg = ['title' => 'Hoje tem ' . $partes[0], 'body' => $quando . $acao];
   } else {
-    $msg = ['title' => 'Hoje na Nova Igreja Batista', 'body' => implode(' · ', array_column($itens, 1)) . '. ' . $acao];
+    // Curto para caber no aviso fechado do celular (~2 linhas): se a lista for longa, a frase de ação sai.
+    $lista = implode(' · ', array_column($itens, 1));
+    $msg = ['title' => 'Hoje na igreja', 'body' => mb_strlen($lista) > 70 ? $lista : $lista . '. ' . $acao];
   }
   return $msg + ['url' => '/app/#' . NIB_TELA[$principal], 'tipo' => 'lembrete'];
 }

@@ -19,6 +19,17 @@
   // Menu do app oficial em blocos, para não virar uma lista comprida sem respiro.
   const publicGroups = items => [['Sua conta',['inicio','cadastro','entrar']],['Vida na igreja',['agenda','eventos','celulas','caderno']],['Igreja',['avisos','generosidade','informacoes']],['Equipe da igreja',['cadastros','checkin']],['Ajude a melhorar',['sugestoes']]]
     .map(([label,keys]) => [label, keys.map(k => items.find(([key]) => key === k)).filter(Boolean)]).filter(([,links]) => links.length);
+  // Grupos de opções lado a lado (data-seg) no padrão do login: trilho cinza com pílula branca que desliza (pedido de Hilton, 06/11/2026).
+  const segPrev = new Map();
+  function segify(scope) {
+    scope.querySelectorAll('[data-seg]').forEach(g => {
+      const btns = [...g.querySelectorAll(':scope > button')]; if (!btns.length) return;
+      const i = Math.max(0, btns.findIndex(b => b.classList.contains('is-active') || b.getAttribute('aria-pressed') === 'true'));
+      const key = g.dataset.seg, from = segPrev.has(key) ? segPrev.get(key) : i; segPrev.set(key, i);
+      g.classList.add('seg', 'seg-auto'); g.style.setProperty('--n', btns.length); g.style.setProperty('--i', i); g.style.setProperty('--from', from);
+      if (!g.querySelector(':scope > .seg-pill')) { const pill = document.createElement('span'); pill.className = 'seg-pill' + (from !== i ? ' is-moving' : ''); pill.setAttribute('aria-hidden', 'true'); g.prepend(pill); }
+    });
+  }
   const viewHistory = [];
   let notebookSequence = 0;
   const demoPrayers = () => [
@@ -253,7 +264,7 @@
     const months = []; for (const x of items) { const m = x.day.slice(0,7); let g = months.find(g => g.m === m); if (!g) months.push(g = { m, list: [] }); g.list.push(x); }
     const monthName = m => new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Porto_Velho',month:'long'}).format(new Date(m+'-15T12:00:00-04:00'));
     const rows = months.map(g => `<li class="history-month"><h3>${escape(monthName(g.m))}</h3><ul>${g.list.map(x => `<li><span class="admin-when"><small>${escape(monthShort(x.day))}</small><strong>${x.day.slice(8)}</strong></span><span class="history-what"><b>${escape(typeLabel(x.type))}</b><small><span class="history-status">Efetuado</span> · Pix${x.app ? ' pelo app' : ''}</small></span></li>`).join('')}</ul></li>`).join('');
-    return `<div class="history-years" role="group" aria-label="Ano">${chips}</div><div class="history-layout"><section class="box history-summary" aria-labelledby="history-total-title"><span class="label">RESUMO DE ${year}</span><h2 id="history-total-title" class="history-total">${items.length} ${items.length === 1 ? 'contribuição' : 'contribuições'}</h2><p class="history-total-note">Obrigado por semear na obra de Deus.</p><dl class="bank-details history-parts">${parts}</dl>${button('Contribuir agora','generosidade',true)}</section><section class="box history-list" aria-labelledby="history-list-title"><h2 id="history-list-title">Lançamentos</h2>${rows ? `<ul class="history-months">${rows}</ul>` : '<p class="gift-intro">Nenhuma contribuição neste ano.</p>'}</section></div><section class="box history-how"><h2>Como o histórico funciona</h2><p>Cada contribuição aparece como <b>Efetuado</b>, sem valores. O Pix feito direto no app do banco aparece depois que a tesouraria confere o extrato da igreja.</p><p class="note">Demonstração com dados fictícios. Os valores ficam só com a tesouraria e a liderança pastoral.</p></section>`;
+    return `<div class="history-years" role="group" aria-label="Ano" data-seg="anos">${chips}</div><div class="history-layout"><section class="box history-summary" aria-labelledby="history-total-title"><span class="label">RESUMO DE ${year}</span><h2 id="history-total-title" class="history-total">${items.length} ${items.length === 1 ? 'contribuição' : 'contribuições'}</h2><p class="history-total-note">Obrigado por semear na obra de Deus.</p><dl class="bank-details history-parts">${parts}</dl>${button('Contribuir agora','generosidade',true)}</section><section class="box history-list" aria-labelledby="history-list-title"><h2 id="history-list-title">Lançamentos</h2>${rows ? `<ul class="history-months">${rows}</ul>` : '<p class="gift-intro">Nenhuma contribuição neste ano.</p>'}</section></div><section class="box history-how"><h2>Como o histórico funciona</h2><p>Cada contribuição aparece como <b>Efetuado</b>, sem valores. O Pix feito direto no app do banco aparece depois que a tesouraria confere o extrato da igreja.</p><p class="note">Demonstração com dados fictícios. Os valores ficam só com a tesouraria e a liderança pastoral.</p></section>`;
   }
   function giftBack() {
     const prev = ({valor:'finalidade', confirmar:'valor', pix: PUBLIC ? 'valor' : 'confirmar'})[state.giftStep || 'finalidade'];
@@ -648,6 +659,7 @@
     };
     content.innerHTML = (isManagement() && admin.pages[state.view] ? admin.pages[state.view] : pages[state.view])();
     content.dataset.view = state.view;
+    segify(content);
     content.querySelectorAll('[data-w]').forEach(el => el.style.setProperty('width', el.dataset.w + '%'));
     if (state.view === 'inicio') myBirthdayPopup();
     if (state.view === 'informacoes' && !isManagement()) { state.noticesSeen = admin.noticesCount(); refreshNotices(); }
@@ -1219,9 +1231,9 @@
     const f = state.teamFilter || 'pendente';
     const list = state.team.filter(p => f === 'todos' || (f === 'pendente' ? p.membro_status === 'pendente' : f === 'confirmado' ? p.membro_status === 'confirmado' : p.membro_status === 'nao'));
     const count = k => state.team.filter(p => k === 'todos' || p.membro_status === k).length;
-    const chips = [['pendente','Aguardando'],['confirmado','Membros'],['nao','Não membros'],['todos','Todos']].map(([k,l]) => `<button type="button" class="history-year${f === k ? ' is-active' : ''}" data-team-filter="${k}" aria-pressed="${f === k}">${l} <span>${count(k)}</span></button>`).join('');
+    const chips = [['pendente','Aguardando'],['confirmado','Membros'],['nao','Não membros'],['todos','Todos']].map(([k,l]) => `<button type="button" class="history-year${f === k ? ' is-active' : ''}" data-team-filter="${k}" aria-pressed="${f === k}">${l}<small>${count(k)}</small></button>`).join('');
     const rows = list.map(p => `<li class="team-row" data-q="${escape((p.nome + ' ' + p.email + ' ' + p.celular).toLowerCase())}"><div><strong>${escape(p.nome)}</strong><small>${escape(p.email)} · ${escape(fmtPhone(p.celular))}${p.cpf ? ' · CPF ' + escape(fmtCpf(p.cpf)) : ''}</small>${p.celula ? `<small>Célula: ${escape(p.celula.split('|').reverse().join(' · '))}</small>` : ''}<small>${escape(vinculoLabel[p.vinculo] || '')} · desde ${escape(fmtDay(p.criado_em))}${p.papel !== 'membro' ? ' · equipe: ' + escape(p.papel) : ''}</small></div><div class="team-actions">${p.membro_status !== 'confirmado' ? `<button type="button" class="action" data-team-status="confirmado" data-id="${p.id}">Confirmar membro</button>` : ''}${p.membro_status !== 'nao' ? `<button type="button" class="button" data-team-status="nao" data-id="${p.id}">Não é membro</button>` : ''}${p.membro_status === 'nao' ? `<button type="button" class="button" data-team-status="pendente" data-id="${p.id}">Voltar para análise</button>` : ''}</div></li>`).join('');
-    return `${state.teamError ? `<p class="form-error" role="alert">${escape(state.teamError)}</p>` : ''}<div class="team-tools"><div class="cell-days" role="group" aria-label="Filtrar cadastros">${chips}</div><label class="sr-only" for="team-q">Buscar</label><input id="team-q" type="search" placeholder="Buscar por nome, e-mail ou celular" autocomplete="off"></div>${rows ? `<ul class="team-list">${rows}</ul>` : '<p class="event-empty">Nenhum cadastro neste filtro.</p>'}`;
+    return `${state.teamError ? `<p class="form-error" role="alert">${escape(state.teamError)}</p>` : ''}<div class="team-tools"><div class="cell-days" role="group" aria-label="Filtrar cadastros" data-seg="cadastros">${chips}</div><label class="sr-only" for="team-q">Buscar</label><input id="team-q" type="search" placeholder="Buscar por nome, e-mail ou celular" autocomplete="off"></div>${rows ? `<ul class="team-list">${rows}</ul>` : '<p class="event-empty">Nenhum cadastro neste filtro.</p>'}`;
   }
   async function teamSet(btn) {
     btn.disabled = true;
