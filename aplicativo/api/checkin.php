@@ -31,9 +31,11 @@ function nib_culto_aberto(?DateTimeImmutable $agora = null): ?array {
 function nib_ajuste(PDO $db, string $k): ?string { $q = $db->prepare('SELECT valor FROM nib_ajustes WHERE chave = ?'); $q->execute([$k]); $v = $q->fetchColumn(); return $v === false ? null : (string)$v; }
 function nib_ajuste_set(PDO $db, string $k, string $v): void { $db->prepare('INSERT INTO nib_ajustes (chave, valor) VALUES (?, ?) ON DUPLICATE KEY UPDATE valor = VALUES(valor)')->execute([$k, $v]); }
 // Código do QR fixo do telão: criado sozinho na primeira vez.
+// Código fixo impresso na arte do telão (não é segredo: fica projetado na igreja). Trocar aqui e no banco só se precisar de uma arte nova.
+const NIB_CHECKIN_QR_PADRAO = '05981c828247dbdfd70eda6a';
 function nib_checkin_qr(PDO $db): string {
   $t = nib_ajuste($db, 'checkin_qr');
-  if (!$t) { $t = bin2hex(random_bytes(12)); $db->prepare('INSERT IGNORE INTO nib_ajustes (chave, valor) VALUES (?, ?)')->execute(['checkin_qr', $t]); $t = (string)nib_ajuste($db, 'checkin_qr'); }
+  if (!$t) { $t = NIB_CHECKIN_QR_PADRAO; $db->prepare('INSERT IGNORE INTO nib_ajustes (chave, valor) VALUES (?, ?)')->execute(['checkin_qr', $t]); $t = (string)nib_ajuste($db, 'checkin_qr'); }
   return $t;
 }
 function nib_local_igreja(PDO $db): ?array { $v = nib_ajuste($db, 'igreja_local'); $a = $v ? json_decode($v, true) : null; return is_array($a) && isset($a['lat'], $a['lng']) ? $a : null; }
