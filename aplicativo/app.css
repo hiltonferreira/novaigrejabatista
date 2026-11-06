@@ -2368,3 +2368,11 @@ dialog.ck-telao::backdrop{background:#041e42}
 #nib-proposta .choice-seg span,#nib-proposta .choice-seg input:checked+span{font:600 15px/1 "NIB Acumin Mobile",Arial,sans-serif}
 #nib-proposta .auth-form input[type=date]{font:400 16px/1.2 "NIB Acumin Mobile",Arial,sans-serif;color:#041e42}
 #nib-proposta .auth-form input[type=date]:invalid::-webkit-datetime-edit{color:#6b7a8f}
+/* v126: pílula selecionada azul com letra branca em todo seletor deslizante, menos Entrar/Criar cadastro (Hilton, 06/11/2026) */
+#nib-proposta .seg>.seg-pill,#nib-proposta .choice-seg::before{background:#041e42;box-shadow:0 2px 8px #041e4233}
+#nib-proposta .seg-auto>button.is-active,#nib-proposta .seg-auto>button.is-active:hover,#nib-proposta main .seg-auto>button.mem-chip.is-active,#nib-proposta main .seg-auto>button.mem-chip.is-active:hover,
+#nib-proposta .day-pick.seg .day-pick-btn.is-active,#nib-proposta .day-pick.seg .day-pick-btn.is-active:hover,
+#nib-proposta .choice-seg input:checked+span,#nib-proposta .choice-seg input:checked+span:hover{color:#fff}
+#nib-proposta .seg-auto>button.is-active small,#nib-proposta .day-pick.seg .day-pick-btn.is-active small{color:#ffffffc7}
+#nib-proposta .choice-seg input:focus-visible+span{outline:3px solid #041e42;outline-offset:2px}
+#nib-proposta .auth-tabs.seg>.seg-pill{background:#fff;box-shadow:0 2px 8px #041e421a}
