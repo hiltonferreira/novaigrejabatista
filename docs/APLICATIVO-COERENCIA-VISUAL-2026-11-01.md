@@ -416,3 +416,12 @@ Nova versão: uma única linha do tempo de 3 s, só com `transform` e `opacity`,
 ## Gestão por perfil: Secretaria e Liderança Pastoral (2026-11-03)
 
 Mapa completo e decisões em `docs/APLICATIVO-GESTAO-PERFIS-2026-11-03.md`. Código novo em `aplicativo/admin.js`; agenda aceita itens incluídos pela gestão (`NibDaily.addItem`). Nomes e tipos da agenda agora passam por escape.
+## Hover do site institucional — substitui efeitos anteriores
+
+Hilton rejeitou a proposta de brilho/halo/elevação do head7853ad1 e pediu padrão já usado no site. Reaproveitado comportamento .btn-ghost/.btn do index.html: preenchimento azul, texto branco e transição250ms. Nos atalhos desktop, mesmo estado parafocus-visible, com contorno de teclado preservado. Removidos bloco de brilho deslizante, halo, transform e toda a expansão de animações adicionada na última rodada. Botões habilitados usam apenas transição curta de cor/contorno; demais componentes voltam ao acabamento anterior. Sem marfim novo ou alteração de layout/rotas.
+
+51 testes existentes aprovados. Inspeção visual deste head NÃO executada: abertura do Preview interno no navegador foi rejeitada pela revisão automática por limite de uso; nenhuma tentativa alternativa de navegador foi feita. Publicação segue pelo fluxo autorizado GitHub/Vercel, conferindo estado do deployment. Pedido de reposicionar barra de carregamento foi cancelado por Hilton, pois estava sendo tratado no Claude; nenhum componente de carregamento foi criado ou alterado.
+
+Codex implementa/testa/publica somente staging; Claude recebe revisão delimitada; Hilton valida visualmente no link. Produção preservada.
+
+Integração 06/11/2026 (Claude): ao juntar esta branch com `codex/aplicativo-v1-preview`, vale a decisão acima de Hilton. O brilho, o halo, a elevação, a pressão no toque e a animação de abrir popup saíram, e ficou o hover do site (azul, texto branco, 250 ms) nos atalhos do desktop. O resto do app (v87) foi mantido.
