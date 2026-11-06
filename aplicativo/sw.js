@@ -2,17 +2,18 @@
    Guarda os arquivos do app no celular para abrir rápido e funcionar com internet fraca.
    Ao mudar qualquer arquivo do app, aumente VERSION: o celular baixa a versão nova
    e mostra "Nova versão do app disponível". Dados de fora (obra.json, site) não ficam guardados. */
-const VERSION = 'nib-app-c65483bd86';
+const VERSION = 'nib-app-700554dd49';
 const FILES = [
   './', 'index.html', 'conheca.html', 'manifest.webmanifest',
-  'app.css', 'install.css', 'conheca.css', 'app.js', 'admin.js', 'icons.js', 'install.js', 'moderation.js', 'daily-content.js', 'verses.js', 'pix.js',
+  'app.css', 'install.css', 'conheca.css', 'app.js', 'admin.js', 'icons.js', 'install.js', 'site-data.js', 'moderation.js', 'daily-content.js', 'verses.js', 'pix.js',
   'assets/vendor/qrcode-generator-2.0.4.js',
   'assets/painel-base.css', 'assets/resumo-base.css', 'assets/refino-mobile-base.css', 'assets/layout-mobile-base.css', 'assets/navegacao-base.css',
   'assets/acumin-regular.woff2', 'assets/acumin-medium.woff2', 'assets/acumin-semibold.woff2', 'assets/acumin-bold.woff2', 'assets/acumin-black.woff2',
   'assets/logo.svg', 'assets/splash-logo.webp', 'assets/splash-logo-final.webp', 'assets/brasao-branco.webp',
   'assets/hero-nib.webp', 'assets/social-instagram.webp', 'assets/social-youtube.webp', 'assets/social-site.webp',
   'assets/campanha-templo.webp', 'assets/jornada.webp', 'assets/mulheres.webp', 'assets/nxt.webp', 'assets/pix-qrcode.png',
-  'assets/icons/icon-96.png', 'assets/icons/icon-192.png', 'assets/icons/icon-512.png', 'assets/icons/maskable-512.png', 'assets/icons/apple-touch-icon.png'
+  'assets/icons/icon-96.png', 'assets/icons/icon-192.png', 'assets/icons/icon-512.png', 'assets/icons/maskable-512.png', 'assets/icons/apple-touch-icon.png',
+  'assets/lideranca/alex.webp', 'assets/lideranca/sheila.webp', 'assets/lideranca/sidiel.webp'
 ];
 
 self.addEventListener('install', e => {

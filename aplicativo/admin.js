@@ -109,7 +109,8 @@
     // Aniversariantes dos próximos 7 dias (só dia e mês, sem idade).
     function birthdays() {
       const base = new Date(api.NibDaily.dayKey(new Date()) + 'T12:00:00-04:00');
-      return demo.birthdays.map(([off, who]) => { const name = who || state.member.full; const d = new Date(base); d.setUTCDate(d.getUTCDate() + off); const key = api.NibDaily.dayKey(d); return { key, name, today: off === 0, date: key.slice(8, 10) + '/' + key.slice(5, 7), week: new Intl.DateTimeFormat('pt-BR', { timeZone: 'America/Porto_Velho', weekday: 'short' }).format(d).replace('.', '') }; });
+      // O aniversário do próprio membro só aparece quando a opção de teste "Simular meu aniversário" está ligada.
+      return demo.birthdays.filter(([, who]) => who || state.simulateBirthday).map(([off, who]) => { const name = who || state.member.full; const d = new Date(base); d.setUTCDate(d.getUTCDate() + off); const key = api.NibDaily.dayKey(d); return { key, name, today: off === 0, date: key.slice(8, 10) + '/' + key.slice(5, 7), week: new Intl.DateTimeFormat('pt-BR', { timeZone: 'America/Porto_Velho', weekday: 'short' }).format(d).replace('.', '') }; });
     }
     const num = n => n.toLocaleString('pt-BR');
     const ico = d => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${d}"/></svg>`;

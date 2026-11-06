@@ -4,6 +4,13 @@
   const content = document.getElementById('content');
   const feedback = document.getElementById('feedback');
   // Estado fictício em memória: nunca importar participantes ou dados reais aqui.
+  // Versão pública (endereço oficial): só informações reais da igreja, sem login e sem dados de exemplo.
+  // Onde vale cada versão: no endereço oficial abre a pública (a demonstração fica em /app/?demo);
+  // fora dele (link de apresentação) abre a demonstração, a menos que a página peça data-mode="publico".
+  const official = /(^|\.)novaigrejabatista\.com\.br$/.test(location.hostname);
+  const PUBLIC = document.documentElement.dataset.mode === 'publico' || (official && !/[?&]demo\b/.test(location.search));
+  root.classList.toggle('is-public', PUBLIC);
+  const publicViews = ['inicio','agenda','eventos','generosidade','celulas','informacoes'];
   const viewHistory = [];
   let notebookSequence = 0;
   const demoPrayers = () => [
@@ -24,8 +31,15 @@
     return h;
   }
   const state = { member: { first: 'Jéssica', full: 'Jéssica Exemplo', email: 'jessica@example.com', gender: 'f' }, context: 'membro', view: 'inicio', request: null, presented: null, gift: 'Dízimo', calendarMonth: NibDaily.dayKey(new Date()).slice(0,7), calendarDay: NibDaily.dayKey(new Date()), prayers: demoPrayers(), history: demoHistory(), historyYear: NibDaily.dayKey(new Date()).slice(0,4) };
-  const navigation = [['inicio', 'Início'], ['cadastro', 'Meu cadastro'], ['eventos', 'Eventos'], ['celulas', 'Células'], ['generosidade', 'Generosidade'], ['historico', 'Minhas contribuições'], ['informacoes', 'Informações'], ['agenda', 'Agenda'], ['caderno', 'Caderno de oração']];
+  const navigation = PUBLIC ? [['inicio', 'Início'], ['agenda', 'Agenda'], ['eventos', 'Eventos'], ['generosidade', 'Generosidade'], ['celulas', 'Células'], ['informacoes', 'Informações']] : [['inicio', 'Início'], ['cadastro', 'Meu cadastro'], ['eventos', 'Eventos'], ['celulas', 'Células'], ['generosidade', 'Generosidade'], ['historico', 'Minhas contribuições'], ['informacoes', 'Informações'], ['agenda', 'Agenda'], ['caderno', 'Caderno de oração']];
   const labels = { caderno: ['VIDA DE ORAÇÃO', 'Caderno de oração', 'Uma comunidade que cuida e ora em conjunto.'], agenda: ['VIDA NA IGREJA', 'Agenda da igreja', 'Cultos, encontros e próximos eventos em um só lugar.'], inicio: ['BOAS-VINDAS', 'Olá, Jéssica! Você está na plataforma Nib.', 'Acesse seu cadastro, encontre eventos, contribua e acompanhe a vida da igreja.'], cadastro: ['MINHAS INFORMAÇÕES', 'Meu cadastro', 'Consulte seus dados e encaminhe uma atualização à equipe.'], eventos: ['VIDA EM COMUNIDADE', 'Eventos e inscrições', 'Encontre os próximos encontros da igreja.'], celulas: ['CAMINHAR JUNTOS', 'Células', 'Acesse a plataforma de células adotada pela igreja.'], generosidade: ['CONTRIBUIR', 'Generosidade', 'Dízimos, ofertas e campanhas em um só lugar.'], historico: ['MEU HISTÓRICO', 'Minhas contribuições', 'Tudo o que você contribuiu, ano a ano. Só você vê.'], informacoes: ['FIQUE POR PERTO', 'Informações da igreja', 'Programação, endereço e canais da comunidade.'], gestao: ['ADMINISTRAÇÃO', 'Integração e membresia', 'Acompanhe o formulário, a reunião e a apresentação no culto.'], confirmar: ['MEMBRESIA', 'Registrar apresentação', 'O registro documenta a apresentação já realizada no culto.'] };
+  if (PUBLIC) { const t = document.querySelector('#drawer-title + p'); if (t) t.textContent = 'Sua vida na igreja'; const sb = document.querySelector('.sidebar-bottom small'); if (sb) sb.textContent = 'Ariquemes, RO'; }
+  if (PUBLIC) Object.assign(labels, {
+    inicio: ['BOAS-VINDAS', 'Que bom ter você na Nib!', 'Cultos, eventos, células e contribuições da Nova Igreja Batista em um só lugar.'],
+    celulas: ['CAMINHAR JUNTOS', 'Células', 'Encontre uma célula perto de você e fale com o líder pelo WhatsApp.'],
+    eventos: ['VIDA EM COMUNIDADE', 'Eventos', 'Os próximos encontros da igreja e as inscrições abertas.'],
+    informacoes: ['FIQUE POR PERTO', 'Informações da igreja', 'Horários dos cultos, endereço, liderança e canais oficiais.']
+  });
   // Concordância com o perfil: g('obrigado', 'obrigada').
   const g = (male, female) => state.member.gender === 'm' ? male : female;
   const escape = value => String(value).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -40,7 +54,25 @@
     { name: 'NXT CAMP', image: 'assets/nxt.webp', date: '21/11/2026', active: true },
     { name: 'Jornada DNA', image: 'assets/jornada.webp', date: '25/10/2026', active: false }
   ];
-  const eventCards = (compact = false) => `<div class="cards ${compact ? 'home-events' : ''}">${[...events].filter(e => !compact || e.active).sort((a,b) => Number(b.active) - Number(a.active)).map(e => `<article class="event ${e.name === 'Mulheres Virtuosas' ? 'event-mulheres-virtuosas' : ''} ${e.active ? '' : 'event-ended'}"><div class="event-cover"><img src="${e.image}" alt="${e.name}" width="800" height="400"></div><div class="event-content"><div class="event-top"><span class="tag ${e.active ? 'status-active' : 'status-ended'}">${e.active ? 'Ativo' : 'Encerrado'}</span><time class="event-date">${e.date}</time></div><${compact ? 'h3' : 'h2'}>${e.name}</${compact ? 'h3' : 'h2'}><p>${e.active ? 'Conheça o encontro e as informações do evento.' : 'Evento realizado. Consulte as informações.'}</p><button type="button" class="button primary" aria-label="Ver informações: ${e.name}" data-message="${e.name}: catálogo demonstrativo. A integração com as inscrições ainda será conectada; nenhum cadastro ou pagamento é realizado aqui.">Ver informações</button></div></article>`).join('')}</div>`;
+  const demoEventCards = (compact = false) => `<div class="cards ${compact ? 'home-events' : ''}">${[...events].filter(e => !compact || e.active).sort((a,b) => Number(b.active) - Number(a.active)).map(e => `<article class="event ${e.name === 'Mulheres Virtuosas' ? 'event-mulheres-virtuosas' : ''} ${e.active ? '' : 'event-ended'}"><div class="event-cover"><img src="${e.image}" alt="${e.name}" width="800" height="400"></div><div class="event-content"><div class="event-top"><span class="tag ${e.active ? 'status-active' : 'status-ended'}">${e.active ? 'Ativo' : 'Encerrado'}</span><time class="event-date">${e.date}</time></div><${compact ? 'h3' : 'h2'}>${e.name}</${compact ? 'h3' : 'h2'}><p>${e.active ? 'Conheça o encontro e as informações do evento.' : 'Evento realizado. Consulte as informações.'}</p><button type="button" class="button primary" aria-label="Ver informações: ${e.name}" data-message="${e.name}: catálogo demonstrativo. A integração com as inscrições ainda será conectada; nenhum cadastro ou pagamento é realizado aqui.">Ver informações</button></div></article>`).join('')}</div>`;
+  // Eventos do painel de eventos do site (NibSite). Antes de carregar, usa a lista conhecida.
+  const siteUrl = u => !u ? 'https://novaigrejabatista.com.br/' : /^https:\/\//.test(u) ? u : 'https://novaigrejabatista.com.br' + u;
+  function eventDate(e) {
+    const fmt = (v, o) => new Intl.DateTimeFormat('pt-BR', { timeZone: 'America/Porto_Velho', ...o }).format(new Date(v.slice(0, 10) + 'T12:00:00-04:00'));
+    let t = fmt(e.start, { day: '2-digit', month: 'long' });
+    if (e.end && e.end.slice(0, 10) !== e.start.slice(0, 10)) t += ' a ' + fmt(e.end, { day: '2-digit', month: 'long' });
+    if (!e.tbd && e.start.length > 10 && (!e.end || e.end.slice(0, 10) === e.start.slice(0, 10))) t += ', ' + e.start.slice(11, 16).replace(':', 'h').replace('h00', 'h');
+    return t;
+  }
+  const knownEvents = () => events.filter(e => e.active).map(e => ({ name: e.name, category: 'Acampamento', summary: 'Dois dias de palavra, worship, gincanas e comunhão para adolescentes de 12 a 17 anos.', start: '2026-11-21', end: '2026-11-22', tbd: true, location: '', price: 'R$ 80,00', cta: 'Ver inscrição', open: true, url: '/next/camp-sbgp1-nov26/', image: e.image }));
+  function eventCards(compact = false) {
+    if (!PUBLIC) return demoEventCards(compact);
+    const loaded = window.NibSite && NibSite.eventos();
+    const list = (loaded || knownEvents()).slice(0, compact ? 1 : 20);
+    if (!list.length) return `<section class="box event-empty"><h2>Nenhum evento com data marcada agora</h2><p>Quando a igreja publicar um novo evento no site, ele aparece aqui.</p><a class="button button-go" href="https://novaigrejabatista.com.br/#eventos" target="_blank" rel="noopener">Ver no site ${arrow}</a></section>`;
+    const tag = compact ? 'h3' : 'h2';
+    return `<div class="cards ${compact ? 'home-events' : ''}">${list.map(e => { const img = e.image || (e.banner ? siteUrl(e.banner) : ''); return `<article class="event">${img ? `<div class="event-cover"><img src="${escape(img)}" alt="" width="800" height="400" loading="lazy"></div>` : ''}<div class="event-content"><div class="event-top">${e.category ? `<span class="tag status-active">${escape(e.category)}</span>` : ''}<time class="event-date">${escape(eventDate(e))}</time></div><${tag}>${escape(e.name)}</${tag}>${e.summary ? `<p>${escape(e.summary)}</p>` : ''}${e.price || e.location ? `<p class="event-meta">${[e.location, e.price].filter(Boolean).map(escape).join(' · ')}</p>` : ''}<a class="button primary" href="${escape(siteUrl(e.url))}" target="_blank" rel="noopener">${escape(e.open ? e.cta : 'Ver informações')}</a></div></article>`; }).join('')}</div>`;
+  }
   const isManagement = () => ['secretaria', 'pastoral', 'tesouraria'].includes(state.context);
   const NibAdminIcons = NibIcons.paths;
   const barIcon = (key, selected = false) => selected && NibIcons.mixed && NibIcons.mixed[key]
@@ -94,6 +126,7 @@
   // Célula do membro (exemplo): na versão final vem do vínculo do membro com a célula na plataforma de células.
   const myCell = { name: 'Célula Exemplo', weekday: 3, time: '19:30', place: 'Casa da família Exemplo · Bairro Exemplo', leader: 'Paulo e Lúcia Exemplo' };
   function withCell(items, fromKey, days) {
+    if (PUBLIC) return items;
     const base = new Date(fromKey+'T12:00:00-04:00'); const extra = [];
     for (let i = 0; i < days; i++) { const d = new Date(base); d.setUTCDate(base.getUTCDate()+i); if (d.getUTCDay() === myCell.weekday) extra.push({ day: NibDaily.dayKey(d), time: myCell.time, name: myCell.name, type: 'Minha célula', place: myCell.place }); }
     return items.concat(extra).sort((a,b)=>(a.day+' '+(a.time||'99')).localeCompare(b.day+' '+(b.time||'99')));
@@ -181,19 +214,20 @@
     return `<div class="history-years" role="group" aria-label="Ano">${chips}</div><div class="history-layout"><section class="box history-summary" aria-labelledby="history-total-title"><span class="label">RESUMO DE ${year}</span><h2 id="history-total-title" class="history-total">${money(sum(ok))}</h2><p class="history-total-note">Confirmado pela tesouraria${pending.length ? `. Mais ${money(sum(pending))} em conferência.` : '.'}</p><dl class="bank-details history-parts">${parts}</dl>${button('Contribuir agora','generosidade',true)}</section><section class="box history-list" aria-labelledby="history-list-title"><h2 id="history-list-title">Lançamentos</h2>${rows ? `<ul class="history-months">${rows}</ul>` : '<p class="gift-intro">Nenhuma contribuição neste ano.</p>'}</section></div><section class="box history-how"><h2>Como o histórico funciona</h2><p>O Pix feito pelo app aparece na hora como <b>Em conferência</b>. Quando a tesouraria confere o extrato da igreja, ele passa a <b>Confirmado</b>. O Pix feito direto no app do banco aparece depois dessa conferência.</p><p class="note">Demonstração com valores fictícios. Só você e a tesouraria veem estes dados.</p></section>`;
   }
   function giftBack() {
-    const prev = ({valor:'finalidade', confirmar:'valor', pix:'confirmar'})[state.giftStep || 'finalidade'];
+    const prev = ({valor:'finalidade', confirmar:'valor', pix: PUBLIC ? 'valor' : 'confirmar'})[state.giftStep || 'finalidade'];
     return prev ? `<button type="button" class="button-back gift-back" data-gift-step="${prev}">${backArrow}<span>Voltar</span></button>` : '';
   }
   function giftFlow() {
     const step = state.giftStep || 'finalidade', m = state.member;
-    const order = ['finalidade','valor','confirmar','pix','obrigado'], idx = order.indexOf(step);
+    const order = PUBLIC ? ['finalidade','valor','pix','obrigado'] : ['finalidade','valor','confirmar','pix','obrigado'], idx = order.indexOf(step);
     const tick = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>';
-    const steps = ['Finalidade','Valor','Seus dados','Pix'].map((label,i) => `<li class="${idx > i ? 'is-done' : idx === i ? 'is-current' : ''}"${idx === i ? ' aria-current="step"' : ''}><span class="gift-dot">${idx > i ? tick : '0' + (i+1)}</span><span class="gift-step-label">${label}</span></li>`).join('');
+    const steps = (PUBLIC ? ['Finalidade','Valor','Pix'] : ['Finalidade','Valor','Seus dados','Pix']).map((label,i) => `<li class="${idx > i ? 'is-done' : idx === i ? 'is-current' : ''}"${idx === i ? ' aria-current="step"' : ''}><span class="gift-dot">${idx > i ? tick : '0' + (i+1)}</span><span class="gift-step-label">${label}</span></li>`).join('');
     const head = `${giftBack() ? `<div class="gift-backrow">${giftBack()}</div>` : ''}<ol class="gift-steps" aria-label="Etapas da contribuição">${steps}</ol>`;
     const title = (text, intro) => `<div class="gift-step-head"><div><h3 id="gift-step-title" tabindex="-1" class="gift-step-title">${text}</h3>${intro ? `<p class="gift-intro">${intro}</p>` : ''}</div></div>`;
     const summary = () => `<div class="gift-summary"><span>${escape(giftLabel())}</span><strong>${money(state.giftAmount)}</strong></div>`;
     if (step === 'confirmar') return `${head}${title('Confira seus dados', 'Já preenchemos com o seu cadastro. Confira e toque em Gerar Pix.')}${summary()}<div class="gift-payer"><span class="profile-avatar" aria-hidden="true">${escape(m.first.charAt(0))}</span><div><span class="gift-payer-label">Contribuindo como</span><strong>${escape(m.full)}</strong><small>${escape(m.email)}</small></div><span class="gift-auto">Preenchido</span></div><label class="check gift-check"><input id="gift-receipt" type="checkbox" checked><span>Enviar o comprovante para ${escape(m.email)}</span></label><div class="form-actions gift-actions"><button type="button" class="action primary" data-gift-step="pix">Gerar Pix</button></div><p class="gift-foot">Dados errados? Atualize em <button type="button" class="auth-link" data-view="cadastro">Meu cadastro</button>.</p>`;
     if (step === 'pix') return `${head}${title('Pague no app do seu banco', 'Leia o QR Code ou copie o código e siga os passos abaixo.')}${summary()}<div class="pix-qr" id="pix-qr" role="img" aria-label="QR Code Pix de ${money(state.giftAmount)} para a Nova Igreja Batista"></div><label for="pix-code">Pix copia e cola</label><div class="pix-copy"><input id="pix-code" readonly value="${escape(state.giftCode)}"><button type="button" id="pix-copy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 9h10v10H9z M5 15V5h10"/></svg><span>Copiar</span></button></div><ol class="pix-howto" aria-label="Como pagar"><li><span>1</span><p>Abra o app do seu banco e escolha <b>Pix</b>.</p></li><li><span>2</span><p>Use <b>Ler QR Code</b> ou <b>Pix copia e cola</b>.</p></li><li><span>3</span><p>Confira o nome <b>Nova Igreja Batista</b> e confirme.</p></li></ol><div class="form-actions gift-actions"><button type="button" class="action primary" data-gift-step="obrigado">Já fiz o Pix</button></div><p class="gift-foot">Pix real, direto para a conta da igreja (CNPJ 40.518.758/0001-30). Seu banco já informa o seu nome.</p>`;
+    if (step === 'obrigado' && PUBLIC) return `${head}<div class="gift-thanks"><span class="gift-thanks-icon" aria-hidden="true">${tick}</span><h3 id="gift-step-title" tabindex="-1" class="gift-step-title">Obrigado pela sua generosidade!</h3><p>${escape(giftLabel())} de ${money(state.giftAmount)}. O Pix cai direto na conta da Nova Igreja Batista, e a tesouraria confere pelo extrato.</p><p class="note">O comprovante fica no app do seu banco.</p></div><div class="form-actions gift-actions"><button type="button" class="action primary" data-gift-step="finalidade" data-done="1">Fazer outra contribuição</button></div>`;
     if (step === 'obrigado') return `${head}<div class="gift-thanks"><span class="gift-thanks-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><h3 id="gift-step-title" tabindex="-1" class="gift-step-title">Obrigado pela sua generosidade, ${escape(m.first)}!</h3><p>${escape(giftLabel())} de ${money(state.giftAmount)} registrado em Minhas contribuições como em conferência. A tesouraria confere o recebimento pelo extrato da conta da igreja.</p><p class="note">Quando a integração com o banco estiver ativa, a confirmação aparece aqui sozinha${state.giftReceipt === false ? '' : ' e o comprovante chega em ' + escape(m.email)}.</p></div><div class="form-actions gift-actions"><button type="button" class="action primary" data-view="historico">Ver minhas contribuições</button><button type="button" data-gift-step="finalidade" data-done="1">Fazer outra contribuição</button></div>`;
     if (step === 'finalidade') {
       const icons = {
@@ -296,6 +330,7 @@
     dlg.showModal(); dlg.querySelector('form').focus({ preventScroll: true });
   }
   function myBirthdayPopup(tries = 0) {
+    if (PUBLIC) return;
     const me = admin.birthdays().find(b => b.today && b.name === state.member.full);
     if (!me || state.birthdayShown || isManagement() || state.view !== 'inicio') return;
     const ready = ['app-splash', 'app-auth', 'app-onboarding', 'app-enter'].every(id => { const el = document.getElementById(id); return !el || el.hidden; });
@@ -325,7 +360,22 @@
     const list = admin.myRequests(state.member.full); if (!list.length) return '';
     return `<section class="box my-requests" aria-labelledby="my-req-title"><h2 id="my-req-title">Minhas solicitações</h2><ol class="req-list">${list.map(r => { const done = r.status === 'atualizado'; return `<li><div class="req-head"><strong>${escape(r.note)}</strong><span class="tag ${done ? 'status-active' : 'is-wait'}">${done ? 'Atualizado' : 'Em conferência'}</span></div><ol class="req-steps" aria-label="Andamento"><li class="is-done">Enviado · ${escape(r.at)}</li><li class="${done ? 'is-done' : 'is-now'}">Em conferência pela Secretaria</li><li class="${done ? 'is-done' : ''}">${done ? 'Cadastro atualizado · ' + escape(r.done || '') : 'Cadastro atualizado'}</li></ol></li>`; }).join('')}</ol></section>`;
   }
+  // Células do site: mesma lista da home (novaigrejabatista.com.br/#celulas), filtrada por dia.
+  function siteCellsPage() {
+    const days = NibSite.celulas(), total = NibSite.totalCelulas();
+    const sel = days.some(d => d.dia === state.cellDay) ? state.cellDay : '';
+    const chips = [['', 'Todos os dias']].concat(days.map(d => [d.dia, d.dia.replace('-feira', '')])).map(([v, l]) => `<button type="button" class="history-year${v === sel ? ' is-active' : ''}" data-cell-day="${escape(v)}" aria-pressed="${v === sel}">${escape(l)}</button>`).join('');
+    const wa = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11.5a8.5 8.5 0 0 1-12.6 7.4L3 20l1.2-4.2A8.5 8.5 0 1 1 20 11.5Z M9 8.5c0 3.5 3 6.5 6.5 6.5l1-1.6-2-1-1 .9a4 4 0 0 1-2.8-2.8l.9-1-1-2Z"/></svg>';
+    const groups = days.filter(d => !sel || d.dia === sel).map(d => `<section class="cell-day" aria-labelledby="cd-${escape(d.dia.slice(0,3))}"><div class="section-heading"><h2 id="cd-${escape(d.dia.slice(0,3))}">${escape(d.dia)}</h2><span class="cell-count">${d.celulas.length} ${d.celulas.length === 1 ? 'célula' : 'células'}</span></div><ul class="cell-list">${d.celulas.map(c => `<li class="cell-card"><h3>${escape(c.nome)}</h3><p class="cell-leader">${escape(c.lider)}</p><p class="cell-row">${navIcon('informacoes')}<span>${escape(c.horario)}</span></p><p class="cell-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21Z M12 12a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z"/></svg><span>${escape(c.local)}</span></p>${c.whatsapp ? `<a class="button button-go cell-wa" href="${escape(c.whatsapp)}" target="_blank" rel="noopener">${wa}<span>Falar com o líder</span></a>` : ''}</li>`).join('')}</ul></section>`).join('');
+    return `<section class="box cell-intro"><span class="label">NOSSAS CÉLULAS</span><h2>${total} células em Ariquemes</h2><p>É nos lares que a fé encontra espaço para ser vivida de perto. Escolha o dia que fica melhor para você e chame o líder no WhatsApp.</p></section><div class="history-years cell-days" role="group" aria-label="Dia da semana">${chips}</div>${groups}`;
+  }
+  // Informações reais da igreja: horários, endereço, liderança e canais.
+  function siteInfoPage() {
+    const leaders = NibSite.lideranca().map(l => `<li class="leader"><img src="${l.photo}" alt="" width="480" height="600" loading="lazy"><div><small>${escape(l.role)}</small><strong>${escape(l.name)}</strong></div></li>`).join('');
+    return `<div class="admin-grid info-grid"><section class="box"><span class="label">TODA SEMANA</span><h2>Cultos e encontros</h2><ul class="admin-upcoming info-week"><li><span class="admin-when"><small>qui</small><strong>19h30</strong></span><span><b>Culto da Fé</b><small>Quinta-feira</small></span></li><li><span class="admin-when"><small>dom</small><strong>9h30</strong></span><span><b>EBS · Escola Bíblica de Sabedoria</b><small>Domingo de manhã</small></span></li><li><span class="admin-when"><small>dom</small><strong>19h</strong></span><span><b>Noite de Glória</b><small>Domingo à noite</small></span></li><li><span class="admin-when"><small>lares</small><strong>${NibSite.totalCelulas()}</strong></span><span><b>Células</b><small>Durante a semana, nos lares</small></span></li></ul><div class="form-actions">${button('Ver células', 'celulas')}</div></section><section class="box church-contact"><span class="label">ESTAMOS TE ESPERANDO</span><h2>Endereço</h2><p class="church-address"><strong>Nova Igreja Batista</strong>Rua França, 1409 · Áreas Especiais 01<br>Ariquemes, RO · 76870-013</p><div class="form-actions"><a class="button button-go" href="https://www.google.com/maps/search/?api=1&amp;query=Nova%20Igreja%20Batista%20Rua%20Fran%C3%A7a%201409%20Ariquemes%20RO" target="_blank" rel="noopener">Abrir no mapa ${arrow}</a><a class="button button-go" href="https://www.instagram.com/nibcasadedeus/" target="_blank" rel="noopener">Instagram ${arrow}</a><a class="button button-go" href="https://www.youtube.com/@nibcasadedeus" target="_blank" rel="noopener">YouTube ${arrow}</a></div></section></div><section class="box leaders-box" aria-labelledby="leaders-title"><span class="label">QUEM CONDUZ</span><h2 id="leaders-title">Nossa liderança</h2><ul class="leaders">${leaders}</ul></section>`;
+  }
   function cellsPage() {
+    if (PUBLIC) return siteCellsPage();
     const wd = ['domingo','segunda-feira','terça-feira','quarta-feira','quinta-feira','sexta-feira','sábado'][myCell.weekday];
     return `<div class="cells-layout"><section class="box my-cell" aria-labelledby="my-cell-title"><span class="label">MINHA CÉLULA</span><h2 id="my-cell-title">${escape(myCell.name)}</h2><dl class="profile"><dt>Quando</dt><dd>Toda ${wd}, às ${escape(myCell.time)}</dd><dt>Onde</dt><dd>${escape(myCell.place)}</dd><dt>Líder</dt><dd>${escape(myCell.leader)}</dd></dl><div class="form-actions"><button type="button" class="action primary" data-message="No app real, este botão abre o WhatsApp do líder da célula. Nesta versão de teste o número é fictício.">Falar com o líder</button><button type="button" class="button button-go" data-view="agenda">Ver no calendário ${arrow}</button></div><p class="note">Dados fictícios. Na versão real, a célula vem da plataforma de células ou do cadastro feito pela Secretaria.</p></section><section class="box"><span class="label">PLATAFORMA DE CÉLULAS</span><h2>Estudos e presença</h2><p>Os estudos, a presença e os relatórios da célula ficam na plataforma de células, que será conectada ao app.</p><button type="button" disabled>Acesso em preparação</button></section></div>`;
   }
@@ -354,8 +404,8 @@
       if (nav.dataset.context !== context) {
         if (nav.id === 'navigation') nav.innerHTML = items.map(([key,label]) => `<a href="#${key}" data-view="${key}" aria-label="${label}">${navIcon(key)}<span>${label}</span></a>`).join('');
         else {
-          const descriptions = {...admin.descriptions, inicio:'Seu ponto de partida',cadastro:'Dados e atualizações',eventos:'Encontros e inscrições',generosidade:'Dízimos, ofertas e campanhas',historico:'Seu histórico financeiro',celulas:'Acesso à plataforma',informacoes:'Programação e avisos',gestao:'Integração e apresentações',agenda:'Cultos, eventos e festividades',caderno:'Ore com a comunidade'};
-          const groups = isManagement() ? [[admin.profiles[state.context].name,items]] : [['Seu acesso',items.filter(([key])=>['inicio','cadastro'].includes(key))],['Vida na igreja',items.filter(([key])=>['agenda','eventos','generosidade','historico','celulas','informacoes','caderno'].includes(key))]];
+          const descriptions = {...admin.descriptions, inicio:'Seu ponto de partida',cadastro:'Dados e atualizações',eventos:'Encontros e inscrições',generosidade:'Dízimos, ofertas e campanhas',historico:'Seu histórico financeiro',celulas: PUBLIC ? 'Encontre uma célula' : 'Acesso à plataforma',informacoes: PUBLIC ? 'Horários, endereço e liderança' : 'Programação e avisos',gestao:'Integração e apresentações',agenda:'Cultos, eventos e festividades',caderno:'Ore com a comunidade'};
+          const groups = isManagement() ? [[admin.profiles[state.context].name,items]] : PUBLIC ? [['Nova Igreja Batista',items]] : [['Seu acesso',items.filter(([key])=>['inicio','cadastro'].includes(key))],['Vida na igreja',items.filter(([key])=>['agenda','eventos','generosidade','historico','celulas','informacoes','caderno'].includes(key))]];
           nav.innerHTML = groups.map(([label,links],index) => `<section class="menu-group" aria-labelledby="menu-group-${index}"><h3 id="menu-group-${index}">${label}</h3><div class="menu-grid">${links.map(([key,title])=>`<a href="#${key}" data-view="${key}" aria-label="${title}"><span class="menu-icon">${navIcon(key)}</span><strong>${title}</strong><span class="menu-description">${descriptions[key]}</span><span class="mobile-current" hidden>Atual</span></a>`).join('')}</div></section>`).join('');
         }
         nav.dataset.context = context;
@@ -370,13 +420,14 @@
       });
     }
     const ms = document.getElementById('member-shortcuts'); if (ms) ms.hidden = isManagement();
-    document.getElementById('menu-profile').innerHTML = isManagement() ? '<div class="menu-profile-card"><strong>' + admin.profiles[state.context].name + '</strong><span>Experiência de teste</span></div>' : '<a class="menu-profile-card" href="#cadastro" data-view="cadastro"><span class="profile-avatar" aria-hidden="true">' + escape(state.member.first.charAt(0).toUpperCase()) + '</span><span><strong>' + escape(state.member.full) + '</strong><small>' + escape(state.member.email) + '</small></span><span class="profile-demo">Teste</span></a>';
+    document.getElementById('menu-profile').innerHTML = PUBLIC ? '' : isManagement() ? '<div class="menu-profile-card"><strong>' + admin.profiles[state.context].name + '</strong><span>Experiência de teste</span></div>' : '<a class="menu-profile-card" href="#cadastro" data-view="cadastro"><span class="profile-avatar" aria-hidden="true">' + escape(state.member.first.charAt(0).toUpperCase()) + '</span><span><strong>' + escape(state.member.full) + '</strong><small>' + escape(state.member.email) + '</small></span><span class="profile-demo">Teste</span></a>';
     renderBar();
   }
   function show(view, focus = true, record = true) {
     if(view==='oracao') view='caderno'; // Compatibilidade com o destino anterior.
     if (isManagement() && !admin.allowed(view)) view = 'gestao';
     if (adminOnly.includes(view) && !isManagement()) view = 'inicio';
+    if (PUBLIC && !publicViews.includes(view)) view = 'inicio';
     if (record && focus && view !== state.view) viewHistory.push(state.view);
     state.view = (labels[view] || admin.labels[view]) ? view : 'inicio';
     root.dataset.view = state.view;
@@ -398,6 +449,18 @@
       ].map(([view, title, text]) => `<button type="button" class="quick-action admin-quick" data-view="${view}"><span class="home-action-icon" aria-hidden="true">${navIcon(view)}</span>${view === 'informacoes' && unreadNotices() ? `<span class="admin-badge notice-badge" aria-label="${unreadNotices()} ${unreadNotices() === 1 ? 'aviso novo' : 'avisos novos'}">${unreadNotices()}</span>` : ''}<strong>${title}</strong><span class="home-action-description">${text}</span></button>`).join('')}</div></section>`;
         const events = `<section class="home-events-block" aria-labelledby="home-events-title"><div class="section-heading"><div><span class="label">PARTICIPE COM A GENTE</span><h2 id="home-events-title">Próximo evento</h2></div>${button('Ver todos', 'eventos')}</div>${eventCards(true)}</section>`;
         const install = window.NibInstall ? NibInstall.card() : '';
+        if (PUBLIC) {
+          const pq = `<section aria-labelledby="quick-title"><div class="section-heading"><h2 id="quick-title">O que você procura?</h2></div><div class="quick-actions">${[
+            ['agenda', 'Agenda da igreja', 'Cultos, escola bíblica e eventos no calendário.'],
+            ['eventos', 'Eventos e inscrições', 'Os próximos encontros e as inscrições abertas.'],
+            ['generosidade', 'Dízimos e ofertas', 'Contribua pelo Pix com os dados oficiais da igreja.'],
+            ['celulas', 'Células', 'Encontre uma célula perto de você.'],
+            ['informacoes', 'Horários e endereço', 'Cultos da semana, endereço e liderança.'],
+            ['youtube', 'Cultos ao vivo', 'Assista às transmissões no YouTube.']
+          ].map(([view, title, text]) => view === 'youtube' ? `<button type="button" class="quick-action admin-quick" data-open-url="https://www.youtube.com/@nibcasadedeus"><span class="home-action-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7.5C3 6 4 5 5.5 5h13C20 5 21 6 21 7.5v9c0 1.5-1 2.5-2.5 2.5h-13C4 19 3 18 3 16.5z M10 9l5 3-5 3z"/></svg></span><strong>${title}</strong><span class="home-action-description">${text}</span></button>` : `<button type="button" class="quick-action admin-quick" data-view="${view}"><span class="home-action-icon" aria-hidden="true">${navIcon(view)}</span><strong>${title}</strong><span class="home-action-description">${text}</span></button>`).join('')}</div></section>`;
+          if (isDesk()) return `<div class="home-desk"><div class="home-col">${dailyBlocks(false,'verse')}${pq}${socialBanners()}</div><div class="home-rail">${install}${dailyBlocks(false,'agenda')}${events}</div></div>`;
+          return `${dailyBlocks(false,'verse')}${install}${pq}${dailyBlocks(false,'agenda')}${events}${socialBanners()}`;
+        }
         if (isDesk()) return `<div class="home-desk"><div class="home-col">${dailyBlocks(false,'verse')}${quick}${socialBanners()}${communityBlock()}</div><div class="home-rail">${checkinCard()}${install}${homeNotice()}${dailyBlocks(false,'agenda')}${birthdayBlock()}${events}</div></div>`;
         return `${dailyBlocks(false,'verse')}${checkinCard()}${install}${quick}${socialBanners()}${homeNotice()}${dailyBlocks(false,'agenda')}${birthdayBlock()}${events}${communityBlock()}`;
       },
@@ -407,8 +470,8 @@
       eventos: () => `${eventCards()}<section class="box event-follow-up"><h2>Minhas inscrições</h2><p>As inscrições são feitas no site da igreja. Para ver a sua, use a consulta com o nome ou o protocolo e o WhatsApp informado.</p><a class="button button-go" href="https://novaigrejabatista.com.br/consulta-inscricao/" target="_blank" rel="noopener">Consultar minha inscrição ${arrow}</a></section>`,
       celulas: () => cellsPage(),
       historico: () => historyPage(),
-      generosidade: () => `${(state.giftStep || 'finalidade') === 'finalidade' ? historyPeek() : ''}<div class="giving-layout${(state.giftStep || 'finalidade') === 'finalidade' ? '' : ' is-flow'}"><section class="box gift-box" aria-labelledby="gift-step-title">${giftFlow()}</section>${(state.giftStep || 'finalidade') === 'finalidade' ? `<section class="box giving-details"><h2>Outras formas de contribuir</h2><p class="giving-church">Se preferir, faça o Pix direto no app do seu banco com os dados oficiais da igreja, os mesmos do site.</p><dl class="bank-details"><div><dt>Pix (CNPJ)</dt><dd>40.518.758/0001-30</dd></div><div><dt>Banco</dt><dd>Sicoob</dd></div><div><dt>Agência / Conta</dt><dd>3315 / 51.404-7</dd></div></dl><figure class="church-qr church-qr-open"><img src="assets/pix-qrcode.png" alt="QR Code Pix oficial da Nova Igreja Batista" width="200" height="200"><figcaption>Abra o app do seu banco e escaneie o QR Code para fazer o Pix.</figcaption><button type="button" class="action church-pix-copy" id="church-pix-copy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 9h10v10H9z M5 15V5h10"/></svg><span>Copiar código Pix</span></button><small class="church-pix-note">Depois, cole em Pix copia e cola e informe o valor no app do banco.</small></figure></section>` : ''}</div>`,
-      informacoes: () => `${admin.infoProgram()}<section class="box church-contact"><h2>Endereço e contato</h2><p class="church-address"><strong>Nova Igreja Batista</strong>Rua França, 1409 · Áreas Especiais 01<br>Ariquemes, RO · 76870-013</p><div class="form-actions"><a class="button button-go" href="https://www.google.com/maps/search/?api=1&amp;query=Nova%20Igreja%20Batista%20Rua%20Fran%C3%A7a%201409%20Ariquemes%20RO" target="_blank" rel="noopener">Abrir no mapa ${arrow}</a><a class="button button-go" href="https://www.instagram.com/nibcasadedeus/" target="_blank" rel="noopener">Instagram ${arrow}</a><a class="button button-go" href="https://www.youtube.com/@nibcasadedeus" target="_blank" rel="noopener">YouTube ${arrow}</a></div><p class="note">O WhatsApp da Secretaria entra aqui quando a igreja definir o número oficial.</p></section>`
+      generosidade: () => `${(state.giftStep || 'finalidade') === 'finalidade' && !PUBLIC ? historyPeek() : ''}<div class="giving-layout${(state.giftStep || 'finalidade') === 'finalidade' ? '' : ' is-flow'}"><section class="box gift-box" aria-labelledby="gift-step-title">${giftFlow()}</section>${(state.giftStep || 'finalidade') === 'finalidade' ? `<section class="box giving-details"><h2>Outras formas de contribuir</h2><p class="giving-church">Se preferir, faça o Pix direto no app do seu banco com os dados oficiais da igreja, os mesmos do site.</p><dl class="bank-details"><div><dt>Pix (CNPJ)</dt><dd>40.518.758/0001-30</dd></div><div><dt>Banco</dt><dd>Sicoob</dd></div><div><dt>Agência / Conta</dt><dd>3315 / 51.404-7</dd></div></dl><figure class="church-qr church-qr-open"><img src="assets/pix-qrcode.png" alt="QR Code Pix oficial da Nova Igreja Batista" width="200" height="200"><figcaption>Abra o app do seu banco e escaneie o QR Code para fazer o Pix.</figcaption><button type="button" class="action church-pix-copy" id="church-pix-copy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 9h10v10H9z M5 15V5h10"/></svg><span>Copiar código Pix</span></button><small class="church-pix-note">Depois, cole em Pix copia e cola e informe o valor no app do banco.</small></figure></section>` : ''}</div>`,
+      informacoes: () => PUBLIC ? siteInfoPage() : `${admin.infoProgram()}<section class="box church-contact"><h2>Endereço e contato</h2><p class="church-address"><strong>Nova Igreja Batista</strong>Rua França, 1409 · Áreas Especiais 01<br>Ariquemes, RO · 76870-013</p><div class="form-actions"><a class="button button-go" href="https://www.google.com/maps/search/?api=1&amp;query=Nova%20Igreja%20Batista%20Rua%20Fran%C3%A7a%201409%20Ariquemes%20RO" target="_blank" rel="noopener">Abrir no mapa ${arrow}</a><a class="button button-go" href="https://www.instagram.com/nibcasadedeus/" target="_blank" rel="noopener">Instagram ${arrow}</a><a class="button button-go" href="https://www.youtube.com/@nibcasadedeus" target="_blank" rel="noopener">YouTube ${arrow}</a></div><p class="note">O WhatsApp da Secretaria entra aqui quando a igreja definir o número oficial.</p></section>`
     };
     content.innerHTML = (isManagement() && admin.pages[state.view] ? admin.pages[state.view] : pages[state.view])();
     content.dataset.view = state.view;
@@ -462,8 +525,10 @@
     if (action.dataset.view) { event.preventDefault(); show(action.dataset.view); }
     if (action.dataset.message) announce(action.dataset.message);
     if (action.dataset.giftAmount) { const input = content.querySelector('#gift-value'); input.value = action.dataset.giftAmount; content.querySelectorAll('[data-gift-amount]').forEach(b => b.setAttribute('aria-pressed', String(b === action))); return; }
+    if (action.dataset.openUrl) { window.open(action.dataset.openUrl, '_blank', 'noopener'); return; }
+    if (action.dataset.cellDay !== undefined) { state.cellDay = action.dataset.cellDay; show('celulas', false, false); const b = content.querySelector('[data-cell-day="' + state.cellDay + '"]'); if (b) b.focus({preventScroll:true}); return; }
     if (action.dataset.historyYear) { state.historyYear = action.dataset.historyYear; show('historico', false, false); content.querySelector('[data-history-year="' + state.historyYear + '"]').focus({preventScroll:true}); return; }
-    if (action.dataset.giftStep) { state.giftStep = action.dataset.giftStep; if (state.giftStep === 'obrigado' && state.giftAmount && state.giftLogged !== state.giftCode) { state.giftLogged = state.giftCode; const txid = 'E2E' + Date.now().toString().slice(-9); state.history.push({ day: NibDaily.dayKey(new Date()), type: state.gift, amount: state.giftAmount, status: 'pending', app: true, txid }); admin.addAppPix({ day: NibDaily.dayKey(new Date()), type: state.gift, amount: state.giftAmount, txid }); } if (action.dataset.done) state.giftAmount = null; if (state.giftStep === 'pix') { if (content.querySelector('#gift-receipt')) state.giftReceipt = content.querySelector('#gift-receipt').checked; state.giftCode = NibPix.brCode({ amount: state.giftAmount, txid: ({'Dízimo':'DIZ','Oferta':'OFE','Campanha':'OBRA'})[state.gift] + NibDaily.dayKey(new Date()).replace(/-/g,'') + Math.random().toString(36).slice(2,8) }); } show('generosidade', false, false); const t = content.querySelector('#gift-step-title'); if (t) t.focus({preventScroll:true});  return; }
+    if (action.dataset.giftStep) { state.giftStep = action.dataset.giftStep; if (!PUBLIC && state.giftStep === 'obrigado' && state.giftAmount && state.giftLogged !== state.giftCode) { state.giftLogged = state.giftCode; const txid = 'E2E' + Date.now().toString().slice(-9); state.history.push({ day: NibDaily.dayKey(new Date()), type: state.gift, amount: state.giftAmount, status: 'pending', app: true, txid }); admin.addAppPix({ day: NibDaily.dayKey(new Date()), type: state.gift, amount: state.giftAmount, txid }); } if (action.dataset.done) state.giftAmount = null; if (state.giftStep === 'pix') { if (content.querySelector('#gift-receipt')) state.giftReceipt = content.querySelector('#gift-receipt').checked; state.giftCode = NibPix.brCode({ amount: state.giftAmount, txid: ({'Dízimo':'DIZ','Oferta':'OFE','Campanha':'OBRA'})[state.gift] + NibDaily.dayKey(new Date()).replace(/-/g,'') + Math.random().toString(36).slice(2,8) }); } show('generosidade', false, false); const t = content.querySelector('#gift-step-title'); if (t) t.focus({preventScroll:true});  return; }
     if (action.id === 'church-pix-copy') { const label = action.querySelector('span'); const done = () => { label.textContent = 'Código copiado!'; action.classList.add('is-copied'); announce('Código Pix da igreja copiado. Cole no app do seu banco e informe o valor.','success',false); setTimeout(() => { label.textContent = 'Copiar código Pix'; action.classList.remove('is-copied'); }, 2200); }; if (navigator.clipboard) navigator.clipboard.writeText(NibPix.brCode()).then(done, done); else done(); return; }
     if (action.id === 'pix-copy') { const code = content.querySelector('#pix-code').value; const ok = () => { action.querySelector('span').textContent = 'Copiado'; announce('Código Pix copiado. Cole no app do seu banco.','success',false); }; if (navigator.clipboard) navigator.clipboard.writeText(code).then(ok, ok); else ok(); return; }
     if (action.dataset.gift) { state.gift = action.dataset.gift; state.giftStep = 'finalidade'; show('generosidade', false, false); content.querySelector('[data-gift="' + state.gift + '"]').focus({preventScroll:true}); return; }
@@ -496,7 +561,9 @@
     if (form.id === 'gift-form') {
       const amount = Number(String(values.get('amount')).replace(',','.'));
       if (!(amount >= 1 && amount <= 1000000)) return announce('Informe um valor a partir de R$ 1,00.','warning');
-      state.giftAmount = Math.round(amount*100)/100; state.giftStep = 'confirmar'; show('generosidade', false, false); content.querySelector('#gift-step-title').focus({preventScroll:true}); return;
+      state.giftAmount = Math.round(amount*100)/100; state.giftStep = 'confirmar';
+      if (PUBLIC) { state.giftStep = 'pix'; state.giftCode = NibPix.brCode({ amount: state.giftAmount, txid: ({'Dízimo':'DIZ','Oferta':'OFE','Campanha':'OBRA'})[state.gift] + NibDaily.dayKey(new Date()).replace(/-/g,'') + Math.random().toString(36).slice(2,8) }); }
+      show('generosidade', false, false); content.querySelector('#gift-step-title').focus({preventScroll:true}); return;
     }
   });
   function changeContext(event) {
@@ -573,6 +640,7 @@
   }
   refreshDailyDate();
   loadObra();
+  if (window.NibSite) { NibSite.onChange(() => { if (['inicio','eventos','celulas','informacoes'].includes(state.view) && !document.activeElement.closest('#content input')) show(state.view, false, false); }); NibSite.load(); }
   setInterval(refreshDailyDate, 60000);
   document.addEventListener('visibilitychange', () => { if (!document.hidden) refreshDailyDate(); });
   document.getElementById('demo-context').value = 'membro';
@@ -697,7 +765,7 @@
   track.addEventListener('scroll', () => { if (slideFrame) return; slideFrame = requestAnimationFrame(() => { slideFrame = 0; const k = Math.round(track.scrollLeft / track.clientWidth); if (k !== slide) { slide = k; syncSlide(); } }); }, {passive:true});
   const enter = document.getElementById('app-enter');
   function closeOnboarding() {
-    writeFlag('nib-onboarded', true);
+    writeFlag('nib-onboarded', true); if (PUBLIC) setOnbHidden(true);
     window.scrollTo(0,0);
     const done = () => { enter.hidden = true; gate(false); document.getElementById('heading').focus({preventScroll:true}); };
     if (matchMedia('(prefers-reduced-motion: reduce)').matches || !enter.animate) { onboarding.hidden = true; done(); return; }
@@ -736,6 +804,7 @@
   next.addEventListener('click', () => { if (slide === slides.length - 1) closeOnboarding(); else goSlide(slide + 1); });
   document.getElementById('onb-skip').addEventListener('click', () => { setOnbHidden(true); closeOnboarding(); });
   onboarding.addEventListener('keydown', e => { if (e.key === 'ArrowRight') goSlide(slide + 1); if (e.key === 'ArrowLeft') goSlide(slide - 1); if (e.key === 'Escape') closeOnboarding(); });
+  ['simulate-birthday','simulate-birthday-mobile'].forEach(id => document.getElementById(id).addEventListener('change', e => { state.simulateBirthday = e.target.checked; ['simulate-birthday','simulate-birthday-mobile'].forEach(o => { document.getElementById(o).checked = e.target.checked; }); state.birthdayShown = false; document.querySelector('.test-options').open = false; closeDrawer(); refreshNotices(); if (!isManagement()) show('inicio', false, false); }));
   document.getElementById('simulate-service').addEventListener('change', e => { state.simulateService = e.target.checked; document.querySelector('.test-options').open = false; if (!isManagement()) show('inicio', false, false); });
   document.addEventListener('click', e => {
     if (!e.target.closest('[data-logout]')) return;
@@ -746,12 +815,18 @@
   document.getElementById('replay-flow').addEventListener('click', () => { document.querySelector('.test-options').open = false; writeFlag('nib-auth', false); writeFlag('nib-faceid', false); setOnbHidden(false); ['panel-login','panel-signup'].forEach(id => document.getElementById(id).reset()); openAuth(); });
   // Abertura: aparece ao abrir o aplicativo, antes do acesso; some sozinha ou ao toque.
   const splash = document.getElementById('app-splash');
-  const afterSplash = () => { if (!readFlag('nib-auth')) openAuth(); };
+  // Versão pública: sem login. Na primeira visita mostra a orientação; depois vai direto para a inicial.
+  function publicStart() {
+    if (onbHidden()) { gate(false); return; }
+    gate(true); onboarding.querySelectorAll('[data-member-first]').forEach(el => { el.parentNode.textContent = 'Boas-vindas à Nib'; });
+    onboarding.hidden = false; goSlide(0, false); requestAnimationFrame(() => document.getElementById('onb-next').focus({preventScroll:true}));
+  }
+  const afterSplash = () => { if (PUBLIC) publicStart(); else if (!readFlag('nib-auth')) openAuth(); };
   if (splash) {
     let seen = false;
     try { seen = sessionStorage.getItem('nib-splash') === '1'; sessionStorage.setItem('nib-splash','1'); } catch (_) {}
     const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const finish = () => { if (splash.hidden || splash.classList.contains('is-leaving')) return; if (!readFlag('nib-auth')) openAuth(); else gate(false); splash.classList.add('is-leaving'); setTimeout(() => { splash.hidden = true; }, reduced ? 0 : 500); };
+    const finish = () => { if (splash.hidden || splash.classList.contains('is-leaving')) return; if (PUBLIC) publicStart(); else if (!readFlag('nib-auth')) openAuth(); else gate(false); splash.classList.add('is-leaving'); setTimeout(() => { splash.hidden = true; }, reduced ? 0 : 500); };
     if (seen) { splash.hidden = true; afterSplash(); }
     else {
       gate(true);
