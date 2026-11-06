@@ -663,7 +663,7 @@ html{scrollbar-gutter:stable}
 #nib-proposta .auth-choice input:checked+span{background:#041e42;border-color:#041e42;color:#fff}
 #nib-proposta .auth-choice input:focus-visible+span{outline:3px solid #315f94;outline-offset:2px}
 #nib-proposta .auth-consent{display:flex;gap:10px;align-items:flex-start;margin:0 0 16px;font-size:14px;line-height:1.4;color:#43516a;cursor:pointer}
-#nib-proposta .auth-consent input{flex:none;width:20px;height:20px;margin:1px 0 0;accent-color:#041e42}
+#nib-proposta .auth-consent input{flex:none;width:20px;height:20px;min-height:0;margin:-1px 0 0;padding:0;accent-color:#041e42}
 #nib-proposta .auth-consent a{color:#163e68;font-weight:600}
 #nib-proposta .auth-test{margin:22px 0 0;padding:12px 14px;border-radius:12px;background:#fff3da;color:#75420d;font-size:13px;line-height:1.4}
 
