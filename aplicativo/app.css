@@ -1964,7 +1964,7 @@ html{scrollbar-gutter:stable}
 #nib-proposta #mobile-navigation a[aria-current=page]{--nib-cut:#041e42}
 
 /* Versão pública: sem conta, sem perfis de teste e sem avisos de demonstração. */
-#nib-proposta.is-public :is(.test-options,#account,#header-notices,.drawer-test,.preview-note,#auth-face,#auth-code,.auth-or,.auth-test){display:none!important}
+#nib-proposta.is-public :is(.test-options,#account,.drawer-test,.preview-note,#auth-face,#auth-code,.auth-or,.auth-test){display:none!important}
 #nib-proposta.is-public:not(.has-account) :is(.logout-btn,#menu-profile){display:none!important}
 #nib-proposta.is-public #content[data-view=informacoes]>.info-grid{display:grid}
 #nib-proposta .event-meta{font-weight:600;color:#041e42}

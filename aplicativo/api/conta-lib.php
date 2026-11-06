@@ -35,6 +35,20 @@ function nib_migrar(PDO $db): void {
     if (!$tem) $db->exec('ALTER TABLE nib_pessoas ADD COLUMN celula VARCHAR(160) NULL AFTER vinculo');
     $db->exec('INSERT INTO nib_versao (v) VALUES (2)');
   }
+  if ($v < 3) {
+    // v3: Caderno de oração (pedidos publicados por quem tem conta; "Vou orar" por pessoa).
+    $db->exec("CREATE TABLE IF NOT EXISTS nib_pedidos (
+      id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY, pessoa_id INT UNSIGNED NOT NULL, titulo VARCHAR(120) NOT NULL, motivo VARCHAR(1000) NOT NULL,
+      atendido TINYINT(1) NOT NULL DEFAULT 0, removido_por INT UNSIGNED NULL, criado_em DATETIME NOT NULL, atualizado_em DATETIME NOT NULL,
+      KEY ix_criado (criado_em), CONSTRAINT fk_pedido_pessoa FOREIGN KEY (pessoa_id) REFERENCES nib_pessoas(id) ON DELETE CASCADE
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+    $db->exec("CREATE TABLE IF NOT EXISTS nib_orando (
+      pedido_id INT UNSIGNED NOT NULL, pessoa_id INT UNSIGNED NOT NULL, criado_em DATETIME NOT NULL, PRIMARY KEY (pedido_id, pessoa_id),
+      CONSTRAINT fk_orando_pedido FOREIGN KEY (pedido_id) REFERENCES nib_pedidos(id) ON DELETE CASCADE,
+      CONSTRAINT fk_orando_pessoa FOREIGN KEY (pessoa_id) REFERENCES nib_pessoas(id) ON DELETE CASCADE
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+    $db->exec('INSERT INTO nib_versao (v) VALUES (3)');
+  }
 }
 
 function nib_migrar_v1(PDO $db): void {

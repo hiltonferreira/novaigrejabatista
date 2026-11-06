@@ -3,11 +3,11 @@
 (function () {
   const official = /(^|\.)novaigrejabatista\.com\.br$/.test(location.hostname) || /^(localhost|127\.0\.0\.1)$/.test(location.hostname) && /[?&]contas\b/.test(location.search);
   let pessoa = null;
-  async function api(acao, body) {
+  async function api(acao, body, arquivo = 'conta') {
     const opt = { credentials: 'same-origin', cache: 'no-store', headers: { 'X-Nib': '1' } };
     if (body !== undefined) { opt.method = 'POST'; opt.headers['Content-Type'] = 'application/json'; opt.body = JSON.stringify(body); }
     let r, d;
-    try { r = await fetch('api/conta.php?acao=' + encodeURIComponent(acao), opt); } catch (_) { throw new Error('Sem conexão. Confira a internet e tente de novo.'); }
+    try { r = await fetch('api/' + arquivo + '.php?acao=' + encodeURIComponent(acao), opt); } catch (_) { throw new Error('Sem conexão. Confira a internet e tente de novo.'); }
     try { d = await r.json(); } catch (_) { d = null; }
     if (!r.ok || !d || !d.ok) throw new Error((d && d.erro) || 'Serviço indisponível no momento. Tente de novo em instantes.');
     return d;
@@ -27,6 +27,7 @@
     redefinir: async (token, senha) => set(await api('redefinir', { token, senha })),
     excluir: async senha => { await api('excluir', { senha }); pessoa = null; },
     cadastros: async () => (await api('cadastros')).pessoas,
-    confirmar: async (id, status) => api('confirmar', { id, status })
+    confirmar: async (id, status) => api('confirmar', { id, status }),
+    caderno: async (acao, body) => api(acao, body, 'caderno')
   };
 })();
