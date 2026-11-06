@@ -480,8 +480,8 @@
         const events = `<section class="home-events-block" aria-labelledby="home-events-title"><div class="section-heading"><div><span class="label">PARTICIPE COM A GENTE</span><h2 id="home-events-title">Próximo evento</h2></div>${button('Ver todos', 'eventos')}</div>${eventCards(true)}</section>`;
         const install = window.NibInstall ? NibInstall.card() : '';
         if (PUBLIC) {
-          const pq = `<section aria-labelledby="quick-title"><div class="section-heading"><h2 id="quick-title">O que você procura?</h2></div><div class="quick-actions">${[
-            ['agenda', 'Agenda da igreja', 'Cultos, escola bíblica e eventos no calendário.'],
+          const pq = `<section aria-labelledby="quick-title"><div class="section-heading"><h2 id="quick-title">O que você precisa está aqui</h2></div><div class="quick-actions">${[
+            account() ? ['cadastro', 'Meu cadastro', 'Consulte e atualize seus dados na igreja.'] : ['entrar', 'Meu cadastro', 'Entre ou crie seu cadastro na igreja.'],
             ['eventos', 'Eventos e inscrições', 'Os próximos encontros e as inscrições abertas.'],
             ['generosidade', 'Dízimos e ofertas', 'Contribua pelo Pix com os dados oficiais da igreja.'],
             ['celulas', 'Células', 'Encontre uma célula perto de você.'],
@@ -489,7 +489,7 @@
             ['youtube', 'Cultos ao vivo', 'Assista às transmissões no YouTube.']
           ].map(([view, title, text]) => view === 'youtube' ? `<button type="button" class="quick-action admin-quick" data-open-url="https://www.youtube.com/@nibcasadedeus"><span class="home-action-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7.5C3 6 4 5 5.5 5h13C20 5 21 6 21 7.5v9c0 1.5-1 2.5-2.5 2.5h-13C4 19 3 18 3 16.5z M10 9l5 3-5 3z"/></svg></span><strong>${title}</strong><span class="home-action-description">${text}</span></button>` : `<button type="button" class="quick-action admin-quick" data-view="${view}"><span class="home-action-icon" aria-hidden="true">${navIcon(view)}</span><strong>${title}</strong><span class="home-action-description">${text}</span></button>`).join('')}</div></section>`;
           if (isDesk()) return `<div class="home-desk"><div class="home-col">${dailyBlocks(false,'verse')}${pq}${socialBanners()}</div><div class="home-rail">${install}${dailyBlocks(false,'agenda')}${events}</div></div>`;
-          return `${dailyBlocks(false,'verse')}${install}${pq}${dailyBlocks(false,'agenda')}${events}${socialBanners()}`;
+          return `${dailyBlocks(false,'verse')}${install}${pq}${socialBanners()}${dailyBlocks(false,'agenda')}${events}`;
         }
         if (isDesk()) return `<div class="home-desk"><div class="home-col">${dailyBlocks(false,'verse')}${quick}${socialBanners()}${communityBlock()}</div><div class="home-rail">${checkinCard()}${install}${homeNotice()}${dailyBlocks(false,'agenda')}${birthdayBlock()}${events}</div></div>`;
         return `${dailyBlocks(false,'verse')}${checkinCard()}${install}${quick}${socialBanners()}${homeNotice()}${dailyBlocks(false,'agenda')}${birthdayBlock()}${events}${communityBlock()}`;
