@@ -44,7 +44,7 @@
   const isManagement = () => ['secretaria', 'pastoral', 'tesouraria'].includes(state.context);
   const NibAdminIcons = NibIcons.paths;
   const barIcon = (key, selected = false) => selected && NibIcons.mixed && NibIcons.mixed[key]
-    ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${NibIcons.mixed[key].stroke}"/><path fill="currentColor" stroke-width="1.6" d="${NibIcons.mixed[key].fill}"/></svg>`
+    ? ((x) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${x.stroke ? `<path d="${x.stroke}"/>` : ''}${x.fill ? `<path fill="currentColor" stroke-width="1.6" d="${x.fill}"/>` : ''}${x.cut ? `<path class="bar-cut" stroke="#fff" stroke-width="1.7" d="${x.cut}"/>` : ''}</svg>`)(NibIcons.mixed[key])
     : selected && NibIcons.filled[key]
     ? `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="${NibIcons.filled[key]}"/></svg>`
     : NibIcons.svg(key, selected ? 2.3 : 1.8);

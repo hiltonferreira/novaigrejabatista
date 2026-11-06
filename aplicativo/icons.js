@@ -53,8 +53,20 @@
   };
   // Ícones mistos no item ativo: parte em traço e parte preenchida (célula: a casa em traço, as duas pessoas cheias).
   const mixed = {
-    celulas: { stroke: 'M13.2 4.4 12 3 3 10.5V21h3.9', fill: 'M10 14.2a1.8 1.8 0 1 0 0-3.6 1.8 1.8 0 0 0 0 3.6z M6.9 21c0-2.7 1.4-4.6 3.1-4.6s3.1 1.9 3.1 4.6z M16.8 12.5a2.1 2.1 0 1 0 0-4.2 2.1 2.1 0 0 0 0 4.2z M13.2 21c0-3.3 1.6-5.6 3.6-5.6s3.6 2.3 3.6 5.6z' }
+    celulas: { stroke: 'M13.2 4.4 12 3 3 10.5V21h3.9', fill: 'M10 14.2a1.8 1.8 0 1 0 0-3.6 1.8 1.8 0 0 0 0 3.6z M6.9 21c0-2.7 1.4-4.6 3.1-4.6s3.1 1.9 3.1 4.6z M16.8 12.5a2.1 2.1 0 1 0 0-4.2 2.1 2.1 0 0 0 0 4.2z M13.2 21c0-3.3 1.6-5.6 3.6-5.6s3.6 2.3 3.6 5.6z' },
+    gestao: { fill: 'M3 3h7v9H3z M14 3h7v5h-7z M14 12h7v9h-7z M3 16h7v5H3z' },
+    membresia: { fill: 'M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z M2 21c0-3.5 3-6 7-6s7 2.5 7 6z', stroke: 'M16 11l2 2 4-4' },
+    membros: { fill: 'M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z M2 21c0-3.5 3-6 7-6s7 2.5 7 6z', stroke: 'M16 3.5a4 4 0 0 1 0 7 M22 21c0-2.6-1.6-4.6-4-5.5' },
+    solicitacoes: { fill: 'M6 3h9l4 4v14H6z', cut: 'M9 12h7 M9 16h5' },
+    programacao: { fill: 'M4 5h16v16H4z', stroke: 'M8 3v4 M16 3v4', cut: 'M4 10.5h16 M12 13.5v4.5 M9.8 15.8h4.4' },
+    comunicados: { fill: 'M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9z', stroke: 'M10 21h4' },
+    cuidado: { fill: 'M5 3h12a2 2 0 0 1 2 2v16H7a2 2 0 0 1-2-2z', cut: 'M5 17a2 2 0 0 1 2-2h12 M12 12.5s-3-1.8-3-3.8a1.6 1.6 0 0 1 3-.8 1.6 1.6 0 0 1 3 .8c0 2-3 3.8-3 3.8z' },
+    palavra: { fill: 'M12 6.5C10.2 5 7.6 4.5 4 4.5v13c3.6 0 6.2.5 8 2 1.8-1.5 4.4-2 8-2v-13c-3.6 0-6.2.5-8 2Z', cut: 'M12 7v12' },
+    conferencia: { fill: 'M12 3l9 5H3z M4 10h2v7H4z M8 10h2v7H8z M14 10h2v4h-2z', stroke: 'M3 21h10 M16 19l2 2 4-4' },
+    lancamentos: { fill: 'M5 4h14v17H5z', cut: 'M8 8h8 M8 12h8 M8 16h5' },
+    saidas: { fill: 'M3 8h18v12H3z', stroke: 'M12 2v4 M9.5 4.5 12 2l2.5 2.5', cut: 'M15.5 14h2.5' }
   };
+  mixed.caderno = mixed.cuidado;
   const svg = (key, width = 1.8) => paths[key] ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${width}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${paths[key]}"/></svg>` : '';
   window.NibIcons = { paths, filled, mixed, svg };
 })();
