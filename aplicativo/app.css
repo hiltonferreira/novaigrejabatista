@@ -2137,3 +2137,26 @@ html{scrollbar-gutter:stable}
 #nib-proposta .notices-list li.pub-notif{padding:16px 22px!important;border:0!important;border-bottom:1px solid #e3e8ef!important;border-radius:0!important;background:transparent!important;box-shadow:none!important}
 #nib-proposta .notices-list li.pub-notif:last-child{border-bottom:0!important}
 #nib-proposta #notices-dialog button.pub-notif-go{display:inline-flex!important;flex:none!important;width:auto!important;min-width:0!important;min-height:0!important;max-width:none!important;padding:0!important;margin:8px 0 0!important;border:0!important;background:none!important;box-shadow:none!important;justify-content:flex-start!important;white-space:nowrap!important;text-align:left!important}
+/* Popup de aniversário em uma tela só, sem rolar (v107) */
+#nib-proposta .my-bday{padding:24px 22px 20px!important}
+#nib-proposta .my-bday-crest{width:60px!important;height:60px!important;margin:0 auto 12px!important}
+#nib-proposta .my-bday-crest img{width:28px!important}
+#nib-proposta .my-bday-date{margin-bottom:8px!important}
+#nib-proposta .my-bday h2{font-size:18px!important}
+#nib-proposta .my-bday h2 span{font-size:32px!important}
+#nib-proposta .my-bday-rule{margin:10px auto 10px!important}
+#nib-proposta .my-bday-msg{margin:0 0 12px!important;font-size:14px!important;line-height:1.5!important}
+#nib-proposta .my-bday-verse{margin:0 0 12px!important;padding:10px 14px!important}
+#nib-proposta .my-bday-verse p{margin:0 0 4px!important;font-size:13px!important;line-height:1.45!important}
+#nib-proposta .my-bday-fans{margin-bottom:12px!important;padding-top:8px!important;padding-bottom:8px!important}
+#nib-proposta .my-bday-ok{min-height:48px!important}
+@media(max-height:620px){#nib-proposta .my-bday{padding:18px 18px 16px!important}#nib-proposta .my-bday-crest{display:none!important}#nib-proposta .my-bday h2 span{font-size:28px!important}#nib-proposta .my-bday-rule{display:none!important}#nib-proposta .my-bday-msg{margin-top:8px!important}}
+@media(max-height:520px){#nib-proposta .my-bday-verse{display:none!important}}
+@media(max-height:620px){#nib-proposta .my-bday-date{padding:0 40px;letter-spacing:.1em!important}}
+#nib-proposta .my-bday-water{bottom:0!important;right:-50px!important;max-height:100%}
+#nib-proposta .my-bday-confetti i{top:-14px}
+/* Botão "Pular" das dicas iniciais (v107): vidro escuro discreto sobre a foto */
+#nib-proposta .onb-skip{display:inline-flex!important;align-items:center;gap:4px;min-height:40px!important;padding:8px 12px 8px 16px!important;border:1px solid #ffffff40!important;background:#041e4299!important;color:#fff!important;font:600 14px/1 "NIB Acumin Mobile",Arial,sans-serif!important;letter-spacing:.01em;-webkit-backdrop-filter:blur(12px) saturate(140%);backdrop-filter:blur(12px) saturate(140%);box-shadow:0 6px 18px #041e4233!important}
+#nib-proposta .onb-skip svg{width:16px;height:16px;flex:0 0 auto}
+#nib-proposta .onb-skip:hover{background:#041e42cc!important}
+#nib-proposta .onb-skip:active{transform:scale(.97)}
