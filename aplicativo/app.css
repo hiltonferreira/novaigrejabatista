@@ -2061,3 +2061,14 @@ html{scrollbar-gutter:stable}
 #nib-proposta.is-public .my-cell{border:1px solid #dce3eb}
 #nib-proposta.is-public .my-cell .cell-leader{margin:2px 0 0;color:#536176}
 #nib-proposta .place-links a{cursor:pointer}
+/* Seletor de dias das células (v97) */
+#nib-proposta .day-pick{display:grid;grid-template-columns:repeat(var(--n,5),minmax(0,1fr));gap:4px;margin:0 0 20px;padding:4px;background:#fff;border:1px solid #dce3eb;border-radius:18px}
+#nib-proposta .day-pick-btn{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:56px;padding:8px 2px;border:0;border-radius:14px;background:transparent;color:#041e42;font:inherit;cursor:pointer;transition:background .15s,color .15s}
+#nib-proposta .day-pick-btn strong{font-size:15px;font-weight:700;line-height:1.1}
+#nib-proposta .day-pick-btn small{font-size:11px;font-weight:500;color:#5b6b80;line-height:1.1;white-space:nowrap}
+#nib-proposta .day-pick-btn:hover{background:#f1f4f8}
+#nib-proposta .day-pick-btn.is-active{background:#041e42;color:#fff}
+#nib-proposta .day-pick-btn.is-active small{color:rgba(255,255,255,.75)}
+#nib-proposta .day-pick-btn.is-today::after{content:"";position:absolute;top:7px;right:calc(50% - 22px);width:6px;height:6px;border-radius:50%;background:#2e7d4f}
+#nib-proposta .day-pick-btn:focus-visible{outline:2px solid #041e42;outline-offset:2px}
+@media(max-width:360px){#nib-proposta .day-pick-btn small{font-size:10px}}
