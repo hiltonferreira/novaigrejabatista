@@ -561,7 +561,7 @@ html{scrollbar-gutter:stable}
 #nib-proposta .app-splash.is-playing .splash-sub .ch{animation-delay:calc(2.5s + var(--i) * 35ms)}
 #nib-proposta .splash-spinner{position:absolute;left:50%;top:calc(72.75% + var(--splash-h) / 4 - 27px);width:54px;height:54px;margin-left:-27px;overflow:visible}
 #nib-proposta .splash-spinner circle{fill:none;stroke:#fff;stroke-width:3.6;stroke-linecap:round;stroke-dasharray:1 150;stroke-dashoffset:0}
-#nib-proposta .app-splash.is-playing .splash-spinner{animation:nib-splash-fade .4s ease .2s both,nib-splash-spin 2.4s linear infinite}
+#nib-proposta .app-splash.is-playing .splash-spinner{animation:nib-splash-fade .4s ease 3.2s both,nib-splash-spin 2.4s linear infinite}
 #nib-proposta .app-splash.is-playing .splash-spinner circle{animation:nib-splash-dash 2s ease-in-out infinite}
 @keyframes nib-splash-dash{0%{stroke-dasharray:1 150;stroke-dashoffset:0}50%{stroke-dasharray:96 150;stroke-dashoffset:-30}100%{stroke-dasharray:96 150;stroke-dashoffset:-124}}
 @keyframes nib-splash-spin{to{transform:rotate(360deg)}}
@@ -2160,3 +2160,6 @@ html{scrollbar-gutter:stable}
 #nib-proposta .onb-skip svg{width:16px;height:16px;flex:0 0 auto}
 #nib-proposta .onb-skip:hover{background:#041e42cc!important}
 #nib-proposta .onb-skip:active{transform:scale(.97)}
+
+/* v110: título da tela de entrar em uma linha no celular */
+@media(max-width:1023px){#nib-proposta .auth-sheet h1{font-size:clamp(20px,6.3vw,28px);white-space:nowrap}}

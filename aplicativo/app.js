@@ -998,7 +998,7 @@
   const vinculoLabel = { membro: 'Membro', frequento: 'Frequenta a igreja', visitante: 'Conhecendo a igreja' };
   function publicAuthChrome() {
     if (auth.dataset.chrome) return; auth.dataset.chrome = '1';
-    const lead = auth.querySelector('.auth-lead'); if (lead) lead.textContent = LOGIN_REQUIRED ? 'Entre ou crie seu cadastro para acessar o app da Nova Igreja Batista.' : 'Entre ou crie seu cadastro para manter seus dados em dia com a igreja.';
+    const lead = auth.querySelector('.auth-lead'); if (lead) lead.textContent = LOGIN_REQUIRED ? 'Acesse e acompanhe a sua comunidade: cultos, células, eventos e avisos da Nova Igreja Batista.' : 'Entre ou crie seu cadastro para manter seus dados em dia com a igreja.';
     if (LOGIN_REQUIRED) return;
     const close = document.createElement('button'); close.type = 'button'; close.className = 'auth-close'; close.textContent = 'Voltar ao app';
     close.addEventListener('click', closeAccount);
