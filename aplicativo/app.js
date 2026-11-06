@@ -1048,8 +1048,11 @@
   function closeOnboarding() {
     writeFlag('nib-onboarded', true); if (PUBLIC) setOnbHidden(true);
     window.scrollTo(0,0);
-    const done = () => { enter.hidden = true; gate(false); document.getElementById('heading').focus({preventScroll:true}); };
-    if (matchMedia('(prefers-reduced-motion: reduce)').matches || !enter.animate) { onboarding.hidden = true; done(); return; }
+    const done = () => { enter.hidden = true; auth.hidden = true; gate(false); document.getElementById('heading').focus({preventScroll:true}); };
+    if (!enter.animate) { onboarding.hidden = true; done(); return; }
+    // O brasão nunca é pulado (pedido de Hilton, 06/11/2026). Com "reduzir movimento" ligado no celular,
+    // ele aparece e some só com esmaecimento, sem deslocamento nem reflexo.
+    const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
     // Acabamento contido: o brasão assenta com desaceleração longa, um reflexo de luz atravessa
     // o desenho e a tela se dissolve sobre a inicial, que sobe de leve. Só transform e opacity.
     enter.hidden = false;
@@ -1058,10 +1061,14 @@
     const parts = appParts.filter(Boolean);
     enter.animate([{opacity:0},{opacity:1}], {duration:360, easing:'cubic-bezier(.33,1,.68,1)', fill:'forwards'}).finished.then(() => {
       // Troca de telas enquanto tudo está coberto, para o trabalho de layout não cair no meio da animação.
-      onboarding.hidden = true; gate(false); parts.forEach(el => { el.inert = true; });
+      onboarding.hidden = true; auth.hidden = true; gate(false); parts.forEach(el => { el.inert = true; });
       return new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
     }).then(() => {
       const at = ms => ms / T;
+      if (still) return Promise.all([
+        mark.animate([{opacity:0},{opacity:1,offset:at(900)},{opacity:1,offset:at(1700)},{opacity:0}], {duration:T, fill:'forwards'}),
+        enter.animate([{opacity:1},{opacity:1,offset:at(1850)},{opacity:0}], {duration:T, fill:'forwards'})
+      ].map(a => a.finished));
       const runs = [
         halo.animate([{opacity:0,transform:'translate(-50%,-52%) scale(.7)'},{opacity:1,transform:'translate(-50%,-52%) scale(1)',offset:at(1300),easing:soft},{opacity:0,transform:'translate(-50%,-52%) scale(1.15)'}], {duration:T, easing:settle, fill:'forwards'}),
         mark.animate([
@@ -1102,8 +1109,10 @@
   const authReady = LOGIN_REQUIRED ? NibConta.eu() : Promise.resolve(null);
   function requireLogin() { publicAuthChrome(); openAuth(); }
   // Com conta: na primeira visita mostra a orientação; depois vai direto para a inicial.
-  function publicStart() {
+  function publicStart(fromLogin = false) {
     if (LOGIN_REQUIRED && !account()) { gate(true); authReady.then(() => { if (account()) publicStart(); else requireLogin(); }); return; }
+    // Depois de entrar, a animação do brasão sempre aparece (a tela de entrar some por baixo dela).
+    if (fromLogin && onbHidden()) { closeOnboarding(); return; }
     if (!auth.hidden) auth.hidden = true;
     if (onbHidden()) { gate(false); return; }
     gate(true); onboarding.querySelectorAll('[data-member-first]').forEach(el => { el.parentNode.textContent = account() ? `Boas-vindas, ${account().primeiro}` : 'Boas-vindas à Nib'; });
@@ -1146,7 +1155,7 @@
     try {
       await fn();
       closeAccount(); ['panel-login','panel-signup'].forEach(id => document.getElementById(id).reset()); refreshPass();
-      applyAccount(); show('inicio', false, false); if (LOGIN_REQUIRED) publicStart(); pendingQrCheckin();
+      applyAccount(); show('inicio', false, false); if (LOGIN_REQUIRED) publicStart(true); pendingQrCheckin();
       const p = account(); announce(form.id === 'panel-signup' ? `Cadastro criado. Boas-vindas, ${p.primeiro}!` + (p.membro_status === 'pendente' ? ' A Secretaria vai confirmar sua membresia.' : '') : `Que bom ver você, ${p.primeiro}!`, 'success', false);
     } catch (e) { err.textContent = e.message; }
     finally { btn.disabled = false; }
@@ -1254,7 +1263,7 @@
       if (!passRules(a).every(Boolean)) { err.textContent = 'A senha ainda não atende a todos os critérios.'; return; }
       if (a !== b) { err.textContent = 'As senhas não são iguais.'; return; }
       btn.disabled = true; err.textContent = '';
-      try { await NibConta.redefinir(token, a); clean(); applyAccount(); if (LOGIN_REQUIRED) { auth.hidden = true; publicStart(); } announce('Senha criada. Você já entrou na sua conta.', 'success', false); }
+      try { await NibConta.redefinir(token, a); clean(); applyAccount(); if (LOGIN_REQUIRED) publicStart(true); announce('Senha criada. Você já entrou na sua conta.', 'success', false); }
       catch (e2) { err.textContent = e2.message; btn.disabled = false; }
     });
     d.showModal();
