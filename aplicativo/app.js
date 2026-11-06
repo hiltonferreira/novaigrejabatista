@@ -44,7 +44,7 @@
   const isManagement = () => ['secretaria', 'pastoral', 'tesouraria'].includes(state.context);
   const NibAdminIcons = NibIcons.paths;
   const barIcon = (key, selected = false) => selected && NibIcons.mixed && NibIcons.mixed[key]
-    ? ((x) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${x.stroke ? `<path d="${x.stroke}"/>` : ''}${x.fill ? `<path fill="currentColor" stroke-width="1.6" d="${x.fill}"/>` : ''}${x.cut ? `<path class="bar-cut" stroke="#fff" stroke-width="1.7" d="${x.cut}"/>` : ''}</svg>`)(NibIcons.mixed[key])
+    ? ((x) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${x.stroke ? `<path d="${x.stroke}"/>` : ''}${x.fill ? `<path fill="currentColor" stroke-width="1.6" d="${x.fill}"/>` : ''}${x.cut ? `<path class="bar-cut" stroke-width="1.7" d="${x.cut}"/>` : ''}</svg>`)(NibIcons.mixed[key])
     : selected && NibIcons.filled[key]
     ? `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="${NibIcons.filled[key]}"/></svg>`
     : NibIcons.svg(key, selected ? 2.3 : 1.8);
@@ -363,6 +363,7 @@
       nav.querySelectorAll('a').forEach(item => {
       const active = state.view === item.dataset.view || (item.dataset.view === 'membresia' && state.view === 'confirmar');
       item.classList.toggle('selected', active);
+      if (item.dataset.on !== String(active)) { item.dataset.on = String(active); const holder = item.querySelector('.menu-icon'); const icon = barIcon(item.dataset.view, active); if (holder) holder.innerHTML = icon; else { const old = item.querySelector('svg'); if (old) old.outerHTML = icon; } }
       const current = item.querySelector('.mobile-current');
       if (current) current.hidden = !active;
       if (active) item.setAttribute('aria-current', 'page'); else item.removeAttribute('aria-current');

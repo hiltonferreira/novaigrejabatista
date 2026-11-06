@@ -67,6 +67,17 @@
     saidas: { fill: 'M3 8h18v12H3z', stroke: 'M12 2v4 M9.5 4.5 12 2l2.5 2.5', cut: 'M15.5 14h2.5' }
   };
   mixed.caderno = mixed.cuidado;
+  Object.assign(mixed, {
+    historico: { fill: 'M12 3.5a8.5 8.5 0 1 1 0 17 8.5 8.5 0 0 1 0-17z', cut: 'M12 7.5v4.5l3 2' },
+    informacoes: { fill: 'M4 5h16v16H4z', stroke: 'M8 3v4 M16 3v4', cut: 'M4 9.5h16 M8 13h1 M11 13h5 M8 17h1 M11 17h5' },
+    recepcao: { fill: 'M3 3h7v7H3z M14 3h7v7h-7z M3 14h7v7H3z M14 14h3v3h-3z', stroke: 'M20 14v.01 M14 20h3 M20 17v4h-3' },
+    aprovacoes: { fill: 'M6 3h9l4 4v14H6z', cut: 'M9 14l2 2 4-4' },
+    orcamento: { fill: 'M21 12A9 9 0 1 1 12 3v9z M15 3.5A9 9 0 0 1 20.5 9H15z' },
+    contribuintes: { fill: 'M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z M2 21c0-3.5 3-6 7-6s7 2.5 7 6z', stroke: 'M16 6h6 M16 10h6 M18 14h4' },
+    relatorios: { fill: 'M5 3h14v18H5z', cut: 'M9 17v-4 M12 17V9 M15 17v-6' },
+    fechamento: { fill: 'M6 11h12v10H6z', stroke: 'M8 11V7a4 4 0 0 1 8 0v4', cut: 'M12 15v2' }
+  });
+
   const svg = (key, width = 1.8) => paths[key] ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${width}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${paths[key]}"/></svg>` : '';
   window.NibIcons = { paths, filled, mixed, svg };
 })();

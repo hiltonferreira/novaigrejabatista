@@ -1986,3 +1986,8 @@ html{scrollbar-gutter:stable}
   #nib-proposta .mem-filters{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
   #nib-proposta #content[data-view=membros] .mem-card~.box,#nib-proposta #content[data-view=membros] .mem-card{max-width:760px}
 }
+
+/* Ícone selecionado preenchido: os recortes usam a cor do fundo onde o ícone está */
+#nib-proposta .bar-cut{stroke:var(--nib-cut,#fff)}
+#nib-proposta .layout>aside nav a[aria-current=page]{--nib-cut:#eaf2fb}
+#nib-proposta #mobile-navigation a[aria-current=page]{--nib-cut:#041e42}
