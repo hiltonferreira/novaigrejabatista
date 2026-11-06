@@ -51,6 +51,10 @@
     generosidade: heart,
     cadastro: 'M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm-9 9a9 7 0 0 1 18 0v1H3Z'
   };
+  // Ícones mistos no item ativo: parte em traço e parte preenchida (célula: a casa em traço, as duas pessoas cheias).
+  const mixed = {
+    celulas: { stroke: 'M13.2 4.4 12 3 3 10.5V21h3.9', fill: 'M10 14.2a1.8 1.8 0 1 0 0-3.6 1.8 1.8 0 0 0 0 3.6z M6.9 21c0-2.7 1.4-4.6 3.1-4.6s3.1 1.9 3.1 4.6z M16.8 12.5a2.1 2.1 0 1 0 0-4.2 2.1 2.1 0 0 0 0 4.2z M13.2 21c0-3.3 1.6-5.6 3.6-5.6s3.6 2.3 3.6 5.6z' }
+  };
   const svg = (key, width = 1.8) => paths[key] ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${width}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${paths[key]}"/></svg>` : '';
-  window.NibIcons = { paths, filled, svg };
+  window.NibIcons = { paths, filled, mixed, svg };
 })();
