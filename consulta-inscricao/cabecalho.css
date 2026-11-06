@@ -24,3 +24,5 @@ body .button.primary,body button.primary,body a.button.primary{background:#041e4
 body .button.primary:hover,body button.primary:hover{background:#0b2d5c!important;border-color:#0b2d5c!important}
 body .button.secondary,body button.secondary{background:#fff!important;border:1px solid #c9d2de!important;color:#041e42!important}
 @media(max-width:640px){body form .button.primary,body form button.primary{width:100%;min-height:52px;justify-content:center}}
+/* Cabeçalho no celular: algumas páginas (NXT CAMP) fixam altura e zeram o espaçamento com !important, e o botão ficava em cima da linha. */
+@media(max-width:820px){html body header.nib-public-header{height:auto!important;min-height:0!important;padding:20px 0 22px!important;gap:16px!important;flex-direction:column!important;justify-content:center!important;align-items:center!important}}
