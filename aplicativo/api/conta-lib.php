@@ -31,7 +31,7 @@ function nib_migrar(PDO $db): void {
   $v = (int)($db->query('SELECT MAX(v) FROM nib_versao')->fetchColumn() ?: 0);
   if ($v >= NIB_MIGRACAO) return; // ao criar a v5, subir NIB_MIGRACAO
   // Uma migração por vez: pedidos simultâneos esperam a primeira terminar (evita versões repetidas).
-  $db->query("SELECT GET_LOCK('nib_migrar', 15)")->fetchColumn();
+  if ((int)$db->query("SELECT GET_LOCK('nib_migrar', 15)")->fetchColumn() !== 1) throw new RuntimeException('migração em andamento por outro pedido');
   try { nib_migrar_passos($db, (int)($db->query('SELECT MAX(v) FROM nib_versao')->fetchColumn() ?: 0)); }
   finally { $db->query("SELECT RELEASE_LOCK('nib_migrar')"); }
 }
