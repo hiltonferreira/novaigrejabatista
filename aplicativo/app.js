@@ -571,7 +571,7 @@
     const context = isManagement() ? state.context : PUBLIC ? 'pub-' + (account() ? account().id + '-' + account().papel : 'anon') : 'membro';
     for (const nav of [document.getElementById('navigation'), document.getElementById('mobile-navigation')]) {
       if (nav.dataset.context !== context) {
-        if (nav.id === 'navigation') nav.innerHTML = items.map(([key,label]) => `<a href="#${key}" data-view="${key}" aria-label="${label}">${navIcon(key)}<span>${label}</span></a>`).join('');
+        if (nav.id === 'navigation') { const link = ([key,label]) => `<a href="#${key}" data-view="${key}" aria-label="${label}">${navIcon(key)}<span>${label}</span></a>`; nav.innerHTML = PUBLIC && !isManagement() ? publicGroups(items).map(([label,links]) => `<div class="nav-group"><span class="nav-group-label">${label}</span>${links.map(link).join('')}</div>`).join('') : items.map(link).join(''); }
         else {
           const descriptions = {...admin.descriptions, inicio:'Seu ponto de partida',cadastro: PUBLIC ? 'Seus dados na igreja' : 'Dados e atualizações',eventos:'Encontros e inscrições',generosidade:'Dízimos, ofertas e campanhas',historico:'Seu histórico financeiro',celulas: PUBLIC ? 'Encontre uma célula' : 'Acesso à plataforma', entrar:'Sua conta na Nib', cadastros:'Confirmar membros',checkin:'Presença nos cultos',sugestoes:'Ideias e melhorias',informacoes: PUBLIC ? 'Horários, endereço e liderança' : 'Programação e avisos',gestao:'Integração e apresentações',agenda:'Cultos, eventos e festividades',caderno:'Ore com a comunidade',avisos:'Comunicados para toda a igreja'};
           const groups = isManagement() ? [[admin.profiles[state.context].name,items]] : PUBLIC ? publicGroups(items) : [['Seu acesso',items.filter(([key])=>['inicio','cadastro'].includes(key))],['Vida na igreja',items.filter(([key])=>['agenda','eventos','generosidade','historico','celulas','informacoes','caderno'].includes(key))]];
@@ -657,7 +657,7 @@
     if (notices.open) notices.close();
     const dateField = document.getElementById('presented-date');
     if (dateField) dateField.max = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Manaus', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
-    if (focus) { document.getElementById('heading').focus({preventScroll:true}); window.scrollTo({top:0,behavior:'instant'}); }
+    if (focus) { document.getElementById('heading').focus({preventScroll:true}); window.scrollTo({top:0,behavior:'instant'}); const m = document.getElementById('main'); m.classList.remove('is-entering'); void m.offsetWidth; m.classList.add('is-entering'); }
   }
   root.addEventListener('click', event => {
     const action = event.target.closest('button,a[data-view],a[data-back]');
@@ -782,12 +782,47 @@
     const collapsed = root.classList.toggle('nib-sidebar-collapsed');
     event.currentTarget.setAttribute('aria-expanded', String(!collapsed));
     event.currentTarget.setAttribute('aria-label', collapsed ? 'Expandir menu lateral' : 'Recolher menu lateral');
+    try { localStorage.setItem('nib-side', collapsed ? '1' : ''); } catch {}
+    hideTip();
   });
+  try { if (localStorage.getItem('nib-side') === '1') { root.classList.add('nib-sidebar-collapsed'); const t = document.getElementById('sidebar-toggle'); t.setAttribute('aria-expanded','false'); t.setAttribute('aria-label','Expandir menu lateral'); } } catch {}
+  // Menu recolhido no computador: nome do item ao passar o mouse ou focar pelo teclado.
+  const sideTip = document.createElement('div'); sideTip.className = 'nib-side-tip'; sideTip.setAttribute('aria-hidden','true'); root.appendChild(sideTip);
+  function hideTip() { sideTip.classList.remove('is-on'); }
+  function showTip(el) {
+    if (!root.classList.contains('nib-sidebar-collapsed') || !matchMedia('(min-width:821px)').matches) return;
+    const r = el.getBoundingClientRect(); sideTip.textContent = el.getAttribute('aria-label') || el.textContent.trim();
+    sideTip.style.top = Math.round(r.top + r.height / 2) + 'px'; sideTip.style.left = Math.round(r.right + 12) + 'px'; sideTip.classList.add('is-on');
+  }
+  const aside = document.querySelector('.layout>aside');
+  aside.addEventListener('mouseover', e => { const el = e.target.closest('nav a, .logout-btn, #sidebar-toggle'); if (el) showTip(el); else hideTip(); });
+  aside.addEventListener('mouseleave', hideTip);
+  aside.addEventListener('focusin', e => { const el = e.target.closest('nav a, .logout-btn, #sidebar-toggle'); if (el && root.classList.contains('keyboard-navigation')) showTip(el); });
+  aside.addEventListener('focusout', hideTip); aside.addEventListener('scroll', hideTip, { passive: true }); aside.addEventListener('click', hideTip);
   root.addEventListener('keydown', event => {
     if (event.key !== 'Escape') return;
     const openMenu = event.target.closest('details[open]');
     if (openMenu) { openMenu.open = false; openMenu.querySelector('summary').focus(); }
   });
+  // Arrastar para a direita dentro de uma subtela volta para a anterior (celular e tablet).
+  (() => {
+    const back = document.getElementById('mobile-back'), ret = document.getElementById('mobile-return'), main = document.getElementById('main');
+    const hint = document.createElement('div'); hint.className = 'swipe-back-hint'; hint.setAttribute('aria-hidden', 'true');
+    hint.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5 M11 6l-6 6 6 6"/></svg>'; root.appendChild(hint);
+    const LIMIT = 100; let sx = 0, sy = 0, dx = 0, on = false, decided = false, horiz = false;
+    const blocked = el => { for (let n = el; n && n !== root; n = n.parentElement) { if (n.matches('input,textarea,select,.seg,.choice-seg,dialog,[data-no-swipe]')) return true; const ox = getComputedStyle(n).overflowX; if ((ox === 'auto' || ox === 'scroll') && n.scrollWidth > n.clientWidth + 2) return true; } return false; };
+    const settle = () => { main.style.transition = 'transform .24s cubic-bezier(.2,.7,.2,1),opacity .24s'; main.style.transform = ''; main.style.opacity = ''; hint.style.transition = 'opacity .2s,transform .24s'; hint.style.opacity = ''; hint.style.transform = ''; hint.classList.remove('is-ready'); };
+    root.addEventListener('touchstart', e => { on = false; if (e.touches.length !== 1 || ret.hidden || document.querySelector('dialog[open]') || blocked(e.target)) return; sx = e.touches[0].clientX; sy = e.touches[0].clientY; dx = 0; on = true; decided = false; horiz = false; }, { passive: true });
+    root.addEventListener('touchmove', e => {
+      if (!on) return; const x = e.touches[0].clientX - sx, y = e.touches[0].clientY - sy;
+      if (!decided) { if (Math.abs(x) < 10 && Math.abs(y) < 10) return; decided = true; horiz = x > 0 && Math.abs(x) > Math.abs(y) * 1.6; if (!horiz) { on = false; return; } main.style.transition = 'none'; hint.style.transition = 'none'; }
+      dx = Math.max(0, x); const p = Math.min(dx / LIMIT, 1);
+      main.style.transform = `translateX(${Math.round(Math.min(dx * .35, 44))}px)`; main.style.opacity = String(1 - p * .2);
+      hint.style.opacity = String(p); hint.style.transform = `translate(${Math.round(Math.min(dx * .45, 52))}px,-50%) scale(${(.75 + p * .25).toFixed(2)})`; hint.classList.toggle('is-ready', p >= 1);
+    }, { passive: true });
+    root.addEventListener('touchend', () => { if (!on) return; on = false; if (!horiz) return; const go = dx >= LIMIT; settle(); if (go) back.click(); });
+    root.addEventListener('touchcancel', () => { if (on && horiz) settle(); on = false; });
+  })();
   root.addEventListener('pointerdown',()=>root.classList.remove('keyboard-navigation'));
   root.addEventListener('keydown',e=>{if(['Tab','Enter',' ','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)) root.classList.add('keyboard-navigation');});
   const drawer = document.getElementById('mobile-drawer');
@@ -1156,7 +1191,7 @@
     const p = account(); if (!p) return '';
     const status = p.vinculo === 'membro' || p.membro_status === 'confirmado' ? `<dt>Membresia</dt><dd>${escape(statusLabel[p.membro_status] || '')}</dd>` : '';
     return `${pushBox()}<div class="profile-layout"><section class="box profile-summary"><span class="tag">${escape(vinculoLabel[p.vinculo] || 'Cadastro')}</span><h2>${escape(p.nome)}</h2><dl class="profile"><dt>E-mail</dt><dd>${escape(p.email)}</dd><dt>Celular</dt><dd>${escape(fmtPhone(p.celular)) || 'Não informado'}</dd><dt>Endereço</dt><dd>${escape(p.endereco || 'Não informado')}</dd><dt>Nascimento</dt><dd>${escape(fmtDay(p.nascimento) || 'Não informado')}</dd><dt>CPF</dt><dd>${escape(fmtCpf(p.cpf) || 'Não informado')}</dd><dt>Célula</dt><dd>${escape(p.celula ? p.celula.split('|').reverse().join(' · ') : 'Não participa')}</dd>${status}<dt>Cadastro desde</dt><dd>${escape(fmtDay(p.criado_em))}</dd></dl><button type="button" class="button account-logout" data-logout="1">Sair da conta</button></section>
-<section class="box profile-edit"><h2>Atualizar meus dados</h2><form id="account-form" novalidate><div class="form-grid"><div><label for="acc-nome">Nome completo</label><input id="acc-nome" name="nome" maxlength="120" value="${escape(p.nome)}" required></div><div><label for="acc-cel">Celular com WhatsApp</label><input id="acc-cel" name="celular" type="tel" inputmode="tel" maxlength="25" value="${escape(fmtPhone(p.celular))}" required></div><div><label for="acc-nasc">Data de nascimento</label><input id="acc-nasc" name="nascimento" type="date" min="1900-01-01" value="${escape(p.nascimento || '')}"></div><div><label for="acc-cpf">CPF</label><input id="acc-cpf" name="cpf" inputmode="numeric" autocomplete="off" maxlength="14" placeholder="000.000.000-00" value="${escape(fmtCpf(p.cpf))}"></div><div><label for="acc-end">Endereço</label><input id="acc-end" name="endereco" maxlength="250" value="${escape(p.endereco || '')}" placeholder="Rua, número, bairro"></div><div><label for="acc-cel-cell">Célula</label><select id="acc-cel-cell" name="celula"><option value="">Não participo de célula</option>${cellOptions(p.celula)}${p.celula && !findCell(p.celula) ? `<option value="${escape(p.celula)}" selected>${escape(p.celula.split('|').reverse().join(' · '))} (fora da lista)</option>` : ''}</select></div></div><fieldset class="auth-choice"><legend>Tratamento no app</legend><label><input type="radio" name="sexo" value="f"${p.sexo !== 'm' ? ' checked' : ''}><span>Feminino</span></label><label><input type="radio" name="sexo" value="m"${p.sexo === 'm' ? ' checked' : ''}><span>Masculino</span></label></fieldset><label class="check"><input type="checkbox" name="mostrar"${p.mostrar_aniversario ? ' checked' : ''}><span>Mostrar meu aniversário (dia e mês) para a igreja</span></label><p class="form-error" role="alert"></p><div class="form-actions"><button class="action" type="submit">Salvar alterações</button></div><p class="note">Para trocar o e-mail, fale com a Secretaria.</p></form></section>
+<section class="box profile-edit"><h2>Atualizar meus dados</h2><form id="account-form" novalidate><div class="form-grid"><div><label for="acc-nome">Nome completo</label><input id="acc-nome" name="nome" maxlength="120" value="${escape(p.nome)}" required></div><div><label for="acc-cel">Celular com WhatsApp</label><input id="acc-cel" name="celular" type="tel" inputmode="tel" maxlength="25" value="${escape(fmtPhone(p.celular))}" required></div><div><label for="acc-nasc">Data de nascimento</label><input id="acc-nasc" name="nascimento" type="date" min="1900-01-01" value="${escape(p.nascimento || '')}"></div><div><label for="acc-cpf">CPF</label><input id="acc-cpf" name="cpf" inputmode="numeric" autocomplete="off" maxlength="14" placeholder="000.000.000-00" value="${escape(fmtCpf(p.cpf))}"></div><div><label for="acc-end">Endereço</label><input id="acc-end" name="endereco" maxlength="250" value="${escape(p.endereco || '')}" placeholder="Rua, número, bairro"></div><div><label for="acc-cel-cell">Célula</label><select id="acc-cel-cell" name="celula"><option value="">Não participo de célula</option>${cellOptions(p.celula)}${p.celula && !findCell(p.celula) ? `<option value="${escape(p.celula)}" selected>${escape(p.celula.split('|').reverse().join(' · '))} (fora da lista)</option>` : ''}</select></div></div><fieldset class="auth-choice"><legend>Tratamento no app</legend><div class="choice-seg"><label><input type="radio" name="sexo" value="f"${p.sexo !== 'm' ? ' checked' : ''}><span>Feminino</span></label><label><input type="radio" name="sexo" value="m"${p.sexo === 'm' ? ' checked' : ''}><span>Masculino</span></label></div></fieldset><label class="check"><input type="checkbox" name="mostrar"${p.mostrar_aniversario ? ' checked' : ''}><span>Mostrar meu aniversário (dia e mês) para a igreja</span></label><p class="form-error" role="alert"></p><div class="form-actions"><button class="action" type="submit">Salvar alterações</button></div><p class="note">Para trocar o e-mail, fale com a Secretaria.</p></form></section>
 <section class="box"><h2>Trocar senha</h2><form id="password-form" novalidate><label for="pw-atual">Senha atual</label><input id="pw-atual" name="atual" type="password" autocomplete="current-password" required><label for="pw-nova">Nova senha</label><input id="pw-nova" name="nova" type="password" autocomplete="new-password" required><p class="note">Pelo menos 8 caracteres, com letra maiúscula, minúscula, número e símbolo.</p><p class="form-error" role="alert"></p><div class="form-actions"><button class="action" type="submit">Trocar senha</button></div></form>
 <details class="account-delete"><summary>Excluir minha conta</summary><form id="delete-form" novalidate><p>Seus dados do app serão apagados. Essa ação não pode ser desfeita.</p><label for="del-senha">Confirme com sua senha</label><input id="del-senha" name="senha" type="password" autocomplete="current-password" required><p class="form-error" role="alert"></p><button class="button danger" type="submit">Excluir minha conta</button></form></details></section></div>`;
   }

@@ -2074,7 +2074,7 @@ html{scrollbar-gutter:stable}
 /* Selo "Sua célula" no canto superior direito do cartão (v98) */
 #nib-proposta .cell-card{position:relative}
 #nib-proposta .cell-card.is-mine h3{padding-right:112px}
-#nib-proposta .cell-mine-tag{position:absolute;top:16px;right:16px;display:inline-flex;align-items:center;gap:5px;padding:5px 10px 5px 8px;border-radius:999px;background:var(--mine-bg,#fff1e8);color:var(--mine-fg,#c2531a);font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;line-height:1.2;white-space:nowrap}
+#nib-proposta .cell-mine-tag{position:absolute;top:16px;right:16px;display:inline-flex;align-items:center;gap:5px;padding:5px 10px 5px 8px;border-radius:999px;background:var(--mine-bg,#fff1e8);color:var(--mine-fg,#a3410f);font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;line-height:1.2;white-space:nowrap}
 #nib-proposta .cell-mine-tag svg{width:13px;height:13px;flex:0 0 auto}
 #nib-proposta .cell-card.is-mine{border-color:var(--mine-line,#ff7f40);box-shadow:0 0 0 1px var(--mine-line,#ff7f40)}
 .sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
@@ -2173,7 +2173,7 @@ html{scrollbar-gutter:stable}
 #nib-proposta .day-pick.seg>.seg-pill{border-radius:14px}
 #nib-proposta .day-pick.seg .day-pick-btn,#nib-proposta .day-pick.seg .day-pick-btn:hover,#nib-proposta .day-pick.seg .day-pick-btn.is-active{background:transparent;color:#536176}
 #nib-proposta .day-pick.seg .day-pick-btn.is-active{color:#041e42}
-#nib-proposta .day-pick.seg .day-pick-btn small,#nib-proposta .day-pick.seg .day-pick-btn.is-active small{color:#6b7a8f}
+#nib-proposta .day-pick.seg .day-pick-btn small,#nib-proposta .day-pick.seg .day-pick-btn.is-active small{color:#536176}
 @media(prefers-reduced-motion:reduce){#nib-proposta .seg>.seg-pill{transition:none;animation:none}}
 @media(max-width:1023px){#nib-proposta .auth-sheet h1{white-space:normal}#nib-proposta .auth-lead{max-width:none}}
 /* v111: lembrete de data de nascimento (contas sem a data) */
@@ -2216,3 +2216,129 @@ dialog.ck-telao::backdrop{background:#041e42}
 .ck-telao-in .ck-qr{width:min(60vh,80vw);padding:20px;border-radius:24px;background:#fff}
 .ck-telao-in .ck-qr svg{width:100%;height:auto;display:block}
 .ck-telao-in .action{min-width:140px;padding:12px 22px;border-radius:999px;border:1px solid #ffffff55;background:transparent;color:#fff;font:600 16px/1 inherit;cursor:pointer}
+
+/* =====================================================================
+   v120 · Menu lateral do computador: blocos, versão recolhida e transições
+   ===================================================================== */
+@media(min-width:821px){
+  #nib-proposta{--nib-header-height:84px}
+  #nib-proposta .layout{transition:grid-template-columns .28s cubic-bezier(.2,.7,.2,1)}
+  #nib-proposta .layout>aside{overflow-x:hidden;transition:width .28s cubic-bezier(.2,.7,.2,1),padding .28s cubic-bezier(.2,.7,.2,1)}
+  #nib-proposta .layout>aside nav a{transition:background-color .16s,color .16s,border-color .16s,transform .16s}
+  #nib-proposta .layout>aside nav a:active{transform:scale(.98)}
+  #nib-proposta .nav-group{display:grid;gap:2px}
+  #nib-proposta .nav-group+.nav-group{margin-top:12px;padding-top:12px;border-top:1px solid #ffffff17}
+  #nib-proposta .nav-group-label{display:block;padding:0 14px 6px;color:#9fb1c8;font-size:10.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;line-height:1.2;white-space:nowrap}
+  #nib-proposta .layout>aside nav a span{white-space:nowrap}
+  #nib-proposta .layout>aside>.nib-sidebar-toggle{transition:background-color .16s,color .16s,border-color .16s,transform .28s cubic-bezier(.2,.7,.2,1)}
+  /* Recolhido */
+  #nib-proposta.nib-sidebar-collapsed .layout{grid-template-columns:72px minmax(0,1fr)}
+  #nib-proposta.nib-sidebar-collapsed .layout>aside{width:72px;padding:18px 0 18px;display:flex;flex-direction:column;align-items:center}
+  #nib-proposta.nib-sidebar-collapsed .layout>aside>.sidebar-label,#nib-proposta.nib-sidebar-collapsed .nav-group-label,#nib-proposta.nib-sidebar-collapsed .layout>aside>.sidebar-bottom,#nib-proposta.nib-sidebar-collapsed .layout>aside>.aside-note{display:none}
+  #nib-proposta.nib-sidebar-collapsed .layout>aside>.nib-sidebar-toggle{position:static;flex:none;margin:0 auto 14px;width:36px;height:36px}
+  #nib-proposta.nib-sidebar-collapsed .layout>aside>nav{display:flex;flex-direction:column;align-items:center;margin:0;gap:0;width:100%}
+  #nib-proposta.nib-sidebar-collapsed .nav-group{justify-items:center;width:100%;gap:4px}
+  #nib-proposta.nib-sidebar-collapsed .nav-group+.nav-group{margin-top:10px;padding-top:10px;border-top:0;position:relative}
+  #nib-proposta.nib-sidebar-collapsed .nav-group+.nav-group::before{content:"";position:absolute;top:0;left:22px;right:22px;height:1px;background:#ffffff24}
+  #nib-proposta.nib-sidebar-collapsed .layout>aside nav a{display:flex;align-items:center;justify-content:center;width:44px;min-width:44px;height:44px;min-height:44px;padding:0;margin:0;gap:0;border-radius:12px;font-size:0}
+  #nib-proposta.nib-sidebar-collapsed .layout>aside nav a svg{width:20px;height:20px;margin:0}
+  #nib-proposta.nib-sidebar-collapsed .layout>aside nav a span{display:none}
+  #nib-proposta.nib-sidebar-collapsed .logout-btn.is-side{width:44px;height:44px;min-height:44px;margin:auto auto 0;padding:0;justify-content:center;gap:0;border-radius:12px;flex:none}
+  #nib-proposta .nib-side-tip{position:fixed;z-index:1500;left:0;top:0;transform:translate(-4px,-50%);padding:7px 11px;border-radius:9px;background:#041e42;color:#fff;font:600 13px/1.2 var(--nib-font);white-space:nowrap;box-shadow:0 8px 24px #041e4233;opacity:0;pointer-events:none;transition:opacity .14s,transform .14s}
+  #nib-proposta .nib-side-tip::before{content:"";position:absolute;left:-4px;top:50%;width:8px;height:8px;background:inherit;transform:translateY(-50%) rotate(45deg)}
+  #nib-proposta .nib-side-tip.is-on{opacity:1;transform:translate(0,-50%)}
+}
+@media(min-width:821px){
+  /* Agenda: dia selecionado sem quebrar "Sexta-feira" ao lado do selo */
+  #nib-proposta .calendar-selection .selection-head{display:grid;grid-template-columns:56px minmax(0,1fr);column-gap:14px;row-gap:8px;align-items:center}
+  #nib-proposta .calendar-selection .selection-date{grid-row:1/3;width:56px;align-self:center}
+  #nib-proposta .calendar-selection .selection-head h2{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #nib-proposta .calendar-selection .selection-count{grid-column:2;justify-self:start;align-self:start}
+  /* Primeiro bloco do menu ao lado do botão de recolher (sem a linha "Plataforma Nib") */
+  #nib-proposta:not(.nib-sidebar-collapsed) .layout>aside:has(.nav-group)>.sidebar-label{display:none}
+  #nib-proposta:not(.nib-sidebar-collapsed) .layout>aside>nav>.nav-group:first-child>.nav-group-label{display:flex;align-items:center;min-height:32px;padding-bottom:4px;padding-right:44px}
+}
+@media(min-width:1100px){
+  #nib-proposta{--nib-header-height:68px}
+  #nib-proposta .layout>aside nav a{min-height:36px;padding:7px 14px}
+  #nib-proposta .layout>aside>nav{margin:8px 0 16px}
+  #nib-proposta.nib-sidebar-collapsed .layout>aside>nav{margin:0 0 16px}
+  #nib-proposta .layout>aside>.sidebar-bottom{display:none}
+  #nib-proposta .logout-btn.is-side{margin:auto 0 0;min-height:42px}
+}
+@media(min-width:821px) and (prefers-reduced-motion:reduce){#nib-proposta .layout,#nib-proposta .layout>aside,#nib-proposta .nib-side-tip{transition:none}}
+
+/* Escolha de tratamento (Meu cadastro) no padrão de pílula deslizante */
+#nib-proposta .choice-seg{position:relative;isolation:isolate;grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;width:100%;max-width:360px;padding:4px;border-radius:999px;background:#e6ebf2}
+#nib-proposta .choice-seg::before{content:"";position:absolute;z-index:-1;top:4px;bottom:4px;left:4px;width:calc(50% - 4px);border-radius:999px;background:#fff;box-shadow:0 2px 8px #041e421a;transition:transform .32s cubic-bezier(.22,1,.36,1)}
+#nib-proposta .choice-seg:has(label:nth-child(2) input:checked)::before{transform:translateX(100%)}
+#nib-proposta .choice-seg span,#nib-proposta .choice-seg input:checked+span{min-height:42px;border:0;background:transparent;color:#536176;font-weight:600;transition:color .2s}
+#nib-proposta .choice-seg input:checked+span{color:#041e42}
+@media(prefers-reduced-motion:reduce){#nib-proposta .choice-seg::before{transition:none}}
+@media(min-width:821px){
+  #nib-proposta .sug-tipos{max-width:460px}
+  #nib-proposta .prayer-feed>p:only-child{display:block;width:100%;box-sizing:border-box;grid-column:1/-1;margin:0;padding:28px 24px;border:1px dashed #b9c5d4;border-radius:18px;background:#fff;color:#536176;text-align:center}
+}
+
+/* v120 · Contraste e hover consistentes */
+#nib-proposta .calendar-week{color:#5b6b80}
+@media(hover:hover){
+  #nib-proposta .sug-tipos button:hover,#nib-proposta .sug-tipos button:focus{color:#041e42;background:transparent!important}
+  #nib-proposta .auth-tabs.seg button:hover{color:#041e42}
+  #nib-proposta .choice-seg label:hover span{color:#041e42}
+  #nib-proposta .home-rail .event,#nib-proposta .cards .event{transition:border-color .2s,box-shadow .2s,transform .2s}
+  #nib-proposta .cards .event:hover{box-shadow:0 14px 30px -12px #041e4233;transform:translateY(-2px)}
+  #nib-proposta .place-links a{transition:border-color .2s,background-color .2s}
+  #nib-proposta .place-links a:hover{border-color:#65768e;background:#f7f9fc}
+  #nib-proposta .leader img{transition:transform .5s cubic-bezier(.2,.7,.2,1)}
+  #nib-proposta .leader:hover img{transform:scale(1.03)}
+}
+/* Líderes: nome e cargo legíveis sobre qualquer foto */
+#nib-proposta .leader div{padding:56px 12px 12px;background:linear-gradient(180deg,#041e4200 0%,#041e42b3 45%,#041e42f2 100%)}
+#nib-proposta .leader small{color:#ffc29e;font-weight:600}
+#nib-proposta .leader :is(small,strong){text-shadow:0 1px 2px #041e4280}
+/* Instagram e YouTube: texto inteiro, sem reticências */
+#nib-proposta .place-links small{white-space:normal;overflow:visible;text-overflow:clip;line-height:1.3}
+/* Troca de tela: entrada suave do conteúdo (todas as larguras) */
+@keyframes nib-view-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+#nib-proposta main.is-entering>:is(#eyebrow,#heading,#description,#content){animation:nib-view-in .28s cubic-bezier(.2,.7,.2,1) both}
+#nib-proposta main.is-entering>#content{animation-delay:.04s}
+@media(prefers-reduced-motion:reduce){#nib-proposta main.is-entering>*{animation:none}}
+
+@media(min-width:1100px){
+  /* Eventos: cartão(ões) à esquerda, consulta de inscrição à direita */
+  #nib-proposta #content[data-view=eventos]{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:24px;align-items:start}
+  #nib-proposta #content[data-view=eventos]>.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px;margin:0}
+  #nib-proposta #content[data-view=eventos]>.cards:has(>.event:only-child){grid-template-columns:1fr}
+  #nib-proposta #content[data-view=eventos]>.cards>.event:only-child{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);border-top:1px solid #dce3eb}
+  #nib-proposta #content[data-view=eventos]>.cards>.event:only-child .event-cover{height:100%}
+  #nib-proposta #content[data-view=eventos]>.cards>.event:only-child .event-cover img{height:100%;min-height:280px;object-fit:cover}
+  #nib-proposta #content[data-view=eventos]>.cards>.event:only-child .event-content{display:flex;flex-direction:column;justify-content:center;padding:24px 26px}
+  #nib-proposta #content[data-view=eventos]>.event-follow-up{margin:0}
+  #nib-proposta #content[data-view=eventos]>:not(.cards):not(.event-follow-up){grid-column:1/-1}
+  /* Avisos: formulário e lista lado a lado */
+  #nib-proposta #content[data-view=avisos]{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:24px;align-items:start}
+  #nib-proposta #content[data-view=avisos]>*{margin:0}
+}
+/* Voltar arrastando: indicador na borda esquerda */
+#nib-proposta .layout{overflow-x:clip}
+#nib-proposta .swipe-back-hint{position:fixed;z-index:1400;left:-44px;top:50%;display:grid;place-items:center;width:44px;height:44px;border-radius:50%;background:#fff;color:#041e42;box-shadow:0 6px 20px #041e4233;opacity:0;transform:translate(0,-50%) scale(.75);pointer-events:none}
+#nib-proposta .swipe-back-hint svg{width:20px;height:20px}
+#nib-proposta .swipe-back-hint.is-ready{background:#041e42;color:#fff}
+@media(min-width:1100px){
+  #nib-proposta #content[data-view=eventos]>.cards>.event:only-child .event-cover{overflow:hidden;min-width:0;border-right:1px solid #dce3eb}
+  #nib-proposta #content[data-view=eventos]>.cards>.event:only-child .event-cover img{width:100%}
+  #nib-proposta #content[data-view=eventos]>.cards>.event:only-child .event-content{min-width:0}
+  #nib-proposta.is-public #content[data-view=informacoes]{grid-template-columns:minmax(0,1.25fr) minmax(0,1fr)}
+  #nib-proposta #content[data-view=informacoes] .place-links{grid-template-columns:1fr}
+  #nib-proposta #content[data-view=informacoes] .place-links a{min-height:52px}
+}
+#nib-proposta .aviso-form>label.check{margin:2px 0 0;min-height:0;padding:0}
+@media(min-width:1100px){
+  #nib-proposta #content[data-view=eventos]>.cards>.event:only-child .event-cover{aspect-ratio:auto;width:100%;height:100%;display:block}
+  #nib-proposta #content[data-view=eventos]>.cards>.event:only-child .event-cover>img{display:block;width:100%;height:100%;object-fit:contain;object-position:center;aspect-ratio:auto}
+}
+@media(min-width:1100px){
+  #nib-proposta #content[data-view=eventos]>.cards>.event:only-child{grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:stretch}
+  #nib-proposta #content[data-view=eventos]>.cards>.event:only-child .event-cover{background:#041e42}
+}
