@@ -2132,3 +2132,8 @@ html{scrollbar-gutter:stable}
 #nib-proposta .pub-notif-go{display:inline-flex;align-items:center;gap:6px;margin-top:8px;padding:0;border:0;background:none;color:#041e42;font:700 13.5px/1.2 var(--nib-font);cursor:pointer}
 #nib-proposta .pub-notif-go .button-arrow{width:15px;height:15px}
 #nib-proposta .pub-notif.is-new .pub-notif-body strong::after{content:"";display:inline-block;width:7px;height:7px;margin-left:7px;border-radius:50%;background:#ff7f40;vertical-align:middle}
+/* Sino: lista separada por linhas finas e ação em uma linha (v106) */
+#nib-proposta .pub-notifs{gap:0!important}
+#nib-proposta .notices-list li.pub-notif{padding:16px 22px!important;border:0!important;border-bottom:1px solid #e3e8ef!important;border-radius:0!important;background:transparent!important;box-shadow:none!important}
+#nib-proposta .notices-list li.pub-notif:last-child{border-bottom:0!important}
+#nib-proposta #notices-dialog button.pub-notif-go{display:inline-flex!important;flex:none!important;width:auto!important;min-width:0!important;min-height:0!important;max-width:none!important;padding:0!important;margin:8px 0 0!important;border:0!important;background:none!important;box-shadow:none!important;justify-content:flex-start!important;white-space:nowrap!important;text-align:left!important}
