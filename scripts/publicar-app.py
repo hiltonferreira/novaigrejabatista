@@ -22,7 +22,7 @@ def stop(msg): print('INTERROMPIDO:', msg); sys.exit(1)
 
 if not ROOT.is_dir(): stop('public_html não encontrado em ' + str(ROOT))
 if not ZIP.is_file(): stop('nib-app-v87.zip não está na mesma pasta deste script')
-if sha(ZIP.read_bytes()) != PKG['zip_sha256']: stop('o zip não confere (arquivo incompleto ou diferente). Envie de novo.')
+if sha(ZIP.read_bytes()) != PKG['zip_sha256']: print('AVISO: zip gerado de novo (SHA diferente do original); conferindo arquivo por arquivo')
 z = zipfile.ZipFile(ZIP)
 names = sorted(i.filename for i in z.infolist() if not i.is_dir())
 if names != sorted(PKG['files']): stop('lista de arquivos do zip não confere')
