@@ -25,11 +25,11 @@ function nib_db(): PDO {
   return $db;
 }
 // Cria as tabelas na primeira vez (e só acrescenta o que faltar nas próximas versões).
-const NIB_MIGRACAO = 5;
+const NIB_MIGRACAO = 6;
 function nib_migrar(PDO $db): void {
   $db->exec("CREATE TABLE IF NOT EXISTS nib_versao (v INT NOT NULL) ENGINE=InnoDB");
   $v = (int)($db->query('SELECT MAX(v) FROM nib_versao')->fetchColumn() ?: 0);
-  if ($v >= NIB_MIGRACAO) return; // ao criar a v6, subir NIB_MIGRACAO
+  if ($v >= NIB_MIGRACAO) return; // ao criar a v7, subir NIB_MIGRACAO
   // Uma migração por vez: pedidos simultâneos esperam a primeira terminar (evita versões repetidas).
   if ((int)$db->query("SELECT GET_LOCK('nib_migrar', 15)")->fetchColumn() !== 1) throw new RuntimeException('migração em andamento por outro pedido');
   try { nib_migrar_passos($db, (int)($db->query('SELECT MAX(v) FROM nib_versao')->fetchColumn() ?: 0)); }
@@ -78,7 +78,31 @@ function nib_migrar_passos(PDO $db, int $v): void {
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
     $db->exec('INSERT INTO nib_versao (v) VALUES (5)');
   }
+  if ($v < 6) {
+    // v6: CPF (opcional, em Meu cadastro) para a tesouraria ligar as contribuições à pessoa. Um CPF por cadastro.
+    $tem = $db->query("SHOW COLUMNS FROM nib_pessoas LIKE 'cpf'")->fetch();
+    if (!$tem) $db->exec('ALTER TABLE nib_pessoas ADD COLUMN cpf CHAR(11) NULL AFTER nascimento, ADD UNIQUE KEY uq_cpf (cpf)');
+    // e sugestões sobre o app enviadas pelos usuários (lidas pela administração e pela Liderança Pastoral).
+    $db->exec("CREATE TABLE IF NOT EXISTS nib_sugestoes (
+      id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY, pessoa_id INT UNSIGNED NULL, tipo VARCHAR(12) NOT NULL, texto VARCHAR(1500) NOT NULL,
+      aparelho VARCHAR(160) NOT NULL DEFAULT '', versao VARCHAR(40) NOT NULL DEFAULT '', lida TINYINT(1) NOT NULL DEFAULT 0, criado_em DATETIME NOT NULL,
+      KEY ix_criado (criado_em), CONSTRAINT fk_sugestao_pessoa FOREIGN KEY (pessoa_id) REFERENCES nib_pessoas(id) ON DELETE SET NULL
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+    $db->exec('INSERT INTO nib_versao (v) VALUES (6)');
+  }
 }
+
+// CPF: 11 dígitos com os dois dígitos verificadores corretos (rejeita 000.000.000-00 etc.).
+function nib_cpf_valido(string $c): bool {
+  if (!preg_match('/^\d{11}$/', $c) || preg_match('/^(\d)\1{10}$/', $c)) return false;
+  for ($t = 9; $t < 11; $t++) {
+    $s = 0; for ($i = 0; $i < $t; $i++) $s += (int)$c[$i] * ($t + 1 - $i);
+    if ((int)$c[$t] !== ((10 * $s) % 11) % 10) return false;
+  }
+  return true;
+}
+// Quem vê o CPF de outras pessoas: Liderança Pastoral e administração (a Tesouraria entra quando o perfil existir).
+function nib_ve_cpf(array $p): bool { return in_array($p['papel'], ['pastoral', 'admin'], true); }
 
 function nib_migrar_v1(PDO $db): void {
   $db->exec("CREATE TABLE IF NOT EXISTS nib_pessoas (
@@ -204,7 +228,7 @@ function nib_publico(array $p): array {
   $nome = nib_nome_proprio((string)$p['nome']);
   return ['id' => (int)$p['id'], 'nome' => $nome, 'primeiro' => explode(' ', $nome)[0], 'email' => $p['email'], 'celular' => $p['celular'],
     'sexo' => $p['sexo'], 'vinculo' => $p['vinculo'], 'celula' => $p['celula'] ?? '', 'membro_status' => $p['membro_status'], 'papel' => $p['papel'],
-    'nascimento' => $p['nascimento'], 'endereco' => $p['endereco'] ?? '', 'mostrar_aniversario' => (bool)$p['mostrar_aniversario'], 'criado_em' => $p['criado_em']];
+    'nascimento' => $p['nascimento'], 'cpf' => $p['cpf'] ?? '', 'endereco' => $p['endereco'] ?? '', 'mostrar_aniversario' => (bool)$p['mostrar_aniversario'], 'criado_em' => $p['criado_em']];
 }
 // Nome próprio: "maria DA silva" -> "Maria da Silva" (partículas em minúsculas, exceto no começo).
 function nib_nome_proprio(string $n): string {

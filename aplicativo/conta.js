@@ -16,6 +16,10 @@
   window.NibConta = {
     available: () => official,
     pessoa: () => pessoa,
+    sugestao: async body => api('sugestao', body),
+    sugestoes: async () => (await api('sugestoes')).sugestoes,
+    sugestaoLida: async (id, lida) => api('sugestao-lida', { id, lida }),
+    lideranca: () => !!pessoa && ['pastoral', 'admin'].includes(pessoa.papel),
     equipe: () => !!pessoa && ['secretaria', 'pastoral', 'admin'].includes(pessoa.papel),
     eu: async () => { if (!official) return null; try { return set(await api('eu')); } catch (_) { return pessoa; } },
     entrar: async (login, senha) => set(await api('entrar', { login, senha })),

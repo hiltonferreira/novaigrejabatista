@@ -75,11 +75,14 @@ try {
       $nasc = nib_texto($d['nascimento'] ?? ($eu['nascimento'] ?? ''), 10);
       if ($nasc !== '') { $dt = DateTimeImmutable::createFromFormat('!Y-m-d', $nasc); if (!$dt || $dt->format('Y-m-d') !== $nasc || $nasc < '1900-01-01' || $nasc > date('Y-m-d')) nib_erro('Data de nascimento inválida.'); }
       $celula = array_key_exists('celula', $d) ? nib_celula($d['celula']) : (string)($eu['celula'] ?? '');
+      $cpf = array_key_exists('cpf', $d) ? nib_digitos($d['cpf'] ?? '') : (string)($eu['cpf'] ?? '');
+      if ($cpf !== '' && !nib_cpf_valido($cpf)) nib_erro('CPF inválido. Confira os números.');
+      if ($cpf !== '') { $q = $db->prepare('SELECT id FROM nib_pessoas WHERE cpf = ? AND id <> ?'); $q->execute([$cpf, $eu['id']]); if ($q->fetch()) nib_erro('Este CPF já está em outro cadastro. Fale com a Secretaria.', 409); }
       $mostrar = array_key_exists('mostrar_aniversario', $d) ? (bool)$d['mostrar_aniversario'] : (bool)$eu['mostrar_aniversario'];
       if (count(explode(' ', $nome)) < 2) nib_erro('Escreva seu nome e sobrenome.');
       if (strlen($cel) < 10) nib_erro('Informe um celular com DDD.');
-      $db->prepare('UPDATE nib_pessoas SET nome = ?, celular = ?, sexo = ?, celula = ?, endereco = ?, nascimento = ?, mostrar_aniversario = ?, atualizado_em = ? WHERE id = ?')
-        ->execute([$nome, $cel, $sexo, $celula !== '' ? $celula : null, $end !== '' ? $end : null, $nasc !== '' ? $nasc : null, $mostrar ? 1 : 0, nib_agora(), $eu['id']]);
+      $db->prepare('UPDATE nib_pessoas SET nome = ?, celular = ?, sexo = ?, celula = ?, endereco = ?, nascimento = ?, cpf = ?, mostrar_aniversario = ?, atualizado_em = ? WHERE id = ?')
+        ->execute([$nome, $cel, $sexo, $celula !== '' ? $celula : null, $end !== '' ? $end : null, $nasc !== '' ? $nasc : null, $cpf !== '' ? $cpf : null, $mostrar ? 1 : 0, nib_agora(), $eu['id']]);
       $q = $db->prepare('SELECT * FROM nib_pessoas WHERE id = ?'); $q->execute([$eu['id']]);
       nib_json(200, ['ok' => true, 'pessoa' => nib_publico($q->fetch())]);
     }
@@ -151,10 +154,33 @@ try {
       nib_json(200, ['ok' => true, 'liberado' => true, 'inscricoes' => nib_minhas_inscricoes((string)$eu['celular'])]);
     }
 
+    case 'post:sugestao': {
+      if (!$eu) nib_erro('Entre na sua conta.', 401);
+      nib_limite('sugestao', (string)$eu['id'], 10, 86400);
+      $tipo = in_array($d['tipo'] ?? '', ['sugestao', 'problema', 'elogio'], true) ? $d['tipo'] : 'sugestao';
+      $texto = nib_texto($d['texto'] ?? '', 1500);
+      if (mb_strlen($texto) < 5) nib_erro('Escreva sua mensagem.');
+      $db->prepare('INSERT INTO nib_sugestoes (pessoa_id, tipo, texto, aparelho, versao, criado_em) VALUES (?,?,?,?,?,?)')
+        ->execute([$eu['id'], $tipo, $texto, mb_substr((string)($_SERVER['HTTP_USER_AGENT'] ?? ''), 0, 160), nib_texto($d['versao'] ?? '', 40), nib_agora()]);
+      nib_json(201, ['ok' => true]);
+    }
+    case 'get:sugestoes': {
+      if (!$eu || !nib_ve_cpf($eu)) nib_erro('Acesso só para a administração.', 403);
+      $rows = $db->query('SELECT s.id, s.tipo, s.texto, s.aparelho, s.versao, s.lida, s.criado_em, p.nome FROM nib_sugestoes s LEFT JOIN nib_pessoas p ON p.id = s.pessoa_id ORDER BY s.criado_em DESC LIMIT 300')->fetchAll();
+      foreach ($rows as &$r) { $r['nome'] = $r['nome'] !== null ? nib_nome_proprio((string)$r['nome']) : 'Conta excluída'; $r['lida'] = (bool)$r['lida']; } unset($r);
+      nib_json(200, ['ok' => true, 'sugestoes' => $rows]);
+    }
+    case 'post:sugestao-lida': {
+      if (!$eu || !nib_ve_cpf($eu)) nib_erro('Acesso só para a administração.', 403);
+      $db->prepare('UPDATE nib_sugestoes SET lida = ? WHERE id = ?')->execute([!empty($d['lida']) ? 1 : 0, (int)($d['id'] ?? 0)]);
+      nib_json(200, ['ok' => true]);
+    }
+
     case 'get:cadastros': {
       if (!$eu || !nib_equipe($eu)) nib_erro('Acesso só para a equipe da igreja.', 403);
-      $rows = $db->query('SELECT id, nome, email, celular, vinculo, celula, membro_status, papel, criado_em, ultimo_acesso, confirmado_em FROM nib_pessoas ORDER BY criado_em DESC LIMIT 2000')->fetchAll();
-      foreach ($rows as &$r) $r['nome'] = nib_nome_proprio((string)$r['nome']); unset($r);
+      $rows = $db->query('SELECT id, nome, email, celular, cpf, vinculo, celula, membro_status, papel, criado_em, ultimo_acesso, confirmado_em FROM nib_pessoas ORDER BY criado_em DESC LIMIT 2000')->fetchAll();
+      $veCpf = nib_ve_cpf($eu);
+      foreach ($rows as &$r) { $r['nome'] = nib_nome_proprio((string)$r['nome']); if (!$veCpf) unset($r['cpf']); } unset($r);
       nib_json(200, ['ok' => true, 'pessoas' => $rows]);
     }
     case 'post:confirmar': {

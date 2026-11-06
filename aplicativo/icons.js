@@ -6,6 +6,8 @@
   const heart = 'M12 20s-8-4.7-8-10a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 5.3-8 10-8 10z';
   const paths = {
     inicio: 'M3 11l9-8 9 8 M5 10v10h5v-6h4v6h5V10',
+    // Sugestões: balão de conversa com lâmpada.
+    sugestoes: 'M4 4h16v12H9l-5 4z M12 7.2a2.6 2.6 0 0 0-1.5 4.7v.9h3v-.9A2.6 2.6 0 0 0 12 7.2z M11 14.2h2',
     cadastro: user,
     eventos: 'M3 6h18v4a2 2 0 0 0 0 4v4H3v-4a2 2 0 0 0 0-4z M15 6v2 M15 11v2 M15 16v2',
     // Célula: meia casa que se completa com duas pessoas.

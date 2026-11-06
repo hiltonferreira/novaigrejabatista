@@ -2183,3 +2183,20 @@ html{scrollbar-gutter:stable}
 #nib-proposta .birth-nudge strong{display:block;font-size:15px;line-height:1.25}
 #nib-proposta .birth-nudge small{display:block;margin-top:2px;font-size:13px;color:#7a4a2e}
 #nib-proposta .birth-nudge-go{margin-left:auto;font-size:24px;line-height:1;color:#c2531a}
+/* v112: sugestões para o app */
+#nib-proposta .sug-box h2{margin:0 0 6px}
+#nib-proposta .sug-box>p{margin:0 0 16px;color:#536176}
+#nib-proposta .sug-tipos{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));padding:4px;margin:0 0 16px;border-radius:999px;background:#e6ebf2}
+#nib-proposta .sug-tipos button{min-height:42px;border:0;border-radius:999px;background:transparent!important;color:#536176;font:600 14px/1 "NIB Acumin Mobile",Arial,sans-serif;cursor:pointer;transition:color .2s}
+#nib-proposta .sug-tipos button[aria-checked=true]{color:#041e42}
+#nib-proposta #sug-form textarea{width:100%;box-sizing:border-box}
+#nib-proposta .sug-list{list-style:none;margin:12px 0 0;padding:0}
+#nib-proposta .sug-item{padding:14px 0;border-top:1px solid #e3e8ef}
+#nib-proposta .sug-item.is-read{opacity:.62}
+#nib-proposta .sug-top{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+#nib-proposta .sug-top small{color:#5b6b80}
+#nib-proposta .sug-tag{padding:3px 10px;border-radius:999px;font-size:12px;font-weight:700;background:#e8eef7;color:#0d3a72}
+#nib-proposta .sug-tag.is-problema{background:#fdecec;color:#b42318}
+#nib-proposta .sug-tag.is-elogio{background:#e7f5ec;color:#1f6b3d}
+#nib-proposta .sug-item p{margin:8px 0;white-space:pre-line;color:#041e42}
+#nib-proposta button.sug-read{width:auto!important;min-height:0;padding:0;border:0;background:none!important;color:#0d3a72;font-size:13px;font-weight:600;text-decoration:underline;cursor:pointer}
