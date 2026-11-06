@@ -1,6 +1,6 @@
 <?php
 // API das contas do app: /app/api/conta.php?acao=...
-// GET: eu, cadastros (equipe). POST (JSON + cabeçalho X-Nib: 1): cadastro, entrar, sair, atualizar, senha, esqueci, redefinir, excluir, confirmar (equipe).
+// GET: eu, inscricoes, cadastros (equipe). POST (JSON + cabeçalho X-Nib: 1): cadastro, entrar, sair, atualizar, senha, esqueci, redefinir, excluir, confirmar (equipe).
 declare(strict_types=1);
 define('NIB_APP_RUNTIME', true);
 ini_set('display_errors', '0');
@@ -9,6 +9,7 @@ header('X-Robots-Tag: noindex');
 header('Referrer-Policy: same-origin');
 require __DIR__ . '/conta-lib.php';
 require __DIR__ . '/push-lib.php';
+require __DIR__ . '/inscricoes-lib.php';
 
 $acao = is_string($_GET['acao'] ?? null) ? $_GET['acao'] : '';
 $post = ($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST';
@@ -140,6 +141,13 @@ try {
     }
 
     // Equipe (Secretaria, Pastoral, administração): quem se cadastrou e confirmação de membro.
+    case 'get:inscricoes': {
+      if (!$eu) nib_erro('Entre na sua conta para ver suas inscrições.', 401);
+      if (NIB_INSCRICOES_SO_CONFIRMADOS && ($eu['membro_status'] ?? '') !== 'confirmado') nib_json(200, ['ok' => true, 'liberado' => false, 'inscricoes' => []]);
+      nib_limite('inscricoes', (string)$eu['id'], 120, 3600);
+      nib_json(200, ['ok' => true, 'liberado' => true, 'inscricoes' => nib_minhas_inscricoes((string)$eu['celular'])]);
+    }
+
     case 'get:cadastros': {
       if (!$eu || !nib_equipe($eu)) nib_erro('Acesso só para a equipe da igreja.', 403);
       $rows = $db->query('SELECT id, nome, email, celular, vinculo, celula, membro_status, papel, criado_em, ultimo_acesso, confirmado_em FROM nib_pessoas ORDER BY criado_em DESC LIMIT 2000')->fetchAll();

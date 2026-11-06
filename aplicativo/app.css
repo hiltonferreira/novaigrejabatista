@@ -2078,3 +2078,15 @@ html{scrollbar-gutter:stable}
 #nib-proposta .cell-mine-tag svg{width:13px;height:13px;flex:0 0 auto}
 #nib-proposta .cell-card.is-mine{border-color:var(--mine-line,#ff7f40);box-shadow:0 0 0 1px var(--mine-line,#ff7f40)}
 .sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+/* Minhas inscrições (v101) */
+#nib-proposta .my-regs .label{display:block;margin-bottom:6px}
+#nib-proposta .reg-list{list-style:none;margin:14px 0 0;padding:0;display:grid;gap:10px}
+#nib-proposta .reg-card{padding:14px 16px;border:1px solid #dce3eb;border-radius:16px;background:#f8fafc}
+#nib-proposta .reg-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+#nib-proposta .reg-top strong{font-size:16px;color:#041e42;line-height:1.3}
+#nib-proposta .reg-status{flex:0 0 auto;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;line-height:1.3;white-space:nowrap}
+#nib-proposta .reg-status.is-ok{background:#e9f3ed;color:#24674e}
+#nib-proposta .reg-status.is-wait{background:#fff1e8;color:#c2531a}
+#nib-proposta .reg-name{margin:6px 0 0;color:#041e42;font-weight:600}
+#nib-proposta .reg-proto{margin:2px 0 0;font-size:13px;color:#5b6b80}
+#nib-proposta .reg-proto b{font-variant-numeric:tabular-nums;color:#041e42;font-weight:600}
