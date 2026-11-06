@@ -6,6 +6,9 @@ declare(strict_types=1);
 if (!defined('NIB_APP_RUNTIME')) { http_response_code(404); exit; }
 
 const NIB_INSCRICOES_SO_CONFIRMADOS = true;
+// Desligado (revisão do Codex, PR #14, 06/11/2026): a confirmação de membresia não prova que o celular é da pessoa.
+// Só ligar quando houver vínculo verificado com o telefone (código por WhatsApp/SMS ou vínculo pelo protocolo).
+const NIB_INSCRICOES_AUTOMATICAS = false;
 
 function nib_insc_tel(string $v): string { $v = preg_replace('/\D/', '', $v) ?? ''; return strlen($v) > 11 && str_starts_with($v, '55') ? substr($v, 2) : $v; }
 

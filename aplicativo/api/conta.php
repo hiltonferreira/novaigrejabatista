@@ -143,6 +143,7 @@ try {
     // Equipe (Secretaria, Pastoral, administração): quem se cadastrou e confirmação de membro.
     case 'get:inscricoes': {
       if (!$eu) nib_erro('Entre na sua conta para ver suas inscrições.', 401);
+      if (!NIB_INSCRICOES_AUTOMATICAS) nib_json(200, ['ok' => true, 'liberado' => false, 'desativado' => true, 'inscricoes' => []]);
       if (NIB_INSCRICOES_SO_CONFIRMADOS && ($eu['membro_status'] ?? '') !== 'confirmado') nib_json(200, ['ok' => true, 'liberado' => false, 'inscricoes' => []]);
       nib_limite('inscricoes', (string)$eu['id'], 120, 3600);
       nib_json(200, ['ok' => true, 'liberado' => true, 'inscricoes' => nib_minhas_inscricoes((string)$eu['celular'])]);
