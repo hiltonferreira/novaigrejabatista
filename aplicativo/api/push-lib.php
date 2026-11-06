@@ -68,7 +68,9 @@ function nib_push_enviar(?array $pessoas, array $msg, array $exceto = []): int {
   if ($pessoas !== null) { if (!$pessoas) return 0; $sql .= ' AND pessoa_id IN (' . implode(',', array_fill(0, count($pessoas), '?')) . ')'; $args = array_values($pessoas); }
   if ($exceto) { $sql .= ' AND pessoa_id NOT IN (' . implode(',', array_fill(0, count($exceto), '?')) . ')'; $args = array_merge($args, array_values($exceto)); }
   $q = $db->prepare($sql . ' LIMIT 5000'); $q->execute($args);
-  $corpo = json_encode(['title' => mb_substr($msg['title'] ?? 'Nib', 0, 80), 'body' => mb_substr($msg['body'] ?? '', 0, 180), 'url' => $msg['url'] ?? '/app/', 'tag' => $msg['tag'] ?? 'nib'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+  // Título sempre "Nib" (igual ao nome do app, para o iPhone não repetir "from Nib"); o assunto vai no começo do texto.
+  $texto = trim(($msg['title'] ?? '') !== '' ? $msg['title'] . ': ' . ($msg['body'] ?? '') : ($msg['body'] ?? ''), ': ');
+  $corpo = json_encode(['title' => 'Nib', 'body' => mb_substr($texto, 0, 200), 'url' => $msg['url'] ?? '/app/', 'tag' => $msg['tag'] ?? 'nib'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
   $mh = curl_multi_init(); $handles = []; $enviados = 0;
   foreach ($q->fetchAll() as $s) {
     try { $dados = nib_push_cifrar($corpo, $s['p256dh'], $s['auth']); } catch (Throwable $e) { continue; }
