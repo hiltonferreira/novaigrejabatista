@@ -2,10 +2,10 @@
    Guarda os arquivos do app no celular para abrir rápido e funcionar com internet fraca.
    Ao mudar qualquer arquivo do app, aumente VERSION: o celular baixa a versão nova
    e mostra "Nova versão do app disponível". Dados de fora (obra.json, site) não ficam guardados. */
-const VERSION = 'nib-app-cc28b28fa0';
+const VERSION = 'nib-app-9ef6ef7d34';
 const FILES = [
   './', 'index.html', 'conheca.html', 'manifest.webmanifest',
-  'app.css', 'install.css', 'conheca.css', 'app.js', 'admin.js', 'icons.js', 'install.js', 'site-data.js', 'moderation.js', 'daily-content.js', 'verses.js', 'pix.js',
+  'app.css', 'install.css', 'conheca.css', 'app.js', 'admin.js', 'icons.js', 'install.js', 'site-data.js', 'conta.js', 'moderation.js', 'daily-content.js', 'verses.js', 'pix.js',
   'assets/vendor/qrcode-generator-2.0.4.js',
   'assets/painel-base.css', 'assets/resumo-base.css', 'assets/refino-mobile-base.css', 'assets/layout-mobile-base.css', 'assets/navegacao-base.css',
   'assets/acumin-regular.woff2', 'assets/acumin-medium.woff2', 'assets/acumin-semibold.woff2', 'assets/acumin-bold.woff2', 'assets/acumin-black.woff2',
