@@ -25,11 +25,11 @@ function nib_db(): PDO {
   return $db;
 }
 // Cria as tabelas na primeira vez (e só acrescenta o que faltar nas próximas versões).
-const NIB_MIGRACAO = 6;
+const NIB_MIGRACAO = 7;
 function nib_migrar(PDO $db): void {
   $db->exec("CREATE TABLE IF NOT EXISTS nib_versao (v INT NOT NULL) ENGINE=InnoDB");
   $v = (int)($db->query('SELECT MAX(v) FROM nib_versao')->fetchColumn() ?: 0);
-  if ($v >= NIB_MIGRACAO) return; // ao criar a v7, subir NIB_MIGRACAO
+  if ($v >= NIB_MIGRACAO) return; // ao criar a v8, subir NIB_MIGRACAO
   // Uma migração por vez: pedidos simultâneos esperam a primeira terminar (evita versões repetidas).
   if ((int)$db->query("SELECT GET_LOCK('nib_migrar', 15)")->fetchColumn() !== 1) throw new RuntimeException('migração em andamento por outro pedido');
   try { nib_migrar_passos($db, (int)($db->query('SELECT MAX(v) FROM nib_versao')->fetchColumn() ?: 0)); }
@@ -89,6 +89,16 @@ function nib_migrar_passos(PDO $db, int $v): void {
       KEY ix_criado (criado_em), CONSTRAINT fk_sugestao_pessoa FOREIGN KEY (pessoa_id) REFERENCES nib_pessoas(id) ON DELETE SET NULL
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
     $db->exec('INSERT INTO nib_versao (v) VALUES (6)');
+  }
+  if ($v < 7) {
+    // v7: check-in do culto (pelo local da igreja ou pelo QR Code do telão). Guarda só a distância, nunca as coordenadas da pessoa.
+    $db->exec("CREATE TABLE IF NOT EXISTS nib_checkins (
+      id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY, pessoa_id INT UNSIGNED NOT NULL, culto_dia DATE NOT NULL, culto VARCHAR(60) NOT NULL,
+      via VARCHAR(6) NOT NULL, distancia INT NULL, criado_em DATETIME NOT NULL,
+      UNIQUE KEY uq_pessoa_culto (pessoa_id, culto_dia, culto), KEY ix_culto (culto_dia, culto),
+      CONSTRAINT fk_checkin_pessoa FOREIGN KEY (pessoa_id) REFERENCES nib_pessoas(id) ON DELETE CASCADE
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+    $db->exec('INSERT INTO nib_versao (v) VALUES (7)');
   }
 }
 

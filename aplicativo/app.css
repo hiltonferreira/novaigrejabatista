@@ -2200,3 +2200,19 @@ html{scrollbar-gutter:stable}
 #nib-proposta .sug-tag.is-elogio{background:#e7f5ec;color:#1f6b3d}
 #nib-proposta .sug-item p{margin:8px 0;white-space:pre-line;color:#041e42}
 #nib-proposta button.sug-read{width:auto!important;min-height:0;padding:0;border:0;background:none!important;color:#0d3a72;font-size:13px;font-weight:600;text-decoration:underline;cursor:pointer}
+/* v115: check-in do culto (equipe) */
+#nib-proposta .ck-box h2{margin:4px 0 8px}
+#nib-proposta .ck-box>p{color:#536176}
+#nib-proposta .ck-qr{display:grid;place-items:center;margin:16px auto;max-width:260px;padding:12px;border-radius:16px;background:#fff;border:1px solid #dce3eb}
+#nib-proposta .ck-qr svg{width:100%;height:auto;display:block}
+#nib-proposta .ck-list{list-style:none;margin:8px 0 0;padding:0}
+#nib-proposta .ck-list li{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-top:1px solid #e3e8ef}
+#nib-proposta .ck-list small{color:#5b6b80;white-space:nowrap}
+dialog.ck-telao{width:100vw;height:100vh;max-width:none;max-height:none;margin:0;padding:0;border:0;background:#041e42;color:#fff}
+dialog.ck-telao::backdrop{background:#041e42}
+.ck-telao-in{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;text-align:center;font-family:"NIB Acumin Mobile",Arial,sans-serif}
+.ck-telao-in h2{margin:0;font-size:clamp(28px,4vw,56px)}
+.ck-telao-in p{margin:0;font-size:clamp(18px,2.2vw,30px);color:#c9d8ec}
+.ck-telao-in .ck-qr{width:min(60vh,80vw);padding:20px;border-radius:24px;background:#fff}
+.ck-telao-in .ck-qr svg{width:100%;height:auto;display:block}
+.ck-telao-in .action{min-width:140px;padding:12px 22px;border-radius:999px;border:1px solid #ffffff55;background:transparent;color:#fff;font:600 16px/1 inherit;cursor:pointer}

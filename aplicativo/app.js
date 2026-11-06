@@ -13,9 +13,9 @@
   root.classList.toggle('is-public', PUBLIC);
   const publicViews = ['inicio','agenda','eventos','generosidade','celulas','caderno','informacoes','avisos','sugestoes'];
   const account = () => (PUBLIC && window.NibConta) ? NibConta.pessoa() : null;
-  const allowedPublic = () => publicViews.concat(account() ? ['cadastro'] : [], account() && NibConta.equipe() ? ['cadastros'] : []);
+  const allowedPublic = () => publicViews.concat(account() ? ['cadastro'] : [], account() && NibConta.equipe() ? ['cadastros', 'checkin'] : []);
   const publicNav = () => [['inicio', 'Início'], ['agenda', 'Agenda'], ['eventos', 'Eventos'], ['generosidade', 'Generosidade'], ['celulas', 'Células'], ['caderno', 'Caderno de oração'], ['avisos', 'Avisos da igreja'], ['informacoes', 'Informações'], ['sugestoes', 'Sugestões para o app']]
-    .concat(account() ? [['cadastro', 'Meu cadastro']] : [['entrar', 'Entrar ou criar cadastro']], account() && NibConta.equipe() ? [['cadastros', 'Cadastros']] : []);
+    .concat(account() ? [['cadastro', 'Meu cadastro']] : [['entrar', 'Entrar ou criar cadastro']], account() && NibConta.equipe() ? [['cadastros', 'Cadastros'], ['checkin', 'Check-in dos cultos']] : []);
   const viewHistory = [];
   let notebookSequence = 0;
   const demoPrayers = () => [
@@ -47,6 +47,7 @@
     cadastros: ['EQUIPE DA IGREJA', 'Cadastros', 'Quem criou conta no app. Confirme quem é membro da igreja.'],
     eventos: ['VIDA EM COMUNIDADE', 'Eventos', 'Os próximos encontros da igreja e as inscrições abertas.'],
     informacoes: ['FIQUE POR PERTO', 'Informações da igreja', 'Horários dos cultos, endereço, liderança e canais oficiais.'],
+    checkin: ['EQUIPE DA IGREJA', 'Check-in dos cultos', 'QR Code do telão, local da igreja e quem registrou presença.'],
     sugestoes: ['SUA OPINIÃO', 'Sugestões para o app', 'Conte o que podemos melhorar no app: ideias, problemas ou o que você gostou.']
   });
   // Concordância com o perfil: g('obrigado', 'obrigada').
@@ -62,7 +63,7 @@
   const button = (text, view, primary = false) => { const back = !primary && /^Voltar/.test(text); return `<button type="button" class="button ${primary ? 'action primary' : back ? 'button-go button-back' : 'button-go'}" data-view="${view}">${back ? backArrow : ''}<span>${text}</span>${primary || back ? '' : arrow}</button>`; };
   // Ícones reaproveitados da função icon() do painel; sem ícones nas ações.
   // Ícones: conjunto único em icons.js (NibIcons).
-  const iconAlias = { entrar: 'cadastro', cadastros: 'membros', avisos: 'comunicados' };
+  const iconAlias = { entrar: 'cadastro', cadastros: 'membros', avisos: 'comunicados', checkin: 'recepcao' };
   const navIcon = key => NibIcons.svg(iconAlias[key] || key);
   const events = [
     { name: 'Mulheres Virtuosas', image: 'assets/mulheres.webp', date: '30/10/2026', active: false },
@@ -495,6 +496,50 @@
     const list = state.avisos.length ? `<ul class="aviso-list">${state.avisos.map(a => `<li class="aviso-card${a.fixado ? ' is-pinned' : ''}"><div class="aviso-top"><span class="aviso-icon" aria-hidden="true">${navIcon('comunicados')}</span><div><h3>${escape(a.titulo)}</h3><small>${a.fixado ? 'Fixado · ' : ''}${escape(avisoData(a.criado_em))}${a.autor ? ' · por ' + escape(a.autor) : ''}</small></div></div><p>${escape(a.texto).replace(/\n/g, '<br>')}</p>${a.link ? `<a class="button button-go" href="${escape(a.link)}" target="_blank" rel="noopener">Saiba mais ${arrow}</a>` : ''}${team ? `<button type="button" class="aviso-remove" data-aviso-remove="${a.id}">Remover aviso</button>` : ''}</li>`).join('')}</ul>` : `<section class="box"><p class="event-empty">${state.avisosErro ? escape(state.avisosErro) : 'Nenhum aviso no momento. Quando a igreja publicar, ele aparece aqui e no sino.'}</p></section>`;
     return form + list;
   }
+  // Check-in do culto (versão oficial): pelo local da igreja (GPS) ou pelo QR Code fixo do telão.
+  const ckIcon = done => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${done ? 'm5 12.5 4.5 4.5L19 7.5' : NibAdminIcons.recepcao}"/></svg>`;
+  function loadCheckin() {
+    if (!account() || state.ckLoading) return Promise.resolve();
+    state.ckLoading = true;
+    return NibConta.checkin('estado').then(r => { state.ck = r; state.ckKey = state.accountKey; }).catch(() => { state.ck = null; }).finally(() => { state.ckLoading = false; });
+  }
+  function publicCheckin() {
+    if (!PUBLIC || !account()) return '';
+    if (!state.ckLoading && (state.ckFor !== state.accountKey || Date.now() - (state.ckAt || 0) > 300000)) { state.ckAt = Date.now(); state.ckFor = state.accountKey; loadCheckin().then(() => { if (state.view === 'inicio' && state.ck && state.ck.culto) show('inicio', false, false); }); }
+    if (state.ckKey !== state.accountKey) return '';
+    const r = state.ck; if (!r || !r.culto) return '';
+    const done = r.feito, c = r.culto;
+    return `<section class="checkin-card${done ? ' is-done' : ''}" aria-labelledby="checkin-title"><span class="checkin-icon">${ckIcon(done)}</span><div class="checkin-text"><span class="label">CHECK-IN DO CULTO</span><h2 id="checkin-title" tabindex="-1">${done ? 'Presença registrada' : escape(c.nome)}</h2><p>${done ? `Você está no ${escape(c.nome)}. Que bom ter você aqui!` : `Hoje, às ${escape(c.hora)}. Chegou? Registre sua presença.`}</p>${done ? '' : `<p class="checkin-note" id="checkin-msg">${state.ckMsg ? escape(state.ckMsg) : 'Usamos sua localização só para confirmar que você está na igreja. Ela não fica guardada.'}</p>`}</div>${done ? '' : `<button type="button" class="action primary" data-checkin-go>${state.ckBusy ? 'Confirmando…' : 'Fazer check-in'}</button>`}</section>`;
+  }
+  // Posição atual do celular (resolve null se negar, demorar ou não tiver GPS).
+  const posicao = (ms = 12000) => new Promise(res => { if (!navigator.geolocation) return res(null); navigator.geolocation.getCurrentPosition(p => res({ lat: p.coords.latitude, lng: p.coords.longitude, precisao: Math.round(p.coords.accuracy) }), () => res(null), { enableHighAccuracy: true, timeout: ms, maximumAge: 30000 }); });
+  async function doCheckin(via, codigo) {
+    state.ckBusy = true; state.ckMsg = ''; if (state.view === 'inicio') show('inicio', false, false);
+    const pos = await posicao(via === 'qr' ? 7000 : 12000);
+    try {
+      if (via === 'local' && !pos) throw new Error('Não conseguimos sua localização. Permita o acesso à localização ou leia o QR Code do telão.');
+      const r = await NibConta.checkin('fazer', Object.assign({ via, codigo: codigo || '' }, pos || {}));
+      state.ck = { culto: r.culto, feito: true, local: true }; state.ckKey = state.accountKey;
+      announce(`Presença registrada no ${r.culto.nome}. Que bom ter você aqui!`, 'success', false);
+    } catch (e) { state.ckMsg = e.message; if (via === 'qr') announce(e.message, 'error', false); }
+    finally { state.ckBusy = false; show('inicio', false, false); }
+  }
+  // QR Code do telão: /app/?checkin=CODIGO. Guarda o código até a pessoa entrar na conta.
+  try { const qc = new URLSearchParams(location.search).get('checkin'); if (qc && /^[a-f0-9]{24}$/.test(qc)) { sessionStorage.setItem('nib-checkin-qr', qc); const u = new URL(location.href); u.searchParams.delete('checkin'); history.replaceState(null, '', u.pathname + u.search + u.hash); } } catch (_) {}
+  function pendingQrCheckin() {
+    if (!PUBLIC || !account()) return; let qc = null;
+    try { qc = sessionStorage.getItem('nib-checkin-qr'); sessionStorage.removeItem('nib-checkin-qr'); } catch (_) {}
+    if (qc) doCheckin('qr', qc);
+  }
+  function checkinPanel() {
+    if (!PUBLIC || !(account() && NibConta.equipe())) return '';
+    if (!state.ckPanel) { NibConta.checkin('painel').then(r => { state.ckPanel = r; if (state.view === 'checkin') show('checkin', false, false); }).catch(e => announce(e.message, 'error')); return '<p class="event-empty">Carregando…</p>'; }
+    const r = state.ckPanel, url = location.origin + location.pathname.replace(/[^/]*$/, '') + '?checkin=' + r.qr;
+    const local = r.local ? `<p>Local da igreja definido${r.pode_local ? '. Se mudar, defina de novo estando na igreja.' : '.'}</p>` : `<p><strong>O local da igreja ainda não foi definido.</strong> ${r.pode_local ? 'Esteja dentro da igreja e toque no botão abaixo.' : 'Peça à Liderança Pastoral para definir, estando na igreja.'} Enquanto isso, o check-in funciona só pelo QR Code.</p>`;
+    const hoje = r.culto ? `<section class="box ck-box"><span class="label">AGORA</span><h2>${escape(r.culto.nome)} · ${r.presentes.length} ${r.presentes.length === 1 ? 'presença' : 'presenças'}</h2>${r.presentes.length ? `<ul class="ck-list">${r.presentes.map(p => `<li><span>${escape(p.nome)}</span><small>${escape(p.hora)} · ${p.via === 'qr' ? 'QR Code' : 'local'}</small></li>`).join('')}</ul>` : '<p>Ninguém registrou presença ainda.</p>'}</section>` : '';
+    const hist = r.cultos.length ? `<section class="box ck-box"><span class="label">ÚLTIMOS CULTOS</span><ul class="ck-list">${r.cultos.map(c => `<li><span>${escape(c.culto)} · ${escape(fmtDay(c.dia))}</span><small>${c.total} ${c.total === 1 ? 'presença' : 'presenças'}${c.qr ? ` (${c.qr} pelo QR)` : ''}</small></li>`).join('')}</ul></section>` : '';
+    return `${hoje}<section class="box ck-box"><span class="label">QR CODE DO TELÃO</span><h2>Sempre o mesmo código</h2><p>Projete este QR Code no telão. Quem ler com a câmera abre o app e registra a presença. Ele só vale durante o culto (1 h antes até 2 h depois).</p><div class="ck-qr" role="img" aria-label="QR Code do check-in">${qrSvg(url)}</div><div class="form-actions"><button type="button" class="action primary" data-ck-telao>Mostrar em tela cheia</button></div></section><section class="box ck-box"><span class="label">LOCAL DA IGREJA</span><h2>Check-in pela localização</h2>${local}<p class="note">Vale num raio de 150 m. A localização de cada pessoa não fica guardada, só a distância.</p>${r.pode_local ? `<div class="form-actions"><button type="button" class="action" data-ck-local>${r.local ? 'Definir de novo aqui' : 'Definir o local da igreja aqui'}</button></div>` : ''}</section>${hist}`;
+  }
   // Sugestões para o app: qualquer pessoa com conta envia; administração e Liderança Pastoral leem.
   const sugTipos = [['sugestao', 'Sugestão'], ['problema', 'Problema'], ['elogio', 'Elogio']];
   function sugestoesPage() {
@@ -525,7 +570,7 @@
       if (nav.dataset.context !== context) {
         if (nav.id === 'navigation') nav.innerHTML = items.map(([key,label]) => `<a href="#${key}" data-view="${key}" aria-label="${label}">${navIcon(key)}<span>${label}</span></a>`).join('');
         else {
-          const descriptions = {...admin.descriptions, inicio:'Seu ponto de partida',cadastro: PUBLIC ? 'Seus dados na igreja' : 'Dados e atualizações',eventos:'Encontros e inscrições',generosidade:'Dízimos, ofertas e campanhas',historico:'Seu histórico financeiro',celulas: PUBLIC ? 'Encontre uma célula' : 'Acesso à plataforma', entrar:'Sua conta na Nib', cadastros:'Confirmar membros',sugestoes:'Ideias e melhorias',informacoes: PUBLIC ? 'Horários, endereço e liderança' : 'Programação e avisos',gestao:'Integração e apresentações',agenda:'Cultos, eventos e festividades',caderno:'Ore com a comunidade',avisos:'Comunicados para toda a igreja'};
+          const descriptions = {...admin.descriptions, inicio:'Seu ponto de partida',cadastro: PUBLIC ? 'Seus dados na igreja' : 'Dados e atualizações',eventos:'Encontros e inscrições',generosidade:'Dízimos, ofertas e campanhas',historico:'Seu histórico financeiro',celulas: PUBLIC ? 'Encontre uma célula' : 'Acesso à plataforma', entrar:'Sua conta na Nib', cadastros:'Confirmar membros',checkin:'Presença nos cultos',sugestoes:'Ideias e melhorias',informacoes: PUBLIC ? 'Horários, endereço e liderança' : 'Programação e avisos',gestao:'Integração e apresentações',agenda:'Cultos, eventos e festividades',caderno:'Ore com a comunidade',avisos:'Comunicados para toda a igreja'};
           const groups = isManagement() ? [[admin.profiles[state.context].name,items]] : PUBLIC ? [['Nova Igreja Batista',items]] : [['Seu acesso',items.filter(([key])=>['inicio','cadastro'].includes(key))],['Vida na igreja',items.filter(([key])=>['agenda','eventos','generosidade','historico','celulas','informacoes','caderno'].includes(key))]];
           nav.innerHTML = groups.map(([label,links],index) => `<section class="menu-group" aria-labelledby="menu-group-${index}"><h3 id="menu-group-${index}">${label}</h3><div class="menu-grid">${links.map(([key,title])=>`<a href="#${key}" data-view="${key}" aria-label="${title}"><span class="menu-icon">${navIcon(key)}</span><strong>${title}</strong><span class="menu-description">${descriptions[key]}</span><span class="mobile-current" hidden>Atual</span></a>`).join('')}</div></section>`).join('');
         }
@@ -580,7 +625,7 @@
             ['caderno', 'Caderno de oração', 'Compartilhe seus pedidos e ore com a comunidade.']
           ].map(([view, title, text]) => view === 'youtube' ? `<button type="button" class="quick-action admin-quick" data-open-url="https://www.youtube.com/@nibcasadedeus"><span class="home-action-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7.5C3 6 4 5 5.5 5h13C20 5 21 6 21 7.5v9c0 1.5-1 2.5-2.5 2.5h-13C4 19 3 18 3 16.5z M10 9l5 3-5 3z"/></svg></span><strong>${title}</strong><span class="home-action-description">${text}</span></button>` : `<button type="button" class="quick-action admin-quick" data-view="${view}"><span class="home-action-icon" aria-hidden="true">${navIcon(view)}</span><strong>${title}</strong><span class="home-action-description">${text}</span></button>`).join('')}</div></section>`;
           if (isDesk()) return `<div class="home-desk"><div class="home-col">${dailyBlocks(false,'verse')}${pq}${socialBanners()}</div><div class="home-rail">${install}${dailyBlocks(false,'agenda')}${events}</div></div>`;
-          return `${birthNudge()}${dailyBlocks(false,'verse')}${homeAvisos()}${install}${pq}${socialBanners()}${dailyBlocks(false,'agenda')}${events}${account() && state.prayersLoaded && state.prayers.length ? communityBlock() : ''}`;
+          return `${birthNudge()}${publicCheckin()}${dailyBlocks(false,'verse')}${homeAvisos()}${install}${pq}${socialBanners()}${dailyBlocks(false,'agenda')}${events}${account() && state.prayersLoaded && state.prayers.length ? communityBlock() : ''}`;
         }
         if (isDesk()) return `<div class="home-desk"><div class="home-col">${dailyBlocks(false,'verse')}${quick}${socialBanners()}${communityBlock()}</div><div class="home-rail">${checkinCard()}${install}${homeNotice()}${dailyBlocks(false,'agenda')}${birthdayBlock()}${events}</div></div>`;
         return `${dailyBlocks(false,'verse')}${checkinCard()}${install}${quick}${socialBanners()}${homeNotice()}${dailyBlocks(false,'agenda')}${birthdayBlock()}${events}${communityBlock()}`;
@@ -589,6 +634,7 @@
       caderno: () => notebookPage(),
       avisos: () => avisosPage(),
       sugestoes: () => sugestoesPage(),
+      checkin: () => checkinPanel(),
       cadastros: () => teamPage(),
       cadastro: () => PUBLIC ? accountPage() : `<div class="profile-layout"><section class="box profile-summary"><span class="tag">Membro · exemplo</span><h2>${escape(state.member.full)}</h2><p>Confira seu cadastro na igreja.</p><dl class="profile"><dt>E-mail</dt><dd>jessica@example.com</dd><dt>Tratamento</dt><dd>${g('Masculino', 'Feminino')}</dd><dt>Telefone</dt><dd>Não informado</dd><dt>Endereço</dt><dd>Não informado</dd><dt>Apresentação no culto</dt><dd>Apresentação registrada · exemplo</dd></dl><label class="check profile-bday"><input type="checkbox" id="bday-visible"${state.hideBirthday ? '' : ' checked'}><span>Mostrar meu aniversário (dia e mês) na tela inicial da igreja</span></label><p class="note">As alterações são encaminhadas para conferência da Secretaria.</p></section><section class="box profile-edit"><h2>O que você deseja atualizar?</h2><p>Preencha somente os dados que precisam mudar.</p><form id="profile-form"><fieldset><legend>Dados para atualização</legend><div class="form-grid"><div><label for="new-name">Nome completo</label><input id="new-name" name="newName" autocomplete="off" placeholder="Informe o nome corrigido" maxlength="160"></div><div><label for="new-email">Novo e-mail</label><input id="new-email" name="newEmail" type="email" autocomplete="off" placeholder="nome@exemplo.com" maxlength="160"></div><div><label for="new-phone">Novo telefone / WhatsApp</label><input id="new-phone" name="newPhone" type="tel" inputmode="tel" autocomplete="off" placeholder="(69) 99999-9999" maxlength="25"></div><div><label for="new-address">Endereço</label><input id="new-address" name="newAddress" autocomplete="off" placeholder="Rua, número, bairro e cidade" maxlength="250"></div></div></fieldset><fieldset><legend>Contato e observações</legend><label for="contact-email">E-mail para retorno</label><input id="contact-email" name="email" type="email" autocomplete="email" value="${escape(state.member.email)}" placeholder="exemplo@example.com" maxlength="160" required><label for="contact-note">Outra alteração ou observação (opcional)</label><textarea id="contact-note" name="note" placeholder="Descreva o que a Secretaria precisa conferir." maxlength="500"></textarea></fieldset><div class="form-actions"><button class="action" type="submit">Enviar solicitação de teste</button><button type="reset">Limpar alterações</button></div></form><p class="note">Use dados fictícios. A solicitação fica nesta sessão; nenhum cadastro real é alterado.</p></section></div>${myRequestsBox()}`,
       eventos: () => `${eventCards()}${PUBLIC && account() ? myRegistrations() : legacyRegsBox()}`,
@@ -645,6 +691,9 @@
       feedback.textContent=p.supported?'Você está orando por este pedido.':'Você deixou de marcar este pedido.';
       return;
     }
+    if (action.dataset.checkinGo !== undefined && PUBLIC) { if (!state.ckBusy) doCheckin('local'); return; }
+    if (action.dataset.ckTelao !== undefined && PUBLIC) { const r = state.ckPanel; if (!r) return; const url = location.origin + location.pathname.replace(/[^/]*$/, '') + '?checkin=' + r.qr; const d = document.createElement('dialog'); d.className = 'ck-telao'; d.innerHTML = `<div class="ck-telao-in"><img src="assets/splash-logo-final.webp" alt="Nib" width="200" height="75"><h2>Check-in do culto</h2><div class="ck-qr">${qrSvg(url)}</div><p>Aponte a câmera do celular e registre sua presença.</p><button type="button" class="action">Fechar</button></div>`; document.body.append(d); d.querySelector('button').addEventListener('click', () => { d.close(); d.remove(); }); d.addEventListener('close', () => d.remove()); d.showModal(); if (d.requestFullscreen) d.requestFullscreen().catch(() => {}); return; }
+    if (action.dataset.ckLocal !== undefined && PUBLIC) { action.disabled = true; action.textContent = 'Lendo a localização…'; posicao(15000).then(pos => { if (!pos) throw new Error('Não conseguimos a localização. Permita o acesso e tente de novo.'); return NibConta.checkin('local', pos); }).then(() => { state.ckPanel = null; show('checkin', false, false); announce('Local da igreja definido.', 'success'); }).catch(e => { action.disabled = false; action.textContent = 'Definir o local da igreja aqui'; announce(e.message, 'error'); }); return; }
     if (action.dataset.sugTipo && PUBLIC) { const t = content.querySelector('#sug-texto'); if (t) state.sugDraft = t.value; state.sugTipo = action.dataset.sugTipo; show('sugestoes', false, false); const b = content.querySelector(`[data-sug-tipo="${state.sugTipo}"]`); if (b) b.focus({preventScroll:true}); return; }
     if (action.dataset.sugLida && PUBLIC) { const id = Number(action.dataset.sugLida), lida = action.dataset.lida === '1'; action.disabled = true; NibConta.sugestaoLida(id, lida).then(() => { const s = state.sugList.find(x => Number(x.id) === id); if (s) s.lida = lida; show('sugestoes', false, false); }).catch(e => { action.disabled = false; announce(e.message, 'error'); }); return; }
     if (action.dataset.avisoRemove && PUBLIC) { if (!confirm('Remover este aviso para toda a igreja?')) return; action.disabled = true; NibConta.avisos('remover', { id: Number(action.dataset.avisoRemove) }).then(loadAvisos).then(() => { show('avisos', false, false); refreshNotices(); announce('Aviso removido.', 'success', false); }).catch(e => { action.disabled = false; announce(e.message, 'warning'); }); return; }
@@ -1047,7 +1096,7 @@
     try {
       await fn();
       closeAccount(); ['panel-login','panel-signup'].forEach(id => document.getElementById(id).reset()); refreshPass();
-      applyAccount(); show('inicio', false, false); if (LOGIN_REQUIRED) publicStart();
+      applyAccount(); show('inicio', false, false); if (LOGIN_REQUIRED) publicStart(); pendingQrCheckin();
       const p = account(); announce(form.id === 'panel-signup' ? `Cadastro criado. Boas-vindas, ${p.primeiro}!` + (p.membro_status === 'pendente' ? ' A Secretaria vai confirmar sua membresia.' : '') : `Que bom ver você, ${p.primeiro}!`, 'success', false);
     } catch (e) { err.textContent = e.message; }
     finally { btn.disabled = false; }
@@ -1161,7 +1210,7 @@
   }
   if (PUBLIC && window.NibConta && NibConta.available()) {
     const goHash = () => { const v = location.hash.slice(1); if (v && allowedPublic().includes(v)) show(v, false, false); };
-    authReady.then(() => { if (account()) applyAccount(); goHash(); });
+    authReady.then(() => { if (account()) applyAccount(); goHash(); pendingQrCheckin(); });
     if ('serviceWorker' in navigator) navigator.serviceWorker.addEventListener('message', e => { const v = e.data && e.data.nibView; if (typeof v === 'string' && allowedPublic().includes(v)) { if (v === 'caderno') { state.prayersLoaded = false; } if (v === 'avisos') { state.avisos = null; } show(v, false, false); } });
     const token = new URLSearchParams(location.search).get('redefinir');
     if (token && /^[a-f0-9]{64}$/.test(token)) resetDialog(token);

@@ -16,6 +16,7 @@
   window.NibConta = {
     available: () => official,
     pessoa: () => pessoa,
+    checkin: async (acao, body) => api(acao, body, 'checkin'),
     sugestao: async body => api('sugestao', body),
     sugestoes: async () => (await api('sugestoes')).sugestoes,
     sugestaoLida: async (id, lida) => api('sugestao-lida', { id, lida }),
