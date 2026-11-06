@@ -11,7 +11,7 @@
   const official = /(^|\.)novaigrejabatista\.com\.br$/.test(location.hostname);
   const PUBLIC = document.documentElement.dataset.mode === 'publico' || (official && !/[?&]demo\b/.test(location.search));
   root.classList.toggle('is-public', PUBLIC);
-  const publicViews = ['inicio','agenda','eventos','generosidade','celulas','caderno','informacoes'];
+  const publicViews = ['inicio','agenda','eventos','generosidade','celulas','caderno','informacoes','avisos'];
   const account = () => (PUBLIC && window.NibConta) ? NibConta.pessoa() : null;
   const allowedPublic = () => publicViews.concat(account() ? ['cadastro'] : [], account() && NibConta.equipe() ? ['cadastros'] : []);
   const publicNav = () => [['inicio', 'Início'], ['agenda', 'Agenda'], ['eventos', 'Eventos'], ['generosidade', 'Generosidade'], ['celulas', 'Células'], ['caderno', 'Caderno de oração'], ['informacoes', 'Informações']]
@@ -37,7 +37,7 @@
   }
   const state = { member: { first: 'Jéssica', full: 'Jéssica Exemplo', email: 'jessica@example.com', gender: 'f' }, context: 'membro', view: 'inicio', request: null, presented: null, gift: 'Dízimo', calendarMonth: NibDaily.dayKey(new Date()).slice(0,7), calendarDay: NibDaily.dayKey(new Date()), prayers: demoPrayers(), history: demoHistory(), historyYear: NibDaily.dayKey(new Date()).slice(0,4) };
   const navigation = PUBLIC ? [['inicio', 'Início'], ['agenda', 'Agenda'], ['eventos', 'Eventos'], ['generosidade', 'Generosidade'], ['celulas', 'Células'], ['informacoes', 'Informações']] : [['inicio', 'Início'], ['cadastro', 'Meu cadastro'], ['eventos', 'Eventos'], ['celulas', 'Células'], ['generosidade', 'Generosidade'], ['historico', 'Minhas contribuições'], ['informacoes', 'Informações'], ['agenda', 'Agenda'], ['caderno', 'Caderno de oração']];
-  const labels = { caderno: ['VIDA DE ORAÇÃO', 'Caderno de oração', 'Uma comunidade que cuida e ora em conjunto.'], agenda: ['VIDA NA IGREJA', 'Agenda da igreja', 'Cultos, encontros e próximos eventos em um só lugar.'], inicio: ['BOAS-VINDAS', 'Olá, Jéssica! Você está na plataforma Nib.', 'Acesse seu cadastro, encontre eventos, contribua e acompanhe a vida da igreja.'], cadastro: ['MINHAS INFORMAÇÕES', 'Meu cadastro', 'Consulte seus dados e encaminhe uma atualização à equipe.'], eventos: ['VIDA EM COMUNIDADE', 'Eventos e inscrições', 'Encontre os próximos encontros da igreja.'], celulas: ['CAMINHAR JUNTOS', 'Células', 'Acesse a plataforma de células adotada pela igreja.'], generosidade: ['CONTRIBUIR', 'Generosidade', 'Dízimos, ofertas e campanhas em um só lugar.'], historico: ['MEU HISTÓRICO', 'Minhas contribuições', 'Tudo o que você contribuiu, ano a ano. Só você vê.'], informacoes: ['FIQUE POR PERTO', 'Informações da igreja', 'Programação, endereço e canais da comunidade.'], gestao: ['ADMINISTRAÇÃO', 'Integração e membresia', 'Acompanhe o formulário, a reunião e a apresentação no culto.'], confirmar: ['MEMBRESIA', 'Registrar apresentação', 'O registro documenta a apresentação já realizada no culto.'] };
+  const labels = { avisos: ['MURAL DA IGREJA', 'Avisos da igreja', 'Comunicados da Secretaria e da Liderança Pastoral para toda a igreja.'], caderno: ['VIDA DE ORAÇÃO', 'Caderno de oração', 'Uma comunidade que cuida e ora em conjunto.'], agenda: ['VIDA NA IGREJA', 'Agenda da igreja', 'Cultos, encontros e próximos eventos em um só lugar.'], inicio: ['BOAS-VINDAS', 'Olá, Jéssica! Você está na plataforma Nib.', 'Acesse seu cadastro, encontre eventos, contribua e acompanhe a vida da igreja.'], cadastro: ['MINHAS INFORMAÇÕES', 'Meu cadastro', 'Consulte seus dados e encaminhe uma atualização à equipe.'], eventos: ['VIDA EM COMUNIDADE', 'Eventos e inscrições', 'Encontre os próximos encontros da igreja.'], celulas: ['CAMINHAR JUNTOS', 'Células', 'Acesse a plataforma de células adotada pela igreja.'], generosidade: ['CONTRIBUIR', 'Generosidade', 'Dízimos, ofertas e campanhas em um só lugar.'], historico: ['MEU HISTÓRICO', 'Minhas contribuições', 'Tudo o que você contribuiu, ano a ano. Só você vê.'], informacoes: ['FIQUE POR PERTO', 'Informações da igreja', 'Programação, endereço e canais da comunidade.'], gestao: ['ADMINISTRAÇÃO', 'Integração e membresia', 'Acompanhe o formulário, a reunião e a apresentação no culto.'], confirmar: ['MEMBRESIA', 'Registrar apresentação', 'O registro documenta a apresentação já realizada no culto.'] };
   if (PUBLIC) { const t = document.querySelector('#drawer-title + p'); if (t) t.textContent = 'Sua vida na igreja'; const sb = document.querySelector('.sidebar-bottom small'); if (sb) sb.textContent = 'Ariquemes, RO'; }
   if (PUBLIC) state.prayers = []; // na versão oficial, só pedidos reais vindos do servidor
   if (PUBLIC) Object.assign(labels, {
@@ -59,7 +59,7 @@
   const button = (text, view, primary = false) => { const back = !primary && /^Voltar/.test(text); return `<button type="button" class="button ${primary ? 'action primary' : back ? 'button-go button-back' : 'button-go'}" data-view="${view}">${back ? backArrow : ''}<span>${text}</span>${primary || back ? '' : arrow}</button>`; };
   // Ícones reaproveitados da função icon() do painel; sem ícones nas ações.
   // Ícones: conjunto único em icons.js (NibIcons).
-  const iconAlias = { entrar: 'cadastro', cadastros: 'membros' };
+  const iconAlias = { entrar: 'cadastro', cadastros: 'membros', avisos: 'comunicados' };
   const navIcon = key => NibIcons.svg(iconAlias[key] || key);
   const events = [
     { name: 'Mulheres Virtuosas', image: 'assets/mulheres.webp', date: '30/10/2026', active: false },
@@ -450,6 +450,29 @@
     const items = d.inscricoes.map(r => `<li class="reg-card"><div class="reg-top"><strong>${escape(r.evento)}</strong><span class="reg-status ${r.confirmada ? 'is-ok' : 'is-wait'}">${escape(r.situacao)}</span></div><p class="reg-name">${escape(r.nome)}</p><p class="reg-proto">Protocolo <b>${escape(r.protocolo)}</b></p></li>`).join('');
     return `<section class="box event-follow-up my-regs">${head}<p>Inscrições feitas com o celular do seu cadastro, inclusive as de filhos em que você é o responsável.</p><ul class="reg-list">${items}</ul></section>`;
   }
+  // Avisos da igreja (reais): a Secretaria e a Liderança Pastoral publicam; todos veem (pedido de Hilton, 06/11/2026).
+  function loadAvisos() {
+    state.avisosLoading = true;
+    return NibConta.avisos('lista').then(d => { state.avisos = d.avisos; state.avisosEquipe = d.equipe; state.avisosErro = ''; })
+      .catch(e => { state.avisosErro = e.message; state.avisos = state.avisos || []; })
+      .finally(() => { state.avisosLoading = false; state.avisosKey = state.accountKey || ''; });
+  }
+  function ensureAvisos() {
+    if (!PUBLIC || !window.NibConta || !NibConta.available() || state.avisosLoading || (state.avisos && state.avisosKey === (state.accountKey || ''))) return;
+    loadAvisos().then(() => { refreshNotices(); if (['inicio', 'avisos'].includes(state.view)) show(state.view, false, false); });
+  }
+  const avisosVistos = () => { try { return JSON.parse(localStorage.getItem('nib-avisos-lidos') || '[]'); } catch (_) { return []; } };
+  function avisosNovos() { ensureAvisos(); const v = avisosVistos(); return (state.avisos || []).filter(a => !v.includes(a.id)).length; }
+  function avisoData(t) { const d = new Date(String(t).replace(' ', 'T') + '-04:00'); return isNaN(d) ? '' : new Intl.DateTimeFormat('pt-BR', { timeZone: 'America/Porto_Velho', day: '2-digit', month: 'long' }).format(d); }
+  function avisosPage() {
+    if (!PUBLIC) return `<section class="box"><p>Os avisos publicados pela igreja aparecem aqui.</p></section>`;
+    if (!state.avisos) { ensureAvisos(); return '<p class="event-empty">Carregando os avisos…</p>'; }
+    try { localStorage.setItem('nib-avisos-lidos', JSON.stringify(state.avisos.map(a => a.id).slice(0, 60))); } catch (_) {}
+    const team = account() && NibConta.equipe();
+    const form = team ? `<section class="box aviso-form-box"><span class="label">NOVO AVISO</span><h2>Publicar para toda a igreja</h2><form id="aviso-form" class="aviso-form"><label>Título<input name="titulo" maxlength="120" required placeholder="Ex.: Culto de Santa Ceia"></label><label>Aviso<textarea name="texto" rows="4" maxlength="1500" required placeholder="Escreva o aviso como ele deve aparecer para a igreja."></textarea></label><label>Link (opcional)<input name="link" type="url" maxlength="300" placeholder="https://"></label><label>Mostrar até (opcional)<input name="ate" type="date"></label><label class="check"><input type="checkbox" name="fixado"><span>Fixar no topo</span></label><label class="check"><input type="checkbox" name="notificar" checked><span>Enviar notificação no celular de quem ativou</span></label><div class="form-actions"><button type="submit" class="action">Publicar aviso</button></div></form></section>` : '';
+    const list = state.avisos.length ? `<ul class="aviso-list">${state.avisos.map(a => `<li class="aviso-card${a.fixado ? ' is-pinned' : ''}"><div class="aviso-top"><span class="aviso-icon" aria-hidden="true">${navIcon('comunicados')}</span><div><h3>${escape(a.titulo)}</h3><small>${a.fixado ? 'Fixado · ' : ''}${escape(avisoData(a.criado_em))}${a.autor ? ' · por ' + escape(a.autor) : ''}</small></div></div><p>${escape(a.texto).replace(/\n/g, '<br>')}</p>${a.link ? `<a class="button button-go" href="${escape(a.link)}" target="_blank" rel="noopener">Saiba mais ${arrow}</a>` : ''}${team ? `<button type="button" class="aviso-remove" data-aviso-remove="${a.id}">Remover aviso</button>` : ''}</li>`).join('')}</ul>` : `<section class="box"><p class="event-empty">${state.avisosErro ? escape(state.avisosErro) : 'Nenhum aviso no momento. Quando a igreja publicar, ele aparece aqui e no sino.'}</p></section>`;
+    return form + list;
+  }
   function publicNotebook() {
     if (!account()) return `<section class="box prayer-box"><span class="label">CUIDADO EM COMUNIDADE</span><h2>Vamos orar uns pelos outros</h2><p>No caderno de oração, quem tem cadastro no app compartilha pedidos e marca “Vou orar” nos pedidos dos irmãos. Os pedidos ficam visíveis só para quem entrou na conta.</p><div class="form-actions"><button type="button" class="action" data-view="entrar">Entrar ou criar cadastro</button></div></section>`;
     if (!state.prayersLoaded) { loadPrayers().then(() => { if (state.view === 'caderno') show('caderno', false, false); }); return '<p class="event-empty">Carregando o caderno…</p>'; }
@@ -514,13 +537,13 @@
         const install = window.NibInstall ? NibInstall.card() : '';
         if (PUBLIC) {
           const pq = `<section aria-labelledby="quick-title"><div class="section-heading"><h2 id="quick-title">O que você procura?</h2></div><div class="quick-actions">${[
-            ['agenda', 'Agenda da igreja', 'Cultos, escola bíblica e eventos no calendário.'],
+            ['avisos', 'Avisos da igreja', 'Comunicados da Secretaria e da Liderança Pastoral.'],
             ['eventos', 'Eventos e inscrições', 'Os próximos encontros e as inscrições abertas.'],
             ['generosidade', 'Dízimos e ofertas', 'Contribua pelo Pix com os dados oficiais da igreja.'],
             ['celulas', 'Células', 'Encontre uma célula perto de você.'],
             ['informacoes', 'Horários e endereço', 'Cultos da semana, endereço e liderança.'],
             ['caderno', 'Caderno de oração', 'Compartilhe seus pedidos e ore com a comunidade.']
-          ].map(([view, title, text]) => view === 'youtube' ? `<button type="button" class="quick-action admin-quick" data-open-url="https://www.youtube.com/@nibcasadedeus"><span class="home-action-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7.5C3 6 4 5 5.5 5h13C20 5 21 6 21 7.5v9c0 1.5-1 2.5-2.5 2.5h-13C4 19 3 18 3 16.5z M10 9l5 3-5 3z"/></svg></span><strong>${title}</strong><span class="home-action-description">${text}</span></button>` : `<button type="button" class="quick-action admin-quick" data-view="${view}"><span class="home-action-icon" aria-hidden="true">${navIcon(view)}</span><strong>${title}</strong><span class="home-action-description">${text}</span></button>`).join('')}</div></section>`;
+          ].map(([view, title, text]) => view === 'youtube' ? `<button type="button" class="quick-action admin-quick" data-open-url="https://www.youtube.com/@nibcasadedeus"><span class="home-action-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7.5C3 6 4 5 5.5 5h13C20 5 21 6 21 7.5v9c0 1.5-1 2.5-2.5 2.5h-13C4 19 3 18 3 16.5z M10 9l5 3-5 3z"/></svg></span><strong>${title}</strong><span class="home-action-description">${text}</span></button>` : `<button type="button" class="quick-action admin-quick" data-view="${view}"><span class="home-action-icon" aria-hidden="true">${navIcon(view)}</span>${view === 'avisos' && avisosNovos() ? `<span class="admin-badge notice-badge" aria-label="${avisosNovos()} ${avisosNovos() === 1 ? 'aviso novo' : 'avisos novos'}">${avisosNovos()}</span>` : ''}<strong>${title}</strong><span class="home-action-description">${text}</span></button>`).join('')}</div></section>`;
           if (isDesk()) return `<div class="home-desk"><div class="home-col">${dailyBlocks(false,'verse')}${pq}${socialBanners()}</div><div class="home-rail">${install}${dailyBlocks(false,'agenda')}${events}</div></div>`;
           return `${dailyBlocks(false,'verse')}${install}${pq}${socialBanners()}${dailyBlocks(false,'agenda')}${events}${account() && state.prayersLoaded && state.prayers.length ? communityBlock() : ''}`;
         }
@@ -529,6 +552,7 @@
       },
       agenda: () => calendarPage(),
       caderno: () => notebookPage(),
+      avisos: () => avisosPage(),
       cadastros: () => teamPage(),
       cadastro: () => PUBLIC ? accountPage() : `<div class="profile-layout"><section class="box profile-summary"><span class="tag">Membro · exemplo</span><h2>${escape(state.member.full)}</h2><p>Confira seu cadastro na igreja.</p><dl class="profile"><dt>E-mail</dt><dd>jessica@example.com</dd><dt>Tratamento</dt><dd>${g('Masculino', 'Feminino')}</dd><dt>Telefone</dt><dd>Não informado</dd><dt>Endereço</dt><dd>Não informado</dd><dt>Apresentação no culto</dt><dd>Apresentação registrada · exemplo</dd></dl><label class="check profile-bday"><input type="checkbox" id="bday-visible"${state.hideBirthday ? '' : ' checked'}><span>Mostrar meu aniversário (dia e mês) na tela inicial da igreja</span></label><p class="note">As alterações são encaminhadas para conferência da Secretaria.</p></section><section class="box profile-edit"><h2>O que você deseja atualizar?</h2><p>Preencha somente os dados que precisam mudar.</p><form id="profile-form"><fieldset><legend>Dados para atualização</legend><div class="form-grid"><div><label for="new-name">Nome completo</label><input id="new-name" name="newName" autocomplete="off" placeholder="Informe o nome corrigido" maxlength="160"></div><div><label for="new-email">Novo e-mail</label><input id="new-email" name="newEmail" type="email" autocomplete="off" placeholder="nome@exemplo.com" maxlength="160"></div><div><label for="new-phone">Novo telefone / WhatsApp</label><input id="new-phone" name="newPhone" type="tel" inputmode="tel" autocomplete="off" placeholder="(69) 99999-9999" maxlength="25"></div><div><label for="new-address">Endereço</label><input id="new-address" name="newAddress" autocomplete="off" placeholder="Rua, número, bairro e cidade" maxlength="250"></div></div></fieldset><fieldset><legend>Contato e observações</legend><label for="contact-email">E-mail para retorno</label><input id="contact-email" name="email" type="email" autocomplete="email" value="${escape(state.member.email)}" placeholder="exemplo@example.com" maxlength="160" required><label for="contact-note">Outra alteração ou observação (opcional)</label><textarea id="contact-note" name="note" placeholder="Descreva o que a Secretaria precisa conferir." maxlength="500"></textarea></fieldset><div class="form-actions"><button class="action" type="submit">Enviar solicitação de teste</button><button type="reset">Limpar alterações</button></div></form><p class="note">Use dados fictícios. A solicitação fica nesta sessão; nenhum cadastro real é alterado.</p></section></div>${myRequestsBox()}`,
       eventos: () => `${eventCards()}${PUBLIC && account() ? myRegistrations() : `<section class="box event-follow-up"><h2>Minhas inscrições</h2><p>As inscrições são feitas no site da igreja. Para ver a sua, use a consulta com o nome ou o protocolo e o WhatsApp informado.</p><a class="button button-go" href="https://novaigrejabatista.com.br/consulta-inscricao/" target="_blank" rel="noopener">Consultar minha inscrição ${arrow}</a></section>`}`,
@@ -585,6 +609,7 @@
       feedback.textContent=p.supported?'Você está orando por este pedido.':'Você deixou de marcar este pedido.';
       return;
     }
+    if (action.dataset.avisoRemove && PUBLIC) { if (!confirm('Remover este aviso para toda a igreja?')) return; action.disabled = true; NibConta.avisos('remover', { id: Number(action.dataset.avisoRemove) }).then(loadAvisos).then(() => { show('avisos', false, false); refreshNotices(); announce('Aviso removido.', 'success', false); }).catch(e => { action.disabled = false; announce(e.message, 'warning'); }); return; }
     if (action.dataset.prayerRemove && PUBLIC) { const id = action.dataset.prayerRemove; action.disabled = true; NibConta.caderno('remover', { id: Number(id) }).then(() => { state.prayers = state.prayers.filter(x => x.id !== id); show('caderno', false, false); announce('Pedido tirado do caderno.', 'success', false); }).catch(e => { action.disabled = false; announce(e.message, 'error'); }); return; }
     if (PUBLIC && (action.dataset.prayerToggle || action.dataset.prayerDelete)) {
       const id = action.dataset.prayerToggle || action.dataset.prayerDelete, p = state.prayers.find(x => x.id === id); if (!p || !p.own) return; action.disabled = true;
@@ -615,6 +640,7 @@
     if (!form.reportValidity()) return;
     const values = new FormData(form);
     if (isManagement() && admin.submit(form, values)) return;
+    if (PUBLIC && form.id === 'aviso-form') { const btn = form.querySelector('[type=submit]'); btn.disabled = true; NibConta.avisos('publicar', { titulo: String(values.get('titulo') || ''), texto: String(values.get('texto') || ''), link: String(values.get('link') || ''), ate: String(values.get('ate') || ''), fixado: values.get('fixado') === 'on', notificar: values.get('notificar') === 'on' }).then(loadAvisos).then(() => { show('avisos', false, false); refreshNotices(); announce('Aviso publicado para toda a igreja.', 'success', false); }).catch(e => { btn.disabled = false; announce(e.message, 'warning'); }); return; }
     if (PUBLIC && accountSubmit(form, values)) return;
     if (form.id === 'profile-form') {
       const email = String(values.get('email')).trim();
@@ -701,6 +727,7 @@
     if (p && !p.celula) out.push({ id: 'sem-celula', kind: 'info', title: 'Participa de uma célula?', text: 'Informe sua célula em Meu cadastro para ver os encontros no calendário.', view: 'celulas', action: 'Ver células' });
     const hoje = withCell(NibDaily.agenda(today, 1), today, 1).filter(x => x.day === today);
     hoje.forEach(x => out.push({ id: 'hoje-' + today + '-' + x.name, kind: x.type === 'Minha célula' ? 'cell' : 'info', title: x.type === 'Minha célula' ? 'Hoje tem célula' : 'Hoje na igreja', text: x.name + (x.time ? ', às ' + x.time : '') + (x.place ? ' · ' + x.place : ''), view: 'agenda', action: 'Ver na agenda' }));
+    ensureAvisos(); (state.avisos || []).slice(0, 5).forEach(a => out.push({ id: 'aviso-' + a.id, kind: 'info', title: a.titulo, text: a.texto.length > 140 ? a.texto.slice(0, 140) + '…' : a.texto, view: 'avisos', action: 'Ver avisos' }));
     const ev = (window.NibSite && NibSite.eventos()) || [];
     const limite = NibDaily.dayKey(new Date(Date.now() + 21 * 864e5));
     ev.filter(e => e.open && e.start.slice(0, 10) >= today && e.start.slice(0, 10) <= limite).slice(0, 3).forEach(e => out.push({ id: 'evento-' + e.name + e.start, kind: 'event', title: 'Inscrições abertas', text: e.name + ' · ' + fmtDay(e.start), view: 'eventos', action: 'Ver evento' }));
@@ -1084,7 +1111,7 @@
   if (PUBLIC && window.NibConta && NibConta.available()) {
     const goHash = () => { const v = location.hash.slice(1); if (v && allowedPublic().includes(v)) show(v, false, false); };
     NibConta.eu().then(() => { if (account()) applyAccount(); goHash(); });
-    if ('serviceWorker' in navigator) navigator.serviceWorker.addEventListener('message', e => { const v = e.data && e.data.nibView; if (typeof v === 'string' && allowedPublic().includes(v)) { if (v === 'caderno') { state.prayersLoaded = false; } show(v, false, false); } });
+    if ('serviceWorker' in navigator) navigator.serviceWorker.addEventListener('message', e => { const v = e.data && e.data.nibView; if (typeof v === 'string' && allowedPublic().includes(v)) { if (v === 'caderno') { state.prayersLoaded = false; } if (v === 'avisos') { state.avisos = null; } show(v, false, false); } });
     const token = new URLSearchParams(location.search).get('redefinir');
     if (token && /^[a-f0-9]{64}$/.test(token)) resetDialog(token);
   }

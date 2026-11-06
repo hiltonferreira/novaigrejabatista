@@ -2090,3 +2090,18 @@ html{scrollbar-gutter:stable}
 #nib-proposta .reg-name{margin:6px 0 0;color:#041e42;font-weight:600}
 #nib-proposta .reg-proto{margin:2px 0 0;font-size:13px;color:#5b6b80}
 #nib-proposta .reg-proto b{font-variant-numeric:tabular-nums;color:#041e42;font-weight:600}
+/* Avisos da igreja (v102) */
+#nib-proposta .aviso-form{display:grid;gap:12px;margin-top:12px}
+#nib-proposta .aviso-form label:not(.check){display:grid;gap:6px;font-weight:600;color:#041e42;font-size:14px}
+#nib-proposta .aviso-form textarea{resize:vertical;min-height:96px}
+#nib-proposta .aviso-list{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+#nib-proposta .aviso-card{padding:18px;border:1px solid #dce3eb;border-radius:20px;background:#fff}
+#nib-proposta .aviso-card.is-pinned{border-color:#ff7f40;box-shadow:0 0 0 1px #ff7f40}
+#nib-proposta .aviso-top{display:flex;gap:12px;align-items:flex-start}
+#nib-proposta .aviso-icon{flex:0 0 40px;width:40px;height:40px;border-radius:12px;background:#fff1e8;color:#c2531a;display:grid;place-items:center}
+#nib-proposta .aviso-icon svg{width:20px;height:20px}
+#nib-proposta .aviso-card h3{margin:0;font-size:17px;line-height:1.3;color:#041e42}
+#nib-proposta .aviso-card small{display:block;margin-top:2px;color:#5b6b80;font-size:12.5px}
+#nib-proposta .aviso-card>p{margin:12px 0 0;color:#2a3a52;line-height:1.55}
+#nib-proposta .aviso-card .button-go{margin-top:12px}
+#nib-proposta .aviso-remove{display:block;margin-top:12px;padding:0;border:0;background:none;color:#b3261e;font:inherit;font-size:13px;font-weight:600;cursor:pointer}

@@ -30,6 +30,7 @@
     confirmar: async (id, status) => api('confirmar', { id, status }),
     caderno: async (acao, body) => api(acao, body, 'caderno'),
     inscricoes: async () => api('inscricoes'),
+    avisos: async (acao, body) => api(acao, body, 'avisos'),
     pushChave: async () => (await api('push-chave')).chave,
     push: async (acao, body) => api(acao, body),
     pushEstado: async endpoint => api('push-estado&endpoint=' + encodeURIComponent(endpoint))

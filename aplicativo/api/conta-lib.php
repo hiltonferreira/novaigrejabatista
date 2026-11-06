@@ -25,11 +25,11 @@ function nib_db(): PDO {
   return $db;
 }
 // Cria as tabelas na primeira vez (e só acrescenta o que faltar nas próximas versões).
-const NIB_MIGRACAO = 4;
+const NIB_MIGRACAO = 5;
 function nib_migrar(PDO $db): void {
   $db->exec("CREATE TABLE IF NOT EXISTS nib_versao (v INT NOT NULL) ENGINE=InnoDB");
   $v = (int)($db->query('SELECT MAX(v) FROM nib_versao')->fetchColumn() ?: 0);
-  if ($v >= NIB_MIGRACAO) return; // ao criar a v5, subir NIB_MIGRACAO
+  if ($v >= NIB_MIGRACAO) return; // ao criar a v6, subir NIB_MIGRACAO
   // Uma migração por vez: pedidos simultâneos esperam a primeira terminar (evita versões repetidas).
   if ((int)$db->query("SELECT GET_LOCK('nib_migrar', 15)")->fetchColumn() !== 1) throw new RuntimeException('migração em andamento por outro pedido');
   try { nib_migrar_passos($db, (int)($db->query('SELECT MAX(v) FROM nib_versao')->fetchColumn() ?: 0)); }
@@ -68,6 +68,15 @@ function nib_migrar_passos(PDO $db, int $v): void {
       CONSTRAINT fk_push_pessoa FOREIGN KEY (pessoa_id) REFERENCES nib_pessoas(id) ON DELETE CASCADE
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
     $db->exec('INSERT INTO nib_versao (v) VALUES (4)');
+  }
+  if ($v < 5) {
+    // v5: avisos da igreja publicados pela Secretaria/Pastoral, visíveis para toda a igreja no app.
+    $db->exec("CREATE TABLE IF NOT EXISTS nib_avisos (
+      id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY, titulo VARCHAR(120) NOT NULL, texto TEXT NOT NULL, link VARCHAR(300) NOT NULL DEFAULT '',
+      fixado TINYINT(1) NOT NULL DEFAULT 0, ate DATE NULL, criado_por INT UNSIGNED NULL, criado_em DATETIME NOT NULL, removido_por INT UNSIGNED NULL, removido_em DATETIME NULL,
+      KEY ix_criado (criado_em)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+    $db->exec('INSERT INTO nib_versao (v) VALUES (5)');
   }
 }
 
