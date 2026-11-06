@@ -10,9 +10,9 @@
  <div class="auth-hero"><picture><source media="(min-width: 1024px)" srcset="assets/hero-nib.webp" width="1600" height="673"><img class="auth-hero-photo" src="assets/social-instagram.webp" alt="" width="900" height="767"></picture><img class="auth-logo" src="assets/splash-logo-final.webp" alt="Nib" width="400" height="150"><p class="auth-hero-copy"><strong>Nova Igreja Batista</strong><span>A casa de Deus · Ariquemes, RO</span></p></div>
  <div class="auth-sheet">
   <span class="auth-kicker">PLATAFORMA NIB</span>
-  <h1 id="auth-title" tabindex="-1">Toda a igreja em um só lugar.</h1>
+  <h1 id="auth-title" tabindex="-1">A igreja, perto de você.</h1>
   <p class="auth-lead">Entre para acompanhar a agenda, contribuir, encontrar sua célula e orar com a comunidade.</p>
-  <div class="auth-tabs" role="tablist" aria-label="Acesso">
+  <div class="auth-tabs seg" role="tablist" aria-label="Acesso" style="--n:2;--i:0"><span class="seg-pill" aria-hidden="true"></span>
    <button type="button" role="tab" id="tab-login" aria-controls="panel-login" aria-selected="true">Entrar</button>
    <button type="button" role="tab" id="tab-signup" aria-controls="panel-signup" aria-selected="false" tabindex="-1">Criar cadastro</button>
   </div>
@@ -37,6 +37,7 @@
    </fieldset>
    <label for="signup-phone">Celular com WhatsApp</label>
    <input id="signup-phone" name="celular" type="tel" inputmode="tel" autocomplete="off" placeholder="(69) 9 9999-9999" aria-required="true">
+   <label for="signup-birth">Data de nascimento</label><input id="signup-birth" name="nascimento" type="date" min="1900-01-01" autocomplete="off" aria-required="true">
    <label for="signup-email">E-mail</label>
    <input id="signup-email" name="email" type="email" inputmode="email" autocomplete="off" aria-required="true">
    <fieldset class="auth-choice"><legend>Você já faz parte da NIB?</legend>

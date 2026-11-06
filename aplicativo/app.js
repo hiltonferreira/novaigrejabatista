@@ -400,13 +400,14 @@
     const days = NibSite.celulas(), total = NibSite.totalCelulas();
     const mine = account() && findCell(account().celula);
     const sel = days.some(d => d.dia === state.cellDay) ? state.cellDay : '';
+    const selIdx = sel ? days.findIndex(d => d.dia === sel) + 1 : 0, fromIdx = state.cellDayFrom === undefined ? selIdx : state.cellDayFrom; state.cellDayFrom = selIdx;
     const hoje = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'][new Date().getDay()];
     const chips = [['', 'Todos', total, 'Todos os dias']].concat(days.map(d => [d.dia, d.dia.slice(0, 3), d.celulas.length, d.dia])).map(([v, l, n, full]) => `<button type="button" class="day-pick-btn${v === sel ? ' is-active' : ''}${v && v === hoje ? ' is-today' : ''}" data-cell-day="${escape(v)}" aria-pressed="${v === sel}" aria-label="${escape(full)}, ${n} ${n === 1 ? 'célula' : 'células'}${v && v === hoje ? ', hoje' : ''}"><strong>${escape(l)}</strong><small>${n} ${n === 1 ? 'célula' : 'células'}</small></button>`).join('');
     const wa = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11.5a8.5 8.5 0 0 1-12.6 7.4L3 20l1.2-4.2A8.5 8.5 0 1 1 20 11.5Z M9 8.5c0 3.5 3 6.5 6.5 6.5l1-1.6-2-1-1 .9a4 4 0 0 1-2.8-2.8l.9-1-1-2Z"/></svg>';
     const groups = days.filter(d => !sel || d.dia === sel).map(d => `<section class="cell-day" aria-labelledby="cd-${escape(d.dia.slice(0,3))}"><div class="section-heading"><h2 id="cd-${escape(d.dia.slice(0,3))}">${escape(d.dia)}</h2><span class="cell-count">${d.celulas.length} ${d.celulas.length === 1 ? 'célula' : 'células'}</span></div><ul class="cell-list">${d.celulas.map(c => `<li class="cell-card${mine && mine.dia === d.dia && mine.nome === c.nome ? ' is-mine' : ''}">${mine && mine.dia === d.dia && mine.nome === c.nome ? '<span class="cell-mine-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>Sua célula</span>' : ''}<h3>${escape(c.nome)}</h3><p class="cell-leader">${escape(c.lider)}</p><p class="cell-row">${navIcon('informacoes')}<span>${escape(c.horario)}</span></p><p class="cell-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21Z M12 12a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z"/></svg><span>${escape(c.local)}</span></p>${c.whatsapp ? `<a class="button button-go cell-wa" href="${escape(c.whatsapp)}" target="_blank" rel="noopener">${wa}<span>Falar com o líder</span></a>` : ''}</li>`).join('')}</ul></section>`).join('');
     const mineBox = mine ? `<section class="box my-cell" aria-labelledby="my-cell-title"><span class="label">SUA CÉLULA</span><h2 id="my-cell-title">${escape(mine.nome)}</h2><p class="cell-leader">${escape(mine.lider)}</p><div class="place-card cell-place"><div class="cell-place-row"><span class="place-pin"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></span><div><strong>${escape(mine.dia)}</strong><span>${escape(mine.horario)}</span></div></div><div class="cell-place-row"><span class="place-pin"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21Z M12 12a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z"/></svg></span><div><strong>Local</strong><span>${escape(mine.local)}</span></div></div></div>${mine.whatsapp ? `<a class="place-route cell-wa-main" href="${escape(mine.whatsapp)}" target="_blank" rel="noopener">${wa}<span>Falar com o líder</span></a>` : ''}<div class="place-links"><a href="#agenda" data-view="agenda">${navIcon('agenda')}<span><strong>Calendário</strong><small>Ver os dias</small></span></a><a href="#cadastro" data-view="cadastro"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4 3.5 7.5 7 11 M3.5 7.5H17 M17 13l3.5 3.5L17 20 M20.5 16.5H7"/></svg><span><strong>Trocar</strong><small>Outra célula</small></span></a></div></section>`
       : account() ? `<section class="box my-cell is-empty"><span class="label">SUA CÉLULA</span><p>${account().celula ? 'A célula do seu cadastro não está mais na lista. Escolha de novo em Meu cadastro.' : 'Já participa de uma célula? Informe em Meu cadastro para ela aparecer aqui e no seu calendário.'}</p><button type="button" class="button" data-view="cadastro">Informar minha célula</button></section>` : '';
-    return `${mineBox}<section class="box cell-intro"><span class="label">NOSSAS CÉLULAS</span><h2>${total} células em Ariquemes</h2><p>É nos lares que a fé encontra espaço para ser vivida de perto. Escolha o dia que fica melhor para você e chame o líder no WhatsApp.</p></section><div class="day-pick" role="group" aria-label="Dia da semana" style="--n:${days.length + 1}">${chips}</div>${groups}`;
+    return `${mineBox}<section class="box cell-intro"><span class="label">NOSSAS CÉLULAS</span><h2>${total} células em Ariquemes</h2><p>É nos lares que a fé encontra espaço para ser vivida de perto. Escolha o dia que fica melhor para você e chame o líder no WhatsApp.</p></section><div class="day-pick seg" role="group" aria-label="Dia da semana" style="--n:${days.length + 1};--i:${selIdx};--from:${fromIdx}"><span class="seg-pill${fromIdx !== selIdx ? ' is-moving' : ''}" aria-hidden="true"></span>${chips}</div>${groups}`;
   }
   // Informações reais da igreja: horários, endereço, liderança e canais.
   function siteInfoPage() {
@@ -470,6 +471,11 @@
   function avisosNovos() { ensureAvisos(); const v = avisosVistos(); return (state.avisos || []).filter(a => !v.includes(a.id)).length; }
   function avisoData(t) { const d = new Date(String(t).replace(' ', 'T') + '-04:00'); return isNaN(d) ? '' : new Intl.DateTimeFormat('pt-BR', { timeZone: 'America/Porto_Velho', day: '2-digit', month: 'long' }).format(d); }
   // Bloco na tela inicial com os avisos ativos (até a data final informada), pedido de Hilton em 06/11/2026.
+  // Contas antigas sem data de nascimento: lembrete discreto na inicial até completar.
+  function birthNudge() {
+    const p = account(); if (!p || p.nascimento) return '';
+    return `<a class="birth-nudge" href="#cadastro" data-view="cadastro"><span class="birth-nudge-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21h16M5 21v-7a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v7M5 16c1.5 1 3 1 4.5 0s3-1 4.5 0 3 1 4.5 0M12 12V8M12 5.5c.8-.8.8-1.7 0-2.5-.8.8-.8 1.7 0 2.5Z"/></svg></span><span><strong>Informe sua data de nascimento</strong><small>Para a igreja lembrar do seu aniversário.</small></span><span class="birth-nudge-go" aria-hidden="true">›</span></a>`;
+  }
   function homeAvisos() {
     ensureAvisos(); const list = (state.avisos || []).slice(0, 2); if (!list.length) return '';
     const v = avisosVistos();
@@ -556,7 +562,7 @@
             ['caderno', 'Caderno de oração', 'Compartilhe seus pedidos e ore com a comunidade.']
           ].map(([view, title, text]) => view === 'youtube' ? `<button type="button" class="quick-action admin-quick" data-open-url="https://www.youtube.com/@nibcasadedeus"><span class="home-action-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7.5C3 6 4 5 5.5 5h13C20 5 21 6 21 7.5v9c0 1.5-1 2.5-2.5 2.5h-13C4 19 3 18 3 16.5z M10 9l5 3-5 3z"/></svg></span><strong>${title}</strong><span class="home-action-description">${text}</span></button>` : `<button type="button" class="quick-action admin-quick" data-view="${view}"><span class="home-action-icon" aria-hidden="true">${navIcon(view)}</span><strong>${title}</strong><span class="home-action-description">${text}</span></button>`).join('')}</div></section>`;
           if (isDesk()) return `<div class="home-desk"><div class="home-col">${dailyBlocks(false,'verse')}${pq}${socialBanners()}</div><div class="home-rail">${install}${dailyBlocks(false,'agenda')}${events}</div></div>`;
-          return `${dailyBlocks(false,'verse')}${homeAvisos()}${install}${pq}${socialBanners()}${dailyBlocks(false,'agenda')}${events}${account() && state.prayersLoaded && state.prayers.length ? communityBlock() : ''}`;
+          return `${birthNudge()}${dailyBlocks(false,'verse')}${homeAvisos()}${install}${pq}${socialBanners()}${dailyBlocks(false,'agenda')}${events}${account() && state.prayersLoaded && state.prayers.length ? communityBlock() : ''}`;
         }
         if (isDesk()) return `<div class="home-desk"><div class="home-col">${dailyBlocks(false,'verse')}${quick}${socialBanners()}${communityBlock()}</div><div class="home-rail">${checkinCard()}${install}${homeNotice()}${dailyBlocks(false,'agenda')}${birthdayBlock()}${events}</div></div>`;
         return `${dailyBlocks(false,'verse')}${checkinCard()}${install}${quick}${socialBanners()}${homeNotice()}${dailyBlocks(false,'agenda')}${birthdayBlock()}${events}${communityBlock()}`;
@@ -802,7 +808,7 @@
     const login = which === 'login';
     const tl = document.getElementById('tab-login'), ts = document.getElementById('tab-signup');
     tl.setAttribute('aria-selected', String(login)); ts.setAttribute('aria-selected', String(!login));
-    tl.tabIndex = login ? 0 : -1; ts.tabIndex = login ? -1 : 0;
+    tl.tabIndex = login ? 0 : -1; ts.tabIndex = login ? -1 : 0; tl.parentNode.style.setProperty('--i', login ? 0 : 1);
     document.getElementById('panel-login').hidden = !login; document.getElementById('panel-signup').hidden = login;
     auth.querySelectorAll('.auth-error').forEach(e => { e.textContent = ''; });
     if (focus) (login ? tl : ts).focus();
@@ -841,6 +847,7 @@
   const fillSignupCells = () => { const v = signupCell.value; signupCell.innerHTML = '<option value="">Escolha sua célula</option>' + cellOptions(v); };
   fillSignupCells(); if (window.NibSite) NibSite.onChange(fillSignupCells);
   document.getElementById('panel-signup').addEventListener('change', e => { if (e.target.name === 'tem_celula') { signupCellWrap.hidden = e.target.value !== 'sim'; if (e.target.value === 'sim') signupCell.focus(); } });
+  { const b = document.getElementById('signup-birth'); if (b && window.NibDaily) b.max = NibDaily.dayKey(new Date()); }
   document.getElementById('panel-signup').addEventListener('reset', () => { signupCellWrap.hidden = true; });
   auth.addEventListener('input', e => { const field = e.target.closest('input,select'); if (!field) return; field.removeAttribute('aria-invalid'); const err = field.form && field.form.querySelector('.auth-error'); if (err) err.textContent = ''; });
   document.getElementById('panel-signup').addEventListener('submit', e => {
@@ -850,6 +857,7 @@
     const checks = [
       [f.nome, name.split(' ').length < 2, 'Escreva seu nome e sobrenome.'],
       [f.celular, f.celular.value.replace(/\D/g,'').length < 10, 'Informe um celular com DDD.'],
+      [f.nascimento, !/^\d{4}-\d{2}-\d{2}$/.test(f.nascimento.value) || f.nascimento.value < '1900-01-01' || f.nascimento.value > NibDaily.dayKey(new Date()), 'Informe sua data de nascimento.'],
       [f.email, !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email.value.trim()), 'Informe um e-mail válido.'],
       [f.senha, !passRules(f.senha.value).every(Boolean), 'A senha ainda não atende a todos os critérios.'],
       [f.senha2, f.senha2.value !== f.senha.value || !f.senha2.value, 'As senhas não são iguais.'],
@@ -860,7 +868,7 @@
     const first = checks.find(c => c[1]);
     if (first) return fail(form, 'signup-error', first[2]);
     const full = properName(name).slice(0,80);
-    if (PUBLIC) { authCall(form, 'signup-error', () => NibConta.cadastrar({ nome: full, sexo: f.sexo.value, celular: f.celular.value, email: f.email.value.trim(), vinculo: f.vinculo.value, celula: f.tem_celula.value === 'sim' ? f.celula.value : '', senha: f.senha.value, consentimento: true })); return; }
+    if (PUBLIC) { authCall(form, 'signup-error', () => NibConta.cadastrar({ nome: full, sexo: f.sexo.value, celular: f.celular.value, nascimento: f.nascimento.value, email: f.email.value.trim(), vinculo: f.vinculo.value, celula: f.tem_celula.value === 'sim' ? f.celula.value : '', senha: f.senha.value, consentimento: true })); return; }
     state.member = { first: full.split(' ')[0], full, email: f.email.value.trim().slice(0,80), gender: f.sexo.value === 'm' ? 'm' : 'f' };
     if (f.tem_celula.value === 'nao') state.demoCell = null; else { const c = findCell(f.celula.value); const wd = c ? weekdays.findIndex(w => c.dia.toLowerCase().startsWith(w)) : -1; const t = c && c.horario.match(/(\d{1,2})[:h](\d{2})/); state.demoCell = c && wd >= 0 ? { name: c.nome, weekday: wd, time: t ? t[1].padStart(2, '0') + ':' + t[2] : '', place: c.local, leader: c.lider } : undefined; }
     offerFace();
@@ -990,7 +998,7 @@
       gate(true);
       splash.querySelectorAll('[data-letters]').forEach(el => { const chars = [...el.textContent]; el.textContent = ''; chars.forEach((c,i) => { const ch = document.createElement('span'); ch.className = 'ch'; ch.textContent = c; ch.style.setProperty('--i', i); el.append(ch); }); });
       if (reduced) splash.querySelector('.splash-logo').src = 'assets/splash-logo-final.webp';
-      splash.classList.add('is-playing'); splash.addEventListener('click', finish); setTimeout(finish, reduced ? 1200 : 4500);
+      splash.classList.add('is-playing'); splash.addEventListener('click', finish); setTimeout(finish, reduced ? 1200 : 6100);
     }
   } else afterSplash();
   // Contas reais (versão pública): cadastro, entrada, meu cadastro e painel da equipe.
@@ -998,7 +1006,7 @@
   const vinculoLabel = { membro: 'Membro', frequento: 'Frequenta a igreja', visitante: 'Conhecendo a igreja' };
   function publicAuthChrome() {
     if (auth.dataset.chrome) return; auth.dataset.chrome = '1';
-    const lead = auth.querySelector('.auth-lead'); if (lead) lead.textContent = LOGIN_REQUIRED ? 'Acesse e acompanhe a sua comunidade: cultos, células, eventos e avisos da Nova Igreja Batista.' : 'Entre ou crie seu cadastro para manter seus dados em dia com a igreja.';
+    const lead = auth.querySelector('.auth-lead'); if (lead) lead.textContent = LOGIN_REQUIRED ? 'Acesse e acompanhe a agenda, contribuição e caderno de oração.' : 'Entre ou crie seu cadastro para manter seus dados em dia com a igreja.';
     if (LOGIN_REQUIRED) return;
     const close = document.createElement('button'); close.type = 'button'; close.className = 'auth-close'; close.textContent = 'Voltar ao app';
     close.addEventListener('click', closeAccount);

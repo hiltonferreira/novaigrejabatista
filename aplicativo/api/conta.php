@@ -33,14 +33,16 @@ try {
       $vinculo = in_array($d['vinculo'] ?? '', ['membro', 'frequento', 'visitante'], true) ? $d['vinculo'] : 'visitante';
       if (count(explode(' ', $nome)) < 2) nib_erro('Escreva seu nome e sobrenome.');
       if (strlen($cel) < 10) nib_erro('Informe um celular com DDD.');
+      $nasc = nib_texto($d['nascimento'] ?? '', 10); $dtn = DateTimeImmutable::createFromFormat('!Y-m-d', $nasc);
+      if (!$dtn || $dtn->format('Y-m-d') !== $nasc || $nasc < '1900-01-01' || $nasc > date('Y-m-d')) nib_erro('Informe sua data de nascimento.');
       if ($email === '') nib_erro('Informe um e-mail válido.');
       if (!nib_senha_ok($senha)) nib_erro('A senha ainda não atende a todos os critérios.');
       if (($d['consentimento'] ?? false) !== true) nib_erro('Para continuar, aceite a política de privacidade.');
       $q = $db->prepare('SELECT id FROM nib_pessoas WHERE email = ?'); $q->execute([$email]);
       if ($q->fetch()) nib_erro('Já existe um cadastro com este e-mail. Entre com a sua senha ou use "Esqueci minha senha".', 409);
       $agora = nib_agora();
-      $db->prepare('INSERT INTO nib_pessoas (nome, email, celular, sexo, vinculo, celula, membro_status, senha_hash, consentimento_em, consentimento_versao, criado_em, atualizado_em) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)')
-        ->execute([$nome, $email, $cel, $sexo, $vinculo, nib_celula($d['celula'] ?? '') ?: null, $vinculo === 'membro' ? 'pendente' : 'nao', password_hash($senha, PASSWORD_DEFAULT), $agora, NIB_POLITICA, $agora, $agora]);
+      $db->prepare('INSERT INTO nib_pessoas (nome, email, celular, nascimento, sexo, vinculo, celula, membro_status, senha_hash, consentimento_em, consentimento_versao, criado_em, atualizado_em) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)')
+        ->execute([$nome, $email, $cel, $nasc, $sexo, $vinculo, nib_celula($d['celula'] ?? '') ?: null, $vinculo === 'membro' ? 'pendente' : 'nao', password_hash($senha, PASSWORD_DEFAULT), $agora, NIB_POLITICA, $agora, $agora]);
       $id = (int)$db->lastInsertId();
       nib_registrar($id, 'cadastro', $id, $vinculo);
       nib_abrir_sessao($id);
