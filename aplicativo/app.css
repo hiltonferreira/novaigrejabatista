@@ -2387,3 +2387,12 @@ dialog.ck-telao::backdrop{background:#041e42}
 /* v131: tipos de Sugestões no mesmo padrão do Gênero (pílula azul, letra branca, 600 15px) */
 #nib-proposta .sug-tipos button{font:600 15px/1 "NIB Acumin Mobile",Arial,sans-serif}
 #nib-proposta .sug-tipos button[aria-checked=true],#nib-proposta .sug-tipos button[aria-checked=true]:hover,#nib-proposta .sug-tipos button[aria-checked=true]:focus{color:#fff}
+/* v132: barra do topo sempre na frente do conteúdo (no desktop ela ficava sem z-index e o título passava por cima) */
+#nib-proposta>header{z-index:130}
+/* v132: Células no desktop, "Sua célula" (maior) ao lado de "Nossas células" */
+#nib-proposta .cell-top{display:contents}
+@media(min-width:1100px){
+  #nib-proposta .cell-top{display:grid;grid-template-columns:minmax(0,1.75fr) minmax(0,1fr);gap:20px;align-items:stretch;margin:0 0 20px}
+  #nib-proposta .cell-top>.box{margin:0}
+  #nib-proposta .cell-top>.cell-intro{display:flex;flex-direction:column;justify-content:flex-start}
+}
