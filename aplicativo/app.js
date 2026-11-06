@@ -37,7 +37,7 @@
   const navIcon = key => NibIcons.svg(key);
   const events = [
     { name: 'Mulheres Virtuosas', image: 'assets/mulheres.webp', date: '30/10/2026', active: false },
-    { name: 'NXT CAMP', image: 'assets/nxt.png', date: '21/11/2026', active: true },
+    { name: 'NXT CAMP', image: 'assets/nxt.webp', date: '21/11/2026', active: true },
     { name: 'Jornada DNA', image: 'assets/jornada.webp', date: '25/10/2026', active: false }
   ];
   const eventCards = (compact = false) => `<div class="cards ${compact ? 'home-events' : ''}">${[...events].filter(e => !compact || e.active).sort((a,b) => Number(b.active) - Number(a.active)).map(e => `<article class="event ${e.name === 'Mulheres Virtuosas' ? 'event-mulheres-virtuosas' : ''} ${e.active ? '' : 'event-ended'}"><div class="event-cover"><img src="${e.image}" alt="${e.name}" width="800" height="400"></div><div class="event-content"><div class="event-top"><span class="tag ${e.active ? 'status-active' : 'status-ended'}">${e.active ? 'Ativo' : 'Encerrado'}</span><time class="event-date">${e.date}</time></div><${compact ? 'h3' : 'h2'}>${e.name}</${compact ? 'h3' : 'h2'}><p>${e.active ? 'Conheça o encontro e as informações do evento.' : 'Evento realizado. Consulte as informações.'}</p><button type="button" class="button primary" aria-label="Ver informações: ${e.name}" data-message="${e.name}: catálogo demonstrativo. A integração com as inscrições ainda será conectada; nenhum cadastro ou pagamento é realizado aqui.">Ver informações</button></div></article>`).join('')}</div>`;
@@ -308,8 +308,8 @@
     let dlg = document.getElementById('bday-dialog');
     if (!dlg) { dlg = document.createElement('dialog'); dlg.id = 'bday-dialog'; dlg.setAttribute('aria-labelledby', 'my-bday-title'); document.body.append(dlg); dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); }); }
     const date = new Intl.DateTimeFormat('pt-BR', { timeZone: 'America/Porto_Velho', day: 'numeric', month: 'long' }).format(new Date());
-    dlg.innerHTML = `<div class="my-bday" tabindex="-1"><div class="my-bday-confetti" aria-hidden="true">${'<i></i>'.repeat(16)}</div><img class="my-bday-water" src="assets/brasao-branco.png" alt="" width="271" height="293"><button type="button" class="my-bday-close" data-bday-close="1" aria-label="Fechar mensagem"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12 M18 6 6 18"/></svg></button>
-      <div class="my-bday-crest" aria-hidden="true"><img src="assets/brasao-branco.png" alt="" width="271" height="293"></div>
+    dlg.innerHTML = `<div class="my-bday" tabindex="-1"><div class="my-bday-confetti" aria-hidden="true">${'<i></i>'.repeat(16)}</div><img class="my-bday-water" src="assets/brasao-branco.webp" alt="" width="271" height="293"><button type="button" class="my-bday-close" data-bday-close="1" aria-label="Fechar mensagem"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12 M18 6 6 18"/></svg></button>
+      <div class="my-bday-crest" aria-hidden="true"><img src="assets/brasao-branco.webp" alt="" width="271" height="293"></div>
       <span class="my-bday-date">${escape(date.toUpperCase())} · HOJE É O SEU DIA</span>
       <h2 id="my-bday-title">Feliz aniversário,<span>${escape(state.member.first)}</span></h2>
       <span class="my-bday-rule" aria-hidden="true"><i></i></span>
@@ -754,7 +754,7 @@
     else {
       gate(true);
       splash.querySelectorAll('[data-letters]').forEach(el => { const chars = [...el.textContent]; el.textContent = ''; chars.forEach((c,i) => { const ch = document.createElement('span'); ch.className = 'ch'; ch.textContent = c; ch.style.setProperty('--i', i); el.append(ch); }); });
-      if (reduced) splash.querySelector('.splash-logo').src = 'assets/splash-logo-final.png';
+      if (reduced) splash.querySelector('.splash-logo').src = 'assets/splash-logo-final.webp';
       splash.classList.add('is-playing'); splash.addEventListener('click', finish); setTimeout(finish, reduced ? 1200 : 4500);
     }
   } else afterSplash();

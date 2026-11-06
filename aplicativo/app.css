@@ -576,7 +576,7 @@ html{scrollbar-gutter:stable}
 #nib-proposta .splash-lockup{display:flex;flex-direction:column;align-items:center;gap:20px;text-align:center;transform-origin:50% 50%}
 #nib-proposta .splash-mark{position:relative;display:block;width:var(--splash-logo)}
 #nib-proposta .splash-logo{display:block;width:100%;height:auto;opacity:.86}
-#nib-proposta .splash-gleam{position:absolute;inset:0;overflow:hidden;-webkit-mask:url(assets/splash-logo-final.png) center/100% 100% no-repeat;mask:url(assets/splash-logo-final.png) center/100% 100% no-repeat;pointer-events:none}
+#nib-proposta .splash-gleam{position:absolute;inset:0;overflow:hidden;-webkit-mask:url(assets/splash-logo-final.webp) center/100% 100% no-repeat;mask:url(assets/splash-logo-final.webp) center/100% 100% no-repeat;pointer-events:none}
 #nib-proposta .splash-shine{position:absolute;top:-30%;left:0;width:30%;height:160%;background:linear-gradient(100deg,#fff0 0%,#ffffff00 28%,#ffffff 50%,#ffffff00 72%,#fff0 100%);transform:translateX(-140%) skewX(-14deg);will-change:transform}
 #nib-proposta .app-splash.is-playing .splash-shine{animation:nib-splash-shine 1.1s cubic-bezier(.65,0,.35,1) 3.05s both}
 @keyframes nib-splash-shine{from{transform:translateX(-140%) skewX(-14deg)}to{transform:translateX(400%) skewX(-14deg)}}
@@ -627,7 +627,7 @@ html{scrollbar-gutter:stable}
 
 /* Versículo do dia: cartão azul NIB com brasão em marca d'água, aspas em laranja e ação de compartilhar. */
 #nib-proposta .daily-verse{position:relative;overflow:hidden;isolation:isolate;padding:24px 24px 20px;border:0;border-radius:22px;color:#fff;background:radial-gradient(120% 90% at 0% 0%,#1d4a86 0%,#0b2d5c 45%,#041e42 100%);box-shadow:0 14px 34px #041e4226;backdrop-filter:none;-webkit-backdrop-filter:none}
-#nib-proposta .daily-verse::after{content:"";position:absolute;right:-96px;bottom:-62px;z-index:-1;width:270px;height:295px;background:url("assets/brasao-branco.png") no-repeat center/contain;opacity:.12;filter:blur(3px);transform:rotate(-8deg);pointer-events:none}
+#nib-proposta .daily-verse::after{content:"";position:absolute;right:-96px;bottom:-62px;z-index:-1;width:270px;height:295px;background:url("assets/brasao-branco.webp") no-repeat center/contain;opacity:.12;filter:blur(3px);transform:rotate(-8deg);pointer-events:none}
 @media(min-width:821px){#nib-proposta .daily-verse::after{width:320px;height:350px;right:-80px;bottom:-110px}}
 #nib-proposta .verse-top{display:flex;align-items:center;gap:10px;margin-bottom:14px}
 #nib-proposta .verse-icon{display:grid;place-items:center;width:32px;height:32px;border-radius:10px;background:#ffffff1a;color:#ffb38a}
@@ -736,7 +736,7 @@ html{scrollbar-gutter:stable}
 #nib-proposta .app-enter{position:fixed;inset:0;z-index:950;overflow:hidden;background:radial-gradient(120% 80% at 50% 46%,#0b3166 0%,#06244f 42%,#03183a 100%);pointer-events:none;will-change:opacity}
 #nib-proposta .app-enter[hidden]{display:none}
 #nib-proposta .enter-halo{position:absolute;top:50%;left:50%;width:min(130vw,640px);aspect-ratio:1;transform:translate(-50%,-52%);border-radius:50%;background:radial-gradient(circle,#4f86c633 0%,#4f86c614 36%,#4f86c600 66%);opacity:0;will-change:opacity,transform}
-#nib-proposta .enter-mark{--mark:clamp(76px,22vw,104px);position:absolute;top:50%;left:50%;width:var(--mark);aspect-ratio:271/293;margin:calc(var(--mark) * -0.5406) 0 0 calc(var(--mark) * -0.5);transform-origin:50% 50%;opacity:0;overflow:hidden;-webkit-mask:url(assets/brasao-branco.png) center/100% 100% no-repeat;mask:url(assets/brasao-branco.png) center/100% 100% no-repeat;will-change:transform,opacity}
+#nib-proposta .enter-mark{--mark:clamp(76px,22vw,104px);position:absolute;top:50%;left:50%;width:var(--mark);aspect-ratio:271/293;margin:calc(var(--mark) * -0.5406) 0 0 calc(var(--mark) * -0.5);transform-origin:50% 50%;opacity:0;overflow:hidden;-webkit-mask:url(assets/brasao-branco.webp) center/100% 100% no-repeat;mask:url(assets/brasao-branco.webp) center/100% 100% no-repeat;will-change:transform,opacity}
 #nib-proposta .enter-brasao{display:block;width:100%;height:100%;max-width:none;opacity:.8}
 #nib-proposta .enter-shine{position:absolute;top:-20%;left:0;width:60%;height:140%;background:linear-gradient(100deg,#fff0 0%,#ffffff00 30%,#ffffff 50%,#ffffff00 70%,#fff0 100%);transform:translateX(-170%) skewX(-12deg);will-change:transform}
 /* Botões de navegação com seta (padrão "Ver ...") */
