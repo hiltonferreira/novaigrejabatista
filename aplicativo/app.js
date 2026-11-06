@@ -1055,11 +1055,12 @@
     // (decisão de Hilton, 06/11/2026: sem movimento não faz sentido ter a animação).
     // Acabamento contido: o brasão assenta com desaceleração longa, um reflexo de luz atravessa
     // o desenho e a tela se dissolve sobre a inicial, que sobe de leve. Só transform e opacity.
+    const covered = !enter.hidden; // já cobrindo a tela (app aberto com sessão): não esmaece de novo
     enter.hidden = false;
     const mark = enter.querySelector('.enter-mark'), shine = enter.querySelector('.enter-shine'), halo = enter.querySelector('.enter-halo');
     const T = 2600, settle = 'cubic-bezier(.16,1,.3,1)', soft = 'cubic-bezier(.65,0,.35,1)';
     const parts = appParts.filter(Boolean);
-    enter.animate([{opacity:0},{opacity:1}], {duration:360, easing:'cubic-bezier(.33,1,.68,1)', fill:'forwards'}).finished.then(() => {
+    enter.animate([{opacity:covered ? 1 : 0},{opacity:1}], {duration:covered ? 0 : 360, easing:'cubic-bezier(.33,1,.68,1)', fill:'forwards'}).finished.then(() => {
       // Troca de telas enquanto tudo está coberto, para o trabalho de layout não cair no meio da animação.
       onboarding.hidden = true; auth.hidden = true; gate(false); parts.forEach(el => { el.inert = true; });
       return new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
@@ -1115,7 +1116,18 @@
     onboarding.hidden = false; goSlide(0, false); requestAnimationFrame(() => document.getElementById('onb-next').focus({preventScroll:true}));
   }
   const afterSplash = () => { if (PUBLIC) publicStart(); else if (!readFlag('nib-auth')) openAuth(); };
-  if (splash) {
+  // Já logado neste aparelho (celular e desktop): ao abrir de novo, em vez da abertura, a tela azul cobre
+  // tudo enquanto a sessão é conferida e o brasão aparece (pedido de Hilton, 06/11/2026).
+  const crestOpen = LOGIN_REQUIRED && NibConta.logado && NibConta.logado();
+  if (crestOpen) {
+    if (splash) splash.hidden = true;
+    try { sessionStorage.setItem('nib-splash','1'); } catch (_) {}
+    gate(true); enter.hidden = false;
+    authReady.then(() => {
+      if (account() && onbHidden()) { auth.hidden = true; closeOnboarding(); return; }
+      enter.hidden = true; publicStart();
+    });
+  } else if (splash) {
     let seen = false;
     try { seen = sessionStorage.getItem('nib-splash') === '1'; sessionStorage.setItem('nib-splash','1'); } catch (_) {}
     const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;

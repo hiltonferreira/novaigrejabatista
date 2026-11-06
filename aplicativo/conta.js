@@ -12,7 +12,9 @@
     if (!r.ok || !d || !d.ok) throw new Error((d && d.erro) || 'Serviço indisponível no momento. Tente de novo em instantes.');
     return d;
   }
-  const set = d => { if (d && 'pessoa' in d) pessoa = d.pessoa; return pessoa; };
+  // Marca no aparelho que há uma sessão aberta, para o app abrir direto com o brasão (sem a abertura).
+  const lembra = on => { try { if (on) localStorage.setItem('nib-logado', '1'); else localStorage.removeItem('nib-logado'); } catch (_) {} };
+  const set = d => { if (d && 'pessoa' in d) { pessoa = d.pessoa; lembra(!!pessoa); } return pessoa; };
   window.NibConta = {
     available: () => official,
     pessoa: () => pessoa,
@@ -25,7 +27,8 @@
     eu: async () => { if (!official) return null; try { return set(await api('eu')); } catch (_) { return pessoa; } },
     entrar: async (login, senha) => set(await api('entrar', { login, senha })),
     cadastrar: async dados => set(await api('cadastro', dados)),
-    sair: async () => { try { await api('sair', {}); } finally { pessoa = null; } },
+    logado: () => { try { return localStorage.getItem('nib-logado') === '1'; } catch (_) { return false; } },
+    sair: async () => { try { await api('sair', {}); } finally { pessoa = null; lembra(false); } },
     atualizar: async dados => set(await api('atualizar', dados)),
     senha: async (atual, nova) => api('senha', { atual, nova }),
     esqueci: async email => api('esqueci', { email }),
