@@ -636,7 +636,7 @@ html{scrollbar-gutter:stable}
 #nib-proposta .auth-form{display:flex;flex-direction:column}
 #nib-proposta .auth-form[hidden]{display:none}
 #nib-proposta .auth-form>label,#nib-proposta .auth-choice legend{margin:0 0 6px;font:600 14px/1.3 "NIB Acumin Mobile",Arial,sans-serif;color:#041e42}
-#nib-proposta .auth-form input[type=text],#nib-proposta .auth-form input[type=tel],#nib-proposta .auth-form input[type=email],#nib-proposta .auth-form input[type=password]{width:100%;min-height:50px;margin:0 0 16px;padding:12px 14px;border:1px solid #7a879a;border-radius:12px;background:#fff;color:#041e42;font:400 16px/1.3 "NIB Acumin Mobile",Arial,sans-serif}
+#nib-proposta .auth-form input[type=text],#nib-proposta .auth-form input[type=tel],#nib-proposta .auth-form input[type=email],#nib-proposta .auth-form input[type=password],#nib-proposta .auth-form input[type=date]{width:100%;min-height:50px;margin:0 0 16px;padding:12px 14px;border:1px solid #7a879a;border-radius:12px;background:#fff;color:#041e42;font:400 16px/1.3 "NIB Acumin Mobile",Arial,sans-serif}
 #nib-proposta .auth-form input:focus-visible{outline:3px solid #315f94;outline-offset:1px;border-color:#315f94}
 #nib-proposta .auth-form input[aria-invalid=true]{border-color:#a3341a}
 #nib-proposta .auth-pass{position:relative}
@@ -2269,9 +2269,11 @@ dialog.ck-telao::backdrop{background:#041e42}
 @media(min-width:821px) and (prefers-reduced-motion:reduce){#nib-proposta .layout,#nib-proposta .layout>aside,#nib-proposta .nib-side-tip{transition:none}}
 
 /* Escolha de tratamento (Meu cadastro) no padrão de pílula deslizante */
-#nib-proposta .choice-seg{position:relative;isolation:isolate;grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;width:100%;max-width:360px;padding:4px;border-radius:999px;background:#e6ebf2}
-#nib-proposta .choice-seg::before{content:"";position:absolute;z-index:-1;top:4px;bottom:4px;left:4px;width:calc(50% - 4px);border-radius:999px;background:#fff;box-shadow:0 2px 8px #041e421a;transition:transform .32s cubic-bezier(.22,1,.36,1)}
+#nib-proposta .choice-seg{position:relative;isolation:isolate;grid-column:1/-1;display:grid;grid-template-columns:repeat(var(--n,2),minmax(0,1fr));width:100%;max-width:calc(var(--n,2) * 180px);padding:4px;border-radius:999px;background:#e6ebf2}
+#nib-proposta .choice-seg::before{content:"";position:absolute;z-index:-1;top:4px;bottom:4px;left:4px;width:calc((100% - 8px) / var(--n,2));border-radius:999px;background:#fff;box-shadow:0 2px 8px #041e421a;transition:transform .32s cubic-bezier(.22,1,.36,1)}
 #nib-proposta .choice-seg:has(label:nth-child(2) input:checked)::before{transform:translateX(100%)}
+#nib-proposta .choice-seg:has(label:nth-child(3) input:checked)::before{transform:translateX(200%)}
+#nib-proposta .auth-form .choice-seg{margin:0 0 4px}
 #nib-proposta .choice-seg span,#nib-proposta .choice-seg input:checked+span{min-height:42px;border:0;background:transparent;color:#536176;font-weight:600;transition:color .2s}
 #nib-proposta .choice-seg input:checked+span{color:#041e42}
 @media(prefers-reduced-motion:reduce){#nib-proposta .choice-seg::before{transition:none}}
@@ -2359,3 +2361,4 @@ dialog.ck-telao::backdrop{background:#041e42}
 #nib-proposta .day-pick.seg .day-pick-btn.is-today::after{top:6px;right:8px}
 @media(max-width:420px){#nib-proposta .seg-auto>button small,#nib-proposta .day-pick.seg .day-pick-btn small{font-size:11px}#nib-proposta .day-pick.seg .day-pick-btn strong{font-size:14px}}
 @media(max-width:370px){#nib-proposta .seg-auto>button,#nib-proposta main .seg-auto>button.mem-chip,#nib-proposta .seg-auto>button.is-active{font-size:11.5px;gap:2px}#nib-proposta .seg-auto>button small{font-size:10.5px}}
+#nib-proposta #signup-cell-wrap>label{display:block;margin:0 0 6px;font:600 14px/1.3 "NIB Acumin Mobile",Arial,sans-serif;color:#041e42}

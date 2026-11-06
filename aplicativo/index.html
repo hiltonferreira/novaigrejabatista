@@ -32,8 +32,10 @@
    <label for="signup-name">Nome completo</label>
    <input id="signup-name" name="nome" type="text" autocomplete="off" aria-required="true">
    <fieldset class="auth-choice"><legend>Tratamento no app</legend>
+    <div class="choice-seg" style="--n:2">
     <label><input type="radio" name="sexo" value="f" checked><span>Feminino</span></label>
     <label><input type="radio" name="sexo" value="m"><span>Masculino</span></label>
+    </div>
    </fieldset>
    <label for="signup-phone">Celular com WhatsApp</label>
    <input id="signup-phone" name="celular" type="tel" inputmode="tel" autocomplete="off" placeholder="(69) 9 9999-9999" aria-required="true">
@@ -41,13 +43,17 @@
    <label for="signup-email">E-mail</label>
    <input id="signup-email" name="email" type="email" inputmode="email" autocomplete="off" aria-required="true">
    <fieldset class="auth-choice"><legend>Você já faz parte da NIB?</legend>
+    <div class="choice-seg" style="--n:3">
     <label><input type="radio" name="vinculo" value="membro" checked><span>Membro</span></label>
     <label><input type="radio" name="vinculo" value="frequento"><span>Frequento</span></label>
     <label><input type="radio" name="vinculo" value="visitante"><span>Conhecendo</span></label>
+    </div>
    </fieldset>
    <fieldset class="auth-choice"><legend>Você participa de uma célula?</legend>
+    <div class="choice-seg" style="--n:2">
     <label><input type="radio" name="tem_celula" value="sim"><span>Sim</span></label>
     <label><input type="radio" name="tem_celula" value="nao" checked><span>Ainda não</span></label>
+    </div>
    </fieldset>
    <div id="signup-cell-wrap" hidden><label for="signup-cell">Qual célula?</label><select id="signup-cell" name="celula" class="auth-select"><option value="">Escolha sua célula</option></select></div>
    <label for="signup-pass">Crie uma senha</label>
