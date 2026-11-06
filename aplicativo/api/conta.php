@@ -168,10 +168,11 @@ try {
       $p256 = is_string($k['p256dh'] ?? null) ? $k['p256dh'] : ''; $au = is_string($k['auth'] ?? null) ? $k['auth'] : '';
       if (strlen($ep) > 700 || !nib_push_endpoint_ok($ep) || !preg_match('/^[A-Za-z0-9_-]{80,100}$/', $p256) || !preg_match('/^[A-Za-z0-9_-]{16,30}$/', $au)) nib_erro('Este aparelho não pode receber notificações.');
       nib_limite('push', (string)$eu['id'], 20, 86400);
-      $db->prepare('INSERT INTO nib_push (pessoa_id, endpoint, endpoint_hash, p256dh, auth, aparelho, criado_em) VALUES (?,?,?,?,?,?,?)
-        ON DUPLICATE KEY UPDATE pessoa_id = VALUES(pessoa_id), p256dh = VALUES(p256dh), auth = VALUES(auth), aparelho = VALUES(aparelho)')
-        ->execute([$eu['id'], $ep, hash('sha256', $ep), $p256, $au, mb_substr((string)($_SERVER['HTTP_USER_AGENT'] ?? ''), 0, 120), nib_agora()]);
-      nib_push_depois([(int)$eu['id']], ['title' => 'Notificações ativadas', 'body' => 'Você vai receber aqui os avisos da Nova Igreja Batista.', 'url' => '/app/', 'tag' => 'nib-ativado']);
+      $ins = $db->prepare('INSERT INTO nib_push (pessoa_id, endpoint, endpoint_hash, p256dh, auth, aparelho, criado_em) VALUES (?,?,?,?,?,?,?)
+        ON DUPLICATE KEY UPDATE pessoa_id = VALUES(pessoa_id), p256dh = VALUES(p256dh), auth = VALUES(auth), aparelho = VALUES(aparelho)');
+      $ins->execute([$eu['id'], $ep, hash('sha256', $ep), $p256, $au, mb_substr((string)($_SERVER['HTTP_USER_AGENT'] ?? ''), 0, 120), nib_agora()]);
+      // Só avisa na primeira inscrição deste aparelho (1 = linha nova; 2 ou 0 = já existia).
+      if ($ins->rowCount() === 1) nib_push_depois([(int)$eu['id']], ['title' => 'Notificações ativadas', 'body' => 'Você vai receber aqui os avisos da Nova Igreja Batista.', 'url' => '/app/', 'tag' => 'nib-ativado']);
       nib_json(200, ['ok' => true]);
     }
 

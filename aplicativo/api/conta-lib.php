@@ -25,9 +25,18 @@ function nib_db(): PDO {
   return $db;
 }
 // Cria as tabelas na primeira vez (e só acrescenta o que faltar nas próximas versões).
+const NIB_MIGRACAO = 4;
 function nib_migrar(PDO $db): void {
   $db->exec("CREATE TABLE IF NOT EXISTS nib_versao (v INT NOT NULL) ENGINE=InnoDB");
   $v = (int)($db->query('SELECT MAX(v) FROM nib_versao')->fetchColumn() ?: 0);
+  if ($v >= NIB_MIGRACAO) return; // ao criar a v5, subir NIB_MIGRACAO
+  // Uma migração por vez: pedidos simultâneos esperam a primeira terminar (evita versões repetidas).
+  $db->query("SELECT GET_LOCK('nib_migrar', 15)")->fetchColumn();
+  try { nib_migrar_passos($db, (int)($db->query('SELECT MAX(v) FROM nib_versao')->fetchColumn() ?: 0)); }
+  finally { $db->query("SELECT RELEASE_LOCK('nib_migrar')"); }
+}
+
+function nib_migrar_passos(PDO $db, int $v): void {
   if ($v < 1) nib_migrar_v1($db);
   if ($v < 2) {
     // v2: célula escolhida no cadastro ("Dia|Nome", da lista de células do site).
