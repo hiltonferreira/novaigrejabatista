@@ -158,9 +158,20 @@ function nib_fechar_sessao(): void {
   nib_cookie('', time() - 3600);
 }
 function nib_publico(array $p): array {
-  return ['id' => (int)$p['id'], 'nome' => $p['nome'], 'primeiro' => explode(' ', $p['nome'])[0], 'email' => $p['email'], 'celular' => $p['celular'],
+  $nome = nib_nome_proprio((string)$p['nome']);
+  return ['id' => (int)$p['id'], 'nome' => $nome, 'primeiro' => explode(' ', $nome)[0], 'email' => $p['email'], 'celular' => $p['celular'],
     'sexo' => $p['sexo'], 'vinculo' => $p['vinculo'], 'celula' => $p['celula'] ?? '', 'membro_status' => $p['membro_status'], 'papel' => $p['papel'],
     'nascimento' => $p['nascimento'], 'endereco' => $p['endereco'] ?? '', 'mostrar_aniversario' => (bool)$p['mostrar_aniversario'], 'criado_em' => $p['criado_em']];
+}
+// Nome próprio: "maria DA silva" -> "Maria da Silva" (partículas em minúsculas, exceto no começo).
+function nib_nome_proprio(string $n): string {
+  $partes = preg_split('/\s+/u', trim($n), -1, PREG_SPLIT_NO_EMPTY);
+  foreach ($partes as $i => $w) {
+    $w = mb_strtolower($w, 'UTF-8');
+    $partes[$i] = ($i > 0 && in_array($w, ['da', 'das', 'de', 'do', 'dos', 'e', "d'"], true)) ? $w
+      : implode('-', array_map(fn($x) => mb_strtoupper(mb_substr($x, 0, 1, 'UTF-8'), 'UTF-8') . mb_substr($x, 1, null, 'UTF-8'), explode('-', $w)));
+  }
+  return implode(' ', $partes);
 }
 function nib_celula($v): string {
   $t = nib_texto(is_string($v) ? $v : '', 160);

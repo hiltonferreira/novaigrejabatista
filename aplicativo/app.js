@@ -149,7 +149,7 @@
   }
   function cellOptions(selected) {
     if (!window.NibSite) return '';
-    return NibSite.celulas().map(d => `<optgroup label="${escape(d.dia)}">${d.celulas.map(c => { const k = cellKey(d.dia, c.nome); return `<option value="${escape(k)}"${k === selected ? ' selected' : ''}>${escape(c.nome)} · ${escape(c.horario.split(' ')[0] || '')}</option>`; }).join('')}</optgroup>`).join('');
+    return NibSite.celulas().map(d => `<optgroup label="${escape(d.dia)}">${d.celulas.map(c => { const k = cellKey(d.dia, c.nome); return `<option value="${escape(k)}"${k === selected ? ' selected' : ''}>${escape(c.nome)}</option>`; }).join('')}</optgroup>`).join('');
   }
   function withCell(items, fromKey, days) {
     const myCell = memberCell(); if (!myCell) return items;
@@ -753,7 +753,7 @@
     checks.forEach(([el,bad]) => mark(el,bad));
     const first = checks.find(c => c[1]);
     if (first) return fail(form, 'signup-error', first[2]);
-    const full = name.slice(0,80);
+    const full = properName(name).slice(0,80);
     if (PUBLIC) { authCall(form, 'signup-error', () => NibConta.cadastrar({ nome: full, sexo: f.sexo.value, celular: f.celular.value, email: f.email.value.trim(), vinculo: f.vinculo.value, celula: f.tem_celula.value === 'sim' ? f.celula.value : '', senha: f.senha.value, consentimento: true })); return; }
     state.member = { first: full.split(' ')[0], full, email: f.email.value.trim().slice(0,80), gender: f.sexo.value === 'm' ? 'm' : 'f' };
     if (f.tem_celula.value === 'nao') state.demoCell = null; else { const c = findCell(f.celula.value); const wd = c ? weekdays.findIndex(w => c.dia.toLowerCase().startsWith(w)) : -1; const t = c && c.horario.match(/(\d{1,2})[:h](\d{2})/); state.demoCell = c && wd >= 0 ? { name: c.nome, weekday: wd, time: t ? t[1].padStart(2, '0') + ':' + t[2] : '', place: c.local, leader: c.lider } : undefined; }
@@ -884,6 +884,7 @@
   // Contas reais (versão pública): cadastro, entrada, meu cadastro e painel da equipe.
   const statusLabel = { confirmado: 'Membro confirmado', pendente: 'Aguardando confirmação da Secretaria', nao: 'Não é membro' };
   const vinculoLabel = { membro: 'Membro', frequento: 'Frequenta a igreja', visitante: 'Conhecendo a igreja' };
+  const properName = n => String(n).trim().split(/\s+/).map((w, i) => { w = w.toLocaleLowerCase('pt-BR'); return i > 0 && ['da','das','de','do','dos','e'].includes(w) ? w : w.split('-').map(x => x.charAt(0).toLocaleUpperCase('pt-BR') + x.slice(1)).join('-'); }).join(' ');
   const fmtPhone = d => { d = String(d || '').replace(/\D/g, ''); return d.length === 11 ? `(${d.slice(0,2)}) ${d.slice(2,3)} ${d.slice(3,7)}-${d.slice(7)}` : d.length === 10 ? `(${d.slice(0,2)}) ${d.slice(2,6)}-${d.slice(6)}` : d; };
   const fmtDay = s => s ? String(s).slice(0,10).split('-').reverse().join('/') : '';
   function publicAuthChrome() {

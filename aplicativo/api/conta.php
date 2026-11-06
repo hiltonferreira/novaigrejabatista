@@ -25,7 +25,7 @@ try {
 
     case 'post:cadastro': {
       nib_limite('cadastro', nib_ip(), 6, 3600);
-      $nome = nib_texto($d['nome'] ?? '', 120); $email = nib_email($d['email'] ?? ''); $cel = nib_digitos($d['celular'] ?? '');
+      $nome = nib_nome_proprio(nib_texto($d['nome'] ?? '', 120)); $email = nib_email($d['email'] ?? ''); $cel = nib_digitos($d['celular'] ?? '');
       $senha = is_string($d['senha'] ?? null) ? $d['senha'] : '';
       $sexo = ($d['sexo'] ?? '') === 'm' ? 'm' : 'f';
       $vinculo = in_array($d['vinculo'] ?? '', ['membro', 'frequento', 'visitante'], true) ? $d['vinculo'] : 'visitante';
@@ -65,7 +65,7 @@ try {
 
     case 'post:atualizar': {
       if (!$eu) nib_erro('Entre na sua conta.', 401);
-      $nome = nib_texto($d['nome'] ?? $eu['nome'], 120); $cel = nib_digitos($d['celular'] ?? $eu['celular']);
+      $nome = nib_nome_proprio(nib_texto($d['nome'] ?? $eu['nome'], 120)); $cel = nib_digitos($d['celular'] ?? $eu['celular']);
       $sexo = ($d['sexo'] ?? $eu['sexo']) === 'm' ? 'm' : 'f';
       $end = nib_texto($d['endereco'] ?? ($eu['endereco'] ?? ''), 250);
       $nasc = nib_texto($d['nascimento'] ?? ($eu['nascimento'] ?? ''), 10);
@@ -142,6 +142,7 @@ try {
     case 'get:cadastros': {
       if (!$eu || !nib_equipe($eu)) nib_erro('Acesso só para a equipe da igreja.', 403);
       $rows = $db->query('SELECT id, nome, email, celular, vinculo, celula, membro_status, papel, criado_em, ultimo_acesso, confirmado_em FROM nib_pessoas ORDER BY criado_em DESC LIMIT 2000')->fetchAll();
+      foreach ($rows as &$r) $r['nome'] = nib_nome_proprio((string)$r['nome']); unset($r);
       nib_json(200, ['ok' => true, 'pessoas' => $rows]);
     }
     case 'post:confirmar': {
