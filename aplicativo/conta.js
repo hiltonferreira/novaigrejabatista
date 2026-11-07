@@ -14,21 +14,28 @@
   }
   // Marca no aparelho que há uma sessão aberta, para o app abrir direto com o brasão (sem a abertura).
   const lembra = on => { try { if (on) localStorage.setItem('nib-logado', '1'); else localStorage.removeItem('nib-logado'); } catch (_) {} };
+  // "Ver o app como" (só para admin): troca apenas o que a tela mostra; o servidor continua usando o papel real.
+  const VER = 'nib-ver-como', VER_OPCOES = ['membro', 'secretaria', 'pastoral'];
+  const verComo = () => { if (!pessoa || pessoa.papel !== 'admin') return ''; try { const v = localStorage.getItem(VER) || ''; return VER_OPCOES.includes(v) ? v : ''; } catch (_) { return ''; } };
+  const papel = () => pessoa ? (verComo() || pessoa.papel) : '';
   const set = d => { if (d && 'pessoa' in d) { pessoa = d.pessoa; lembra(!!pessoa); } return pessoa; };
   window.NibConta = {
     available: () => official,
-    pessoa: () => pessoa,
+    pessoa: () => pessoa && verComo() ? Object.assign({}, pessoa, { papel: verComo(), papelReal: pessoa.papel }) : pessoa,
+    papelReal: () => pessoa ? pessoa.papel : '',
+    verComo,
+    definirVerComo: v => { try { if (VER_OPCOES.includes(v)) localStorage.setItem(VER, v); else localStorage.removeItem(VER); } catch (_) {} },
     checkin: async (acao, body) => api(acao, body, 'checkin'),
     sugestao: async body => api('sugestao', body),
     sugestoes: async () => (await api('sugestoes')).sugestoes,
     sugestaoLida: async (id, lida) => api('sugestao-lida', { id, lida }),
-    lideranca: () => !!pessoa && ['pastoral', 'admin'].includes(pessoa.papel),
-    equipe: () => !!pessoa && ['secretaria', 'pastoral', 'admin'].includes(pessoa.papel),
+    lideranca: () => ['pastoral', 'admin'].includes(papel()),
+    equipe: () => ['secretaria', 'pastoral', 'admin'].includes(papel()),
     eu: async () => { if (!official) return null; try { return set(await api('eu')); } catch (_) { return pessoa; } },
     entrar: async (login, senha) => set(await api('entrar', { login, senha })),
     cadastrar: async dados => set(await api('cadastro', dados)),
     logado: () => { try { return localStorage.getItem('nib-logado') === '1'; } catch (_) { return false; } },
-    sair: async () => { try { await api('sair', {}); } finally { pessoa = null; lembra(false); } },
+    sair: async () => { try { await api('sair', {}); } finally { pessoa = null; lembra(false); try { localStorage.removeItem(VER); } catch (_) {} } },
     atualizar: async dados => set(await api('atualizar', dados)),
     senha: async (atual, nova) => api('senha', { atual, nova }),
     esqueci: async email => api('esqueci', { email }),
