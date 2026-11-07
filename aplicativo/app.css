@@ -2515,3 +2515,5 @@ dialog.ck-telao::backdrop{background:#041e42}
 /* v142: data do próximo evento quebra linha em vez de vazar no Android */
 #nib-proposta .home-events .event-date{white-space:normal;overflow-wrap:anywhere}
 #nib-proposta .home-events .event-content{min-width:0}
+#nib-proposta .home-events .event-top{flex-direction:column;align-items:flex-start;flex-wrap:nowrap;gap:6px;min-width:0;max-width:100%}
+#nib-proposta .home-events .event-top .tag{display:block;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;border-radius:999px}
