@@ -624,9 +624,9 @@
     const context = isManagement() ? state.context : PUBLIC ? 'pub-' + (account() ? account().id + '-' + account().papel : 'anon') : 'membro';
     for (const nav of [document.getElementById('navigation'), document.getElementById('mobile-navigation')]) {
       if (nav.dataset.context !== context) {
-        if (nav.id === 'navigation') { const link = ([key,label]) => `<a href="#${key}" data-view="${key}" aria-label="${label}">${navIcon(key)}<span>${label}</span></a>`; nav.innerHTML = PUBLIC && !isManagement() ? publicGroups(items).map(([label,links]) => `<div class="nav-group"><span class="nav-group-label">${label}</span>${links.map(link).join('')}</div>`).join('') : items.map(link).join(''); }
+        if (nav.id === 'navigation') { const link = ([key,label]) => `<a href="#${key}" data-view="${key}" aria-label="${label}">${navIcon(key)}<span>${label}</span></a>`; nav.innerHTML = PUBLIC && !isManagement() ? publicGroups(items).map(([label,links], i) => `<div class="nav-group"><span class="nav-group-label">${label}</span>${links.map(link).join('')}</div>${i === 0 ? viewAsSelect('lateral') : ''}`).join('') : items.map(link).join(''); }
         else {
-          const descriptions = {...admin.descriptions, inicio:'Seu ponto de partida',cadastro: PUBLIC ? 'Seus dados na igreja' : 'Dados e atualizações',eventos:'Encontros e inscrições',generosidade:'Dízimos, ofertas e campanhas',historico:'Seu histórico financeiro',celulas: PUBLIC ? 'Encontre uma célula' : 'Acesso à plataforma', entrar:'Sua conta na Nib', cadastros:'Confirmar membros',checkin:'Presença nos cultos',sugestoes:'Ideias e melhorias',informacoes: PUBLIC ? 'Horários, endereço e liderança' : 'Programação e avisos',gestao:'Integração e apresentações',agenda:'Cultos, eventos e festividades',caderno:'Ore com a comunidade',avisos:'Comunicados para toda a igreja'};
+          const descriptions = {...admin.descriptions, inicio:'Seu ponto de partida',cadastro: PUBLIC ? 'Seus dados na igreja' : 'Dados e atualizações',eventos:'Encontros e inscrições',generosidade:'Dízimos, ofertas e campanhas',historico:'Seu histórico financeiro',celulas: PUBLIC ? 'Encontre uma célula' : 'Acesso à plataforma', entrar:'Sua conta na Nib', equipe:'Números e atalhos da equipe',membros:'Lista, ficha e exportação',membresia:'Integração e apresentação',cadastros:'Confirmar membros',checkin:'Presença nos cultos',sugestoes:'Ideias e melhorias',informacoes: PUBLIC ? 'Horários, endereço e liderança' : 'Programação e avisos',gestao:'Integração e apresentações',agenda:'Cultos, eventos e festividades',caderno:'Ore com a comunidade',avisos:'Comunicados para toda a igreja'};
           const groups = isManagement() ? [[admin.profiles[state.context].name,items]] : PUBLIC ? publicGroups(items) : [['Seu acesso',items.filter(([key])=>['inicio','cadastro'].includes(key))],['Vida na igreja',items.filter(([key])=>['agenda','eventos','generosidade','historico','celulas','informacoes','caderno'].includes(key))]];
           nav.innerHTML = groups.map(([label,links],index) => `<section class="menu-group" aria-labelledby="menu-group-${index}"><h3 id="menu-group-${index}">${label}</h3><div class="menu-grid">${links.map(([key,title])=>`<a href="#${key}" data-view="${key}" aria-label="${title}"><span class="menu-icon">${navIcon(key)}</span><strong>${title}</strong><span class="menu-description">${descriptions[key]}</span><span class="mobile-current" hidden>Atual</span></a>`).join('')}</div></section>`).join('');
         }
@@ -642,7 +642,7 @@
       });
     }
     const ms = document.getElementById('member-shortcuts'); if (ms) ms.hidden = isManagement();
-    document.getElementById('menu-profile').innerHTML = PUBLIC ? (account() ? '<a class="menu-profile-card" href="#cadastro" data-view="cadastro"><span class="profile-avatar" aria-hidden="true">' + escape(account().primeiro.charAt(0).toUpperCase()) + '</span><span><strong>' + escape(account().nome) + '</strong><small>' + escape(account().email) + '</small>' + (account().papel !== 'membro' && papelNome[account().papel] ? '<small>' + papelNome[account().papel] + '</small>' : '') + '</span></a>' : '') : isManagement() ? '<div class="menu-profile-card"><strong>' + admin.profiles[state.context].name + '</strong><span>Experiência de teste</span></div>' : '<a class="menu-profile-card" href="#cadastro" data-view="cadastro"><span class="profile-avatar" aria-hidden="true">' + escape(state.member.first.charAt(0).toUpperCase()) + '</span><span><strong>' + escape(state.member.full) + '</strong><small>' + escape(state.member.email) + '</small></span><span class="profile-demo">Teste</span></a>';
+    document.getElementById('menu-profile').innerHTML = PUBLIC ? (account() ? '<a class="menu-profile-card" href="#cadastro" data-view="cadastro"><span class="profile-avatar" aria-hidden="true">' + escape(account().primeiro.charAt(0).toUpperCase()) + '</span><span><strong>' + escape(account().nome) + '</strong><small>' + escape(account().email) + '</small>' + (account().papel !== 'membro' && papelNome[account().papel] ? '<small>' + papelNome[account().papel] + '</small>' : '') + '</span></a>' + viewAsSelect('menu') : '') : isManagement() ? '<div class="menu-profile-card"><strong>' + admin.profiles[state.context].name + '</strong><span>Experiência de teste</span></div>' : '<a class="menu-profile-card" href="#cadastro" data-view="cadastro"><span class="profile-avatar" aria-hidden="true">' + escape(state.member.first.charAt(0).toUpperCase()) + '</span><span><strong>' + escape(state.member.full) + '</strong><small>' + escape(state.member.email) + '</small></span><span class="profile-demo">Teste</span></a>';
     renderBar();
   }
   function show(view, focus = true, record = true) {
@@ -847,6 +847,7 @@
   root.addEventListener('input', e => { if (isManagement() && admin.input && e.target.id === 'mem-q') admin.input(e.target); if (e.target.id === 'team-q') teamFilterList(e.target.value); if (PUBLIC && e.target.id === 'eq-q') eqFilterInput(e.target.value); });
   root.addEventListener('change', e => { if (PUBLIC && e.target.id === 'eq-cell') { state.memCell = e.target.value; state.memMore = false; show('membros', false, false); return; } if (isManagement() && admin.input && e.target.id === 'mem-cell') { admin.input(e.target); return; } if (e.target.id === 'bday-visible') { state.hideBirthday = !e.target.checked; announce(e.target.checked ? 'Seu aniversário aparece para a igreja (teste).' : 'Seu aniversário não aparece mais para a igreja (teste).', 'success', false); } });
   document.addEventListener('nib-install-change', () => { if (state.view === 'inicio' && !isManagement()) show('inicio', false, false); });
+  document.addEventListener('change', e => { if (PUBLIC && e.target.matches('[data-ver-como-select]')) setViewAs(e.target.value); });
   document.getElementById('demo-context').addEventListener('change', changeContext);
   document.getElementById('demo-context-mobile').addEventListener('change', changeContext);
   document.getElementById('sidebar-toggle').addEventListener('click', event => {
@@ -1283,6 +1284,13 @@
     const curto = { admin: 'Admin', pastoral: 'Pastoral', secretaria: 'Secretaria', membro: 'Membro' };
     const opts = ['admin', 'pastoral', 'secretaria', 'membro'].map(k => `<button type="button" class="history-year${atual === k ? ' is-active' : ''}" data-ver-como="${k}" aria-pressed="${atual === k}">${curto[k]}</button>`).join('');
     return `<section class="box view-as-box"><span class="label">SÓ PARA ADMINISTRAÇÃO</span><h2>Ver o app como</h2><p>Veja o app como cada perfil vê. Só a tela muda: suas permissões continuam as de administração.</p><div class="cell-days view-as-opts" role="group" aria-label="Ver o app como" data-seg="ver-como">${opts}</div></section>`;
+  }
+  // Seletor fixo no menu (celular e computador), como o "Testar experiência" da versão local.
+  function viewAsSelect(where) {
+    if (!PUBLIC || !window.NibConta || NibConta.papelReal() !== 'admin') return '';
+    const atual = NibConta.verComo() || 'admin', id = 'ver-como-' + where;
+    const opts = [['admin', 'Administração'], ['pastoral', 'Liderança Pastoral'], ['secretaria', 'Secretaria'], ['membro', 'Membro']].map(([k, t]) => `<option value="${k}"${atual === k ? ' selected' : ''}>${t}</option>`).join('');
+    return `<div class="view-as-menu"><label for="${id}">Ver o app como</label><select id="${id}" data-ver-como-select autocomplete="off">${opts}</select></div>`;
   }
   function viewAsBar() {
     if (!PUBLIC || !window.NibConta || !NibConta.verComo()) return '';

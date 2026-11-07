@@ -2543,3 +2543,12 @@ dialog.ck-telao::backdrop{background:#041e42}
 #nib-proposta .team-home-stat span:last-child{flex:1 1 auto;min-width:0;color:#41506a;font-size:14px;line-height:1.35;white-space:normal}
 #nib-proposta .team-home-foot{display:flex;flex-wrap:wrap;gap:10px}
 @media(min-width:1100px){#nib-proposta .team-home-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}#nib-proposta main button.team-home-stat{border-bottom:0}}
+/* v152: seletor "Ver o app como" fixo no menu (só administração) */
+#nib-proposta .view-as-menu{margin:16px 0 4px;padding:14px 16px 16px;border:1px solid #f0d78c;border-radius:18px;background:#fff6db}
+#nib-proposta .view-as-menu label{display:block;margin:0 0 8px;color:#6b5200;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;line-height:1.3}
+#nib-proposta .view-as-menu select{box-sizing:border-box;width:100%;min-height:46px;margin:0;padding:0 44px 0 18px;border:1px solid #d9c27a;border-radius:999px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23041e42' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 16px center/18px;color:#041e42;font:inherit;font-size:16px;font-weight:600;-webkit-appearance:none;appearance:none;cursor:pointer}
+#nib-proposta .layout>aside .view-as-menu{margin:6px 6px 18px;padding:12px;border-color:#ffffff2e;background:#ffffff14}
+#nib-proposta .layout>aside .view-as-menu label{color:#f0d78c;font-size:10.5px;letter-spacing:.12em}
+#nib-proposta .layout>aside .view-as-menu select{min-height:40px;padding:0 32px 0 14px;background-position:right 10px center;background-size:16px;font-size:13.5px;border-color:#ffffff40}
+#nib-proposta.nib-sidebar-collapsed .layout>aside .view-as-menu{display:none}
+#nib-proposta #menu-profile .view-as-menu{margin:16px 0 22px}
