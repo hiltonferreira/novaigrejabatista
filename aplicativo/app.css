@@ -2516,4 +2516,7 @@ dialog.ck-telao::backdrop{background:#041e42}
 #nib-proposta .home-events .event-date{white-space:normal;overflow-wrap:anywhere}
 #nib-proposta .home-events .event-content{min-width:0}
 #nib-proposta .home-events .event-top{flex-direction:column;align-items:flex-start;flex-wrap:nowrap;gap:6px;min-width:0;max-width:100%}
-#nib-proposta .home-events .event-top .tag{display:block;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;border-radius:999px}
+#nib-proposta .home-events .event-top .tag{display:block;max-width:100%;white-space:nowrap;border-radius:999px;letter-spacing:.03em;padding:4px 9px}
+#nib-proposta .home-events .event.is-stack{display:flex;flex-direction:column}
+#nib-proposta .home-events .event.is-stack .event-cover{aspect-ratio:2/1;width:100%;height:auto;min-height:0;max-height:none;flex:none;align-self:stretch;overflow:hidden}
+#nib-proposta .home-events .event.is-stack .event-cover img{width:100%;height:100%;object-fit:cover}

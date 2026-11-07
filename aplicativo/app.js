@@ -99,6 +99,16 @@
     return t;
   }
   const knownEvents = () => events.filter(e => e.active).map(e => ({ name: e.name, category: 'Acampamento', summary: 'Dois dias de palavra, worship, gincanas e comunhão para adolescentes de 12 a 17 anos.', start: '2026-11-21T14:00', end: '2026-11-22T14:00', tbd: false, location: '', price: 'R$ 80,00', cta: 'Ver inscrição', open: true, url: '/next/camp-sbgp1-nov26/inscricao.html', image: e.image }));
+  // Tag do próximo evento nunca corta nem quebra: se não cabe ao lado da capa, o card empilha (capa em cima).
+  function fitEventTags() {
+    document.querySelectorAll('#content .home-events .event').forEach(card => {
+      card.classList.remove('is-stack');
+      const tag = card.querySelector('.event-top .tag');
+      if (tag && tag.scrollWidth > tag.parentElement.clientWidth + 1) card.classList.add('is-stack');
+    });
+  }
+  addEventListener('resize', () => requestAnimationFrame(fitEventTags));
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitEventTags);
   function eventCards(compact = false) {
     if (!PUBLIC) return demoEventCards(compact);
     const loaded = window.NibSite && NibSite.eventos();
@@ -693,7 +703,7 @@
     content.querySelectorAll('[data-w]').forEach(el => el.style.setProperty('width', el.dataset.w + '%'));
     if (state.view === 'inicio') myBirthdayPopup();
     if (state.view === 'informacoes' && !isManagement()) { state.noticesSeen = admin.noticesCount(); refreshNotices(); }
-    bindSocialBanners(); renderPixQr(); syncCampaignBar();
+    bindSocialBanners(); renderPixQr(); syncCampaignBar(); fitEventTags();
     renderNavigation();
     closeDrawer();
     if (notices.open) notices.close();
