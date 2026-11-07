@@ -45,6 +45,8 @@
     confirmar: async (id, status) => api('confirmar', { id, status }),
     equipePainel: async () => (await api('equipe-painel')).painel,
     membros: async () => api('membros'),
+    membresia: async () => api('membresia'),
+    membresiaEtapa: async (id, etapa) => api('membresia-etapa', { id, etapa }),
     membrosExportados: async body => api('membros-exportados', body),
     caderno: async (acao, body) => api(acao, body, 'caderno'),
     inscricoes: async () => api('inscricoes'),

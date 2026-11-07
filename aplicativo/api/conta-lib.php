@@ -25,11 +25,11 @@ function nib_db(): PDO {
   return $db;
 }
 // Cria as tabelas na primeira vez (e só acrescenta o que faltar nas próximas versões).
-const NIB_MIGRACAO = 8;
+const NIB_MIGRACAO = 9;
 function nib_migrar(PDO $db): void {
   $db->exec("CREATE TABLE IF NOT EXISTS nib_versao (v INT NOT NULL) ENGINE=InnoDB");
   $v = (int)($db->query('SELECT MAX(v) FROM nib_versao')->fetchColumn() ?: 0);
-  if ($v >= NIB_MIGRACAO) return; // ao criar a v9, subir NIB_MIGRACAO
+  if ($v >= NIB_MIGRACAO) return; // ao criar a v10, subir NIB_MIGRACAO
   // Uma migração por vez: pedidos simultâneos esperam a primeira terminar (evita versões repetidas).
   if ((int)$db->query("SELECT GET_LOCK('nib_migrar', 15)")->fetchColumn() !== 1) throw new RuntimeException('migração em andamento por outro pedido');
   try { nib_migrar_passos($db, (int)($db->query('SELECT MAX(v) FROM nib_versao')->fetchColumn() ?: 0)); }
@@ -106,6 +106,16 @@ function nib_migrar_passos(PDO $db, int $v): void {
     if (!$tem) $db->exec('ALTER TABLE nib_push ADD COLUMN lembretes TINYINT(1) NOT NULL DEFAULT 1 AFTER caderno');
     $db->exec("CREATE TABLE IF NOT EXISTS nib_lembretes_envio (dia DATE NOT NULL PRIMARY KEY, enviados INT NOT NULL DEFAULT 0, criado_em DATETIME NOT NULL) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
     $db->exec('INSERT INTO nib_versao (v) VALUES (8)');
+  }
+  if ($v < 9) {
+    // v9: caminho até a membresia (formulário, reunião de integração, apresentação no culto), registrado pela equipe.
+    $db->exec("CREATE TABLE IF NOT EXISTS nib_membresia (
+      pessoa_id INT UNSIGNED NOT NULL PRIMARY KEY, iniciado_em DATETIME NOT NULL, iniciado_por INT UNSIGNED NULL,
+      formulario_em DATETIME NULL, formulario_por INT UNSIGNED NULL, reuniao_em DATETIME NULL, reuniao_por INT UNSIGNED NULL,
+      apresentacao_em DATETIME NULL, apresentacao_por INT UNSIGNED NULL,
+      CONSTRAINT fk_membresia_pessoa FOREIGN KEY (pessoa_id) REFERENCES nib_pessoas(id) ON DELETE CASCADE
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+    $db->exec('INSERT INTO nib_versao (v) VALUES (9)');
   }
 }
 

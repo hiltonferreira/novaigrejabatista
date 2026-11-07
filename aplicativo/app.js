@@ -13,11 +13,11 @@
   root.classList.toggle('is-public', PUBLIC);
   const publicViews = ['inicio','agenda','eventos','generosidade','celulas','caderno','informacoes','avisos','sugestoes'];
   const account = () => (PUBLIC && window.NibConta) ? NibConta.pessoa() : null;
-  const allowedPublic = () => publicViews.concat(account() ? ['cadastro'] : [], account() && NibConta.equipe() ? ['equipe', 'membros', 'cadastros', 'checkin'] : []);
+  const allowedPublic = () => publicViews.concat(account() ? ['cadastro'] : [], account() && NibConta.equipe() ? ['equipe', 'membros', 'membresia', 'cadastros', 'checkin'] : []);
   const publicNav = () => [['inicio', 'Início'], ['agenda', 'Agenda'], ['eventos', 'Eventos'], ['generosidade', 'Generosidade'], ['celulas', 'Células'], ['caderno', 'Caderno de oração'], ['avisos', 'Avisos da igreja'], ['informacoes', 'Informações'], ['sugestoes', 'Sugestões para o app']]
-    .concat(account() ? [['cadastro', 'Meu cadastro']] : [['entrar', 'Entrar ou criar cadastro']], account() && NibConta.equipe() ? [['equipe', 'Painel da equipe'], ['membros', 'Membros'], ['cadastros', 'Cadastros'], ['checkin', 'Check-in dos cultos']] : []);
+    .concat(account() ? [['cadastro', 'Meu cadastro']] : [['entrar', 'Entrar ou criar cadastro']], account() && NibConta.equipe() ? [['equipe', 'Painel da equipe'], ['membros', 'Membros'], ['membresia', 'Membresia'], ['cadastros', 'Cadastros'], ['checkin', 'Check-in dos cultos']] : []);
   // Menu do app oficial em blocos, para não virar uma lista comprida sem respiro.
-  const publicGroups = items => [['Sua conta',['inicio','cadastro','entrar']],['Vida na igreja',['agenda','eventos','celulas','caderno']],['Igreja',['avisos','generosidade','informacoes']],['Equipe da igreja',['equipe','membros','cadastros','checkin']],['Ajude a melhorar',['sugestoes']]]
+  const publicGroups = items => [['Sua conta',['inicio','cadastro','entrar']],['Vida na igreja',['agenda','eventos','celulas','caderno']],['Igreja',['avisos','generosidade','informacoes']],['Equipe da igreja',['equipe','membros','membresia','cadastros','checkin']],['Ajude a melhorar',['sugestoes']]]
     .map(([label,keys]) => [label, keys.map(k => items.find(([key]) => key === k)).filter(Boolean)]).filter(([,links]) => links.length);
   // Grupos de opções lado a lado (data-seg) no padrão do login: trilho cinza com pílula branca que desliza (pedido de Hilton, 06/11/2026).
   const segPrev = new Map();
@@ -62,6 +62,7 @@
     eventos: ['VIDA EM COMUNIDADE', 'Eventos', 'Os próximos encontros da igreja e as inscrições abertas.'],
     informacoes: ['FIQUE POR PERTO', 'Informações da igreja', 'Horários dos cultos, endereço, liderança e canais oficiais.'],
     equipe: ['EQUIPE DA IGREJA', 'Painel da equipe', 'Números reais do app, atalhos e o que precisa de atenção.'],
+    membresia: ['EQUIPE DA IGREJA', 'Membresia', 'Caminho até a membresia: formulário, reunião e apresentação no culto.'],
     membros: ['EQUIPE DA IGREJA', 'Membros', 'Lista completa, ficha de cada pessoa e exportação.'],
     checkin: ['EQUIPE DA IGREJA', 'Check-in dos cultos', 'QR Code do telão, local da igreja e quem registrou presença.'],
     sugestoes: ['SUA OPINIÃO', 'Sugestões para o app', 'Conte o que podemos melhorar no app: ideias, problemas ou o que você gostou.']
@@ -79,7 +80,7 @@
   const button = (text, view, primary = false) => { const back = !primary && /^Voltar/.test(text); return `<button type="button" class="button ${primary ? 'action primary' : back ? 'button-go button-back' : 'button-go'}" data-view="${view}">${back ? backArrow : ''}<span>${text}</span>${primary || back ? '' : arrow}</button>`; };
   // Ícones reaproveitados da função icon() do painel; sem ícones nas ações.
   // Ícones: conjunto único em icons.js (NibIcons).
-  const iconAlias = { entrar: 'cadastro', equipe: 'gestao', cadastros: 'solicitacoes', avisos: 'comunicados', checkin: 'recepcao' };
+  const iconAlias = { entrar: 'cadastro', equipe: 'relatorios', cadastros: 'solicitacoes', avisos: 'comunicados', checkin: 'recepcao' };
   const navIcon = key => NibIcons.svg(iconAlias[key] || key);
   const events = [
     { name: 'Mulheres Virtuosas', image: 'assets/mulheres.webp', date: '30/10/2026', active: false },
@@ -638,9 +639,10 @@
   function show(view, focus = true, record = true) {
     if(view==='oracao') view='caderno'; // Compatibilidade com o destino anterior.
     if (isManagement() && !admin.allowed(view)) view = 'gestao';
-    if (adminOnly.includes(view) && !isManagement()) view = 'inicio';
+    if (adminOnly.includes(view) && !isManagement() && !(PUBLIC && allowedPublic().includes(view))) view = 'inicio';
     if (PUBLIC && !allowedPublic().includes(view)) view = 'inicio';
     if (PUBLIC && record && view === 'equipe' && !state.painelLoading) state.painel = null; // números sempre atualizados ao abrir
+    if (PUBLIC && record && view === 'membresia' && !state.membLoading) state.memb = null;
     if (PUBLIC && record && view === 'membros' && !state.memLoading) { state.mem = null; state.memSel = null; state.memPrint = null; }
     if (record && focus && view !== state.view) viewHistory.push(state.view);
     state.view = (labels[view] || admin.labels[view]) ? view : 'inicio';
@@ -686,6 +688,7 @@
       cadastros: () => teamPage(),
       equipe: () => teamPanel(),
       membros: () => membersRealPage(),
+      membresia: () => membershipRealPage(),
       cadastro: () => PUBLIC ? accountPage() : `<div class="profile-layout"><section class="box profile-summary"><span class="tag">Membro · exemplo</span><h2>${escape(state.member.full)}</h2><p>Confira seu cadastro na igreja.</p><dl class="profile"><dt>E-mail</dt><dd>jessica@example.com</dd><dt>Tratamento</dt><dd>${g('Masculino', 'Feminino')}</dd><dt>Telefone</dt><dd>Não informado</dd><dt>Endereço</dt><dd>Não informado</dd><dt>Apresentação no culto</dt><dd>Apresentação registrada · exemplo</dd></dl><label class="check profile-bday"><input type="checkbox" id="bday-visible"${state.hideBirthday ? '' : ' checked'}><span>Mostrar meu aniversário (dia e mês) na tela inicial da igreja</span></label><p class="note">As alterações são encaminhadas para conferência da Secretaria.</p></section><section class="box profile-edit"><h2>O que você deseja atualizar?</h2><p>Preencha somente os dados que precisam mudar.</p><form id="profile-form"><fieldset><legend>Dados para atualização</legend><div class="form-grid"><div><label for="new-name">Nome completo</label><input id="new-name" name="newName" autocomplete="off" placeholder="Informe o nome corrigido" maxlength="160"></div><div><label for="new-email">Novo e-mail</label><input id="new-email" name="newEmail" type="email" autocomplete="off" placeholder="nome@exemplo.com" maxlength="160"></div><div><label for="new-phone">Novo telefone / WhatsApp</label><input id="new-phone" name="newPhone" type="tel" inputmode="tel" autocomplete="off" placeholder="(69) 99999-9999" maxlength="25"></div><div><label for="new-address">Endereço</label><input id="new-address" name="newAddress" autocomplete="off" placeholder="Rua, número, bairro e cidade" maxlength="250"></div></div></fieldset><fieldset><legend>Contato e observações</legend><label for="contact-email">E-mail para retorno</label><input id="contact-email" name="email" type="email" autocomplete="email" value="${escape(state.member.email)}" placeholder="exemplo@example.com" maxlength="160" required><label for="contact-note">Outra alteração ou observação (opcional)</label><textarea id="contact-note" name="note" placeholder="Descreva o que a Secretaria precisa conferir." maxlength="500"></textarea></fieldset><div class="form-actions"><button class="action" type="submit">Enviar solicitação de teste</button><button type="reset">Limpar alterações</button></div></form><p class="note">Use dados fictícios. A solicitação fica nesta sessão; nenhum cadastro real é alterado.</p></section></div>${myRequestsBox()}`,
       eventos: () => `${eventCards()}${PUBLIC && account() ? myRegistrations() : legacyRegsBox()}`,
       celulas: () => cellsPage(),
@@ -765,6 +768,7 @@
     if (action.dataset.teamStatus) { teamSet(action); return; }
     if (PUBLIC && action.dataset.push) { if (action.dataset.push === 'on') pushOn(action); else pushOffCall(); return; }
     if (PUBLIC && action.dataset.eqMem !== undefined) { state.memSel = action.dataset.eqMem || null; state.memPrint = null; show('membros', false, false); scrollTo(0, 0); return; }
+    if (PUBLIC && action.dataset.eqEtapa) { eqEtapa(action); return; }
     if (PUBLIC && action.dataset.eqStatus) { state.memStatus = action.dataset.eqStatus; state.memMore = false; show('membros', false, false); return; }
     if (PUBLIC && action.dataset.eqBday) { state.memBday = !state.memBday; show('membros', false, false); return; }
     if (PUBLIC && action.dataset.eqClear) { state.memQ = ''; state.memCell = ''; state.memBday = false; state.memStatus = 'todos'; show('membros', false, false); return; }
@@ -1282,7 +1286,7 @@
   }
   function setViewAs(v) {
     NibConta.definirVerComo(v === 'admin' ? '' : v);
-    state.sugList = null; state.cadPainel = null; state.cadTab = 'pedidos'; state.ckPanel = null; state.ck = null; state.ckKey = null; state.avisos = null; state.painel = null; state.mem = null; state.memSel = null;
+    state.sugList = null; state.cadPainel = null; state.cadTab = 'pedidos'; state.ckPanel = null; state.ck = null; state.ckKey = null; state.avisos = null; state.painel = null; state.mem = null; state.memSel = null; state.memb = null;
     applyAccount();
   }
   function accountPage() {
@@ -1372,6 +1376,7 @@
       tile(P.alerta, 'Aguardando confirmação', d.aguardando, '', 'Disseram que são membros', 'cadastros')
     ].join('');
     const texts = {
+      membresia: d.em_integracao ? `${d.em_integracao} ${d.em_integracao === 1 ? 'pessoa' : 'pessoas'} em integração. Registre a próxima etapa.` : 'Ninguém em integração. Inicie pela ficha da pessoa.',
       membros: eqPodeExportar() ? 'Lista completa, ficha de cada pessoa e exportação.' : 'Lista completa e ficha de cada pessoa.',
       cadastros: d.aguardando ? `${d.aguardando} ${d.aguardando === 1 ? 'pessoa aguardando' : 'pessoas aguardando'} confirmação de membro.` : 'Ninguém aguardando confirmação.',
       checkin: 'QR Code do telão, local da igreja e presença.',
@@ -1379,9 +1384,9 @@
       caderno: d.caderno_ativos ? `${d.caderno_ativos} ${d.caderno_ativos === 1 ? 'pedido' : 'pedidos'} em andamento.` : 'Nenhum pedido em andamento.',
       sugestoes: d.sugestoes_novas ? `${d.sugestoes_novas} ${d.sugestoes_novas === 1 ? 'sugestão nova' : 'sugestões novas'} para ler.` : 'Ideias e problemas enviados pelos membros.'
     };
-    const badges = { cadastros: d.aguardando, sugestoes: lid ? d.sugestoes_novas : 0 };
-    const titles = { membros: 'Membros', cadastros: 'Cadastros', checkin: 'Check-in dos cultos', avisos: 'Avisos', caderno: 'Caderno de oração', sugestoes: 'Sugestões' };
-    const keys = ['membros', 'cadastros', 'checkin', 'avisos', 'caderno'].concat(lid ? ['sugestoes'] : []);
+    const badges = { membresia: d.em_integracao, cadastros: d.aguardando, sugestoes: lid ? d.sugestoes_novas : 0 };
+    const titles = { membresia: 'Membresia', membros: 'Membros', cadastros: 'Cadastros', checkin: 'Check-in dos cultos', avisos: 'Avisos', caderno: 'Caderno de oração', sugestoes: 'Sugestões' };
+    const keys = ['membresia', 'membros', 'cadastros', 'checkin', 'avisos', 'caderno'].concat(lid ? ['sugestoes'] : []);
     const shortcuts = keys.map(k => `<button type="button" class="quick-action admin-quick" data-view="${k}"><span class="home-action-icon" aria-hidden="true">${navIcon(k)}</span>${badges[k] ? `<span class="admin-badge" aria-label="${badges[k]} pendente${badges[k] === 1 ? '' : 's'}">${badges[k]}</span>` : ''}<strong>${titles[k]}</strong><span class="home-action-description">${texts[k]}</span></button>`).join('');
     const quick = `<section aria-labelledby="admin-quick-title"><div class="section-heading"><div><span class="label">${lid ? 'LIDERANÇA PASTORAL' : 'SECRETARIA DA IGREJA'}</span><h2 id="admin-quick-title">Atalhos de gestão</h2></div></div><p class="admin-rule">${lid ? 'A Liderança Pastoral decide. A Secretaria organiza e registra o que foi decidido.' : 'A Secretaria organiza e registra. Decisões pastorais ficam com a Liderança Pastoral.'}</p><div class="quick-actions">${shortcuts}</div></section>`;
     const c = d.cultos || [], lastC = c[c.length - 1];
@@ -1410,7 +1415,7 @@
     return `<div class="gift-backrow"><button type="button" class="button-back gift-back" data-eq-mem=""><svg class="back-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg><span>Voltar à lista</span></button></div>
     <section class="box mem-card"><div class="admin-person-head"><span class="profile-avatar" aria-hidden="true">${escape(p.nome.charAt(0))}</span><div><h2>${escape(p.nome)}</h2><small>Cadastro no app em ${fmtDay(p.criado_em)}</small></div><span class="tag ${eqTag(s)}">${s}</span></div>
     <div class="mem-actions">${tel ? `<a class="mem-act" href="tel:${tel}">${NibIcons.svg('telefone')}<span>Ligar</span></a><a class="mem-act" href="https://wa.me/55${tel}" target="_blank" rel="noopener">${NibIcons.svg('whatsapp')}<span>WhatsApp</span></a>` : ''}${p.email ? `<a class="mem-act" href="mailto:${escape(p.email)}">${NibIcons.svg('email')}<span>E-mail</span></a>` : ''}</div>
-    ${s === 'Aguardando' ? `<div class="form-actions">${button('Confirmar em Cadastros', 'cadastros')}</div>` : ''}</section>
+    ${s === 'Aguardando' ? `<div class="form-actions">${button('Confirmar em Cadastros', 'cadastros')}</div>` : p.membro_status !== 'confirmado' ? `<div class="form-actions">${p.integracao ? button('Ver em Membresia', 'membresia') : `<button type="button" class="action admin-secondary" data-eq-etapa="inicio" data-id="${p.id}">Iniciar integração</button>`}</div>` : ''}</section>
     <section class="box"><h3 class="mem-h">Contato</h3>${kv([['Celular', escape(fmtPhone(p.celular))], ['E-mail', escape(p.email || '')]])}</section>
     <section class="box"><h3 class="mem-h">Endereço</h3>${kv([['Endereço', escape(p.endereco || '')]])}</section>
     <section class="box"><h3 class="mem-h">Dados pessoais</h3>${kv([['Nascimento', fmtDay(p.nascimento)], ['Gênero', p.sexo === 'm' ? 'Masculino' : 'Feminino'], ['CPF', lid ? escape(fmtCpf(p.cpf || '')) : null], ['Aniversário na tela inicial', p.mostrar_aniversario ? 'Aparece' : 'Não aparece (escolha da pessoa)']])}</section>
@@ -1447,6 +1452,47 @@
     <div class="mem-count" aria-live="polite">${list.length} pessoa${list.length === 1 ? '' : 's'}${filtered ? ' · <button type="button" class="mem-clear" data-eq-clear="1">Limpar filtros</button>' : ''}</div>
     <ul class="mem-list">${shown.map(row).join('') || '<li class="box tes-empty">Ninguém encontrado com esses filtros.</li>'}</ul>
     ${list.length > shown.length ? `<button type="button" class="action admin-secondary mem-more" data-eq-more="1">Mostrar todas as ${list.length}</button>` : ''}${pr}`;
+  }
+  // Membresia real: formulário, reunião de integração e apresentação no culto (ordem obrigatória). Mesmo visual da demonstração.
+  const EQ_ETAPAS = [['formulario', 'Formulário'], ['reuniao', 'Reunião'], ['apresentacao', 'Apresentação']];
+  const eqTick = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg>';
+  function eqPessoaCard(p) {
+    const at = EQ_ETAPAS.findIndex(([k]) => !p[k + '_em']), cur = at < 0 ? 3 : at, prox = at < 0 ? null : EQ_ETAPAS[at][0];
+    const steps = `<ol class="gift-steps admin-steps" aria-label="Etapas de ${escape(p.nome)}">${EQ_ETAPAS.map(([k, l], i) => `<li class="${p[k + '_em'] ? 'is-done' : i === cur ? 'is-current' : ''}"${i === cur ? ' aria-current="step"' : ''}><span class="gift-dot">${p[k + '_em'] ? eqTick : '0' + (i + 1)}</span><span class="gift-step-label">${l}</span></li>`).join('')}</ol>`;
+    const label = { formulario: 'Registrar formulário recebido', reuniao: 'Registrar reunião de integração', apresentacao: 'Registrar apresentação no culto' };
+    const action = prox ? `<button type="button" class="action primary" data-eq-etapa="${prox}" data-id="${p.id}">${label[prox]}</button>` : '';
+    const sair = prox ? `<button type="button" class="action admin-secondary" data-eq-etapa="remover" data-id="${p.id}">Retirar da integração</button>` : '';
+    const log = [['iniciado', 'Início'], ...EQ_ETAPAS].filter(([k]) => p[k + '_em']).map(([k, l]) => `<li><b>${l}</b> ${fmtDay(p[k + '_em'])} · ${escape(p[k + '_nome'] || 'Equipe')}</li>`).join('');
+    return `<article class="box admin-person"><div class="admin-person-head"><span class="profile-avatar" aria-hidden="true">${escape(p.nome.charAt(0))}</span><div><h3>${escape(p.nome)}</h3><small>${escape(vinculoLabel[p.vinculo] || '')}${p.celula ? ' · ' + escape(eqCelula(p.celula)) : ''}</small></div>${p.apresentacao_em ? '<span class="tag status-active">Membro</span>' : '<span class="tag">Em integração</span>'}</div>${steps}${action ? `<div class="form-actions gift-actions">${action}${sair}</div>` : ''}${log ? `<details class="admin-log"><summary>Histórico de registros</summary><ul>${log}</ul></details>` : ''}</article>`;
+  }
+  function membershipRealPage() {
+    eqLoad('memb', () => NibConta.membresia(), 'membresia');
+    if (!state.memb) return state.membErro ? `<p class="form-error" role="alert">${escape(state.membErro)}</p>` : '<p class="event-empty">Carregando a membresia</p>';
+    const all = state.memb.pessoas || [], open = all.filter(p => !p.apresentacao_em), done = all.filter(p => p.apresentacao_em).slice(0, 20);
+    const lid = NibConta.lideranca();
+    // Quem pode entrar no caminho: ainda não é membro e não está na lista.
+    const ids = new Set(all.map(p => String(p.id)));
+    const cand = state.mem ? state.mem.pessoas.filter(p => p.membro_status === 'nao' && !ids.has(String(p.id))) : null;
+    if (!state.mem) eqLoad('mem', () => NibConta.membros(), 'membresia');
+    const add = cand && cand.length ? `<section class="box mem-add"><h2>Iniciar integração</h2><p>Escolha quem quer se tornar membro. A pessoa precisa ter cadastro no app.</p><div class="mem-filter-row"><label class="visually-hidden" for="eq-memb-add">Pessoa</label><select id="eq-memb-add"><option value="">Escolha a pessoa</option>${cand.map(p => `<option value="${p.id}">${escape(p.nome)} · ${escape(eqSituacao(p))}</option>`).join('')}</select><button type="button" class="action primary" data-eq-etapa="inicio" data-id="">Iniciar</button></div></section>` : '';
+    return `<div class="admin-intro"><p>As três etapas seguem uma ordem obrigatória: formulário, reunião de integração e apresentação no culto. Toque no botão para registrar a próxima. ${lid ? 'A Liderança Pastoral e a Secretaria podem registrar.' : 'A Secretaria e a Liderança Pastoral podem registrar.'}</p></div>
+    <div class="mem-link-row">${button('Ver todos os membros', 'membros')}</div>${add}
+    <div class="admin-people">${open.map(eqPessoaCard).join('') || '<section class="box"><p>Ninguém em integração no momento.</p></section>'}</div>
+    ${done.length ? `<h2 class="admin-subtitle">Apresentados</h2><div class="admin-people">${done.map(eqPessoaCard).join('')}</div>` : ''}
+    <p class="note">Ao registrar a apresentação no culto, a pessoa passa a ser membro confirmado e recebe um aviso no celular. Quem já era membro antes do app é confirmado em Cadastros.</p>`;
+  }
+  async function eqEtapa(btn) {
+    let id = btn.dataset.id;
+    if (btn.dataset.eqEtapa === 'inicio' && !id) { const sel = content.querySelector('#eq-memb-add'); id = sel && sel.value; if (!id) { announce('Escolha a pessoa para iniciar a integração.', 'error'); return; } }
+    if (btn.dataset.eqEtapa === 'apresentacao' && !confirm('Registrar a apresentação no culto? A pessoa passa a ser membro confirmado.')) return;
+    if (btn.dataset.eqEtapa === 'remover' && !confirm('Retirar esta pessoa da integração?')) return;
+    btn.disabled = true;
+    try {
+      await NibConta.membresiaEtapa(Number(id), btn.dataset.eqEtapa);
+      state.memb = null; state.mem = null; state.painel = null;
+      if (state.view === 'membros') { show('membros', false, false); } else show('membresia', false, false);
+      announce(btn.dataset.eqEtapa === 'apresentacao' ? 'Apresentação registrada. A pessoa agora é membro.' : btn.dataset.eqEtapa === 'remover' ? 'Pessoa retirada da integração.' : 'Etapa registrada.', 'success', false);
+    } catch (e) { btn.disabled = false; announce(e.message, 'error'); }
   }
   async function eqExport(form) {
     const v = new FormData(form), err = form.querySelector('.form-error'), btn = form.querySelector('[type=submit]');

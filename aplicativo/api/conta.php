@@ -198,7 +198,8 @@ try {
         SUM(nascimento IS NULL OR endereco IS NULL OR endereco = '') dados_faltando,
         SUM(celula IS NOT NULL AND celula <> '') em_celula,
         SUM(membro_status = 'confirmado' AND (celula IS NULL OR celula = '')) membros_sem_celula,
-        COUNT(DISTINCT NULLIF(celula, '')) celulas
+        COUNT(DISTINCT NULLIF(celula, '')) celulas,
+        (SELECT COUNT(*) FROM nib_membresia WHERE apresentacao_em IS NULL) em_integracao
         FROM nib_pessoas");
       $q->execute([$d30, $d30]); $n = array_map('intval', $q->fetch());
       // Cultos com check-in: os 8 mais recentes (dia + culto), do mais antigo ao mais novo.
@@ -221,11 +222,12 @@ try {
       $tz = new DateTimeZone('America/Porto_Velho'); $d56 = (new DateTimeImmutable('today', $tz))->modify('-56 days')->format('Y-m-d');
       $q = $db->prepare("SELECT p.id, p.nome, p.email, p.celular, p.cpf, p.sexo, p.vinculo, p.celula, p.membro_status, p.nascimento, p.endereco, p.mostrar_aniversario, p.criado_em, p.ultimo_acesso, p.confirmado_em,
         (SELECT MAX(c.culto_dia) FROM nib_checkins c WHERE c.pessoa_id = p.id) ultima_presenca,
-        (SELECT COUNT(*) FROM nib_checkins c WHERE c.pessoa_id = p.id AND c.culto_dia >= ?) presencas_8sem
+        (SELECT COUNT(*) FROM nib_checkins c WHERE c.pessoa_id = p.id AND c.culto_dia >= ?) presencas_8sem,
+        (SELECT COUNT(*) FROM nib_membresia m WHERE m.pessoa_id = p.id AND m.apresentacao_em IS NULL) integracao
         FROM nib_pessoas p ORDER BY p.nome LIMIT 5000");
       $q->execute([$d56]); $rows = $q->fetchAll();
       $veCpf = nib_ve_cpf($eu);
-      foreach ($rows as &$r) { $r['nome'] = nib_nome_proprio((string)$r['nome']); $r['presencas_8sem'] = (int)$r['presencas_8sem']; $r['mostrar_aniversario'] = (int)$r['mostrar_aniversario']; if (!$veCpf) unset($r['cpf']); } unset($r);
+      foreach ($rows as &$r) { $r['nome'] = nib_nome_proprio((string)$r['nome']); $r['presencas_8sem'] = (int)$r['presencas_8sem']; $r['integracao'] = (int)$r['integracao']; $r['mostrar_aniversario'] = (int)$r['mostrar_aniversario']; if (!$veCpf) unset($r['cpf']); } unset($r);
       $exporta = in_array($eu['papel'], ['secretaria', 'admin'], true);
       $log = [];
       if ($exporta) {
@@ -233,6 +235,47 @@ try {
         foreach ($log as &$l) $l['nome'] = nib_nome_proprio((string)($l['nome'] ?? '')); unset($l);
       }
       nib_json(200, ['ok' => true, 'pessoas' => $rows, 'pode_exportar' => $exporta, 'exportacoes' => $log]);
+    }
+    // Membresia: três etapas em ordem (formulário, reunião de integração, apresentação no culto). Secretaria e Pastoral registram.
+    case 'get:membresia': {
+      if (!$eu || !nib_equipe($eu)) nib_erro('Acesso só para a equipe da igreja.', 403);
+      $rows = $db->query("SELECT m.pessoa_id id, p.nome, p.vinculo, p.celula, p.celular, p.membro_status, m.iniciado_em, m.formulario_em, m.reuniao_em, m.apresentacao_em,
+        (SELECT nome FROM nib_pessoas x WHERE x.id = m.iniciado_por) iniciado_nome, (SELECT nome FROM nib_pessoas x WHERE x.id = m.formulario_por) formulario_nome,
+        (SELECT nome FROM nib_pessoas x WHERE x.id = m.reuniao_por) reuniao_nome, (SELECT nome FROM nib_pessoas x WHERE x.id = m.apresentacao_por) apresentacao_nome
+        FROM nib_membresia m JOIN nib_pessoas p ON p.id = m.pessoa_id ORDER BY m.apresentacao_em IS NOT NULL, m.iniciado_em DESC LIMIT 2000")->fetchAll();
+      foreach ($rows as &$r) foreach (['nome', 'iniciado_nome', 'formulario_nome', 'reuniao_nome', 'apresentacao_nome'] as $k) if ($r[$k] !== null) $r[$k] = nib_nome_proprio((string)$r[$k]);
+      unset($r);
+      nib_json(200, ['ok' => true, 'pessoas' => $rows]);
+    }
+    case 'post:membresia-etapa': {
+      if (!$eu || !nib_equipe($eu)) nib_erro('Acesso só para a equipe da igreja.', 403);
+      $id = (int)($d['id'] ?? 0); $etapa = in_array($d['etapa'] ?? '', ['inicio', 'formulario', 'reuniao', 'apresentacao', 'remover'], true) ? $d['etapa'] : '';
+      if ($id < 1 || $etapa === '') nib_erro('Pedido inválido.');
+      $q = $db->prepare('SELECT id, membro_status, sexo FROM nib_pessoas WHERE id = ?'); $q->execute([$id]); $pes = $q->fetch();
+      if (!$pes) nib_erro('Cadastro não encontrado.', 404);
+      $q = $db->prepare('SELECT * FROM nib_membresia WHERE pessoa_id = ?'); $q->execute([$id]); $m = $q->fetch();
+      $agora = nib_agora(); $me = (int)$eu['id'];
+      if ($etapa === 'inicio') {
+        if ($pes['membro_status'] === 'confirmado') nib_erro('Esta pessoa já é membro.');
+        if ($m) nib_erro('Esta pessoa já está no caminho até a membresia.');
+        $db->prepare('INSERT INTO nib_membresia (pessoa_id, iniciado_em, iniciado_por) VALUES (?,?,?)')->execute([$id, $agora, $me]);
+      } elseif ($etapa === 'remover') {
+        if (!$m || $m['apresentacao_em']) nib_erro('Não é possível retirar quem já foi apresentado.');
+        $db->prepare('DELETE FROM nib_membresia WHERE pessoa_id = ?')->execute([$id]);
+      } else {
+        if (!$m) nib_erro('Inicie o caminho até a membresia antes.');
+        $antes = ['formulario' => null, 'reuniao' => 'formulario_em', 'apresentacao' => 'reuniao_em'][$etapa];
+        if ($m[$etapa . '_em']) nib_erro('Esta etapa já foi registrada.');
+        if ($antes && !$m[$antes]) nib_erro('Registre a etapa anterior primeiro.');
+        $db->prepare("UPDATE nib_membresia SET {$etapa}_em = ?, {$etapa}_por = ? WHERE pessoa_id = ?")->execute([$agora, $me, $id]);
+        if ($etapa === 'apresentacao') {
+          // Apresentado no culto: passa a ser membro confirmado (o reconhecimento decorre da apresentação).
+          $db->prepare("UPDATE nib_pessoas SET membro_status = 'confirmado', vinculo = 'membro', confirmado_por = ?, confirmado_em = ?, atualizado_em = ? WHERE id = ?")->execute([$me, $agora, $agora, $id]);
+          nib_push_depois([$id], ['title' => ($pes['sexo'] === 'm' ? 'Bem-vindo' : 'Bem-vinda') . ' à membresia', 'body' => 'Você foi ' . ($pes['sexo'] === 'm' ? 'apresentado' : 'apresentada') . ' como membro da Nova Igreja Batista. Que alegria caminhar com você!', 'url' => '/app/', 'tag' => 'nib-membro']);
+        }
+      }
+      nib_registrar($me, 'membresia-' . $etapa, $id);
+      nib_json(200, ['ok' => true]);
     }
     case 'post:membros-exportados': {
       // Só Secretaria e administração exportam (decisão de Hilton, 07/11/2026). Cada exportação fica registrada.
