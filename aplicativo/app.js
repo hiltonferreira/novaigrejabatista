@@ -477,7 +477,7 @@
   function myRegistrations() {
     const consult = `<a class="button button-go" href="https://novaigrejabatista.com.br/consulta-inscricao/" target="_blank" rel="noopener">Consultar pelo site ${arrow}</a>`;
     const head = '<span class="label">MINHAS INSCRIÇÕES</span><h2>Suas inscrições em eventos</h2>';
-    if (!state.regs || state.regsKey !== state.accountKey) { if (!state.regsLoading) loadRegistrations().then(() => { if (state.view === 'eventos') show('eventos', false, false); }); return `<section class="box event-follow-up my-regs">${head}<p class="event-empty">Carregando suas inscrições…</p></section>`; }
+    if (!state.regs || state.regsKey !== state.accountKey) { if (!state.regsLoading) loadRegistrations().then(() => { if (state.view === 'eventos') show('eventos', false, false); }); return `<section class="box event-follow-up my-regs">${head}<p class="event-empty">Carregando suas inscrições</p></section>`; }
     const d = state.regs;
     if (d.desativado) return legacyRegsBox();
     if (d.erro) return `<section class="box event-follow-up my-regs">${head}<p>${escape(d.erro)}</p>${consult}</section>`;
@@ -511,11 +511,11 @@
   function homeAvisos() {
     ensureAvisos(); const list = (state.avisos || []).slice(0, 2); if (!list.length) return '';
     const v = avisosVistos();
-    return `<section class="home-avisos" aria-labelledby="home-avisos-title"><div class="section-heading"><div><span class="label">MURAL DA IGREJA</span><h2 id="home-avisos-title">${list.length === 1 ? 'Aviso da igreja' : 'Avisos da igreja'}</h2></div>${button('Ver todos', 'avisos')}</div>${list.map(a => `<article class="home-aviso${a.fixado ? ' is-pinned' : ''}"><span class="aviso-icon" aria-hidden="true">${navIcon('comunicados')}</span><div><div class="home-aviso-top"><h3>${escape(a.titulo)}</h3>${v.includes(a.id) ? '' : '<span class="home-aviso-new">Novo</span>'}</div><p>${escape(a.texto.length > 180 ? a.texto.slice(0, 180) + '…' : a.texto)}</p>${a.ate ? `<small>Até ${escape(fmtDay(a.ate))}</small>` : ''}${a.link ? `<a class="home-aviso-link" href="${escape(a.link)}" target="_blank" rel="noopener">Saiba mais ${arrow}</a>` : ''}</div></article>`).join('')}</section>`;
+    return `<section class="home-avisos" aria-labelledby="home-avisos-title"><div class="section-heading"><div><span class="label">MURAL DA IGREJA</span><h2 id="home-avisos-title">${list.length === 1 ? 'Aviso da igreja' : 'Avisos da igreja'}</h2></div>${button('Ver todos', 'avisos')}</div>${list.map(a => `<article class="home-aviso${a.fixado ? ' is-pinned' : ''}"><span class="aviso-icon" aria-hidden="true">${navIcon('comunicados')}</span><div><div class="home-aviso-top"><h3>${escape(a.titulo)}</h3>${v.includes(a.id) ? '' : '<span class="home-aviso-new">Novo</span>'}</div><p>${escape(a.texto)}</p>${a.ate ? `<small>Até ${escape(fmtDay(a.ate))}</small>` : ''}${a.link ? `<a class="home-aviso-link" href="${escape(a.link)}" target="_blank" rel="noopener">Saiba mais ${arrow}</a>` : ''}</div></article>`).join('')}</section>`;
   }
   function avisosPage() {
     if (!PUBLIC) return `<section class="box"><p>Os avisos publicados pela igreja aparecem aqui.</p></section>`;
-    if (!state.avisos) { ensureAvisos(); return '<p class="event-empty">Carregando os avisos…</p>'; }
+    if (!state.avisos) { ensureAvisos(); return '<p class="event-empty">Carregando os avisos</p>'; }
     try { localStorage.setItem('nib-avisos-lidos', JSON.stringify(state.avisos.map(a => a.id).slice(0, 60))); } catch (_) {}
     const team = account() && NibConta.equipe();
     const form = team ? `<section class="box aviso-form-box"><span class="label">NOVO AVISO</span><h2>Publicar para toda a igreja</h2><form id="aviso-form" class="aviso-form"><label>Título<input name="titulo" maxlength="120" required placeholder="Ex.: Culto de Santa Ceia"></label><label>Aviso<textarea name="texto" rows="4" maxlength="1500" required placeholder="Escreva o aviso como ele deve aparecer para a igreja."></textarea></label><label>Link (opcional)<input name="link" type="url" maxlength="300" placeholder="https://"></label><label>Mostrar até<input name="ate" type="date" required min="${NibDaily.dayKey(new Date())}" value="${NibDaily.dayKey(new Date(Date.now() + 7 * 864e5))}"></label><label class="check"><input type="checkbox" name="fixado"><span>Fixar no topo</span></label><label class="check"><input type="checkbox" name="notificar" checked><span>Enviar notificação no celular de quem ativou</span></label><div class="form-actions"><button type="submit" class="action">Publicar aviso</button></div></form></section>` : '';
@@ -535,7 +535,7 @@
     if (state.ckKey !== state.accountKey) return '';
     const r = state.ck; if (!r || !r.culto) return '';
     const done = r.feito, c = r.culto;
-    return `<section class="checkin-card${done ? ' is-done' : ''}" aria-labelledby="checkin-title"><span class="checkin-icon">${ckIcon(done)}</span><div class="checkin-text"><span class="label">CHECK-IN DO CULTO</span><h2 id="checkin-title" tabindex="-1">${done ? 'Presença registrada' : escape(c.nome)}</h2><p>${done ? `Você está no ${escape(c.nome)}. Que bom ter você aqui!` : `Hoje, às ${escape(c.hora)}. Chegou? Registre sua presença.`}</p>${done ? '' : `<p class="checkin-note" id="checkin-msg">${state.ckMsg ? escape(state.ckMsg) : 'Usamos sua localização só para confirmar que você está na igreja. Ela não fica guardada.'}</p>`}</div>${done ? '' : `<button type="button" class="action primary" data-checkin-go>${state.ckBusy ? 'Confirmando…' : 'Fazer check-in'}</button>`}</section>`;
+    return `<section class="checkin-card${done ? ' is-done' : ''}" aria-labelledby="checkin-title"><span class="checkin-icon">${ckIcon(done)}</span><div class="checkin-text"><span class="label">CHECK-IN DO CULTO</span><h2 id="checkin-title" tabindex="-1">${done ? 'Presença registrada' : escape(c.nome)}</h2><p>${done ? `Você está no ${escape(c.nome)}. Que bom ter você aqui!` : `Hoje, às ${escape(c.hora)}. Chegou? Registre sua presença.`}</p>${done ? '' : `<p class="checkin-note" id="checkin-msg">${state.ckMsg ? escape(state.ckMsg) : 'Usamos sua localização só para confirmar que você está na igreja. Ela não fica guardada.'}</p>`}</div>${done ? '' : `<button type="button" class="action primary" data-checkin-go>${state.ckBusy ? 'Confirmando' : 'Fazer check-in'}</button>`}</section>`;
   }
   // Posição atual do celular (resolve null se negar, demorar ou não tiver GPS).
   const posicao = (ms = 12000) => new Promise(res => { if (!navigator.geolocation) return res(null); navigator.geolocation.getCurrentPosition(p => res({ lat: p.coords.latitude, lng: p.coords.longitude, precisao: Math.round(p.coords.accuracy) }), () => res(null), { enableHighAccuracy: true, timeout: ms, maximumAge: 30000 }); });
@@ -559,7 +559,7 @@
   }
   function checkinPanel() {
     if (!PUBLIC || !(account() && NibConta.equipe())) return '';
-    if (!state.ckPanel) { NibConta.checkin('painel').then(r => { state.ckPanel = r; if (state.view === 'checkin') show('checkin', false, false); }).catch(e => announce(e.message, 'error')); return '<p class="event-empty">Carregando…</p>'; }
+    if (!state.ckPanel) { NibConta.checkin('painel').then(r => { state.ckPanel = r; if (state.view === 'checkin') show('checkin', false, false); }).catch(e => announce(e.message, 'error')); return '<p class="event-empty">Carregando</p>'; }
     const r = state.ckPanel, url = location.origin + location.pathname.replace(/[^/]*$/, '') + '?checkin=' + r.qr;
     const local = r.local ? `<p>Local da igreja definido${r.pode_local ? '. Se mudar, defina de novo estando na igreja.' : '.'}</p>` : `<p><strong>O local da igreja ainda não foi definido.</strong> ${r.pode_local ? 'Esteja dentro da igreja e toque no botão abaixo.' : 'Peça à Liderança Pastoral para definir, estando na igreja.'} Enquanto isso, o check-in funciona só pelo QR Code.</p>`;
     const hoje = r.culto ? `<section class="box ck-box"><span class="label">AGORA</span><h2>${escape(r.culto.nome)} · ${r.presentes.length} ${r.presentes.length === 1 ? 'presença' : 'presenças'}</h2>${r.presentes.length ? `<ul class="ck-list">${r.presentes.map(p => `<li><span>${escape(p.nome)}</span><small>${escape(p.hora)} · ${p.via === 'qr' ? 'QR Code' : 'local'}</small></li>`).join('')}</ul>` : '<p>Ninguém registrou presença ainda.</p>'}</section>` : '';
@@ -574,7 +574,7 @@
     const seg = `<div class="sug-tipos seg" role="radiogroup" aria-label="Tipo de mensagem" style="--n:3;--i:${ti};--from:${from}"><span class="seg-pill${from !== ti ? ' is-moving' : ''}" aria-hidden="true"></span>${sugTipos.map(([v, l]) => `<button type="button" role="radio" aria-checked="${v === tipo}" data-sug-tipo="${v}">${l}</button>`).join('')}</div>`;
     const form = `<section class="box sug-box"><h2>Como podemos melhorar o app?</h2><p>Sua mensagem vai direto para quem cuida do app. Pode ser uma ideia, algo que não funcionou ou o que você gostou.</p><form id="sug-form" novalidate>${seg}<label for="sug-texto">Sua mensagem</label><textarea id="sug-texto" name="texto" rows="5" maxlength="1500" required placeholder="${tipo === 'problema' ? 'O que aconteceu? Em qual tela?' : tipo === 'elogio' ? 'O que você mais gostou?' : 'Qual a sua ideia?'}">${escape(state.sugDraft || '')}</textarea><p class="form-error" role="alert"></p><div class="form-actions"><button class="action primary" type="submit">Enviar</button></div></form></section>`;
     if (!(account() && NibConta.lideranca())) return form;
-    if (!state.sugList) { NibConta.sugestoes().then(l => { state.sugList = l; if (state.view === 'sugestoes') show('sugestoes', false, false); }).catch(() => {}); return form + '<p class="event-empty">Carregando as sugestões…</p>'; }
+    if (!state.sugList) { NibConta.sugestoes().then(l => { state.sugList = l; if (state.view === 'sugestoes') show('sugestoes', false, false); }).catch(() => {}); return form + '<p class="event-empty">Carregando as sugestões</p>'; }
     const label = Object.fromEntries(sugTipos), novas = state.sugList.filter(s => !s.lida).length;
     const list = state.sugList.length ? `<ul class="sug-list">${state.sugList.map(s => `<li class="sug-item${s.lida ? ' is-read' : ''}"><div class="sug-top"><span class="sug-tag is-${escape(s.tipo)}">${escape(label[s.tipo] || 'Sugestão')}</span><small>${escape(s.nome)} · ${escape(avisoData(s.criado_em))}</small></div><p>${escape(s.texto)}</p><button type="button" class="sug-read" data-sug-lida="${s.id}" data-lida="${s.lida ? 0 : 1}">${s.lida ? 'Marcar como nova' : 'Marcar como lida'}</button></li>`).join('')}</ul>` : '<p class="event-empty">Nenhuma sugestão recebida ainda.</p>';
     return form + `<section class="box sug-inbox"><span class="label">RECEBIDAS</span><h2>${state.sugList.length} ${state.sugList.length === 1 ? 'mensagem' : 'mensagens'}${novas ? ` · ${novas} ${novas === 1 ? 'nova' : 'novas'}` : ''}</h2>${list}</section>`;
@@ -591,7 +591,7 @@
   function cadMarcarVisto() { const ids = state.prayers.map(p => Number(p.id)); try { const v = Number(localStorage.getItem(cadVistoKey()) || 0); localStorage.setItem(cadVistoKey(), String(Math.max(v, ...ids, 0))); } catch (_) {} }
   // Painel do caderno (Secretaria, Liderança Pastoral e admin): só números, sem nomes nem textos dos pedidos.
   function cadPainel() {
-    if (!state.cadPainel) { NibConta.caderno('painel').then(d => { state.cadPainel = d.painel; if (state.view === 'caderno') show('caderno', false, false); }).catch(e => { state.cadPainel = { erro: e.message }; if (state.view === 'caderno') show('caderno', false, false); }); return '<p class="event-empty">Carregando o painel…</p>'; }
+    if (!state.cadPainel) { NibConta.caderno('painel').then(d => { state.cadPainel = d.painel; if (state.view === 'caderno') show('caderno', false, false); }).catch(e => { state.cadPainel = { erro: e.message }; if (state.view === 'caderno') show('caderno', false, false); }); return '<p class="event-empty">Carregando o painel</p>'; }
     const d = state.cadPainel; if (d.erro) return `<p class="form-error" role="alert">${escape(d.erro)}</p>`;
     const pct = d.total ? Math.round(d.atendidos / d.total * 100) : 0;
     const tile = (n, l, extra = '') => `<div class="cad-stat${extra}"><strong>${n}</strong><span>${l}</span></div>`;
@@ -602,7 +602,7 @@
   }
   function publicNotebook() {
     if (!account()) return `<section class="box prayer-box"><span class="label">CUIDADO EM COMUNIDADE</span><h2>Vamos orar uns pelos outros</h2><p>No caderno de oração, quem tem cadastro no app compartilha pedidos e marca “Vou orar” nos pedidos dos irmãos. Os pedidos ficam visíveis só para quem entrou na conta.</p><div class="form-actions"><button type="button" class="action" data-view="entrar">Entrar ou criar cadastro</button></div></section>`;
-    if (!state.prayersLoaded) { loadPrayers().then(() => { if (state.view === 'caderno') show('caderno', false, false); }); return '<p class="event-empty">Carregando o caderno…</p>'; }
+    if (!state.prayersLoaded) { loadPrayers().then(() => { if (state.view === 'caderno') show('caderno', false, false); }); return '<p class="event-empty">Carregando o caderno</p>'; }
     cadMarcarVisto();
     const ativos = state.prayers.filter(p => !p.answered), minhas = state.prayers.filter(p => p.answered && p.own);
     const tab = state.cadTab === 'painel' && !state.prayerTeam ? 'pedidos' : (state.cadTab || 'pedidos');
@@ -748,7 +748,7 @@
     }
     if (action.dataset.checkinGo !== undefined && PUBLIC) { if (!state.ckBusy) doCheckin('local'); return; }
     if (action.dataset.ckTelao !== undefined && PUBLIC) { const r = state.ckPanel; if (!r) return; const url = location.origin + location.pathname.replace(/[^/]*$/, '') + '?checkin=' + r.qr; const d = document.createElement('dialog'); d.className = 'ck-telao'; d.innerHTML = `<div class="ck-telao-in"><img src="assets/splash-logo-final.webp" alt="Nib" width="200" height="75"><h2>Check-in do culto</h2><div class="ck-qr">${qrSvg(url)}</div><p>Aponte a câmera do celular e registre sua presença.</p><button type="button" class="action">Fechar</button></div>`; document.body.append(d); d.querySelector('button').addEventListener('click', () => { d.close(); d.remove(); }); d.addEventListener('close', () => d.remove()); d.showModal(); if (d.requestFullscreen) d.requestFullscreen().catch(() => {}); return; }
-    if (action.dataset.ckLocal !== undefined && PUBLIC) { action.disabled = true; action.textContent = 'Lendo a localização…'; posicao(15000).then(pos => { if (!pos) throw new Error('Não conseguimos a localização. Permita o acesso e tente de novo.'); return NibConta.checkin('local', pos); }).then(() => { state.ckPanel = null; show('checkin', false, false); announce('Local da igreja definido.', 'success'); }).catch(e => { action.disabled = false; action.textContent = 'Definir o local da igreja aqui'; announce(e.message, 'error'); }); return; }
+    if (action.dataset.ckLocal !== undefined && PUBLIC) { action.disabled = true; action.textContent = 'Lendo a localização'; posicao(15000).then(pos => { if (!pos) throw new Error('Não conseguimos a localização. Permita o acesso e tente de novo.'); return NibConta.checkin('local', pos); }).then(() => { state.ckPanel = null; show('checkin', false, false); announce('Local da igreja definido.', 'success'); }).catch(e => { action.disabled = false; action.textContent = 'Definir o local da igreja aqui'; announce(e.message, 'error'); }); return; }
     if (action.dataset.sugTipo && PUBLIC) { const t = content.querySelector('#sug-texto'); if (t) state.sugDraft = t.value; state.sugTipo = action.dataset.sugTipo; show('sugestoes', false, false); const b = content.querySelector(`[data-sug-tipo="${state.sugTipo}"]`); if (b) b.focus({preventScroll:true}); return; }
     if (action.dataset.sugLida && PUBLIC) { const id = Number(action.dataset.sugLida), lida = action.dataset.lida === '1'; action.disabled = true; NibConta.sugestaoLida(id, lida).then(() => { const s = state.sugList.find(x => Number(x.id) === id); if (s) s.lida = lida; show('sugestoes', false, false); }).catch(e => { action.disabled = false; announce(e.message, 'error'); }); return; }
     if (action.dataset.avisoRemove && PUBLIC) { if (!confirm('Remover este aviso para toda a igreja?')) return; action.disabled = true; NibConta.avisos('remover', { id: Number(action.dataset.avisoRemove) }).then(loadAvisos).then(() => { show('avisos', false, false); refreshNotices(); announce('Aviso removido.', 'success', false); }).catch(e => { action.disabled = false; announce(e.message, 'warning'); }); return; }
@@ -907,7 +907,7 @@
     if (p && !p.celula) out.push({ id: 'sem-celula', kind: 'info', title: 'Participa de uma célula?', text: 'Informe sua célula em Meu cadastro para ver os encontros no calendário.', view: 'celulas', action: 'Ver células' });
     const hoje = withCell(NibDaily.agenda(today, 1), today, 1).filter(x => x.day === today);
     hoje.forEach(x => out.push({ id: 'hoje-' + today + '-' + x.name, kind: x.type === 'Minha célula' ? 'cell' : 'agenda', title: x.type === 'Minha célula' ? 'Hoje tem célula' : 'Hoje na igreja', text: x.name + (x.time ? ', às ' + x.time : '') + (x.place ? ' · ' + x.place : ''), view: 'agenda', action: 'Ver na agenda' }));
-    ensureAvisos(); (state.avisos || []).slice(0, 5).forEach(a => out.push({ id: 'aviso-' + a.id, kind: 'aviso', title: a.titulo, text: a.texto.length > 140 ? a.texto.slice(0, 140) + '…' : a.texto, view: 'avisos', action: 'Ver avisos' }));
+    ensureAvisos(); (state.avisos || []).slice(0, 5).forEach(a => out.push({ id: 'aviso-' + a.id, kind: 'aviso', title: a.titulo, text: a.texto, view: 'avisos', action: 'Ver avisos' }));
     const ev = (window.NibSite && NibSite.eventos()) || [];
     const limite = NibDaily.dayKey(new Date(Date.now() + 21 * 864e5));
     ev.filter(e => e.open && e.start.slice(0, 10) >= today && e.start.slice(0, 10) <= limite).slice(0, 3).forEach(e => out.push({ id: 'evento-' + e.name + e.start, kind: 'event', title: 'Inscrições abertas', text: e.name + ' · ' + fmtDay(e.start), view: 'eventos', action: 'Ver evento' }));
@@ -1211,7 +1211,7 @@
   async function forgot() {
     const err = document.getElementById('login-error'), email = document.getElementById('login-id').value.trim();
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { err.textContent = 'Escreva seu e-mail no campo acima e toque de novo em "Esqueci minha senha".'; document.getElementById('login-id').focus(); return; }
-    err.textContent = 'Enviando…';
+    err.textContent = 'Enviando';
     try { await NibConta.esqueci(email); err.textContent = 'Se houver um cadastro com esse e-mail, enviamos um link para criar uma nova senha. Confira também a caixa de spam e Promoções.'; }
     catch (e) { err.textContent = e.message; }
   }
@@ -1253,7 +1253,7 @@
     const head = '<section class="box push-box" aria-labelledby="push-title"><span class="label">NOTIFICAÇÕES</span><h2 id="push-title">Avisos no seu celular</h2>';
     if (isIOS() && !standalone()) return head + '<p>No iPhone, as notificações funcionam com o app instalado. No Safari, toque em Compartilhar e depois em “Adicionar à Tela de Início”. Abra o app pelo ícone e volte aqui.</p></section>';
     if (!pushOk()) return head + '<p>Este navegador não recebe notificações. Instale o app na tela inicial do celular para ativar.</p></section>';
-    if (!state.push) { pushRefresh(); return head + '<p>Conferindo…</p></section>'; }
+    if (!state.push) { pushRefresh(); return head + '<p>Conferindo</p></section>'; }
     if (!state.push.on) return head + '<p>Receba no celular os avisos da igreja, como a confirmação da sua membresia.</p><div class="form-actions"><button type="button" class="action" data-push="on">Ativar notificações</button></div></section>';
     return head + `<p>Ativadas neste celular. Você recebe os avisos da igreja e da sua membresia.</p><label class="check"><input type="checkbox" data-push-lembretes${state.push.lembretes !== false ? ' checked' : ''}><span>Lembrete no dia dos cultos, da minha célula e dos eventos, com o horário</span></label><label class="check"><input type="checkbox" data-push-caderno${state.push.caderno ? ' checked' : ''}><span>Também quero receber cada novo pedido do Caderno de oração</span></label><div class="form-actions"><button type="button" class="button" data-push="off">Desligar neste celular</button></div></section>`;
   }
@@ -1283,7 +1283,7 @@
     if (!state.team) {
       NibConta.cadastros().then(list => { state.team = list; if (state.view === 'cadastros') show('cadastros', false, false); })
         .catch(e => { state.team = []; state.teamError = e.message; if (state.view === 'cadastros') show('cadastros', false, false); });
-      return '<p class="event-empty">Carregando cadastros…</p>';
+      return '<p class="event-empty">Carregando cadastros</p>';
     }
     const f = state.teamFilter || 'pendente';
     const list = state.team.filter(p => f === 'todos' || (f === 'pendente' ? p.membro_status === 'pendente' : f === 'confirmado' ? p.membro_status === 'confirmado' : p.membro_status === 'nao'));

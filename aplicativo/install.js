@@ -64,7 +64,7 @@
     if (!b) return;
     if (b.dataset.installClose) { const d = document.getElementById('install-dialog'); if (d) d.close(); return; }
     if (b.dataset.installLater) { hide(); changed(); return; }
-    if (b.dataset.swUpdate) { const w = window.__nibWaiting; window.__nibUpdating = true; if (w) w.postMessage('skip'); b.disabled = true; b.textContent = 'Atualizando…'; return; }
+    if (b.dataset.swUpdate) { const w = window.__nibWaiting; window.__nibUpdating = true; if (w) w.postMessage('skip'); b.disabled = true; b.textContent = 'Atualizando'; return; }
     const drawer = document.getElementById('mobile-drawer'); if (drawer && drawer.open) drawer.close();
     if (deferred) {
       const ev = deferred; deferred = null;
