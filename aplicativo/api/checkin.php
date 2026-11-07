@@ -95,11 +95,11 @@ try {
       if ($c) { $q = $db->prepare('SELECT p.nome, k.via, k.criado_em FROM nib_checkins k JOIN nib_pessoas p ON p.id = k.pessoa_id WHERE k.culto_dia = ? AND k.culto = ? ORDER BY k.criado_em DESC'); $q->execute([$c['dia'], $c['nome']]);
         $hoje = array_map(fn($r) => ['nome' => nib_nome_proprio((string)$r['nome']), 'via' => $r['via'], 'hora' => substr((string)$r['criado_em'], 11, 5)], $q->fetchAll()); }
       nib_json(200, ['ok' => true, 'culto' => $c, 'presentes' => $hoje, 'cultos' => array_map(fn($r) => ['dia' => $r['culto_dia'], 'culto' => $r['culto'], 'total' => (int)$r['total'], 'qr' => (int)$r['qr']], $ult),
-        'qr' => nib_checkin_qr($db), 'local' => nib_local_igreja($db), 'pode_local' => in_array($eu['papel'], ['pastoral', 'admin'], true)]);
+        'qr' => nib_checkin_qr($db), 'local' => nib_local_igreja($db), 'pode_local' => nib_tem_papel($eu, ['pastoral', 'admin'])]);
     }
 
     case 'post:local': {
-      if (!in_array($eu['papel'], ['pastoral', 'admin'], true)) nib_erro('Só a Liderança Pastoral define o local da igreja.', 403);
+      if (!nib_tem_papel($eu, ['pastoral', 'admin'])) nib_erro('Só a Liderança Pastoral define o local da igreja.', 403);
       $pos = nib_coord($d); if (!$pos) nib_erro('Localização inválida.');
       if ($pos[2] > 60) nib_erro('A localização está imprecisa (' . $pos[2] . ' m). Vá para perto da porta ou de uma janela e tente de novo.');
       nib_ajuste_set($db, 'igreja_local', json_encode(['lat' => round($pos[0], 6), 'lng' => round($pos[1], 6), 'por' => (int)$eu['id'], 'em' => nib_agora()]));

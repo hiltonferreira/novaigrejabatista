@@ -15,22 +15,35 @@
   // Marca no aparelho que há uma sessão aberta, para o app abrir direto com o brasão (sem a abertura).
   const lembra = on => { try { if (on) localStorage.setItem('nib-logado', '1'); else localStorage.removeItem('nib-logado'); } catch (_) {} };
   // "Ver o app como" (só para admin): troca apenas o que a tela mostra; o servidor continua usando o papel real.
-  const VER = 'nib-ver-como', VER_OPCOES = ['membro', 'secretaria', 'pastoral'];
-  const verComo = () => { if (!pessoa || pessoa.papel !== 'admin') return ''; try { const v = localStorage.getItem(VER) || ''; return VER_OPCOES.includes(v) ? v : ''; } catch (_) { return ''; } };
-  const papel = () => pessoa ? (verComo() || pessoa.papel) : '';
+  // Quem tem mais de um perfil (ou é admin) escolhe com qual ver o app. O servidor continua usando os perfis reais.
+  const VER = 'nib-ver-como', ORDEM = ['admin', 'pastoral', 'secretaria', 'tesouraria', 'membro'];
+  const papeisReais = () => { if (!pessoa) return []; const l = Array.isArray(pessoa.papeis) && pessoa.papeis.length ? pessoa.papeis : [pessoa.papel || 'membro']; return ORDEM.filter(k => l.includes(k)); };
+  const principal = () => papeisReais()[0] || '';
+  // Opções do seletor: admin vê todos os perfis com telas; os demais, os próprios perfis com telas e Membro.
+  const opcoes = () => {
+    const r = papeisReais(); if (!r.length) return [];
+    if (r.includes('admin')) return ['admin', 'pastoral', 'secretaria', 'membro'];
+    const o = ['pastoral', 'secretaria'].filter(k => r.includes(k));
+    return r.length > 1 && o.length ? o.concat('membro') : [];
+  };
+  const verComo = () => { const o = opcoes(); if (o.length < 2) return ''; try { const v = localStorage.getItem(VER) || ''; return o.includes(v) && v !== o[0] ? v : ''; } catch (_) { return ''; } };
+  const tem = quais => { const v = verComo(); return v ? quais.includes(v) : papeisReais().some(k => quais.includes(k)); };
   const set = d => { if (d && 'pessoa' in d) { pessoa = d.pessoa; lembra(!!pessoa); } return pessoa; };
   window.NibConta = {
     available: () => official,
-    pessoa: () => pessoa && verComo() ? Object.assign({}, pessoa, { papel: verComo(), papelReal: pessoa.papel }) : pessoa,
-    papelReal: () => pessoa ? pessoa.papel : '',
+    pessoa: () => !pessoa ? pessoa : verComo() ? Object.assign({}, pessoa, { papel: verComo(), papeis: [verComo()], papelReal: principal() }) : Object.assign({}, pessoa, { papel: principal(), papeis: papeisReais() }),
+    papelReal: () => principal(),
+    papeisReais,
+    opcoesPerfil: opcoes,
     verComo,
-    definirVerComo: v => { try { if (VER_OPCOES.includes(v)) localStorage.setItem(VER, v); else localStorage.removeItem(VER); } catch (_) {} },
+    definirVerComo: v => { try { const o = opcoes(); if (o.includes(v) && v !== o[0]) localStorage.setItem(VER, v); else localStorage.removeItem(VER); } catch (_) {} },
     checkin: async (acao, body) => api(acao, body, 'checkin'),
     sugestao: async body => api('sugestao', body),
     sugestoes: async () => (await api('sugestoes')).sugestoes,
     sugestaoLida: async (id, lida) => api('sugestao-lida', { id, lida }),
-    lideranca: () => ['pastoral', 'admin'].includes(papel()),
-    equipe: () => ['secretaria', 'pastoral', 'admin'].includes(papel()),
+    lideranca: () => tem(['pastoral', 'admin']),
+    equipe: () => tem(['secretaria', 'pastoral', 'admin']),
+    exporta: () => tem(['secretaria', 'admin']),
     eu: async () => { if (!official) return null; try { return set(await api('eu')); } catch (_) { return pessoa; } },
     entrar: async (login, senha) => set(await api('entrar', { login, senha })),
     cadastrar: async dados => set(await api('cadastro', dados)),
@@ -46,7 +59,7 @@
     equipePainel: async () => (await api('equipe-painel')).painel,
     membros: async () => api('membros'),
     membresia: async () => api('membresia'),
-    mudarPapel: async (id, papel) => api('papel', { id, papel }),
+    mudarPapeis: async (id, papeis) => api('papel', { id, papeis }),
     membresiaEtapa: async (id, etapa) => api('membresia-etapa', { id, etapa }),
     membrosExportados: async body => api('membros-exportados', body),
     caderno: async (acao, body) => api(acao, body, 'caderno'),

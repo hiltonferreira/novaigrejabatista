@@ -2561,3 +2561,16 @@ dialog.ck-telao::backdrop{background:#041e42}
 #nib-proposta main .view-as-bar .view-as-back{display:grid;place-items:center;flex:0 0 36px;box-sizing:border-box;width:36px;height:36px;min-width:36px;min-height:36px;max-height:36px;margin:0 0 0 auto;padding:0;border:0;border-radius:50%;background:#041e42;color:#fff;cursor:pointer}
 #nib-proposta .view-as-bar .view-as-back svg{width:16px;height:16px}
 @media(max-width:350px){#nib-proposta .view-as-eye{display:none}}
+/* v155: confirmação de membro dentro de Membros */
+#nib-proposta main .mem-alert{display:flex;align-items:center;gap:12px;width:100%;box-sizing:border-box;margin:0 0 14px;padding:14px 16px;border:1px solid #f3c9a8;border-radius:18px;background:#fff4ec;color:#041e42;text-align:left;font:inherit;cursor:pointer}
+#nib-proposta main .mem-alert.is-on{cursor:default}
+#nib-proposta .mem-alert .dash-ico{flex:0 0 36px;width:36px;height:36px}
+#nib-proposta .mem-alert-text{display:flex;flex-direction:column;gap:2px;flex:1 1 auto;min-width:0}
+#nib-proposta .mem-alert-text strong{font-size:15px;line-height:1.3}
+#nib-proposta .mem-alert-text small{color:#41506a;font-size:13px;line-height:1.35}
+#nib-proposta .mem-alert .admin-chevron{flex:0 0 18px;width:18px;height:18px;color:#8a5a3a}
+#nib-proposta .mem-alert .mem-clear{flex:0 0 auto;white-space:nowrap}
+#nib-proposta .eq-confirm{margin-top:14px;padding:14px 16px;border-radius:16px;background:#fff4ec;border:1px solid #f3c9a8}
+#nib-proposta .eq-confirm p{margin:0 0 10px;color:#41506a;font-size:14px;line-height:1.45}
+#nib-proposta .eq-confirm p strong{color:#041e42}
+#nib-proposta .eq-confirm .form-actions{margin:0;display:flex;flex-wrap:wrap;gap:10px}

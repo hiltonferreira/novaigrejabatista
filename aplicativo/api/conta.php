@@ -178,9 +178,9 @@ try {
 
     case 'get:cadastros': {
       if (!$eu || !nib_equipe($eu)) nib_erro('Acesso só para a equipe da igreja.', 403);
-      $rows = $db->query('SELECT id, nome, email, celular, cpf, vinculo, celula, membro_status, papel, criado_em, ultimo_acesso, confirmado_em FROM nib_pessoas ORDER BY criado_em DESC LIMIT 2000')->fetchAll();
+      $rows = $db->query('SELECT id, nome, email, celular, cpf, vinculo, celula, membro_status, papel, papeis, criado_em, ultimo_acesso, confirmado_em FROM nib_pessoas ORDER BY criado_em DESC LIMIT 2000')->fetchAll();
       $veCpf = nib_ve_cpf($eu);
-      foreach ($rows as &$r) { $r['nome'] = nib_nome_proprio((string)$r['nome']); if (!$veCpf) unset($r['cpf']); } unset($r);
+      foreach ($rows as &$r) { $r['nome'] = nib_nome_proprio((string)$r['nome']); $r['papeis'] = nib_papeis($r); $r['papel'] = $r['papeis'][0]; if (!$veCpf) unset($r['cpf']); } unset($r);
       nib_json(200, ['ok' => true, 'pessoas' => $rows]);
     }
     // Área da equipe (Fase 1): painel com números reais e lista de membros. O servidor confere o papel real.
@@ -220,15 +220,15 @@ try {
     case 'get:membros': {
       if (!$eu || !nib_equipe($eu)) nib_erro('Acesso só para a equipe da igreja.', 403);
       $tz = new DateTimeZone('America/Porto_Velho'); $d56 = (new DateTimeImmutable('today', $tz))->modify('-56 days')->format('Y-m-d');
-      $q = $db->prepare("SELECT p.id, p.nome, p.email, p.celular, p.cpf, p.papel, p.sexo, p.vinculo, p.celula, p.membro_status, p.nascimento, p.endereco, p.mostrar_aniversario, p.criado_em, p.ultimo_acesso, p.confirmado_em,
+      $q = $db->prepare("SELECT p.id, p.nome, p.email, p.celular, p.cpf, p.papel, p.papeis, p.sexo, p.vinculo, p.celula, p.membro_status, p.nascimento, p.endereco, p.mostrar_aniversario, p.criado_em, p.ultimo_acesso, p.confirmado_em,
         (SELECT MAX(c.culto_dia) FROM nib_checkins c WHERE c.pessoa_id = p.id) ultima_presenca,
         (SELECT COUNT(*) FROM nib_checkins c WHERE c.pessoa_id = p.id AND c.culto_dia >= ?) presencas_8sem,
         (SELECT COUNT(*) FROM nib_membresia m WHERE m.pessoa_id = p.id AND m.apresentacao_em IS NULL) integracao
         FROM nib_pessoas p ORDER BY p.nome LIMIT 5000");
       $q->execute([$d56]); $rows = $q->fetchAll();
       $veCpf = nib_ve_cpf($eu);
-      foreach ($rows as &$r) { $r['nome'] = nib_nome_proprio((string)$r['nome']); $r['presencas_8sem'] = (int)$r['presencas_8sem']; $r['integracao'] = (int)$r['integracao']; $r['mostrar_aniversario'] = (int)$r['mostrar_aniversario']; if (!$veCpf) unset($r['cpf']); } unset($r);
-      $exporta = in_array($eu['papel'], ['secretaria', 'admin'], true);
+      foreach ($rows as &$r) { $r['nome'] = nib_nome_proprio((string)$r['nome']); $r['papeis'] = nib_papeis($r); $r['papel'] = $r['papeis'][0]; $r['presencas_8sem'] = (int)$r['presencas_8sem']; $r['integracao'] = (int)$r['integracao']; $r['mostrar_aniversario'] = (int)$r['mostrar_aniversario']; if (!$veCpf) unset($r['cpf']); } unset($r);
+      $exporta = nib_tem_papel($eu, ['secretaria', 'admin']);
       $log = [];
       if ($exporta) {
         $log = $db->query("SELECT r.criado_em em, r.detalhes, p.nome FROM nib_registro r LEFT JOIN nib_pessoas p ON p.id = r.pessoa_id WHERE r.acao = 'membros-exportar' ORDER BY r.id DESC LIMIT 3")->fetchAll();
@@ -279,20 +279,24 @@ try {
     }
     // Perfil de acesso: só a administração muda (decisão de Hilton, 07/11/2026). Ninguém tira o próprio admin, e sempre fica ao menos um admin.
     case 'post:papel': {
-      if (!$eu || $eu['papel'] !== 'admin') nib_erro('Só a administração muda o perfil de acesso.', 403);
-      $id = (int)($d['id'] ?? 0); $papel = in_array($d['papel'] ?? '', ['membro', 'secretaria', 'pastoral', 'tesouraria', 'admin'], true) ? $d['papel'] : '';
-      if ($id < 1 || $papel === '') nib_erro('Pedido inválido.');
-      if ($id === (int)$eu['id'] && $papel !== 'admin') nib_erro('Você não pode tirar o seu próprio acesso de administração.');
-      $q = $db->prepare('SELECT papel FROM nib_pessoas WHERE id = ?'); $q->execute([$id]); $antes = $q->fetchColumn();
-      if ($antes === false) nib_erro('Cadastro não encontrado.', 404);
-      if ($antes === 'admin' && $papel !== 'admin' && (int)$db->query("SELECT COUNT(*) FROM nib_pessoas WHERE papel = 'admin'")->fetchColumn() <= 1) nib_erro('A igreja precisa ter ao menos uma pessoa na administração.');
-      $db->prepare('UPDATE nib_pessoas SET papel = ?, atualizado_em = ? WHERE id = ?')->execute([$papel, nib_agora(), $id]);
-      nib_registrar((int)$eu['id'], 'papel-' . $papel, $id, 'antes=' . $antes);
-      nib_json(200, ['ok' => true]);
+      if (!$eu || !nib_tem_papel($eu, ['admin'])) nib_erro('Só a administração muda o perfil de acesso.', 403);
+      $id = (int)($d['id'] ?? 0);
+      $pedidos = is_array($d['papeis'] ?? null) ? $d['papeis'] : [$d['papel'] ?? ''];
+      $novos = array_values(array_intersect(NIB_PAPEIS, array_map('strval', $pedidos)));
+      if (count($novos) > 1) $novos = array_values(array_diff($novos, ['membro']));
+      if ($id < 1 || !$novos) nib_erro('Pedido inválido.');
+      if ($id === (int)$eu['id'] && !in_array('admin', $novos, true)) nib_erro('Você não pode tirar o seu próprio acesso de administração.');
+      $q = $db->prepare('SELECT papel, papeis FROM nib_pessoas WHERE id = ?'); $q->execute([$id]); $row = $q->fetch();
+      if (!$row) nib_erro('Cadastro não encontrado.', 404);
+      $antes = nib_papeis($row);
+      if (in_array('admin', $antes, true) && !in_array('admin', $novos, true) && (int)$db->query("SELECT COUNT(*) FROM nib_pessoas WHERE papel = 'admin'")->fetchColumn() <= 1) nib_erro('A igreja precisa ter ao menos uma pessoa na administração.');
+      $db->prepare('UPDATE nib_pessoas SET papel = ?, papeis = ?, atualizado_em = ? WHERE id = ?')->execute([$novos[0], implode(',', $novos), nib_agora(), $id]);
+      nib_registrar((int)$eu['id'], 'papel-' . implode('+', $novos), $id, 'antes=' . implode('+', $antes));
+      nib_json(200, ['ok' => true, 'papel' => $novos[0], 'papeis' => $novos]);
     }
     case 'post:membros-exportados': {
       // Só Secretaria e administração exportam (decisão de Hilton, 07/11/2026). Cada exportação fica registrada.
-      if (!$eu || !in_array($eu['papel'], ['secretaria', 'admin'], true)) nib_erro('Só a Secretaria exporta a lista de membros.', 403);
+      if (!$eu || !nib_tem_papel($eu, ['secretaria', 'admin'])) nib_erro('Só a Secretaria exporta a lista de membros.', 403);
       if (($d['uso_interno'] ?? false) !== true) nib_erro('Confirme que o arquivo é para uso interno da igreja.');
       $nn = max(0, min(100000, (int)($d['n'] ?? 0))); $fmt = ($d['formato'] ?? '') === 'pdf' ? 'pdf' : 'csv';
       $grupos = implode(',', array_values(array_intersect(is_array($d['grupos'] ?? null) ? $d['grupos'] : [], ['contato', 'endereco', 'igreja', 'pessoal'])));

@@ -15,10 +15,10 @@
   const account = () => (PUBLIC && window.NibConta) ? NibConta.pessoa() : null;
   const allowedPublic = () => publicViews.concat(account() ? ['cadastro'] : [], account() && NibConta.equipe() ? ['equipe', 'membros', 'membresia', 'cadastros', 'checkin'] : []);
   const publicNav = () => [['inicio', 'Início'], ['agenda', 'Agenda'], ['eventos', 'Eventos'], ['generosidade', 'Generosidade'], ['celulas', 'Células'], ['caderno', 'Caderno de oração'], ['avisos', 'Avisos da igreja'], ['informacoes', 'Informações'], ['sugestoes', 'Sugestões para o app']]
-    .concat(account() ? [['cadastro', 'Meu cadastro']] : [['entrar', 'Entrar ou criar cadastro']], account() && NibConta.equipe() ? [['equipe', 'Painel da equipe'], ['membros', 'Membros'], ['membresia', 'Membresia'], ['cadastros', 'Cadastros'], ['checkin', 'Check-in dos cultos']] : []);
+    .concat(account() ? [['cadastro', 'Meu cadastro']] : [['entrar', 'Entrar ou criar cadastro']], account() && NibConta.equipe() ? [['equipe', 'Painel da equipe'], ['membros', 'Membros'], ['membresia', 'Membresia'], ['checkin', 'Check-in dos cultos']] : []);
   // Menu do app oficial em blocos, para não virar uma lista comprida sem respiro.
   const teamGroupName = () => ({ secretaria: 'Secretaria da igreja', pastoral: 'Liderança Pastoral', admin: 'Administração' })[account() && account().papel] || 'Equipe da igreja';
-  const publicGroups = items => (g => account() && NibConta.equipe() ? [g[3]].concat(g.slice(0, 3), g.slice(4)) : g)([['Sua conta',['inicio','cadastro','entrar']],['Vida na igreja',['agenda','eventos','celulas','caderno']],['Igreja',['avisos','generosidade','informacoes']],[teamGroupName(),['equipe','membros','membresia','cadastros','checkin']],['Ajude a melhorar',['sugestoes']]])
+  const publicGroups = items => (g => account() && NibConta.equipe() ? [g[3]].concat(g.slice(0, 3), g.slice(4)) : g)([['Sua conta',['inicio','cadastro','entrar']],['Vida na igreja',['agenda','eventos','celulas','caderno']],['Igreja',['avisos','generosidade','informacoes']],[teamGroupName(),['equipe','membros','membresia','checkin']],['Ajude a melhorar',['sugestoes']]])
     .map(([label,keys]) => [label, keys.map(k => items.find(([key]) => key === k)).filter(Boolean)]).filter(([,links]) => links.length);
   // Grupos de opções lado a lado (data-seg) no padrão do login: trilho cinza com pílula branca que desliza (pedido de Hilton, 06/11/2026).
   const segPrev = new Map();
@@ -122,7 +122,7 @@
   function publicTeamBar() {
     if (!PUBLIC || !account() || !NibConta.equipe()) return null;
     return NibConta.pessoa().papel === 'secretaria'
-      ? [['inicio', 'Início'], ['equipe', 'Painel'], ['membros', 'Membros'], ['cadastros', 'Cadastros'], ['checkin', 'Check-in']]
+      ? [['inicio', 'Início'], ['equipe', 'Painel'], ['membros', 'Membros'], ['checkin', 'Check-in'], ['avisos', 'Avisos']]
       : [['inicio', 'Início'], ['equipe', 'Painel'], ['membresia', 'Membresia'], ['membros', 'Membros'], ['caderno', 'Caderno']];
   }
   function renderBar() {
@@ -642,11 +642,12 @@
       });
     }
     const ms = document.getElementById('member-shortcuts'); if (ms) ms.hidden = isManagement();
-    document.getElementById('menu-profile').innerHTML = PUBLIC ? (account() ? '<a class="menu-profile-card" href="#cadastro" data-view="cadastro"><span class="profile-avatar" aria-hidden="true">' + escape(account().primeiro.charAt(0).toUpperCase()) + '</span><span><strong>' + escape(account().nome) + '</strong><small>' + escape(account().email) + '</small>' + (account().papel !== 'membro' && papelNome[account().papel] ? '<small>' + papelNome[account().papel] + '</small>' : '') + '</span></a>' + viewAsSelect('menu') : '') : isManagement() ? '<div class="menu-profile-card"><strong>' + admin.profiles[state.context].name + '</strong><span>Experiência de teste</span></div>' : '<a class="menu-profile-card" href="#cadastro" data-view="cadastro"><span class="profile-avatar" aria-hidden="true">' + escape(state.member.first.charAt(0).toUpperCase()) + '</span><span><strong>' + escape(state.member.full) + '</strong><small>' + escape(state.member.email) + '</small></span><span class="profile-demo">Teste</span></a>';
+    document.getElementById('menu-profile').innerHTML = PUBLIC ? (account() ? '<a class="menu-profile-card" href="#cadastro" data-view="cadastro"><span class="profile-avatar" aria-hidden="true">' + escape(account().primeiro.charAt(0).toUpperCase()) + '</span><span><strong>' + escape(account().nome) + '</strong><small>' + escape(account().email) + '</small>' + (NibConta.papeisReais().some(k => k !== 'membro') ? '<small>' + papeisTexto(NibConta.papeisReais()) + '</small>' : '') + '</span></a>' + viewAsSelect('menu') : '') : isManagement() ? '<div class="menu-profile-card"><strong>' + admin.profiles[state.context].name + '</strong><span>Experiência de teste</span></div>' : '<a class="menu-profile-card" href="#cadastro" data-view="cadastro"><span class="profile-avatar" aria-hidden="true">' + escape(state.member.first.charAt(0).toUpperCase()) + '</span><span><strong>' + escape(state.member.full) + '</strong><small>' + escape(state.member.email) + '</small></span><span class="profile-demo">Teste</span></a>';
     renderBar();
   }
   function show(view, focus = true, record = true) {
     if(view==='oracao') view='caderno'; // Compatibilidade com o destino anterior.
+    if (PUBLIC && view === 'cadastros') { state.memStatus = 'Aguardando'; state.memSel = null; state.memMore = false; view = 'membros'; } // v155: Cadastros virou um filtro de Membros.
     if (isManagement() && !admin.allowed(view)) view = 'gestao';
     if (adminOnly.includes(view) && !isManagement() && !(PUBLIC && allowedPublic().includes(view))) view = 'inicio';
     if (PUBLIC && !allowedPublic().includes(view)) view = 'inicio';
@@ -779,6 +780,7 @@
     if (PUBLIC && action.dataset.push) { if (action.dataset.push === 'on') pushOn(action); else pushOffCall(); return; }
     if (PUBLIC && action.dataset.eqMem !== undefined) { state.memSel = action.dataset.eqMem || null; state.memPrint = null; show('membros', false, false); scrollTo(0, 0); return; }
     if (PUBLIC && action.dataset.eqPapel) { eqSalvarPapel(action); return; }
+    if (PUBLIC && action.dataset.eqConfirm) { eqConfirmar(action); return; }
     if (PUBLIC && action.dataset.eqEtapa) { eqEtapa(action); return; }
     if (PUBLIC && action.dataset.eqStatus) { state.memStatus = action.dataset.eqStatus; state.memMore = false; show('membros', false, false); return; }
     if (PUBLIC && action.dataset.eqBday) { state.memBday = !state.memBday; show('membros', false, false); return; }
@@ -846,7 +848,7 @@
   root.addEventListener('change', e => { if (PUBLIC && e.target.matches('[data-push-caderno]')) pushCaderno(e.target); if (PUBLIC && e.target.matches('[data-push-lembretes]')) pushLembretes(e.target); });
   root.addEventListener('input', e => { if (e.target.id !== 'acc-cpf') return; const d = e.target.value.replace(/\D/g, '').slice(0, 11); e.target.value = d.replace(/^(\d{3})(\d)/, '$1.$2').replace(/^(\d{3})\.(\d{3})(\d)/, '$1.$2.$3').replace(/\.(\d{3})(\d{1,2})$/, '.$1-$2'); });
   root.addEventListener('input', e => { if (isManagement() && admin.input && e.target.id === 'mem-q') admin.input(e.target); if (e.target.id === 'team-q') teamFilterList(e.target.value); if (PUBLIC && e.target.id === 'eq-q') eqFilterInput(e.target.value); });
-  root.addEventListener('change', e => { if (PUBLIC && e.target.id === 'eq-cell') { state.memCell = e.target.value; state.memMore = false; show('membros', false, false); return; } if (isManagement() && admin.input && e.target.id === 'mem-cell') { admin.input(e.target); return; } if (e.target.id === 'bday-visible') { state.hideBirthday = !e.target.checked; announce(e.target.checked ? 'Seu aniversário aparece para a igreja (teste).' : 'Seu aniversário não aparece mais para a igreja (teste).', 'success', false); } });
+  root.addEventListener('change', e => { if (PUBLIC && e.target.name === 'eq-papel') { eqPapelToggle(e.target); return; } if (PUBLIC && e.target.id === 'eq-cell') { state.memCell = e.target.value; state.memMore = false; show('membros', false, false); return; } if (isManagement() && admin.input && e.target.id === 'mem-cell') { admin.input(e.target); return; } if (e.target.id === 'bday-visible') { state.hideBirthday = !e.target.checked; announce(e.target.checked ? 'Seu aniversário aparece para a igreja (teste).' : 'Seu aniversário não aparece mais para a igreja (teste).', 'success', false); } });
   document.addEventListener('nib-install-change', () => { if (state.view === 'inicio' && !isManagement()) show('inicio', false, false); });
   document.addEventListener('change', e => { if (PUBLIC && e.target.matches('[data-ver-como-select]')) setViewAs(e.target.value); });
   document.getElementById('demo-context').addEventListener('change', changeContext);
@@ -1277,27 +1279,31 @@
     if (!state.push.on) return head + '<p>Receba no celular os avisos da igreja, como a confirmação da sua membresia.</p><div class="form-actions"><button type="button" class="action" data-push="on">Ativar notificações</button></div></section>';
     return head + `<p>Ativadas neste celular. Você recebe os avisos da igreja e da sua membresia.</p><label class="check"><input type="checkbox" data-push-lembretes${state.push.lembretes !== false ? ' checked' : ''}><span>Lembrete no dia dos cultos, da minha célula e dos eventos, com o horário</span></label><label class="check"><input type="checkbox" data-push-caderno${state.push.caderno ? ' checked' : ''}><span>Também quero receber cada novo pedido do Caderno de oração</span></label><div class="form-actions"><button type="button" class="button" data-push="off">Desligar neste celular</button></div></section>`;
   }
-  const papelNome = { admin: 'Administração', pastoral: 'Liderança Pastoral', secretaria: 'Secretaria', membro: 'Membro' };
+  var papelNome = { admin: 'Administração', pastoral: 'Liderança Pastoral', secretaria: 'Secretaria', tesouraria: 'Tesouraria', membro: 'Membro' };
+  function papeisTexto(l) { return (l || []).filter(k => k !== 'membro').map(k => papelNome[k] || k).join(' + ') || 'Membro'; }
   // Admin escolhe com qual perfil quer ver o app (só a tela muda; permissões reais ficam no servidor).
+  // Quem tem mais de um perfil (ou é admin) escolhe com qual perfil ver o app. Só a tela muda; o servidor usa os perfis reais.
+  function verOpcoes() { return (PUBLIC && window.NibConta && NibConta.opcoesPerfil) ? NibConta.opcoesPerfil() : []; }
+  function verAtual() { return NibConta.verComo() || verOpcoes()[0]; }
+  function verAdmin() { return verOpcoes()[0] === 'admin'; }
   function viewAsBox() {
-    if (!PUBLIC || !window.NibConta || NibConta.papelReal() !== 'admin') return '';
-    const atual = NibConta.verComo() || 'admin';
+    const o = verOpcoes(); if (o.length < 2) return '';
+    const atual = verAtual();
     const curto = { admin: 'Admin', pastoral: 'Pastoral', secretaria: 'Secretaria', membro: 'Membro' };
-    const opts = ['admin', 'pastoral', 'secretaria', 'membro'].map(k => `<button type="button" class="history-year${atual === k ? ' is-active' : ''}" data-ver-como="${k}" aria-pressed="${atual === k}">${curto[k]}</button>`).join('');
-    return `<section class="box view-as-box"><span class="label">SÓ PARA ADMINISTRAÇÃO</span><h2>Ver o app como</h2><p>Veja o app como cada perfil vê. Só a tela muda: suas permissões continuam as de administração.</p><div class="cell-days view-as-opts" role="group" aria-label="Ver o app como" data-seg="ver-como">${opts}</div></section>`;
+    const opts = o.map(k => `<button type="button" class="history-year${atual === k ? ' is-active' : ''}" data-ver-como="${k}" aria-pressed="${atual === k}">${curto[k]}</button>`).join('');
+    return `<section class="box view-as-box"><span class="label">${verAdmin() ? 'SÓ PARA ADMINISTRAÇÃO' : 'SEUS PERFIS'}</span><h2>Ver o app como</h2><p>${verAdmin() ? 'Veja o app como cada perfil vê. Só a tela muda: suas permissões continuam as de administração.' : 'Você tem mais de um perfil na igreja. Escolha com qual quer usar o app agora.'}</p><div class="cell-days view-as-opts" role="group" aria-label="Ver o app como" data-seg="ver-como">${opts}</div></section>`;
   }
+  function verOptions(atual) { return verOpcoes().map(k => `<option value="${k}"${atual === k ? ' selected' : ''}>${papelNome[k]}</option>`).join(''); }
   // Seletor fixo no menu (celular e computador), como o "Testar experiência" da versão local.
   function viewAsSelect(where) {
-    if (!PUBLIC || !window.NibConta || NibConta.papelReal() !== 'admin') return '';
-    const atual = NibConta.verComo() || 'admin', id = 'ver-como-' + where;
-    const opts = [['admin', 'Administração'], ['pastoral', 'Liderança Pastoral'], ['secretaria', 'Secretaria'], ['membro', 'Membro']].map(([k, t]) => `<option value="${k}"${atual === k ? ' selected' : ''}>${t}</option>`).join('');
-    return `<div class="view-as-menu"><label for="${id}">Ver o app como</label><select id="${id}" data-ver-como-select autocomplete="off">${opts}</select></div>`;
+    if (verOpcoes().length < 2) return '';
+    const id = 'ver-como-' + where;
+    return `<div class="view-as-menu"><label for="${id}">Ver o app como</label><select id="${id}" data-ver-como-select autocomplete="off">${verOptions(verAtual())}</select></div>`;
   }
   function viewAsBar() {
     if (!PUBLIC || !window.NibConta || !NibConta.verComo()) return '';
-    const atual = NibConta.verComo();
-    const opts = [['pastoral', 'Liderança Pastoral'], ['secretaria', 'Secretaria'], ['membro', 'Membro'], ['admin', 'Administração']].map(([k, t]) => `<option value="${k}"${atual === k ? ' selected' : ''}>${t}</option>`).join('');
-    return `<div class="view-as-bar" role="status"><span class="view-as-eye" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></span><label for="ver-como-faixa">Vendo como</label><select id="ver-como-faixa" data-ver-como-select autocomplete="off">${opts}</select><button type="button" class="view-as-back" data-ver-como="admin" aria-label="Voltar para administração" title="Voltar para administração"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12 M18 6 6 18"/></svg></button></div>`;
+    const volta = verOpcoes()[0], txt = volta === 'admin' ? 'Voltar para administração' : 'Voltar para ' + papelNome[volta];
+    return `<div class="view-as-bar" role="status"><span class="view-as-eye" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></span><label for="ver-como-faixa">Vendo como</label><select id="ver-como-faixa" data-ver-como-select autocomplete="off">${verOptions(NibConta.verComo())}</select><button type="button" class="view-as-back" data-ver-como="${volta}" aria-label="${txt}" title="${txt}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12 M18 6 6 18"/></svg></button></div>`;
   }
   function syncViewAsBar() {
     let bar = document.getElementById('view-as-bar'); const html = viewAsBar();
@@ -1306,7 +1312,7 @@
     bar.innerHTML = html;
   }
   function setViewAs(v) {
-    NibConta.definirVerComo(v === 'admin' ? '' : v);
+    NibConta.definirVerComo(v);
     state.sugList = null; state.cadPainel = null; state.cadTab = 'pedidos'; state.ckPanel = null; state.ck = null; state.ckKey = null; state.avisos = null; state.painel = null; state.mem = null; state.memSel = null; state.memb = null;
     applyAccount();
   }
@@ -1359,7 +1365,7 @@
   const eqHead = (label, title, aside = '') => `<div class="dash-head"><div><span class="label">${label}</span><h2>${title}</h2></div>${aside}</div>`;
   const eqChevron = '<svg class="admin-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>';
   const eqFold = s => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
-  const eqPodeExportar = () => !!(state.mem && state.mem.pode_exportar && account() && ['secretaria', 'admin'].includes(account().papel));
+  const eqPodeExportar = () => !!(state.mem && state.mem.pode_exportar && account() && NibConta.exporta());
   // Situação de cada pessoa, a partir do cadastro real.
   const eqSituacao = p => p.membro_status === 'confirmado' ? 'Membro' : p.membro_status === 'pendente' ? 'Aguardando' : p.vinculo === 'frequento' ? 'Frequenta' : 'Conhecendo';
   const eqTag = s => s === 'Membro' ? 'status-active' : s === 'Aguardando' ? 'is-wait' : s === 'Frequenta' ? 'mem-tag-reg' : 'is-neutral';
@@ -1389,15 +1395,15 @@
   function teamShortcuts() {
     if (!PUBLIC || !account() || !NibConta.equipe()) return null;
     if (account().papel === 'secretaria') return [
+      ['cadastros', 'Confirmar membros', 'Quem disse no cadastro que é membro e aguarda confirmação.'],
       ['membresia', 'Membresia', 'Registre formulário, reunião e apresentação no culto.'],
-      ['avisos', 'Avisos da igreja', 'Publique avisos no sino e no mural da igreja.'],
       ['agenda', 'Agenda da igreja', 'Cultos, escola bíblica e eventos no calendário.'],
       ['caderno', 'Caderno de oração', 'Acompanhe os pedidos e ore com a comunidade.'],
       ['eventos', 'Eventos e inscrições', 'Os próximos encontros e as inscrições abertas.'],
       ['generosidade', 'Dízimos e ofertas', 'Contribua pelo Pix com os dados oficiais da igreja.']
     ];
     return [
-      ['cadastros', 'Cadastros', 'Quem disse que é membro e aguarda confirmação.'],
+      ['cadastros', 'Confirmar membros', 'Quem disse no cadastro que é membro e aguarda confirmação.'],
       ['checkin', 'Check-in dos cultos', 'QR Code do telão, local da igreja e presença.'],
       ['avisos', 'Avisos da igreja', 'Publique avisos no sino e no mural da igreja.'],
       ['sugestoes', 'Sugestões para o app', 'Ideias e problemas enviados pelos membros.'],
@@ -1433,16 +1439,16 @@
     ].join('');
     const texts = {
       membresia: d.em_integracao ? `${d.em_integracao} ${d.em_integracao === 1 ? 'pessoa' : 'pessoas'} em integração. Registre a próxima etapa.` : 'Ninguém em integração. Inicie pela ficha da pessoa.',
-      membros: eqPodeExportar() ? 'Lista completa, ficha de cada pessoa e exportação.' : 'Lista completa e ficha de cada pessoa.',
+      membros: (d.aguardando ? `${d.aguardando} ${d.aguardando === 1 ? 'pessoa aguardando' : 'pessoas aguardando'} confirmação. ` : '') + (eqPodeExportar() ? 'Lista completa, ficha de cada pessoa e exportação.' : 'Lista completa e ficha de cada pessoa.'),
       cadastros: d.aguardando ? `${d.aguardando} ${d.aguardando === 1 ? 'pessoa aguardando' : 'pessoas aguardando'} confirmação de membro.` : 'Ninguém aguardando confirmação.',
       checkin: 'QR Code do telão, local da igreja e presença.',
       avisos: 'Publique avisos no sino e no mural da igreja.',
       caderno: d.caderno_ativos ? `${d.caderno_ativos} ${d.caderno_ativos === 1 ? 'pedido' : 'pedidos'} em andamento.` : 'Nenhum pedido em andamento.',
       sugestoes: d.sugestoes_novas ? `${d.sugestoes_novas} ${d.sugestoes_novas === 1 ? 'sugestão nova' : 'sugestões novas'} para ler.` : 'Ideias e problemas enviados pelos membros.'
     };
-    const badges = { membresia: d.em_integracao, cadastros: d.aguardando, sugestoes: lid ? d.sugestoes_novas : 0 };
+    const badges = { membresia: d.em_integracao, membros: d.aguardando, sugestoes: lid ? d.sugestoes_novas : 0 };
     const titles = { membresia: 'Membresia', membros: 'Membros', cadastros: 'Cadastros', checkin: 'Check-in dos cultos', avisos: 'Avisos', caderno: 'Caderno de oração', sugestoes: 'Sugestões' };
-    const keys = ['membresia', 'membros', 'cadastros', 'checkin', 'avisos', 'caderno'].concat(lid ? ['sugestoes'] : []);
+    const keys = ['membresia', 'membros', 'checkin', 'avisos', 'caderno'].concat(lid ? ['sugestoes'] : []);
     const shortcuts = keys.map(k => `<button type="button" class="quick-action admin-quick" data-view="${k}"><span class="home-action-icon" aria-hidden="true">${navIcon(k)}</span>${badges[k] ? `<span class="admin-badge" aria-label="${badges[k]} pendente${badges[k] === 1 ? '' : 's'}">${badges[k]}</span>` : ''}<strong>${titles[k]}</strong><span class="home-action-description">${texts[k]}</span></button>`).join('');
     const quick = `<section aria-labelledby="admin-quick-title"><div class="section-heading"><div><span class="label">${lid ? 'LIDERANÇA PASTORAL' : 'SECRETARIA DA IGREJA'}</span><h2 id="admin-quick-title">Atalhos de gestão</h2></div></div><p class="admin-rule">${lid ? 'A Liderança Pastoral decide. A Secretaria organiza e registra o que foi decidido.' : 'A Secretaria organiza e registra. Decisões pastorais ficam com a Liderança Pastoral.'}</p><div class="quick-actions">${shortcuts}</div></section>`;
     const c = d.cultos || [], lastC = c[c.length - 1];
@@ -1465,22 +1471,45 @@
     return all.filter(p => (st === 'todos' || eqSituacao(p) === st) && (!cel || (cel === '-' ? !p.celula : p.celula === cel)) && (!state.memBday || String(p.nascimento || '').slice(5, 7) === mes)
       && (!q || eqFold(p.nome).includes(q) || eqFold(p.email).includes(q) || (dig.length >= 4 && String(p.celular).includes(dig))));
   }
-  const EQ_PAPEIS = [['membro', 'Membro', 'Usa o app normalmente, sem área da equipe.'], ['secretaria', 'Secretaria', 'Cadastros, membros, membresia, check-in e avisos. Exporta a lista.'], ['pastoral', 'Liderança Pastoral', 'Tudo da equipe, mais CPF, sugestões e local do check-in.'], ['tesouraria', 'Tesouraria', 'Reservado para as telas da Tesouraria (Fase 3). Por enquanto usa o app como membro.'], ['admin', 'Administração', 'Acesso completo, inclusive mudar o perfil das pessoas.']];
+  const EQ_PAPEIS = [['membro', 'Membro', 'Usa o app normalmente, sem área da equipe.'], ['secretaria', 'Secretaria', 'Membros, confirmação de membros, membresia, check-in e avisos. Exporta a lista.'], ['pastoral', 'Liderança Pastoral', 'Tudo da equipe, mais CPF, sugestões e local do check-in.'], ['tesouraria', 'Tesouraria', 'Reservado para as telas da Tesouraria (Fase 3). Por enquanto usa o app como membro.'], ['admin', 'Administração', 'Acesso completo, inclusive mudar o perfil das pessoas.']];
   // Só quem é admin de verdade (e não está em "Ver o app como") vê e muda o perfil.
+  const eqPapeisDe = p => { const l = Array.isArray(p.papeis) && p.papeis.length ? p.papeis : [p.papel || 'membro']; return EQ_PAPEIS.map(x => x[0]).filter(k => l.includes(k)); };
   function eqPapelBox(p) {
     if (!window.NibConta || NibConta.papelReal() !== 'admin' || NibConta.verComo()) return '';
-    const eu = account() && String(account().id) === String(p.id), atual = p.papel || 'membro';
-    return `<section class="box eq-papel"><h3 class="mem-h">Perfil de acesso</h3><p class="note">Só a administração vê e muda. ${eu ? 'Você não pode tirar o seu próprio acesso de administração.' : 'A mudança vale na próxima vez que a pessoa abrir o app.'}</p><div class="eq-papel-opts" role="radiogroup" aria-label="Perfil de acesso">${EQ_PAPEIS.map(([k, l, d]) => `<label class="mem-check"><input type="radio" name="eq-papel" value="${k}"${atual === k ? ' checked' : ''}${eu && k !== 'admin' ? ' disabled' : ''}><span><strong>${l}</strong><small>${d}</small></span></label>`).join('')}</div><div class="form-actions"><button type="button" class="action primary" data-eq-papel="${p.id}"${eu ? ' disabled' : ''}>Salvar perfil</button></div></section>`;
+    const eu = account() && String(account().id) === String(p.id), atual = eqPapeisDe(p);
+    return `<section class="box eq-papel"><h3 class="mem-h">Perfis de acesso</h3><p class="note">Marque um ou mais perfis. Quem tem mais de um escolhe no menu com qual usar o app. ${eu ? 'Você não pode tirar o seu próprio acesso de administração.' : 'A mudança vale na próxima vez que a pessoa abrir o app.'}</p><div class="eq-papel-opts" role="group" aria-label="Perfis de acesso">${EQ_PAPEIS.map(([k, l, d]) => `<label class="mem-check"><input type="checkbox" name="eq-papel" value="${k}"${atual.includes(k) ? ' checked' : ''}${eu && k === 'admin' ? ' disabled' : ''}><span><strong>${l}</strong><small>${d}</small></span></label>`).join('')}</div><div class="form-actions"><button type="button" class="action primary" data-eq-papel="${p.id}">Salvar perfis</button></div></section>`;
+  }
+  // Membro é exclusivo: marcar outro perfil desmarca Membro; desmarcar tudo volta para Membro.
+  function eqPapelToggle(input) {
+    const box = input.closest('.eq-papel'); if (!box) return;
+    const all = [...box.querySelectorAll('input[name="eq-papel"]')];
+    if (input.value === 'membro' && input.checked) all.forEach(i => { if (i.value !== 'membro' && !i.disabled) i.checked = false; });
+    else if (input.value !== 'membro' && input.checked) all.forEach(i => { if (i.value === 'membro') i.checked = false; });
+    if (!all.some(i => i.checked)) all.find(i => i.value === 'membro').checked = true;
   }
   async function eqSalvarPapel(btn) {
-    const sel = content.querySelector('input[name="eq-papel"]:checked'); if (!sel) return;
     const p = state.mem && state.mem.pessoas.find(x => String(x.id) === btn.dataset.eqPapel); if (!p) return;
-    if (sel.value === (p.papel || 'membro')) { announce('Esse já é o perfil da pessoa.', 'success', false); return; }
-    const nome = (EQ_PAPEIS.find(x => x[0] === sel.value) || [])[1];
-    if (sel.value === 'admin' && !confirm(`Dar acesso de Administração para ${p.nome}? A pessoa poderá mudar o perfil de todos.`)) return;
+    let sel = [...content.querySelectorAll('input[name="eq-papel"]:checked')].map(i => i.value);
+    if (sel.length > 1) sel = sel.filter(k => k !== 'membro');
+    if (!sel.length) sel = ['membro'];
+    const antes = eqPapeisDe(p);
+    if (sel.join() === antes.join()) { announce('Esses já são os perfis da pessoa.', 'success', false); return; }
+    if (sel.includes('admin') && !antes.includes('admin') && !confirm(`Dar acesso de Administração para ${p.nome}? A pessoa poderá mudar o perfil de todos.`)) return;
     btn.disabled = true;
-    try { await NibConta.mudarPapel(Number(p.id), sel.value); p.papel = sel.value; show('membros', false, false); announce(`${p.nome} agora tem o perfil ${nome}.`, 'success', false); }
+    try { const r = await NibConta.mudarPapeis(Number(p.id), sel); p.papeis = r.papeis || sel; p.papel = r.papel || sel[0]; show('membros', false, false); announce(`${p.nome} agora tem: ${papeisTexto(p.papeis)}.`, 'success', false); }
     catch (e) { btn.disabled = false; announce(e.message, 'error'); }
+  }
+  // Confirmação de membro, que antes ficava na tela Cadastros (v155).
+  async function eqConfirmar(btn) {
+    const p = state.mem && state.mem.pessoas.find(x => String(x.id) === btn.dataset.id); if (!p) return;
+    const st = btn.dataset.eqConfirm;
+    if (st === 'nao' && !confirm(`Marcar ${p.nome} como não membro? A pessoa continua no app e pode iniciar a integração.`)) return;
+    btn.disabled = true;
+    try {
+      await NibConta.confirmar(Number(p.id), st); p.membro_status = st; if (st === 'confirmado') p.confirmado_em = new Date().toISOString().slice(0, 10);
+      state.painel = null; state.team = null; show('membros', false, false);
+      announce(st === 'confirmado' ? `${p.nome} agora é membro confirmado.` : st === 'nao' ? `${p.nome} ficou como não membro.` : `${p.nome} voltou para análise.`, 'success', false);
+    } catch (e) { btn.disabled = false; announce(e.message, 'error'); }
   }
   function eqFicha(p) {
     const lid = NibConta.lideranca(), s = eqSituacao(p), tel = String(p.celular || '').replace(/\D/g, '');
@@ -1488,13 +1517,20 @@
     return `<div class="gift-backrow"><button type="button" class="button-back gift-back" data-eq-mem=""><svg class="back-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg><span>Voltar à lista</span></button></div>
     <section class="box mem-card"><div class="admin-person-head"><span class="profile-avatar" aria-hidden="true">${escape(p.nome.charAt(0))}</span><div><h2>${escape(p.nome)}</h2><small>Cadastro no app em ${fmtDay(p.criado_em)}</small></div><span class="tag ${eqTag(s)}">${s}</span></div>
     <div class="mem-actions">${tel ? `<a class="mem-act" href="tel:${tel}">${NibIcons.svg('telefone')}<span>Ligar</span></a><a class="mem-act" href="https://wa.me/55${tel}" target="_blank" rel="noopener">${NibIcons.svg('whatsapp')}<span>WhatsApp</span></a>` : ''}${p.email ? `<a class="mem-act" href="mailto:${escape(p.email)}">${NibIcons.svg('email')}<span>E-mail</span></a>` : ''}</div>
-    ${s === 'Aguardando' ? `<div class="form-actions">${button('Confirmar em Cadastros', 'cadastros')}</div>` : p.membro_status !== 'confirmado' ? `<div class="form-actions">${p.integracao ? button('Ver em Membresia', 'membresia') : `<button type="button" class="action admin-secondary" data-eq-etapa="inicio" data-id="${p.id}">Iniciar integração</button>`}</div>` : ''}</section>
+    ${s === 'Aguardando' ? `<div class="eq-confirm"><p><strong>Disse no cadastro que é membro.</strong> Confira e confirme.</p><div class="form-actions"><button type="button" class="action primary" data-eq-confirm="confirmado" data-id="${p.id}">Confirmar membro</button><button type="button" class="action admin-secondary" data-eq-confirm="nao" data-id="${p.id}">Não é membro</button></div></div>` : p.membro_status !== 'confirmado' ? `<div class="form-actions">${p.integracao ? button('Ver em Membresia', 'membresia') : `<button type="button" class="action admin-secondary" data-eq-etapa="inicio" data-id="${p.id}">Iniciar integração</button>`}</div>` : ''}</section>
     ${eqPapelBox(p)}
     <section class="box"><h3 class="mem-h">Contato</h3>${kv([['Celular', escape(fmtPhone(p.celular))], ['E-mail', escape(p.email || '')]])}</section>
     <section class="box"><h3 class="mem-h">Endereço</h3>${kv([['Endereço', escape(p.endereco || '')]])}</section>
     <section class="box"><h3 class="mem-h">Dados pessoais</h3>${kv([['Nascimento', fmtDay(p.nascimento)], ['Gênero', p.sexo === 'm' ? 'Masculino' : 'Feminino'], ['CPF', lid ? escape(fmtCpf(p.cpf || '')) : null], ['Aniversário na tela inicial', p.mostrar_aniversario ? 'Aparece' : 'Não aparece (escolha da pessoa)']])}</section>
-    <section class="box"><h3 class="mem-h">Vida na igreja</h3>${kv([['Situação', s], ['Perfil no app', escape((EQ_PAPEIS.find(x => x[0] === (p.papel || 'membro')) || [, 'Membro'])[1])], ['Como se cadastrou', escape(vinculoLabel[p.vinculo] || '')], ['Célula', escape(eqCelula(p.celula) || 'Sem célula')], ['Membro desde', p.membro_status === 'confirmado' ? (fmtDay(p.confirmado_em) || '') : null], ['Última presença no culto', fmtDay(p.ultima_presenca) || 'Ainda sem check-in'], ['Presenças nas últimas 8 semanas', String(p.presencas_8sem || 0)], ['Último acesso ao app', fmtDay(p.ultimo_acesso)]])}</section>
+    <section class="box"><h3 class="mem-h">Vida na igreja</h3>${kv([['Situação', s], ['Perfil no app', escape(papeisTexto(eqPapeisDe(p)))], ['Como se cadastrou', escape(vinculoLabel[p.vinculo] || '')], ['Célula', escape(eqCelula(p.celula) || 'Sem célula')], ['Membro desde', p.membro_status === 'confirmado' ? (fmtDay(p.confirmado_em) || '') : null], ['Última presença no culto', fmtDay(p.ultima_presenca) || 'Ainda sem check-in'], ['Presenças nas últimas 8 semanas', String(p.presencas_8sem || 0)], ['Último acesso ao app', fmtDay(p.ultimo_acesso)]])}</section>
     <p class="note">${lid ? 'A Liderança Pastoral vê a ficha completa, inclusive o CPF.' : 'A Secretaria vê a ficha. O CPF fica só com a Liderança Pastoral.'} Os dados são atualizados pela própria pessoa em Meu cadastro.</p>`;
+  }
+  // Quem disse no cadastro que é membro e ainda não foi confirmado (antes ficava em Cadastros).
+  function eqAguardando(n, st) {
+    const ico = `<span class="dash-ico is-warn">${eqIco(eqP().alerta || 'M12 9v4 M12 17h.01 M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z')}</span>`;
+    if (st === 'Aguardando') return `<div class="box mem-alert is-on">${ico}<span class="mem-alert-text"><strong>Aguardando confirmação</strong><small>Abra a ficha para confirmar ou marcar como não membro.</small></span><button type="button" class="mem-clear" data-eq-status="todos">Ver todos</button></div>`;
+    if (!n) return '';
+    return `<button type="button" class="box mem-alert" data-eq-status="Aguardando">${ico}<span class="mem-alert-text"><strong>${n} ${n === 1 ? 'pessoa aguardando' : 'pessoas aguardando'} confirmação</strong><small>Disseram no cadastro que são membros.</small></span>${eqChevron}</button>`;
   }
   function eqExportBox(list) {
     if (!eqPodeExportar()) return '<p class="note mem-note">Só a Secretaria exporta a lista. A Liderança Pastoral consulta pelo app.</p>';
@@ -1519,7 +1555,8 @@
     const filtered = state.memQ || state.memCell || state.memBday || st !== 'todos';
     const pr = state.memPrint ? `<section class="tes-print mem-print" aria-hidden="true"><div class="tes-decl-head"><img src="assets/logo.svg" alt="" width="90" height="38"><div><strong>Nova Igreja Batista</strong><small>Lista de membros · ${escape(state.memPrint.at)} · ${state.memPrint.rows.length} pessoas · uso interno</small></div></div><table class="tes-table is-compact"><thead><tr>${state.memPrint.head.map(h => `<th>${escape(h)}</th>`).join('')}</tr></thead><tbody>${state.memPrint.rows.map(r => `<tr>${r.map(c => `<td>${escape(c)}</td>`).join('')}</tr>`).join('')}</tbody></table></section>` : '';
     return `<p class="admin-rule">Dados pessoais protegidos pela LGPD. ${eqPodeExportar() ? 'A Secretaria consulta e exporta. Cada exportação fica registrada.' : 'A Liderança Pastoral consulta. A exportação fica com a Secretaria.'}</p>
-    <div class="cell-days mem-seg" role="group" aria-label="Situação" data-seg="eq-membros">${chips}</div>
+    ${eqAguardando(count('Aguardando'), st)}
+    ${st === 'Aguardando' ? '' : `<div class="cell-days mem-seg" role="group" aria-label="Situação" data-seg="eq-membros">${chips}</div>`}
     <div class="mem-filters"><label class="visually-hidden" for="eq-q">Buscar por nome, e-mail ou celular</label><input id="eq-q" type="search" value="${escape(state.memQ || '')}" placeholder="Buscar nome, e-mail ou celular" autocomplete="off" enterkeyhint="search">
     <div class="mem-filter-row"><label class="visually-hidden" for="eq-cell">Célula</label><select id="eq-cell"><option value="">Todas as células</option>${cells.map(c => `<option value="${escape(c)}"${state.memCell === c ? ' selected' : ''}>${escape(eqCelula(c))}</option>`).join('')}<option value="-"${state.memCell === '-' ? ' selected' : ''}>Sem célula</option></select><button type="button" class="mem-chip${state.memBday ? ' is-active' : ''}" data-eq-bday="1" aria-pressed="${!!state.memBday}">Aniversário no mês</button></div></div>
     ${eqExportBox(list)}

@@ -25,11 +25,11 @@ function nib_db(): PDO {
   return $db;
 }
 // Cria as tabelas na primeira vez (e só acrescenta o que faltar nas próximas versões).
-const NIB_MIGRACAO = 9;
+const NIB_MIGRACAO = 10;
 function nib_migrar(PDO $db): void {
   $db->exec("CREATE TABLE IF NOT EXISTS nib_versao (v INT NOT NULL) ENGINE=InnoDB");
   $v = (int)($db->query('SELECT MAX(v) FROM nib_versao')->fetchColumn() ?: 0);
-  if ($v >= NIB_MIGRACAO) return; // ao criar a v10, subir NIB_MIGRACAO
+  if ($v >= NIB_MIGRACAO) return; // ao criar a v11, subir NIB_MIGRACAO
   // Uma migração por vez: pedidos simultâneos esperam a primeira terminar (evita versões repetidas).
   if ((int)$db->query("SELECT GET_LOCK('nib_migrar', 15)")->fetchColumn() !== 1) throw new RuntimeException('migração em andamento por outro pedido');
   try { nib_migrar_passos($db, (int)($db->query('SELECT MAX(v) FROM nib_versao')->fetchColumn() ?: 0)); }
@@ -117,7 +117,24 @@ function nib_migrar_passos(PDO $db, int $v): void {
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
     $db->exec('INSERT INTO nib_versao (v) VALUES (9)');
   }
+  if ($v < 10) {
+    // v10: mais de um perfil por pessoa ("secretaria,tesouraria"). A coluna papel guarda o principal (o mais alto).
+    $tem = $db->query("SHOW COLUMNS FROM nib_pessoas LIKE 'papeis'")->fetch();
+    if (!$tem) $db->exec("ALTER TABLE nib_pessoas ADD COLUMN papeis VARCHAR(64) NOT NULL DEFAULT '' AFTER papel");
+    $db->exec('INSERT INTO nib_versao (v) VALUES (10)');
+  }
 }
+
+// Perfis da pessoa, do mais alto para o mais baixo. Sem a coluna papeis preenchida, vale o papel principal.
+const NIB_PAPEIS = ['admin', 'pastoral', 'secretaria', 'tesouraria', 'membro'];
+function nib_papeis(array $p): array {
+  $s = trim((string)($p['papeis'] ?? ''));
+  $l = $s === '' ? [(string)($p['papel'] ?? 'membro')] : explode(',', $s);
+  $r = array_values(array_intersect(NIB_PAPEIS, $l));
+  if (count($r) > 1) $r = array_values(array_diff($r, ['membro']));
+  return $r ?: ['membro'];
+}
+function nib_tem_papel(array $p, array $quais): bool { return (bool)array_intersect(nib_papeis($p), $quais); }
 
 // CPF: 11 dígitos com os dois dígitos verificadores corretos (rejeita 000.000.000-00 etc.).
 function nib_cpf_valido(string $c): bool {
@@ -129,7 +146,7 @@ function nib_cpf_valido(string $c): bool {
   return true;
 }
 // Quem vê o CPF de outras pessoas: Liderança Pastoral e administração (a Tesouraria entra quando o perfil existir).
-function nib_ve_cpf(array $p): bool { return in_array($p['papel'], ['pastoral', 'admin'], true); }
+function nib_ve_cpf(array $p): bool { return nib_tem_papel($p, ['pastoral', 'admin']); }
 
 function nib_migrar_v1(PDO $db): void {
   $db->exec("CREATE TABLE IF NOT EXISTS nib_pessoas (
@@ -254,7 +271,7 @@ function nib_fechar_sessao(): void {
 function nib_publico(array $p): array {
   $nome = nib_nome_proprio((string)$p['nome']);
   return ['id' => (int)$p['id'], 'nome' => $nome, 'primeiro' => explode(' ', $nome)[0], 'email' => $p['email'], 'celular' => $p['celular'],
-    'sexo' => $p['sexo'], 'vinculo' => $p['vinculo'], 'celula' => $p['celula'] ?? '', 'membro_status' => $p['membro_status'], 'papel' => $p['papel'],
+    'sexo' => $p['sexo'], 'vinculo' => $p['vinculo'], 'celula' => $p['celula'] ?? '', 'membro_status' => $p['membro_status'], 'papel' => nib_papeis($p)[0], 'papeis' => nib_papeis($p),
     'nascimento' => $p['nascimento'], 'cpf' => $p['cpf'] ?? '', 'endereco' => $p['endereco'] ?? '', 'mostrar_aniversario' => (bool)$p['mostrar_aniversario'], 'criado_em' => $p['criado_em']];
 }
 // Nome próprio: "maria DA silva" -> "Maria da Silva" (partículas em minúsculas, exceto no começo).
@@ -277,7 +294,7 @@ function nib_push_endpoint_ok(string $u): bool {
   $p = parse_url($u); if (!$p || ($p['scheme'] ?? '') !== 'https' || empty($p['host'])) return false;
   return (bool)preg_match('/(^|\.)(fcm\.googleapis\.com|android\.googleapis\.com|push\.services\.mozilla\.com|push\.apple\.com|notify\.windows\.com)$/', $p['host']);
 }
-function nib_equipe(array $p): bool { return in_array($p['papel'], ['secretaria', 'pastoral', 'admin'], true); }
+function nib_equipe(array $p): bool { return nib_tem_papel($p, ['secretaria', 'pastoral', 'admin']); }
 
 function nib_enviar_email(string $para, string $assunto, string $texto): bool {
   $c = nib_config();
