@@ -220,7 +220,7 @@ try {
     case 'get:membros': {
       if (!$eu || !nib_equipe($eu)) nib_erro('Acesso só para a equipe da igreja.', 403);
       $tz = new DateTimeZone('America/Porto_Velho'); $d56 = (new DateTimeImmutable('today', $tz))->modify('-56 days')->format('Y-m-d');
-      $q = $db->prepare("SELECT p.id, p.nome, p.email, p.celular, p.cpf, p.sexo, p.vinculo, p.celula, p.membro_status, p.nascimento, p.endereco, p.mostrar_aniversario, p.criado_em, p.ultimo_acesso, p.confirmado_em,
+      $q = $db->prepare("SELECT p.id, p.nome, p.email, p.celular, p.cpf, p.papel, p.sexo, p.vinculo, p.celula, p.membro_status, p.nascimento, p.endereco, p.mostrar_aniversario, p.criado_em, p.ultimo_acesso, p.confirmado_em,
         (SELECT MAX(c.culto_dia) FROM nib_checkins c WHERE c.pessoa_id = p.id) ultima_presenca,
         (SELECT COUNT(*) FROM nib_checkins c WHERE c.pessoa_id = p.id AND c.culto_dia >= ?) presencas_8sem,
         (SELECT COUNT(*) FROM nib_membresia m WHERE m.pessoa_id = p.id AND m.apresentacao_em IS NULL) integracao
@@ -275,6 +275,19 @@ try {
         }
       }
       nib_registrar($me, 'membresia-' . $etapa, $id);
+      nib_json(200, ['ok' => true]);
+    }
+    // Perfil de acesso: só a administração muda (decisão de Hilton, 07/11/2026). Ninguém tira o próprio admin, e sempre fica ao menos um admin.
+    case 'post:papel': {
+      if (!$eu || $eu['papel'] !== 'admin') nib_erro('Só a administração muda o perfil de acesso.', 403);
+      $id = (int)($d['id'] ?? 0); $papel = in_array($d['papel'] ?? '', ['membro', 'secretaria', 'pastoral', 'tesouraria', 'admin'], true) ? $d['papel'] : '';
+      if ($id < 1 || $papel === '') nib_erro('Pedido inválido.');
+      if ($id === (int)$eu['id'] && $papel !== 'admin') nib_erro('Você não pode tirar o seu próprio acesso de administração.');
+      $q = $db->prepare('SELECT papel FROM nib_pessoas WHERE id = ?'); $q->execute([$id]); $antes = $q->fetchColumn();
+      if ($antes === false) nib_erro('Cadastro não encontrado.', 404);
+      if ($antes === 'admin' && $papel !== 'admin' && (int)$db->query("SELECT COUNT(*) FROM nib_pessoas WHERE papel = 'admin'")->fetchColumn() <= 1) nib_erro('A igreja precisa ter ao menos uma pessoa na administração.');
+      $db->prepare('UPDATE nib_pessoas SET papel = ?, atualizado_em = ? WHERE id = ?')->execute([$papel, nib_agora(), $id]);
+      nib_registrar((int)$eu['id'], 'papel-' . $papel, $id, 'antes=' . $antes);
       nib_json(200, ['ok' => true]);
     }
     case 'post:membros-exportados': {

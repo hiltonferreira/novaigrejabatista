@@ -768,6 +768,7 @@
     if (action.dataset.teamStatus) { teamSet(action); return; }
     if (PUBLIC && action.dataset.push) { if (action.dataset.push === 'on') pushOn(action); else pushOffCall(); return; }
     if (PUBLIC && action.dataset.eqMem !== undefined) { state.memSel = action.dataset.eqMem || null; state.memPrint = null; show('membros', false, false); scrollTo(0, 0); return; }
+    if (PUBLIC && action.dataset.eqPapel) { eqSalvarPapel(action); return; }
     if (PUBLIC && action.dataset.eqEtapa) { eqEtapa(action); return; }
     if (PUBLIC && action.dataset.eqStatus) { state.memStatus = action.dataset.eqStatus; state.memMore = false; show('membros', false, false); return; }
     if (PUBLIC && action.dataset.eqBday) { state.memBday = !state.memBday; show('membros', false, false); return; }
@@ -1409,6 +1410,23 @@
     return all.filter(p => (st === 'todos' || eqSituacao(p) === st) && (!cel || (cel === '-' ? !p.celula : p.celula === cel)) && (!state.memBday || String(p.nascimento || '').slice(5, 7) === mes)
       && (!q || eqFold(p.nome).includes(q) || eqFold(p.email).includes(q) || (dig.length >= 4 && String(p.celular).includes(dig))));
   }
+  const EQ_PAPEIS = [['membro', 'Membro', 'Usa o app normalmente, sem área da equipe.'], ['secretaria', 'Secretaria', 'Cadastros, membros, membresia, check-in e avisos. Exporta a lista.'], ['pastoral', 'Liderança Pastoral', 'Tudo da equipe, mais CPF, sugestões e local do check-in.'], ['tesouraria', 'Tesouraria', 'Reservado para as telas da Tesouraria (Fase 3). Por enquanto usa o app como membro.'], ['admin', 'Administração', 'Acesso completo, inclusive mudar o perfil das pessoas.']];
+  // Só quem é admin de verdade (e não está em "Ver o app como") vê e muda o perfil.
+  function eqPapelBox(p) {
+    if (!window.NibConta || NibConta.papelReal() !== 'admin' || NibConta.verComo()) return '';
+    const eu = account() && String(account().id) === String(p.id), atual = p.papel || 'membro';
+    return `<section class="box eq-papel"><h3 class="mem-h">Perfil de acesso</h3><p class="note">Só a administração vê e muda. ${eu ? 'Você não pode tirar o seu próprio acesso de administração.' : 'A mudança vale na próxima vez que a pessoa abrir o app.'}</p><div class="eq-papel-opts" role="radiogroup" aria-label="Perfil de acesso">${EQ_PAPEIS.map(([k, l, d]) => `<label class="mem-check"><input type="radio" name="eq-papel" value="${k}"${atual === k ? ' checked' : ''}${eu && k !== 'admin' ? ' disabled' : ''}><span><strong>${l}</strong><small>${d}</small></span></label>`).join('')}</div><div class="form-actions"><button type="button" class="action primary" data-eq-papel="${p.id}"${eu ? ' disabled' : ''}>Salvar perfil</button></div></section>`;
+  }
+  async function eqSalvarPapel(btn) {
+    const sel = content.querySelector('input[name="eq-papel"]:checked'); if (!sel) return;
+    const p = state.mem && state.mem.pessoas.find(x => String(x.id) === btn.dataset.eqPapel); if (!p) return;
+    if (sel.value === (p.papel || 'membro')) { announce('Esse já é o perfil da pessoa.', 'success', false); return; }
+    const nome = (EQ_PAPEIS.find(x => x[0] === sel.value) || [])[1];
+    if (sel.value === 'admin' && !confirm(`Dar acesso de Administração para ${p.nome}? A pessoa poderá mudar o perfil de todos.`)) return;
+    btn.disabled = true;
+    try { await NibConta.mudarPapel(Number(p.id), sel.value); p.papel = sel.value; show('membros', false, false); announce(`${p.nome} agora tem o perfil ${nome}.`, 'success', false); }
+    catch (e) { btn.disabled = false; announce(e.message, 'error'); }
+  }
   function eqFicha(p) {
     const lid = NibConta.lideranca(), s = eqSituacao(p), tel = String(p.celular || '').replace(/\D/g, '');
     const kv = rows => `<dl class="mem-kv">${rows.filter(r => r[1] !== null).map(([k, v]) => `<div><dt>${k}</dt><dd>${v === '' ? '<span class="mem-empty">Não informado</span>' : v}</dd></div>`).join('')}</dl>`;
@@ -1416,10 +1434,11 @@
     <section class="box mem-card"><div class="admin-person-head"><span class="profile-avatar" aria-hidden="true">${escape(p.nome.charAt(0))}</span><div><h2>${escape(p.nome)}</h2><small>Cadastro no app em ${fmtDay(p.criado_em)}</small></div><span class="tag ${eqTag(s)}">${s}</span></div>
     <div class="mem-actions">${tel ? `<a class="mem-act" href="tel:${tel}">${NibIcons.svg('telefone')}<span>Ligar</span></a><a class="mem-act" href="https://wa.me/55${tel}" target="_blank" rel="noopener">${NibIcons.svg('whatsapp')}<span>WhatsApp</span></a>` : ''}${p.email ? `<a class="mem-act" href="mailto:${escape(p.email)}">${NibIcons.svg('email')}<span>E-mail</span></a>` : ''}</div>
     ${s === 'Aguardando' ? `<div class="form-actions">${button('Confirmar em Cadastros', 'cadastros')}</div>` : p.membro_status !== 'confirmado' ? `<div class="form-actions">${p.integracao ? button('Ver em Membresia', 'membresia') : `<button type="button" class="action admin-secondary" data-eq-etapa="inicio" data-id="${p.id}">Iniciar integração</button>`}</div>` : ''}</section>
+    ${eqPapelBox(p)}
     <section class="box"><h3 class="mem-h">Contato</h3>${kv([['Celular', escape(fmtPhone(p.celular))], ['E-mail', escape(p.email || '')]])}</section>
     <section class="box"><h3 class="mem-h">Endereço</h3>${kv([['Endereço', escape(p.endereco || '')]])}</section>
     <section class="box"><h3 class="mem-h">Dados pessoais</h3>${kv([['Nascimento', fmtDay(p.nascimento)], ['Gênero', p.sexo === 'm' ? 'Masculino' : 'Feminino'], ['CPF', lid ? escape(fmtCpf(p.cpf || '')) : null], ['Aniversário na tela inicial', p.mostrar_aniversario ? 'Aparece' : 'Não aparece (escolha da pessoa)']])}</section>
-    <section class="box"><h3 class="mem-h">Vida na igreja</h3>${kv([['Situação', s], ['Como se cadastrou', escape(vinculoLabel[p.vinculo] || '')], ['Célula', escape(eqCelula(p.celula) || 'Sem célula')], ['Membro desde', p.membro_status === 'confirmado' ? (fmtDay(p.confirmado_em) || '') : null], ['Última presença no culto', fmtDay(p.ultima_presenca) || 'Ainda sem check-in'], ['Presenças nas últimas 8 semanas', String(p.presencas_8sem || 0)], ['Último acesso ao app', fmtDay(p.ultimo_acesso)]])}</section>
+    <section class="box"><h3 class="mem-h">Vida na igreja</h3>${kv([['Situação', s], ['Perfil no app', escape((EQ_PAPEIS.find(x => x[0] === (p.papel || 'membro')) || [, 'Membro'])[1])], ['Como se cadastrou', escape(vinculoLabel[p.vinculo] || '')], ['Célula', escape(eqCelula(p.celula) || 'Sem célula')], ['Membro desde', p.membro_status === 'confirmado' ? (fmtDay(p.confirmado_em) || '') : null], ['Última presença no culto', fmtDay(p.ultima_presenca) || 'Ainda sem check-in'], ['Presenças nas últimas 8 semanas', String(p.presencas_8sem || 0)], ['Último acesso ao app', fmtDay(p.ultimo_acesso)]])}</section>
     <p class="note">${lid ? 'A Liderança Pastoral vê a ficha completa, inclusive o CPF.' : 'A Secretaria vê a ficha. O CPF fica só com a Liderança Pastoral.'} Os dados são atualizados pela própria pessoa em Meu cadastro.</p>`;
   }
   function eqExportBox(list) {
@@ -1427,7 +1446,7 @@
     const groups = state.memGroups || ['contato', 'igreja'], log = state.mem.exportacoes || [];
     return `<details class="box mem-export"${state.memExportOpen ? ' open' : ''}><summary>${NibIcons.svg('relatorios')}<span><strong>Exportar lista</strong><small>${list.length} pessoa${list.length === 1 ? '' : 's'} do filtro atual · planilha ou PDF</small></span></summary>
     <form id="mem-export-form" autocomplete="off" novalidate><fieldset><legend>O que vai no arquivo</legend><p class="note">Sempre vão nome e situação.</p>${EQ_GRUPOS.map(([k, l, d]) => `<label class="mem-check"><input type="checkbox" name="g" value="${k}"${groups.includes(k) ? ' checked' : ''}><span><strong>${l}</strong><small>${d}</small></span></label>`).join('')}</fieldset>
-    <fieldset><legend>Formato</legend><div class="mem-formats"><label class="mem-format"><input type="radio" name="format" value="csv" checked><span><strong>Planilha</strong><small>CSV, abre no Excel</small></span></label><label class="mem-format"><input type="radio" name="format" value="pdf"><span><strong>PDF</strong><small>Imprimir ou salvar</small></span></label></div></fieldset>
+    <fieldset><legend>Formato</legend><div class="mem-formats"><label class="mem-format"><input type="radio" name="format" value="csv" checked><span><strong>Planilha CSV</strong><small>Abre no Excel e no Google Planilhas</small></span></label><label class="mem-format"><input type="radio" name="format" value="pdf"><span><strong>PDF</strong><small>Imprimir ou salvar</small></span></label></div></fieldset>
     <label class="mem-check mem-consent"><input type="checkbox" name="ok"><span>Uso interno da igreja. Não vou compartilhar o arquivo fora da equipe.</span></label>
     <p class="form-error" role="alert"></p><button type="submit" class="action primary">Exportar ${list.length} pessoa${list.length === 1 ? '' : 's'}</button></form>
     ${log.length ? `<div class="mem-log"><h3>Últimas exportações</h3><ul>${log.map(x => { const n = (String(x.detalhes).match(/n=(\d+)/) || [])[1] || '0'; return `<li>${fmtDay(x.em)} ${String(x.em).slice(11, 16)} · ${escape(x.nome || 'Equipe')} · ${n} pessoas · ${/formato=pdf/.test(x.detalhes) ? 'PDF' : 'planilha'}</li>`; }).join('')}</ul></div>` : ''}</details>`;

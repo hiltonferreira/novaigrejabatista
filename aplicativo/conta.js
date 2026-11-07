@@ -46,6 +46,7 @@
     equipePainel: async () => (await api('equipe-painel')).painel,
     membros: async () => api('membros'),
     membresia: async () => api('membresia'),
+    mudarPapel: async (id, papel) => api('papel', { id, papel }),
     membresiaEtapa: async (id, etapa) => api('membresia-etapa', { id, etapa }),
     membrosExportados: async body => api('membros-exportados', body),
     caderno: async (acao, body) => api(acao, body, 'caderno'),
