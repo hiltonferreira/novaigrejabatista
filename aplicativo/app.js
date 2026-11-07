@@ -13,11 +13,11 @@
   root.classList.toggle('is-public', PUBLIC);
   const publicViews = ['inicio','agenda','eventos','generosidade','celulas','caderno','informacoes','avisos','sugestoes'];
   const account = () => (PUBLIC && window.NibConta) ? NibConta.pessoa() : null;
-  const allowedPublic = () => publicViews.concat(account() ? ['cadastro'] : [], account() && NibConta.equipe() ? ['cadastros', 'checkin'] : []);
+  const allowedPublic = () => publicViews.concat(account() ? ['cadastro'] : [], account() && NibConta.equipe() ? ['equipe', 'membros', 'cadastros', 'checkin'] : []);
   const publicNav = () => [['inicio', 'Início'], ['agenda', 'Agenda'], ['eventos', 'Eventos'], ['generosidade', 'Generosidade'], ['celulas', 'Células'], ['caderno', 'Caderno de oração'], ['avisos', 'Avisos da igreja'], ['informacoes', 'Informações'], ['sugestoes', 'Sugestões para o app']]
-    .concat(account() ? [['cadastro', 'Meu cadastro']] : [['entrar', 'Entrar ou criar cadastro']], account() && NibConta.equipe() ? [['cadastros', 'Cadastros'], ['checkin', 'Check-in dos cultos']] : []);
+    .concat(account() ? [['cadastro', 'Meu cadastro']] : [['entrar', 'Entrar ou criar cadastro']], account() && NibConta.equipe() ? [['equipe', 'Painel da equipe'], ['membros', 'Membros'], ['cadastros', 'Cadastros'], ['checkin', 'Check-in dos cultos']] : []);
   // Menu do app oficial em blocos, para não virar uma lista comprida sem respiro.
-  const publicGroups = items => [['Sua conta',['inicio','cadastro','entrar']],['Vida na igreja',['agenda','eventos','celulas','caderno']],['Igreja',['avisos','generosidade','informacoes']],['Equipe da igreja',['cadastros','checkin']],['Ajude a melhorar',['sugestoes']]]
+  const publicGroups = items => [['Sua conta',['inicio','cadastro','entrar']],['Vida na igreja',['agenda','eventos','celulas','caderno']],['Igreja',['avisos','generosidade','informacoes']],['Equipe da igreja',['equipe','membros','cadastros','checkin']],['Ajude a melhorar',['sugestoes']]]
     .map(([label,keys]) => [label, keys.map(k => items.find(([key]) => key === k)).filter(Boolean)]).filter(([,links]) => links.length);
   // Grupos de opções lado a lado (data-seg) no padrão do login: trilho cinza com pílula branca que desliza (pedido de Hilton, 06/11/2026).
   const segPrev = new Map();
@@ -61,6 +61,8 @@
     cadastros: ['EQUIPE DA IGREJA', 'Cadastros', 'Quem criou conta no app. Confirme quem é membro da igreja.'],
     eventos: ['VIDA EM COMUNIDADE', 'Eventos', 'Os próximos encontros da igreja e as inscrições abertas.'],
     informacoes: ['FIQUE POR PERTO', 'Informações da igreja', 'Horários dos cultos, endereço, liderança e canais oficiais.'],
+    equipe: ['EQUIPE DA IGREJA', 'Painel da equipe', 'Números reais do app, atalhos e o que precisa de atenção.'],
+    membros: ['EQUIPE DA IGREJA', 'Membros', 'Lista completa, ficha de cada pessoa e exportação.'],
     checkin: ['EQUIPE DA IGREJA', 'Check-in dos cultos', 'QR Code do telão, local da igreja e quem registrou presença.'],
     sugestoes: ['SUA OPINIÃO', 'Sugestões para o app', 'Conte o que podemos melhorar no app: ideias, problemas ou o que você gostou.']
   });
@@ -77,7 +79,7 @@
   const button = (text, view, primary = false) => { const back = !primary && /^Voltar/.test(text); return `<button type="button" class="button ${primary ? 'action primary' : back ? 'button-go button-back' : 'button-go'}" data-view="${view}">${back ? backArrow : ''}<span>${text}</span>${primary || back ? '' : arrow}</button>`; };
   // Ícones reaproveitados da função icon() do painel; sem ícones nas ações.
   // Ícones: conjunto único em icons.js (NibIcons).
-  const iconAlias = { entrar: 'cadastro', cadastros: 'membros', avisos: 'comunicados', checkin: 'recepcao' };
+  const iconAlias = { entrar: 'cadastro', equipe: 'gestao', cadastros: 'solicitacoes', avisos: 'comunicados', checkin: 'recepcao' };
   const navIcon = key => NibIcons.svg(iconAlias[key] || key);
   const events = [
     { name: 'Mulheres Virtuosas', image: 'assets/mulheres.webp', date: '30/10/2026', active: false },
@@ -638,6 +640,8 @@
     if (isManagement() && !admin.allowed(view)) view = 'gestao';
     if (adminOnly.includes(view) && !isManagement()) view = 'inicio';
     if (PUBLIC && !allowedPublic().includes(view)) view = 'inicio';
+    if (PUBLIC && record && view === 'equipe' && !state.painelLoading) state.painel = null; // números sempre atualizados ao abrir
+    if (PUBLIC && record && view === 'membros' && !state.memLoading) { state.mem = null; state.memSel = null; state.memPrint = null; }
     if (record && focus && view !== state.view) viewHistory.push(state.view);
     state.view = (labels[view] || admin.labels[view]) ? view : 'inicio';
     root.dataset.view = state.view;
@@ -680,6 +684,8 @@
       sugestoes: () => sugestoesPage(),
       checkin: () => checkinPanel(),
       cadastros: () => teamPage(),
+      equipe: () => teamPanel(),
+      membros: () => membersRealPage(),
       cadastro: () => PUBLIC ? accountPage() : `<div class="profile-layout"><section class="box profile-summary"><span class="tag">Membro · exemplo</span><h2>${escape(state.member.full)}</h2><p>Confira seu cadastro na igreja.</p><dl class="profile"><dt>E-mail</dt><dd>jessica@example.com</dd><dt>Tratamento</dt><dd>${g('Masculino', 'Feminino')}</dd><dt>Telefone</dt><dd>Não informado</dd><dt>Endereço</dt><dd>Não informado</dd><dt>Apresentação no culto</dt><dd>Apresentação registrada · exemplo</dd></dl><label class="check profile-bday"><input type="checkbox" id="bday-visible"${state.hideBirthday ? '' : ' checked'}><span>Mostrar meu aniversário (dia e mês) na tela inicial da igreja</span></label><p class="note">As alterações são encaminhadas para conferência da Secretaria.</p></section><section class="box profile-edit"><h2>O que você deseja atualizar?</h2><p>Preencha somente os dados que precisam mudar.</p><form id="profile-form"><fieldset><legend>Dados para atualização</legend><div class="form-grid"><div><label for="new-name">Nome completo</label><input id="new-name" name="newName" autocomplete="off" placeholder="Informe o nome corrigido" maxlength="160"></div><div><label for="new-email">Novo e-mail</label><input id="new-email" name="newEmail" type="email" autocomplete="off" placeholder="nome@exemplo.com" maxlength="160"></div><div><label for="new-phone">Novo telefone / WhatsApp</label><input id="new-phone" name="newPhone" type="tel" inputmode="tel" autocomplete="off" placeholder="(69) 99999-9999" maxlength="25"></div><div><label for="new-address">Endereço</label><input id="new-address" name="newAddress" autocomplete="off" placeholder="Rua, número, bairro e cidade" maxlength="250"></div></div></fieldset><fieldset><legend>Contato e observações</legend><label for="contact-email">E-mail para retorno</label><input id="contact-email" name="email" type="email" autocomplete="email" value="${escape(state.member.email)}" placeholder="exemplo@example.com" maxlength="160" required><label for="contact-note">Outra alteração ou observação (opcional)</label><textarea id="contact-note" name="note" placeholder="Descreva o que a Secretaria precisa conferir." maxlength="500"></textarea></fieldset><div class="form-actions"><button class="action" type="submit">Enviar solicitação de teste</button><button type="reset">Limpar alterações</button></div></form><p class="note">Use dados fictícios. A solicitação fica nesta sessão; nenhum cadastro real é alterado.</p></section></div>${myRequestsBox()}`,
       eventos: () => `${eventCards()}${PUBLIC && account() ? myRegistrations() : legacyRegsBox()}`,
       celulas: () => cellsPage(),
@@ -758,6 +764,11 @@
     if (PUBLIC && (action.dataset.view === 'entrar' || action.dataset.accountOpen)) { event.preventDefault(); openAccount(action.dataset.accountOpen || 'login'); return; }
     if (action.dataset.teamStatus) { teamSet(action); return; }
     if (PUBLIC && action.dataset.push) { if (action.dataset.push === 'on') pushOn(action); else pushOffCall(); return; }
+    if (PUBLIC && action.dataset.eqMem !== undefined) { state.memSel = action.dataset.eqMem || null; state.memPrint = null; show('membros', false, false); scrollTo(0, 0); return; }
+    if (PUBLIC && action.dataset.eqStatus) { state.memStatus = action.dataset.eqStatus; state.memMore = false; show('membros', false, false); return; }
+    if (PUBLIC && action.dataset.eqBday) { state.memBday = !state.memBday; show('membros', false, false); return; }
+    if (PUBLIC && action.dataset.eqClear) { state.memQ = ''; state.memCell = ''; state.memBday = false; state.memStatus = 'todos'; show('membros', false, false); return; }
+    if (PUBLIC && action.dataset.eqMore) { state.memMore = true; show('membros', false, false); return; }
     if (action.dataset.verComo && PUBLIC) { setViewAs(action.dataset.verComo); return; }
     if (action.dataset.cadTab !== undefined) { state.cadTab = action.dataset.cadTab; if (state.cadTab === 'painel') state.cadPainel = null; show('caderno', false, false); return; }
     if (action.dataset.teamFilter !== undefined) { state.teamFilter = action.dataset.teamFilter; show('cadastros', false, false); return; }
@@ -775,6 +786,7 @@
     if (!form.reportValidity()) return;
     const values = new FormData(form);
     if (isManagement() && admin.submit(form, values)) return;
+    if (PUBLIC && form.id === 'mem-export-form') { eqExport(form); return; }
     if (PUBLIC && form.id === 'sug-form') { const btn = form.querySelector('[type=submit]'), err = form.querySelector('.form-error'), texto = String(values.get('texto') || '').trim(); if (texto.length < 5) { err.textContent = 'Escreva sua mensagem.'; form.elements.texto.focus(); return; } btn.disabled = true; err.textContent = ''; NibConta.sugestao({ tipo: state.sugTipo || 'sugestao', texto }).then(() => { state.sugDraft = ''; state.sugList = null; show('sugestoes', false, false); announce('Obrigado! Sua mensagem foi enviada.', 'success'); }).catch(e => { err.textContent = e.message; btn.disabled = false; }); return; }
     if (PUBLIC && form.id === 'aviso-form') { const btn = form.querySelector('[type=submit]'); btn.disabled = true; NibConta.avisos('publicar', { titulo: String(values.get('titulo') || ''), texto: String(values.get('texto') || ''), link: String(values.get('link') || ''), ate: String(values.get('ate') || ''), fixado: values.get('fixado') === 'on', notificar: values.get('notificar') === 'on' }).then(loadAvisos).then(() => { show('avisos', false, false); refreshNotices(); announce('Aviso publicado para toda a igreja.', 'success', false); }).catch(e => { btn.disabled = false; announce(e.message, 'warning'); }); return; }
     if (PUBLIC && accountSubmit(form, values)) return;
@@ -818,8 +830,8 @@
   }
   root.addEventListener('change', e => { if (PUBLIC && e.target.matches('[data-push-caderno]')) pushCaderno(e.target); if (PUBLIC && e.target.matches('[data-push-lembretes]')) pushLembretes(e.target); });
   root.addEventListener('input', e => { if (e.target.id !== 'acc-cpf') return; const d = e.target.value.replace(/\D/g, '').slice(0, 11); e.target.value = d.replace(/^(\d{3})(\d)/, '$1.$2').replace(/^(\d{3})\.(\d{3})(\d)/, '$1.$2.$3').replace(/\.(\d{3})(\d{1,2})$/, '.$1-$2'); });
-  root.addEventListener('input', e => { if (isManagement() && admin.input && e.target.id === 'mem-q') admin.input(e.target); if (e.target.id === 'team-q') teamFilterList(e.target.value); });
-  root.addEventListener('change', e => { if (isManagement() && admin.input && e.target.id === 'mem-cell') { admin.input(e.target); return; } if (e.target.id === 'bday-visible') { state.hideBirthday = !e.target.checked; announce(e.target.checked ? 'Seu aniversário aparece para a igreja (teste).' : 'Seu aniversário não aparece mais para a igreja (teste).', 'success', false); } });
+  root.addEventListener('input', e => { if (isManagement() && admin.input && e.target.id === 'mem-q') admin.input(e.target); if (e.target.id === 'team-q') teamFilterList(e.target.value); if (PUBLIC && e.target.id === 'eq-q') eqFilterInput(e.target.value); });
+  root.addEventListener('change', e => { if (PUBLIC && e.target.id === 'eq-cell') { state.memCell = e.target.value; state.memMore = false; show('membros', false, false); return; } if (isManagement() && admin.input && e.target.id === 'mem-cell') { admin.input(e.target); return; } if (e.target.id === 'bday-visible') { state.hideBirthday = !e.target.checked; announce(e.target.checked ? 'Seu aniversário aparece para a igreja (teste).' : 'Seu aniversário não aparece mais para a igreja (teste).', 'success', false); } });
   document.addEventListener('nib-install-change', () => { if (state.view === 'inicio' && !isManagement()) show('inicio', false, false); });
   document.getElementById('demo-context').addEventListener('change', changeContext);
   document.getElementById('demo-context-mobile').addEventListener('change', changeContext);
@@ -1270,7 +1282,7 @@
   }
   function setViewAs(v) {
     NibConta.definirVerComo(v === 'admin' ? '' : v);
-    state.sugList = null; state.cadPainel = null; state.cadTab = 'pedidos'; state.ckPanel = null; state.ck = null; state.ckKey = null; state.avisos = null;
+    state.sugList = null; state.cadPainel = null; state.cadTab = 'pedidos'; state.ckPanel = null; state.ck = null; state.ckKey = null; state.avisos = null; state.painel = null; state.mem = null; state.memSel = null;
     applyAccount();
   }
   function accountPage() {
@@ -1314,6 +1326,156 @@
     catch (e) { btn.disabled = false; announce(e.message, 'error'); }
   }
   function teamFilterList(q) { q = q.trim().toLowerCase(); content.querySelectorAll('.team-row').forEach(li => { li.hidden = !!q && !li.dataset.q.includes(q); }); }
+  // ---------- Área da equipe com dados reais (Fase 1): Painel e Membros. Mesmo visual da versão de demonstração. ----------
+  const eqMes = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+  const eqNum = n => Number(n || 0).toLocaleString('pt-BR');
+  const eqIco = d => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${d}"/></svg>`;
+  const eqP = () => NibIcons.paths || {};
+  const eqHead = (label, title, aside = '') => `<div class="dash-head"><div><span class="label">${label}</span><h2>${title}</h2></div>${aside}</div>`;
+  const eqChevron = '<svg class="admin-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>';
+  const eqFold = s => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+  const eqPodeExportar = () => !!(state.mem && state.mem.pode_exportar && account() && ['secretaria', 'admin'].includes(account().papel));
+  // Situação de cada pessoa, a partir do cadastro real.
+  const eqSituacao = p => p.membro_status === 'confirmado' ? 'Membro' : p.membro_status === 'pendente' ? 'Aguardando' : p.vinculo === 'frequento' ? 'Frequenta' : 'Conhecendo';
+  const eqTag = s => s === 'Membro' ? 'status-active' : s === 'Aguardando' ? 'is-wait' : s === 'Frequenta' ? 'mem-tag-reg' : 'is-neutral';
+  const eqCelula = c => c ? String(c).split('|').reverse().join(' · ') : '';
+  function eqLoad(key, fn, view) {
+    if (state[key] || state[key + 'Loading']) return;
+    state[key + 'Loading'] = true;
+    fn().then(d => { state[key] = d; state[key + 'Erro'] = ''; }).catch(e => { state[key] = null; state[key + 'Erro'] = e.message; })
+      .finally(() => { state[key + 'Loading'] = false; if (state.view === view) show(view, false, false); });
+  }
+  function eqChart(cultos) {
+    const narrow = typeof innerWidth === 'number' && innerWidth < 600, W = narrow ? 340 : 560, top = 26, base = 182, left = 34, n = cultos.length;
+    const vals = cultos.map(c => c.pessoas), max = Math.max(10, Math.ceil(Math.max(...vals) * 1.15 / 10) * 10), bw = narrow ? 24 : 38, gap = n > 1 ? (W - left - 8 - n * bw) / (n - 1) : 0;
+    const y = v => base - (v / max) * (base - top);
+    const avg = Math.round(vals.reduce((a, b) => a + b, 0) / n);
+    const grid = [0, Math.round(max / 2), max].map(v => `<line x1="${left}" x2="${W}" y1="${y(v)}" y2="${y(v)}" class="dash-grid${v ? '' : ' is-base'}"/><text x="${left - 8}" y="${y(v) + 4}" class="dash-axis" text-anchor="end">${v}</text>`).join('');
+    const bars = cultos.map((c, i) => {
+      const v = c.pessoas, x = left + i * (bw + gap), yt = y(v), r = Math.min(5, (base - yt) / 2), last = i === n - 1, d = String(c.dia);
+      const path = `M${x},${base} V${yt + r} Q${x},${yt} ${x + r},${yt} H${x + bw - r} Q${x + bw},${yt} ${x + bw},${yt + r} V${base} Z`;
+      return `<g class="dash-bar${last ? ' is-last' : ''}" tabindex="0" role="img" aria-label="${d.slice(8, 10)} de ${eqMes[+d.slice(5, 7) - 1]}, ${escape(c.culto)}: ${v} pessoas"><path d="${path}"/><text x="${x + bw / 2}" y="${yt - 8}" text-anchor="middle" class="dash-value">${v}</text><text x="${x + bw / 2}" y="${base + 20}" text-anchor="middle" class="dash-axis">${d.slice(8, 10)}/${d.slice(5, 7)}</text></g>`;
+    }).join('');
+    return `<svg class="dash-chart" viewBox="0 0 ${W} ${base + 30}" role="group" aria-label="Check-ins nos últimos cultos">${grid}${bars}<line x1="${left}" x2="${W}" y1="${y(avg)}" y2="${y(avg)}" class="dash-avg"/></svg><div class="dash-legend"><span><i class="sw is-last"></i>Último culto</span><span><i class="sw is-avg"></i>Média · ${avg}</span></div>`;
+  }
+  function teamPanel() {
+    eqLoad('painel', () => NibConta.equipePainel(), 'equipe');
+    if (!state.painel) return state.painelErro ? `<p class="form-error" role="alert">${escape(state.painelErro)}</p>` : '<p class="event-empty">Carregando o painel</p>';
+    const d = state.painel, P = eqP(), lid = NibConta.lideranca();
+    const pill = v => v > 0 ? `<span class="dash-pill">${eqIco('M7 14l5-5 5 5')}+${v}</span>` : '';
+    const tile = (icon, label, value, extra, note, view) => `<${view ? `button type="button" class="dash-tile is-link" data-view="${view}"` : 'div class="dash-tile"'}><span class="dash-tile-top"><span class="dash-ico">${eqIco(icon || '')}</span><span class="dash-tile-label">${label}</span></span><strong class="dash-tile-value">${eqNum(value)}</strong><span class="dash-tile-note">${extra}${note ? `<small>${note}</small>` : ''}</span></${view ? 'button' : 'div'}>`;
+    const tiles = [
+      tile(P.membros, 'Membros', d.membros, pill(d.membros_novos), d.membros_novos ? 'confirmados em 30 dias' : 'confirmados pela Secretaria', 'membros'),
+      tile(P.frequentador, 'Frequentam', d.frequentadores, '', 'Participam, ainda sem membresia', 'membros'),
+      tile(P.visitante, 'Conhecendo a igreja', d.visitantes, '', 'Cadastro como visitante', 'membros'),
+      tile(P.celulas, 'Em célula', d.em_celula, `<span class="dash-pill is-neutral">${eqNum(d.celulas)} ${d.celulas === 1 ? 'célula' : 'células'}</span>`, '', 'membros'),
+      tile(P.alerta, 'Aguardando confirmação', d.aguardando, '', 'Disseram que são membros', 'cadastros')
+    ].join('');
+    const texts = {
+      membros: eqPodeExportar() ? 'Lista completa, ficha de cada pessoa e exportação.' : 'Lista completa e ficha de cada pessoa.',
+      cadastros: d.aguardando ? `${d.aguardando} ${d.aguardando === 1 ? 'pessoa aguardando' : 'pessoas aguardando'} confirmação de membro.` : 'Ninguém aguardando confirmação.',
+      checkin: 'QR Code do telão, local da igreja e presença.',
+      avisos: 'Publique avisos no sino e no mural da igreja.',
+      caderno: d.caderno_ativos ? `${d.caderno_ativos} ${d.caderno_ativos === 1 ? 'pedido' : 'pedidos'} em andamento.` : 'Nenhum pedido em andamento.',
+      sugestoes: d.sugestoes_novas ? `${d.sugestoes_novas} ${d.sugestoes_novas === 1 ? 'sugestão nova' : 'sugestões novas'} para ler.` : 'Ideias e problemas enviados pelos membros.'
+    };
+    const badges = { cadastros: d.aguardando, sugestoes: lid ? d.sugestoes_novas : 0 };
+    const titles = { membros: 'Membros', cadastros: 'Cadastros', checkin: 'Check-in dos cultos', avisos: 'Avisos', caderno: 'Caderno de oração', sugestoes: 'Sugestões' };
+    const keys = ['membros', 'cadastros', 'checkin', 'avisos', 'caderno'].concat(lid ? ['sugestoes'] : []);
+    const shortcuts = keys.map(k => `<button type="button" class="quick-action admin-quick" data-view="${k}"><span class="home-action-icon" aria-hidden="true">${navIcon(k)}</span>${badges[k] ? `<span class="admin-badge" aria-label="${badges[k]} pendente${badges[k] === 1 ? '' : 's'}">${badges[k]}</span>` : ''}<strong>${titles[k]}</strong><span class="home-action-description">${texts[k]}</span></button>`).join('');
+    const quick = `<section aria-labelledby="admin-quick-title"><div class="section-heading"><div><span class="label">${lid ? 'LIDERANÇA PASTORAL' : 'SECRETARIA DA IGREJA'}</span><h2 id="admin-quick-title">Atalhos de gestão</h2></div></div><p class="admin-rule">${lid ? 'A Liderança Pastoral decide. A Secretaria organiza e registra o que foi decidido.' : 'A Secretaria organiza e registra. Decisões pastorais ficam com a Liderança Pastoral.'}</p><div class="quick-actions">${shortcuts}</div></section>`;
+    const c = d.cultos || [], lastC = c[c.length - 1];
+    const presence = `<section class="box dash-box">${eqHead('CHECK-IN DOS CULTOS', 'Presença nos últimos cultos', lastC ? `<div class="dash-head-aside"><strong>${lastC.pessoas}</strong></div>` : '')}${c.length ? eqChart(c) + `<div class="dash-foot dash-minis"><div><small>Maior</small><strong>${Math.max(...c.map(x => x.pessoas))}</strong></div><div><small>Menor</small><strong>${Math.min(...c.map(x => x.pessoas))}</strong></div><div><small>Cultos</small><strong>${c.length}</strong></div></div>` : '<p class="dash-sub">Ainda não há check-ins registrados. Projete o QR Code do telão no próximo culto.</p>'}<div class="dash-foot">${button('Ver check-in', 'checkin')}</div></section>`;
+    const stat = (icon, value, text, tone) => `<li><span class="dash-ico${tone ? ' is-' + tone : ''}">${eqIco(icon || '')}</span><strong>${eqNum(value)}</strong><span>${text}</span></li>`;
+    const care = `<section class="box dash-box">${eqHead('PARA ACOMPANHAR', 'O que precisa de atenção')}<ul class="dash-stats">${stat(P.alerta, d.aguardando, 'cadastros aguardando confirmação de membro', d.aguardando ? 'warn' : '')}${stat(P.celulas, d.membros_sem_celula, 'membros sem célula', d.membros_sem_celula ? 'warn' : '')}${stat(P.cuidado, d.caderno_sem_oracao, 'pedidos do caderno ainda sem ninguém orando', d.caderno_sem_oracao ? 'warn' : '')}${stat(P.membros, d.dados_faltando, 'cadastros sem data de nascimento ou endereço')}${stat(P.visitante, d.cadastros_novos, 'cadastros novos nos últimos 30 dias')}</ul></section>`;
+    const bd = d.aniversariantes || [];
+    const birthdays = `<section class="box dash-box">${eqHead('ESTA SEMANA', 'Aniversariantes')}${bd.length ? `<ul class="dash-people">${bd.map(b => `<li><span class="profile-avatar" aria-hidden="true">${escape(b.nome.charAt(0))}</span><span>${escape(b.nome)}</span><span class="dash-date">${b.em === 0 ? 'Hoje' : b.dia.slice(3) + '/' + b.dia.slice(0, 2)}</span></li>`).join('')}</ul>` : '<p class="dash-sub">Nenhum aniversário nos próximos 7 dias.</p>'}<p class="note dash-foot">Só aparece quem deixou o aniversário visível em Meu cadastro.</p></section>`;
+    return `<section class="dash" aria-labelledby="dash-title"><div class="section-heading"><div><span class="label">RESUMO DA IGREJA</span><h2 id="dash-title">Como a igreja está hoje</h2></div></div><div class="dash-tiles">${tiles}</div></section>${quick}<section class="dash dash-more" aria-label="Indicadores"><div class="admin-grid dash-row">${presence}${care}</div><div class="admin-grid dash-row">${birthdays}<section class="box dash-box">${eqHead('EVENTOS E INSCRIÇÕES', 'Painel de inscrições')}<p class="dash-sub">As inscrições dos eventos continuam no painel do site, com login próprio.</p><div class="dash-foot"><a class="button button-go admin-external" href="https://novaigrejabatista.com.br/inscricoes/" target="_blank" rel="noopener"><span>Abrir painel de inscrições</span>${arrow}</a></div></section></div></section>`;
+  }
+  // Membros: lista, filtros, ficha e exportação (exportar só Secretaria e administração).
+  const EQ_GRUPOS = [
+    ['contato', 'Contato', 'celular e e-mail', p => [fmtPhone(p.celular), p.email], ['celular', 'email']],
+    ['endereco', 'Endereço', 'endereço informado no cadastro', p => [p.endereco || ''], ['endereco']],
+    ['igreja', 'Vida na igreja', 'célula, membro desde e última presença', p => [eqCelula(p.celula) || 'sem célula', fmtDay(p.confirmado_em), fmtDay(p.ultima_presenca)], ['celula', 'membro_desde', 'ultima_presenca']],
+    ['pessoal', 'Dados pessoais', 'nascimento e gênero', p => [fmtDay(p.nascimento), p.sexo === 'm' ? 'Masculino' : 'Feminino'], ['nascimento', 'genero']]
+  ];
+  function eqFiltrados() {
+    const all = state.mem.pessoas, q = eqFold(state.memQ), dig = String(state.memQ || '').replace(/\D/g, ''), st = state.memStatus || 'todos', cel = state.memCell || '', mes = NibDaily.dayKey(new Date()).slice(5, 7);
+    return all.filter(p => (st === 'todos' || eqSituacao(p) === st) && (!cel || (cel === '-' ? !p.celula : p.celula === cel)) && (!state.memBday || String(p.nascimento || '').slice(5, 7) === mes)
+      && (!q || eqFold(p.nome).includes(q) || eqFold(p.email).includes(q) || (dig.length >= 4 && String(p.celular).includes(dig))));
+  }
+  function eqFicha(p) {
+    const lid = NibConta.lideranca(), s = eqSituacao(p), tel = String(p.celular || '').replace(/\D/g, '');
+    const kv = rows => `<dl class="mem-kv">${rows.filter(r => r[1] !== null).map(([k, v]) => `<div><dt>${k}</dt><dd>${v === '' ? '<span class="mem-empty">Não informado</span>' : v}</dd></div>`).join('')}</dl>`;
+    return `<div class="gift-backrow"><button type="button" class="button-back gift-back" data-eq-mem=""><svg class="back-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg><span>Voltar à lista</span></button></div>
+    <section class="box mem-card"><div class="admin-person-head"><span class="profile-avatar" aria-hidden="true">${escape(p.nome.charAt(0))}</span><div><h2>${escape(p.nome)}</h2><small>Cadastro no app em ${fmtDay(p.criado_em)}</small></div><span class="tag ${eqTag(s)}">${s}</span></div>
+    <div class="mem-actions">${tel ? `<a class="mem-act" href="tel:${tel}">${NibIcons.svg('telefone')}<span>Ligar</span></a><a class="mem-act" href="https://wa.me/55${tel}" target="_blank" rel="noopener">${NibIcons.svg('whatsapp')}<span>WhatsApp</span></a>` : ''}${p.email ? `<a class="mem-act" href="mailto:${escape(p.email)}">${NibIcons.svg('email')}<span>E-mail</span></a>` : ''}</div>
+    ${s === 'Aguardando' ? `<div class="form-actions">${button('Confirmar em Cadastros', 'cadastros')}</div>` : ''}</section>
+    <section class="box"><h3 class="mem-h">Contato</h3>${kv([['Celular', escape(fmtPhone(p.celular))], ['E-mail', escape(p.email || '')]])}</section>
+    <section class="box"><h3 class="mem-h">Endereço</h3>${kv([['Endereço', escape(p.endereco || '')]])}</section>
+    <section class="box"><h3 class="mem-h">Dados pessoais</h3>${kv([['Nascimento', fmtDay(p.nascimento)], ['Gênero', p.sexo === 'm' ? 'Masculino' : 'Feminino'], ['CPF', lid ? escape(fmtCpf(p.cpf || '')) : null], ['Aniversário na tela inicial', p.mostrar_aniversario ? 'Aparece' : 'Não aparece (escolha da pessoa)']])}</section>
+    <section class="box"><h3 class="mem-h">Vida na igreja</h3>${kv([['Situação', s], ['Como se cadastrou', escape(vinculoLabel[p.vinculo] || '')], ['Célula', escape(eqCelula(p.celula) || 'Sem célula')], ['Membro desde', p.membro_status === 'confirmado' ? (fmtDay(p.confirmado_em) || '') : null], ['Última presença no culto', fmtDay(p.ultima_presenca) || 'Ainda sem check-in'], ['Presenças nas últimas 8 semanas', String(p.presencas_8sem || 0)], ['Último acesso ao app', fmtDay(p.ultimo_acesso)]])}</section>
+    <p class="note">${lid ? 'A Liderança Pastoral vê a ficha completa, inclusive o CPF.' : 'A Secretaria vê a ficha. O CPF fica só com a Liderança Pastoral.'} Os dados são atualizados pela própria pessoa em Meu cadastro.</p>`;
+  }
+  function eqExportBox(list) {
+    if (!eqPodeExportar()) return '<p class="note mem-note">Só a Secretaria exporta a lista. A Liderança Pastoral consulta pelo app.</p>';
+    const groups = state.memGroups || ['contato', 'igreja'], log = state.mem.exportacoes || [];
+    return `<details class="box mem-export"${state.memExportOpen ? ' open' : ''}><summary>${NibIcons.svg('relatorios')}<span><strong>Exportar lista</strong><small>${list.length} pessoa${list.length === 1 ? '' : 's'} do filtro atual · planilha ou PDF</small></span></summary>
+    <form id="mem-export-form" autocomplete="off" novalidate><fieldset><legend>O que vai no arquivo</legend><p class="note">Sempre vão nome e situação.</p>${EQ_GRUPOS.map(([k, l, d]) => `<label class="mem-check"><input type="checkbox" name="g" value="${k}"${groups.includes(k) ? ' checked' : ''}><span><strong>${l}</strong><small>${d}</small></span></label>`).join('')}</fieldset>
+    <fieldset><legend>Formato</legend><div class="mem-formats"><label class="mem-format"><input type="radio" name="format" value="csv" checked><span><strong>Planilha</strong><small>CSV, abre no Excel</small></span></label><label class="mem-format"><input type="radio" name="format" value="pdf"><span><strong>PDF</strong><small>Imprimir ou salvar</small></span></label></div></fieldset>
+    <label class="mem-check mem-consent"><input type="checkbox" name="ok"><span>Uso interno da igreja. Não vou compartilhar o arquivo fora da equipe.</span></label>
+    <p class="form-error" role="alert"></p><button type="submit" class="action primary">Exportar ${list.length} pessoa${list.length === 1 ? '' : 's'}</button></form>
+    ${log.length ? `<div class="mem-log"><h3>Últimas exportações</h3><ul>${log.map(x => { const n = (String(x.detalhes).match(/n=(\d+)/) || [])[1] || '0'; return `<li>${fmtDay(x.em)} ${String(x.em).slice(11, 16)} · ${escape(x.nome || 'Equipe')} · ${n} pessoas · ${/formato=pdf/.test(x.detalhes) ? 'PDF' : 'planilha'}</li>`; }).join('')}</ul></div>` : ''}</details>`;
+  }
+  function membersRealPage() {
+    eqLoad('mem', () => NibConta.membros(), 'membros');
+    if (!state.mem) return state.memErro ? `<p class="form-error" role="alert">${escape(state.memErro)}</p>` : '<p class="event-empty">Carregando os membros</p>';
+    const all = state.mem.pessoas, sel = state.memSel && all.find(p => String(p.id) === String(state.memSel));
+    if (sel) return eqFicha(sel);
+    const list = eqFiltrados(), st = state.memStatus || 'todos', shown = list.slice(0, state.memMore ? list.length : 30);
+    const count = k => k === 'todos' ? all.length : all.filter(p => eqSituacao(p) === k).length;
+    const chips = [['todos', 'Todos'], ['Membro', 'Membros'], ['Frequenta', 'Frequentam'], ['Conhecendo', 'Visitantes']].map(([k, l]) => `<button type="button" class="history-year${st === k ? ' is-active' : ''}" data-eq-status="${k}" aria-pressed="${st === k}">${l}<small>${count(k)}</small></button>`).join('');
+    const cells = [...new Set(all.map(p => p.celula).filter(Boolean))].sort((a, b) => eqCelula(a).localeCompare(eqCelula(b), 'pt-BR'));
+    const row = p => { const s = eqSituacao(p); return `<li><button type="button" class="mem-row" data-eq-mem="${p.id}"><span class="profile-avatar" aria-hidden="true">${escape(p.nome.charAt(0))}</span><span class="mem-row-text"><strong>${escape(p.nome)}</strong><small>${escape(eqCelula(p.celula) || 'Sem célula')}</small></span><span class="tag ${eqTag(s)}">${s}</span>${eqChevron}</button></li>`; };
+    const filtered = state.memQ || state.memCell || state.memBday || st !== 'todos';
+    const pr = state.memPrint ? `<section class="tes-print mem-print" aria-hidden="true"><div class="tes-decl-head"><img src="assets/logo.svg" alt="" width="90" height="38"><div><strong>Nova Igreja Batista</strong><small>Lista de membros · ${escape(state.memPrint.at)} · ${state.memPrint.rows.length} pessoas · uso interno</small></div></div><table class="tes-table is-compact"><thead><tr>${state.memPrint.head.map(h => `<th>${escape(h)}</th>`).join('')}</tr></thead><tbody>${state.memPrint.rows.map(r => `<tr>${r.map(c => `<td>${escape(c)}</td>`).join('')}</tr>`).join('')}</tbody></table></section>` : '';
+    return `<p class="admin-rule">Dados pessoais protegidos pela LGPD. ${eqPodeExportar() ? 'A Secretaria consulta e exporta. Cada exportação fica registrada.' : 'A Liderança Pastoral consulta. A exportação fica com a Secretaria.'}</p>
+    <div class="cell-days mem-seg" role="group" aria-label="Situação" data-seg="eq-membros">${chips}</div>
+    <div class="mem-filters"><label class="visually-hidden" for="eq-q">Buscar por nome, e-mail ou celular</label><input id="eq-q" type="search" value="${escape(state.memQ || '')}" placeholder="Buscar nome, e-mail ou celular" autocomplete="off" enterkeyhint="search">
+    <div class="mem-filter-row"><label class="visually-hidden" for="eq-cell">Célula</label><select id="eq-cell"><option value="">Todas as células</option>${cells.map(c => `<option value="${escape(c)}"${state.memCell === c ? ' selected' : ''}>${escape(eqCelula(c))}</option>`).join('')}<option value="-"${state.memCell === '-' ? ' selected' : ''}>Sem célula</option></select><button type="button" class="mem-chip${state.memBday ? ' is-active' : ''}" data-eq-bday="1" aria-pressed="${!!state.memBday}">Aniversário no mês</button></div></div>
+    ${eqExportBox(list)}
+    <div class="mem-count" aria-live="polite">${list.length} pessoa${list.length === 1 ? '' : 's'}${filtered ? ' · <button type="button" class="mem-clear" data-eq-clear="1">Limpar filtros</button>' : ''}</div>
+    <ul class="mem-list">${shown.map(row).join('') || '<li class="box tes-empty">Ninguém encontrado com esses filtros.</li>'}</ul>
+    ${list.length > shown.length ? `<button type="button" class="action admin-secondary mem-more" data-eq-more="1">Mostrar todas as ${list.length}</button>` : ''}${pr}`;
+  }
+  async function eqExport(form) {
+    const v = new FormData(form), err = form.querySelector('.form-error'), btn = form.querySelector('[type=submit]');
+    if (!v.get('ok')) { err.textContent = 'Marque que o arquivo é para uso interno da igreja.'; return; }
+    const groups = v.getAll('g'), formato = String(v.get('format')) === 'pdf' ? 'pdf' : 'csv', list = eqFiltrados(), sel = EQ_GRUPOS.filter(([k]) => groups.includes(k));
+    btn.disabled = true; err.textContent = '';
+    try { await NibConta.membrosExportados({ n: list.length, formato, grupos: groups, uso_interno: true }); }
+    catch (e) { btn.disabled = false; err.textContent = e.message; return; }
+    const head = ['nome', 'situacao', ...sel.flatMap(g => g[4])], rows = list.map(p => [p.nome, eqSituacao(p), ...sel.flatMap(g => g[3](p))]);
+    const agora = new Date(), at = agora.toLocaleDateString('pt-BR') + ' ' + agora.toTimeString().slice(0, 5);
+    state.memGroups = groups; state.memExportOpen = true;
+    state.mem.exportacoes = [{ em: NibDaily.dayKey(agora) + ' ' + agora.toTimeString().slice(0, 5), nome: account().nome, detalhes: `n=${rows.length};formato=${formato}` }, ...(state.mem.exportacoes || [])].slice(0, 3);
+    if (formato === 'pdf') {
+      const LBL = { nome: 'Nome', situacao: 'Situação', celular: 'Celular', email: 'E-mail', endereco: 'Endereço', celula: 'Célula', membro_desde: 'Membro desde', ultima_presenca: 'Última presença', nascimento: 'Nascimento', genero: 'Gênero' };
+      state.memPrint = { at, head: head.map(h => LBL[h] || h), rows }; show('membros', false, false);
+      setTimeout(() => { if (typeof print === 'function') print(); }, 60);
+      announce(`PDF com ${rows.length} pessoas pronto. Escolha "Salvar como PDF" na impressão.`, 'success', false); return;
+    }
+    const q = x => /[;"\n]/.test(String(x)) ? '"' + String(x).replace(/"/g, '""') + '"' : String(x);
+    const csv = '﻿' + [head, ...rows].map(r => r.map(q).join(';')).join('\r\n');
+    try { const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' })), a = document.createElement('a'); a.href = url; a.download = `nib-membros-${NibDaily.dayKey(agora)}.csv`; document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 4000); } catch (_) {}
+    show('membros', false, false); announce(`Planilha com ${rows.length} pessoas baixada. A exportação ficou registrada.`, 'success', false);
+  }
+  function eqFilterInput(q) {
+    state.memQ = q; const list = eqFiltrados(), ids = new Set(list.map(p => String(p.id)));
+    content.querySelectorAll('.mem-list [data-eq-mem]').forEach(b => { b.parentElement.hidden = !ids.has(b.dataset.eqMem); });
+    if (!state.memMore && list.length > content.querySelectorAll('.mem-list [data-eq-mem]').length) { state.memMore = true; show('membros', false, false); const i = content.querySelector('#eq-q'); if (i) { i.focus(); i.setSelectionRange(i.value.length, i.value.length); } return; }
+    const c = content.querySelector('.mem-count'); if (c) c.firstChild.textContent = `${list.length} pessoa${list.length === 1 ? '' : 's'}`;
+  }
   // Link do e-mail "Esqueci minha senha": ?redefinir=TOKEN abre a troca de senha.
   function resetDialog(token) {
     const d = document.createElement('dialog'); d.className = 'reset-dialog'; d.setAttribute('aria-labelledby', 'reset-title');

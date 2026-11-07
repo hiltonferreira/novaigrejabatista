@@ -183,6 +183,66 @@ try {
       foreach ($rows as &$r) { $r['nome'] = nib_nome_proprio((string)$r['nome']); if (!$veCpf) unset($r['cpf']); } unset($r);
       nib_json(200, ['ok' => true, 'pessoas' => $rows]);
     }
+    // Área da equipe (Fase 1): painel com números reais e lista de membros. O servidor confere o papel real.
+    case 'get:equipe-painel': {
+      if (!$eu || !nib_equipe($eu)) nib_erro('Acesso só para a equipe da igreja.', 403);
+      $tz = new DateTimeZone('America/Porto_Velho'); $hoje = new DateTimeImmutable('today', $tz);
+      $d30 = $hoje->modify('-30 days')->format('Y-m-d 00:00:00');
+      $q = $db->prepare("SELECT COUNT(*) total,
+        SUM(membro_status = 'confirmado') membros,
+        SUM(membro_status = 'confirmado' AND confirmado_em >= ?) membros_novos,
+        SUM(membro_status <> 'confirmado' AND vinculo = 'frequento') frequentadores,
+        SUM(membro_status <> 'confirmado' AND vinculo = 'visitante') visitantes,
+        SUM(membro_status = 'pendente') aguardando,
+        SUM(criado_em >= ?) cadastros_novos,
+        SUM(nascimento IS NULL OR endereco IS NULL OR endereco = '') dados_faltando,
+        SUM(celula IS NOT NULL AND celula <> '') em_celula,
+        SUM(membro_status = 'confirmado' AND (celula IS NULL OR celula = '')) membros_sem_celula,
+        COUNT(DISTINCT NULLIF(celula, '')) celulas
+        FROM nib_pessoas");
+      $q->execute([$d30, $d30]); $n = array_map('intval', $q->fetch());
+      // Cultos com check-in: os 8 mais recentes (dia + culto), do mais antigo ao mais novo.
+      $cultos = array_reverse($db->query("SELECT culto_dia dia, culto, COUNT(*) pessoas FROM nib_checkins GROUP BY culto_dia, culto ORDER BY culto_dia DESC, culto DESC LIMIT 8")->fetchAll());
+      foreach ($cultos as &$c) $c['pessoas'] = (int)$c['pessoas']; unset($c);
+      $cad = $db->query("SELECT SUM(p.atendido = 0) ativos, SUM(p.atendido = 0 AND NOT EXISTS (SELECT 1 FROM nib_orando o WHERE o.pedido_id = p.id)) sem_oracao FROM nib_pedidos p WHERE p.removido_por IS NULL")->fetch();
+      $sug = nib_ve_cpf($eu) ? (int)$db->query('SELECT COUNT(*) FROM nib_sugestoes WHERE lida = 0')->fetchColumn() : null;
+      // Aniversariantes dos próximos 7 dias (só quem deixou aparecer).
+      $dias = []; for ($i = 0; $i < 7; $i++) $dias[$hoje->modify("+$i days")->format('m-d')] = $i;
+      $aniv = [];
+      foreach ($db->query("SELECT nome, nascimento FROM nib_pessoas WHERE nascimento IS NOT NULL AND mostrar_aniversario = 1")->fetchAll() as $r) {
+        $md = substr((string)$r['nascimento'], 5, 5); if (!isset($dias[$md])) continue;
+        $aniv[] = ['nome' => nib_nome_proprio((string)$r['nome']), 'dia' => $md, 'em' => $dias[$md]];
+      }
+      usort($aniv, fn($a, $b) => $a['em'] <=> $b['em'] ?: strcmp($a['nome'], $b['nome']));
+      nib_json(200, ['ok' => true, 'painel' => $n + ['cultos' => $cultos, 'caderno_ativos' => (int)($cad['ativos'] ?? 0), 'caderno_sem_oracao' => (int)($cad['sem_oracao'] ?? 0), 'sugestoes_novas' => $sug, 'aniversariantes' => array_slice($aniv, 0, 12)]]);
+    }
+    case 'get:membros': {
+      if (!$eu || !nib_equipe($eu)) nib_erro('Acesso só para a equipe da igreja.', 403);
+      $tz = new DateTimeZone('America/Porto_Velho'); $d56 = (new DateTimeImmutable('today', $tz))->modify('-56 days')->format('Y-m-d');
+      $q = $db->prepare("SELECT p.id, p.nome, p.email, p.celular, p.cpf, p.sexo, p.vinculo, p.celula, p.membro_status, p.nascimento, p.endereco, p.mostrar_aniversario, p.criado_em, p.ultimo_acesso, p.confirmado_em,
+        (SELECT MAX(c.culto_dia) FROM nib_checkins c WHERE c.pessoa_id = p.id) ultima_presenca,
+        (SELECT COUNT(*) FROM nib_checkins c WHERE c.pessoa_id = p.id AND c.culto_dia >= ?) presencas_8sem
+        FROM nib_pessoas p ORDER BY p.nome LIMIT 5000");
+      $q->execute([$d56]); $rows = $q->fetchAll();
+      $veCpf = nib_ve_cpf($eu);
+      foreach ($rows as &$r) { $r['nome'] = nib_nome_proprio((string)$r['nome']); $r['presencas_8sem'] = (int)$r['presencas_8sem']; $r['mostrar_aniversario'] = (int)$r['mostrar_aniversario']; if (!$veCpf) unset($r['cpf']); } unset($r);
+      $exporta = in_array($eu['papel'], ['secretaria', 'admin'], true);
+      $log = [];
+      if ($exporta) {
+        $log = $db->query("SELECT r.criado_em em, r.detalhes, p.nome FROM nib_registro r LEFT JOIN nib_pessoas p ON p.id = r.pessoa_id WHERE r.acao = 'membros-exportar' ORDER BY r.id DESC LIMIT 3")->fetchAll();
+        foreach ($log as &$l) $l['nome'] = nib_nome_proprio((string)($l['nome'] ?? '')); unset($l);
+      }
+      nib_json(200, ['ok' => true, 'pessoas' => $rows, 'pode_exportar' => $exporta, 'exportacoes' => $log]);
+    }
+    case 'post:membros-exportados': {
+      // Só Secretaria e administração exportam (decisão de Hilton, 07/11/2026). Cada exportação fica registrada.
+      if (!$eu || !in_array($eu['papel'], ['secretaria', 'admin'], true)) nib_erro('Só a Secretaria exporta a lista de membros.', 403);
+      if (($d['uso_interno'] ?? false) !== true) nib_erro('Confirme que o arquivo é para uso interno da igreja.');
+      $nn = max(0, min(100000, (int)($d['n'] ?? 0))); $fmt = ($d['formato'] ?? '') === 'pdf' ? 'pdf' : 'csv';
+      $grupos = implode(',', array_values(array_intersect(is_array($d['grupos'] ?? null) ? $d['grupos'] : [], ['contato', 'endereco', 'igreja', 'pessoal'])));
+      nib_registrar((int)$eu['id'], 'membros-exportar', null, "n=$nn;formato=$fmt;grupos=$grupos");
+      nib_json(200, ['ok' => true]);
+    }
     case 'post:confirmar': {
       if (!$eu || !nib_equipe($eu)) nib_erro('Acesso só para a equipe da igreja.', 403);
       $id = (int)($d['id'] ?? 0); $status = in_array($d['status'] ?? '', ['confirmado', 'pendente', 'nao'], true) ? $d['status'] : '';
