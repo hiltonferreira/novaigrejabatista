@@ -2552,3 +2552,12 @@ dialog.ck-telao::backdrop{background:#041e42}
 #nib-proposta .layout>aside .view-as-menu select{min-height:40px;padding:0 32px 0 14px;background-position:right 10px center;background-size:16px;font-size:13.5px;border-color:#ffffff40}
 #nib-proposta.nib-sidebar-collapsed .layout>aside .view-as-menu{display:none}
 #nib-proposta #menu-profile .view-as-menu{margin:16px 0 22px}
+/* v154: faixa "Vendo como" em uma linha, com seletor */
+#nib-proposta .view-as-bar{display:flex;align-items:center;justify-content:flex-start;flex-wrap:nowrap;gap:8px;min-width:0;max-width:100%;box-sizing:border-box;margin:0 0 16px;padding:6px 6px 6px 14px;border-radius:999px;background:#fff6db;border:1px solid #f0d58a;color:#5c4400;font-size:14px;line-height:1.2}
+#nib-proposta .view-as-eye{display:grid;place-items:center;flex:0 0 20px;width:20px;height:20px;color:#8a6a00}
+#nib-proposta .view-as-eye svg{width:20px;height:20px}
+#nib-proposta .view-as-bar label{flex:0 0 auto;margin:0;color:#5c4400;font-size:14px;font-weight:600;white-space:nowrap}
+#nib-proposta .view-as-bar select{flex:0 1 auto;width:auto;min-width:0;max-width:100%;min-height:0;height:36px;margin:0;padding:0 32px 0 14px;border:1px solid #e3c870;border-radius:999px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23041e42' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 10px center/16px;color:#041e42;font:inherit;font-size:14px;font-weight:700;-webkit-appearance:none;appearance:none;cursor:pointer}
+#nib-proposta main .view-as-bar .view-as-back{display:grid;place-items:center;flex:0 0 36px;box-sizing:border-box;width:36px;height:36px;min-width:36px;min-height:36px;max-height:36px;margin:0 0 0 auto;padding:0;border:0;border-radius:50%;background:#041e42;color:#fff;cursor:pointer}
+#nib-proposta .view-as-bar .view-as-back svg{width:16px;height:16px}
+@media(max-width:350px){#nib-proposta .view-as-eye{display:none}}

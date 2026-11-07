@@ -42,7 +42,7 @@
     saidas: 'M3 8h18v12H3z M16 14h2 M12 2v4 M9.5 4.5 12 2l2.5 2.5',
     orcamento: 'M21 12A9 9 0 1 1 12 3v9z M15 3.5A9 9 0 0 1 20.5 9H15z',
     contribuintes: 'M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z M2 21c0-3.5 3-6 7-6s7 2.5 7 6 M16 6h6 M16 10h6 M18 14h4',
-    relatorios: 'M5 3h14v18H5z M9 17v-4 M12 17V9 M15 17v-6',
+    relatorios: 'M8 3h8a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3z M9 17v-4 M12 17V9 M15 17v-6',
     aprovacoes: 'M6 3h9l4 4v14H6z M15 3v4h4 M9 14l2 2 4-4'
   };
   paths.cuidado = paths.caderno; // Caderno de oração e cuidado pastoral são o mesmo assunto.
@@ -77,7 +77,7 @@
     aprovacoes: { fill: 'M6 3h9l4 4v14H6z', cut: 'M9 14l2 2 4-4' },
     orcamento: { fill: 'M21 12A9 9 0 1 1 12 3v9z M15 3.5A9 9 0 0 1 20.5 9H15z' },
     contribuintes: { fill: 'M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z M2 21c0-3.5 3-6 7-6s7 2.5 7 6z', stroke: 'M16 6h6 M16 10h6 M18 14h4' },
-    relatorios: { fill: 'M5 3h14v18H5z', cut: 'M9 17v-4 M12 17V9 M15 17v-6' },
+    relatorios: { fill: 'M8 3h8a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3z', cut: 'M9 17v-4 M12 17V9 M15 17v-6' },
     fechamento: { fill: 'M6 11h12v10H6z', stroke: 'M8 11V7a4 4 0 0 1 8 0v4', cut: 'M12 15v2' }
   });
 

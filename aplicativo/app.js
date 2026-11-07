@@ -1295,7 +1295,9 @@
   }
   function viewAsBar() {
     if (!PUBLIC || !window.NibConta || !NibConta.verComo()) return '';
-    return `<div class="view-as-bar" role="status"><span>Vendo o app como <strong>${papelNome[NibConta.verComo()]}</strong></span><button type="button" class="view-as-back" data-ver-como="admin">Voltar para administração</button></div>`;
+    const atual = NibConta.verComo();
+    const opts = [['pastoral', 'Liderança Pastoral'], ['secretaria', 'Secretaria'], ['membro', 'Membro'], ['admin', 'Administração']].map(([k, t]) => `<option value="${k}"${atual === k ? ' selected' : ''}>${t}</option>`).join('');
+    return `<div class="view-as-bar" role="status"><span class="view-as-eye" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></span><label for="ver-como-faixa">Vendo como</label><select id="ver-como-faixa" data-ver-como-select autocomplete="off">${opts}</select><button type="button" class="view-as-back" data-ver-como="admin" aria-label="Voltar para administração" title="Voltar para administração"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12 M18 6 6 18"/></svg></button></div>`;
   }
   function syncViewAsBar() {
     let bar = document.getElementById('view-as-bar'); const html = viewAsBar();
