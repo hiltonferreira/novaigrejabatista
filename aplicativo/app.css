@@ -2511,3 +2511,7 @@ dialog.ck-telao::backdrop{background:#041e42}
   #nib-proposta #content[data-view=caderno]>.cad-tabs~.community-prayer:not(:has(~.prayer-box)):not(.prayer-box~*){grid-column:1/-1}
   #nib-proposta #content[data-view=caderno]>.cad-panel{grid-column:1/-1;margin:0}
 }
+
+/* v142: data do próximo evento quebra linha em vez de vazar no Android */
+#nib-proposta .home-events .event-date{white-space:normal;overflow-wrap:anywhere}
+#nib-proposta .home-events .event-content{min-width:0}
