@@ -2483,3 +2483,31 @@ dialog.ck-telao::backdrop{background:#041e42}
 }
 /* v137: cabeçalho do menu (Menu / Voltar) rola junto com a lista, sem ficar fixo por cima */
 #nib-proposta .drawer-heading{position:static}
+/* v141: balão de pedidos novos no atalho do Caderno, abas do caderno e painel da equipe */
+#nib-proposta main .quick-action .quick-badge{position:absolute;top:10px;right:10px;min-width:22px;height:22px;padding:0 6px;border-radius:999px;background:#d92d20;color:#fff;font:700 12px/22px "NIB Acumin Mobile",Arial,sans-serif;text-align:center;box-shadow:0 0 0 2px #fff;font-variant-numeric:tabular-nums}
+#nib-proposta .cad-tabs{margin:0 0 18px}
+#nib-proposta .cad-panel h3.cad-sub{margin:22px 0 12px;font:700 15px/1.3 "NIB Acumin Mobile",Arial,sans-serif;color:#041e42}
+#nib-proposta .cad-stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:16px 0 0}
+#nib-proposta .cad-stat{display:flex;flex-direction:column;gap:4px;padding:14px 16px;border-radius:14px;background:#f3f6fa}
+#nib-proposta .cad-stat strong{font:700 26px/1 "NIB Acumin Mobile",Arial,sans-serif;color:#041e42;font-variant-numeric:tabular-nums}
+#nib-proposta .cad-stat span{font:500 13px/1.3 "NIB Acumin Mobile",Arial,sans-serif;color:#536176}
+#nib-proposta .cad-stat.is-ok{background:#e9f3ed}#nib-proposta .cad-stat.is-ok strong{color:#24674e}
+#nib-proposta .cad-stat.is-alert{background:#fff6e5}#nib-proposta .cad-stat.is-alert strong{color:#8a5a00}
+#nib-proposta .cad-bars{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:10px;align-items:end;height:150px;margin:0;padding:0;list-style:none}
+#nib-proposta .cad-bars li{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:4px;height:100%}
+#nib-proposta .cad-bar{position:relative;display:block;width:100%;max-width:40px;height:var(--h);min-height:4px;border-radius:8px 8px 3px 3px;background:#c9d6e8;overflow:hidden}
+#nib-proposta .cad-bar i{position:absolute;left:0;right:0;bottom:0;height:var(--h);background:#2e7d4f}
+#nib-proposta .cad-bars b{font:700 13px/1 "NIB Acumin Mobile",Arial,sans-serif;color:#041e42}
+#nib-proposta .cad-bars small{font:500 12px/1 "NIB Acumin Mobile",Arial,sans-serif;color:#536176;text-transform:capitalize}
+#nib-proposta .cad-legend{display:flex;gap:16px;margin:12px 0 0;font-size:12px;color:#536176}
+#nib-proposta .cad-legend i{display:inline-block;width:10px;height:10px;margin-right:6px;border-radius:3px;vertical-align:-1px}
+#nib-proposta .cad-legend i.is-total{background:#c9d6e8}#nib-proposta .cad-legend i.is-ok{background:#2e7d4f}
+@media(min-width:821px){#nib-proposta .cad-stats{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(min-width:1100px){
+  #nib-proposta #content[data-view=caderno]>.cad-tabs{grid-column:1/-1;grid-row:1;margin:0;max-width:640px}
+  #nib-proposta #content[data-view=caderno]>.cad-tabs~.prayer-box{grid-row:2}
+  #nib-proposta #content[data-view=caderno]>.cad-tabs~.community-prayer{grid-row:2}
+  #nib-proposta #content[data-view=caderno]>.cad-tabs~.form-error{grid-column:1/-1}
+  #nib-proposta #content[data-view=caderno]>.cad-tabs~.community-prayer:not(:has(~.prayer-box)):not(.prayer-box~*){grid-column:1/-1}
+  #nib-proposta #content[data-view=caderno]>.cad-panel{grid-column:1/-1;margin:0}
+}

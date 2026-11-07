@@ -61,14 +61,33 @@ try {
           (SELECT COUNT(*) FROM nib_orando o WHERE o.pedido_id = p.id) AS orando,
           EXISTS(SELECT 1 FROM nib_orando o WHERE o.pedido_id = p.id AND o.pessoa_id = ?) AS eu_orando
         FROM nib_pedidos p JOIN nib_pessoas s ON s.id = p.pessoa_id
-        WHERE p.removido_por IS NULL ORDER BY p.criado_em DESC, p.id DESC LIMIT 200');
-      $q->execute([$eu['id']]);
+        WHERE p.removido_por IS NULL AND (p.atendido = 0 OR p.pessoa_id = ?) ORDER BY p.criado_em DESC, p.id DESC LIMIT 200');
+      // Orações atendidas saem do mural: cada pessoa vê só o próprio histórico (Hilton, 07/11/2026).
+      $q->execute([$eu['id'], $eu['id']]);
       $lista = array_map(fn($r) => [
         'id' => (int)$r['id'], 'autor' => nib_nome_proprio((string)$r['nome']), 'titulo' => $r['titulo'], 'motivo' => $r['motivo'],
         'atendido' => (bool)$r['atendido'], 'orando' => (int)$r['orando'], 'eu_orando' => (bool)$r['eu_orando'],
         'meu' => (int)$r['pessoa_id'] === (int)$eu['id'], 'criado_em' => $r['criado_em'],
       ], $q->fetchAll());
       nib_json(200, ['ok' => true, 'pedidos' => $lista, 'equipe' => $equipe]);
+    }
+
+    // Painel do caderno para Secretaria, Liderança Pastoral e admin: só números, sem nomes nem textos.
+    case 'get:painel': {
+      if (!$equipe) nib_erro('Só a equipe da igreja vê o painel do caderno.', 403);
+      $agora = nib_agora();
+      $t = $db->query('SELECT COUNT(*) total, COALESCE(SUM(atendido = 0), 0) andamento, COALESCE(SUM(atendido = 1), 0) atendidos, COUNT(DISTINCT pessoa_id) autores FROM nib_pedidos WHERE removido_por IS NULL')->fetch();
+      $o = $db->query('SELECT COUNT(DISTINCT o.pessoa_id) orantes, COUNT(*) apoios FROM nib_orando o JOIN nib_pedidos p ON p.id = o.pedido_id AND p.removido_por IS NULL')->fetch();
+      $sem = (int)$db->query('SELECT COUNT(*) FROM nib_pedidos p WHERE p.removido_por IS NULL AND p.atendido = 0 AND NOT EXISTS (SELECT 1 FROM nib_orando o WHERE o.pedido_id = p.id)')->fetchColumn();
+      $rem = (int)$db->query('SELECT COUNT(*) FROM nib_pedidos WHERE removido_por IS NOT NULL')->fetchColumn();
+      $q = $db->prepare('SELECT COUNT(*) FROM nib_pedidos WHERE removido_por IS NULL AND criado_em >= DATE_SUB(?, INTERVAL 30 DAY)'); $q->execute([$agora]); $novos = (int)$q->fetchColumn();
+      $q = $db->prepare("SELECT DATE_FORMAT(criado_em, '%Y-%m') mes, COUNT(*) pedidos, COALESCE(SUM(atendido), 0) atendidos FROM nib_pedidos WHERE removido_por IS NULL AND criado_em >= DATE_SUB(?, INTERVAL 6 MONTH) GROUP BY mes ORDER BY mes");
+      $q->execute([$agora]);
+      nib_json(200, ['ok' => true, 'painel' => [
+        'total' => (int)$t['total'], 'andamento' => (int)$t['andamento'], 'atendidos' => (int)$t['atendidos'], 'autores' => (int)$t['autores'],
+        'orantes' => (int)$o['orantes'], 'apoios' => (int)$o['apoios'], 'sem_oracao' => $sem, 'removidos' => $rem, 'novos_30' => $novos,
+        'meses' => array_map(fn($r) => ['mes' => $r['mes'], 'pedidos' => (int)$r['pedidos'], 'atendidos' => (int)$r['atendidos']], $q->fetchAll()),
+      ]]);
     }
 
     case 'post:publicar': {
