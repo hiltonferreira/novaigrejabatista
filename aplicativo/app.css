@@ -2532,3 +2532,14 @@ dialog.ck-telao::backdrop{background:#041e42}
 #nib-proposta .view-as-bar strong{font-weight:700}
 #nib-proposta .view-as-back{border:1px solid #041e42;background:#041e42;color:#fff;border-radius:999px;padding:8px 14px;font:600 13px/1.2 inherit;cursor:pointer}
 @media(min-width:1100px){#nib-proposta #content>.view-as-box{grid-column:1/-1}}
+/* v150: bloco da equipe no Início (Secretaria, Pastoral, admin) */
+#nib-proposta .team-home{margin:0 0 24px}
+#nib-proposta .team-home-stats{list-style:none;margin:8px 0 4px;padding:0;display:flex;flex-direction:column}
+#nib-proposta .team-home-stats li{margin:0;padding:0;border:0;display:block}
+#nib-proposta main button.team-home-stat{display:flex;align-items:center;gap:12px;width:100%;min-height:56px;padding:10px 0;margin:0;border:0;border-bottom:1px solid #e3e8ef;border-radius:0;background:none;color:#041e42;text-align:left;font:inherit;cursor:pointer;box-shadow:none}
+#nib-proposta .team-home-stats li:last-child .team-home-stat{border-bottom:0}
+#nib-proposta .team-home-stat .dash-ico{flex:0 0 36px;width:36px;height:36px;margin:0}
+#nib-proposta .team-home-stat strong{flex:0 0 auto;width:auto;min-width:22px;margin:0;font-size:20px;font-weight:700;line-height:1}
+#nib-proposta .team-home-stat span:last-child{flex:1 1 auto;min-width:0;color:#41506a;font-size:14px;line-height:1.35;white-space:normal}
+#nib-proposta .team-home-foot{display:flex;flex-wrap:wrap;gap:10px}
+@media(min-width:1100px){#nib-proposta .team-home-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}#nib-proposta main button.team-home-stat{border-bottom:0}}

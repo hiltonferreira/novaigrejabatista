@@ -17,7 +17,8 @@
   const publicNav = () => [['inicio', 'Início'], ['agenda', 'Agenda'], ['eventos', 'Eventos'], ['generosidade', 'Generosidade'], ['celulas', 'Células'], ['caderno', 'Caderno de oração'], ['avisos', 'Avisos da igreja'], ['informacoes', 'Informações'], ['sugestoes', 'Sugestões para o app']]
     .concat(account() ? [['cadastro', 'Meu cadastro']] : [['entrar', 'Entrar ou criar cadastro']], account() && NibConta.equipe() ? [['equipe', 'Painel da equipe'], ['membros', 'Membros'], ['membresia', 'Membresia'], ['cadastros', 'Cadastros'], ['checkin', 'Check-in dos cultos']] : []);
   // Menu do app oficial em blocos, para não virar uma lista comprida sem respiro.
-  const publicGroups = items => [['Sua conta',['inicio','cadastro','entrar']],['Vida na igreja',['agenda','eventos','celulas','caderno']],['Igreja',['avisos','generosidade','informacoes']],['Equipe da igreja',['equipe','membros','membresia','cadastros','checkin']],['Ajude a melhorar',['sugestoes']]]
+  const teamGroupName = () => ({ secretaria: 'Secretaria da igreja', pastoral: 'Liderança Pastoral', admin: 'Administração' })[account() && account().papel] || 'Equipe da igreja';
+  const publicGroups = items => (g => account() && NibConta.equipe() ? [g[3]].concat(g.slice(0, 3), g.slice(4)) : g)([['Sua conta',['inicio','cadastro','entrar']],['Vida na igreja',['agenda','eventos','celulas','caderno']],['Igreja',['avisos','generosidade','informacoes']],[teamGroupName(),['equipe','membros','membresia','cadastros','checkin']],['Ajude a melhorar',['sugestoes']]])
     .map(([label,keys]) => [label, keys.map(k => items.find(([key]) => key === k)).filter(Boolean)]).filter(([,links]) => links.length);
   // Grupos de opções lado a lado (data-seg) no padrão do login: trilho cinza com pílula branca que desliza (pedido de Hilton, 06/11/2026).
   const segPrev = new Map();
@@ -117,13 +118,21 @@
     : selected && NibIcons.filled[key]
     ? `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="${NibIcons.filled[key]}"/></svg>`
     : NibIcons.svg(key, selected ? 2.3 : 1.8);
+  // App oficial: quem é da equipe (ou o admin vendo como Secretaria/Liderança) usa a barra inferior da gestão, como na demonstração.
+  function publicTeamBar() {
+    if (!PUBLIC || !account() || !NibConta.equipe()) return null;
+    return NibConta.pessoa().papel === 'secretaria'
+      ? [['equipe', 'Painel'], ['membros', 'Membros'], ['cadastros', 'Cadastros'], ['checkin', 'Check-in'], ['avisos', 'Avisos']]
+      : [['equipe', 'Painel'], ['membresia', 'Membresia'], ['membros', 'Membros'], ['caderno', 'Caderno'], ['avisos', 'Avisos']];
+  }
   function renderBar() {
     const bar = document.getElementById('bottom-nav');
-    const barKey = isManagement() ? state.context : 'membro';
+    const team = publicTeamBar(), gestao = isManagement() || !!team;
+    const barKey = isManagement() ? state.context : team ? 'pub-equipe-' + NibConta.pessoa().papel : 'membro';
     if (bar.dataset.context !== barKey) { bar.innerHTML = ''; bar.dataset.context = barKey; }
-    bar.classList.toggle('is-admin', isManagement());
-    bar.hidden = false; bar.setAttribute('aria-label', isManagement() ? 'Acessos da gestão' : 'Acessos do membro');
-    if (!bar.children.length) bar.innerHTML = (isManagement() ? admin.bar() : [['inicio','Início'],['agenda','Calendário'],['generosidade','Contribuir'],['eventos','Eventos'],['celulas','Células']]).map(([view,label]) => `<a href="#${view}" data-view="${view}" class="${view === 'generosidade' ? 'bar-main' : ''}"><span class="bar-icon">${barIcon(view)}</span><span>${label}</span></a>`).join('');
+    bar.classList.toggle('is-admin', gestao);
+    bar.hidden = false; bar.setAttribute('aria-label', gestao ? 'Acessos da gestão' : 'Acessos do membro');
+    if (!bar.children.length) bar.innerHTML = (isManagement() ? admin.bar() : team ? team : [['inicio','Início'],['agenda','Calendário'],['generosidade','Contribuir'],['eventos','Eventos'],['celulas','Células']]).map(([view,label]) => `<a href="#${view}" data-view="${view}" class="${view === 'generosidade' ? 'bar-main' : ''}"><span class="bar-icon">${barIcon(view)}</span><span>${label}</span></a>`).join('');
     bar.querySelectorAll('a').forEach(a => {
       const active = a.dataset.view === state.view || (a.dataset.view === 'membresia' && state.view === 'confirmar');
       if (active) a.setAttribute('aria-current','page'); else a.removeAttribute('aria-current');
@@ -633,7 +642,7 @@
       });
     }
     const ms = document.getElementById('member-shortcuts'); if (ms) ms.hidden = isManagement();
-    document.getElementById('menu-profile').innerHTML = PUBLIC ? (account() ? '<a class="menu-profile-card" href="#cadastro" data-view="cadastro"><span class="profile-avatar" aria-hidden="true">' + escape(account().primeiro.charAt(0).toUpperCase()) + '</span><span><strong>' + escape(account().nome) + '</strong><small>' + escape(account().email) + '</small></span></a>' : '') : isManagement() ? '<div class="menu-profile-card"><strong>' + admin.profiles[state.context].name + '</strong><span>Experiência de teste</span></div>' : '<a class="menu-profile-card" href="#cadastro" data-view="cadastro"><span class="profile-avatar" aria-hidden="true">' + escape(state.member.first.charAt(0).toUpperCase()) + '</span><span><strong>' + escape(state.member.full) + '</strong><small>' + escape(state.member.email) + '</small></span><span class="profile-demo">Teste</span></a>';
+    document.getElementById('menu-profile').innerHTML = PUBLIC ? (account() ? '<a class="menu-profile-card" href="#cadastro" data-view="cadastro"><span class="profile-avatar" aria-hidden="true">' + escape(account().primeiro.charAt(0).toUpperCase()) + '</span><span><strong>' + escape(account().nome) + '</strong><small>' + escape(account().email) + '</small>' + (account().papel !== 'membro' && papelNome[account().papel] ? '<small>' + papelNome[account().papel] + '</small>' : '') + '</span></a>' : '') : isManagement() ? '<div class="menu-profile-card"><strong>' + admin.profiles[state.context].name + '</strong><span>Experiência de teste</span></div>' : '<a class="menu-profile-card" href="#cadastro" data-view="cadastro"><span class="profile-avatar" aria-hidden="true">' + escape(state.member.first.charAt(0).toUpperCase()) + '</span><span><strong>' + escape(state.member.full) + '</strong><small>' + escape(state.member.email) + '</small></span><span class="profile-demo">Teste</span></a>';
     renderBar();
   }
   function show(view, focus = true, record = true) {
@@ -647,7 +656,7 @@
     if (record && focus && view !== state.view) viewHistory.push(state.view);
     state.view = (labels[view] || admin.labels[view]) ? view : 'inicio';
     root.dataset.view = state.view;
-    document.getElementById('mobile-return').hidden = state.view === 'inicio' || (isManagement() && state.view === 'gestao');
+    document.getElementById('mobile-return').hidden = state.view === 'inicio' || (isManagement() && state.view === 'gestao') || (state.view === 'equipe' && !!publicTeamBar());
     const [eyebrow, title, description] = (isManagement() && admin.pageLabels(state.view)) || labels[state.view];
     document.getElementById('eyebrow').textContent = eyebrow;
     document.getElementById('heading').textContent = state.view === 'inicio' ? (PUBLIC ? (account() ? `Olá, ${account().primeiro}! Que bom ter você aqui.` : title) : title.replace('Jéssica', state.member.first)) : title;
@@ -674,8 +683,8 @@
             ['informacoes', 'Horários e endereço', 'Cultos da semana, endereço e liderança.'],
             ['caderno', 'Caderno de oração', 'Compartilhe seus pedidos e ore com a comunidade.']
           ].map(([view, title, text]) => view === 'youtube' ? `<button type="button" class="quick-action admin-quick" data-open-url="https://www.youtube.com/@nibcasadedeus"><span class="home-action-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7.5C3 6 4 5 5.5 5h13C20 5 21 6 21 7.5v9c0 1.5-1 2.5-2.5 2.5h-13C4 19 3 18 3 16.5z M10 9l5 3-5 3z"/></svg></span><strong>${title}</strong><span class="home-action-description">${text}</span></button>` : `<button type="button" class="quick-action admin-quick" data-view="${view}"><span class="home-action-icon" aria-hidden="true">${navIcon(view)}</span>${view === 'caderno' && cadNovos() ? `<span class="quick-badge" aria-label="${cadNovos()} ${cadNovos() === 1 ? 'pedido novo' : 'pedidos novos'}">${cadNovos() > 9 ? '9+' : cadNovos()}</span>` : ''}<strong>${title}</strong><span class="home-action-description">${text}</span></button>`).join('')}</div></section>`;
-          if (isDesk()) return `${birthNudge()}<div class="home-desk"><div class="home-col">${dailyBlocks(false,'verse')}${publicCheckin()}${pq}${account() && state.prayersLoaded && state.prayers.some(p => !p.answered) ? communityBlock() : ''}${socialBanners()}</div><div class="home-rail">${homeAvisos()}${install}${dailyBlocks(false,'agenda')}${events}</div></div>`;
-          return `${birthNudge()}${dailyBlocks(false,'verse')}${publicCheckin()}${homeAvisos()}${install}${pq}${socialBanners()}${account() && state.prayersLoaded && state.prayers.some(p => !p.answered) ? communityBlock() : ''}${dailyBlocks(false,'agenda')}${events}`;
+          if (isDesk()) return `${birthNudge()}${teamHome()}<div class="home-desk"><div class="home-col">${dailyBlocks(false,'verse')}${publicCheckin()}${pq}${account() && state.prayersLoaded && state.prayers.some(p => !p.answered) ? communityBlock() : ''}${socialBanners()}</div><div class="home-rail">${homeAvisos()}${install}${dailyBlocks(false,'agenda')}${events}</div></div>`;
+          return `${birthNudge()}${teamHome()}${dailyBlocks(false,'verse')}${publicCheckin()}${homeAvisos()}${install}${pq}${socialBanners()}${account() && state.prayersLoaded && state.prayers.some(p => !p.answered) ? communityBlock() : ''}${dailyBlocks(false,'agenda')}${events}`;
         }
         if (isDesk()) return `<div class="home-desk"><div class="home-col">${dailyBlocks(false,'verse')}${quick}${socialBanners()}${communityBlock()}</div><div class="home-rail">${checkinCard()}${install}${homeNotice()}${dailyBlocks(false,'agenda')}${birthdayBlock()}${events}</div></div>`;
         return `${dailyBlocks(false,'verse')}${checkinCard()}${install}${quick}${socialBanners()}${homeNotice()}${dailyBlocks(false,'agenda')}${birthdayBlock()}${events}${communityBlock()}`;
@@ -1362,6 +1371,15 @@
       return `<g class="dash-bar${last ? ' is-last' : ''}" tabindex="0" role="img" aria-label="${d.slice(8, 10)} de ${eqMes[+d.slice(5, 7) - 1]}, ${escape(c.culto)}: ${v} pessoas"><path d="${path}"/><text x="${x + bw / 2}" y="${yt - 8}" text-anchor="middle" class="dash-value">${v}</text><text x="${x + bw / 2}" y="${base + 20}" text-anchor="middle" class="dash-axis">${d.slice(8, 10)}/${d.slice(5, 7)}</text></g>`;
     }).join('');
     return `<svg class="dash-chart" viewBox="0 0 ${W} ${base + 30}" role="group" aria-label="Check-ins nos últimos cultos">${grid}${bars}<line x1="${left}" x2="${W}" y1="${y(avg)}" y2="${y(avg)}" class="dash-avg"/></svg><div class="dash-legend"><span><i class="sw is-last"></i>Último culto</span><span><i class="sw is-avg"></i>Média · ${avg}</span></div>`;
+  }
+  // Início da equipe (Secretaria, Pastoral, admin): resumo do dia no topo, com o caminho para o Painel.
+  function teamHome() {
+    if (!PUBLIC || !account() || !NibConta.equipe()) return '';
+    eqLoad('painel', () => NibConta.equipePainel(), 'inicio');
+    const d = state.painel, P = eqP(), lid = NibConta.lideranca();
+    const stat = (icon, value, text, view, tone) => `<li><button type="button" class="team-home-stat" data-view="${view}"><span class="dash-ico${tone ? ' is-' + tone : ''}">${eqIco(icon || '')}</span><strong>${eqNum(value)}</strong><span>${text}</span></button></li>`;
+    const body = d ? `<ul class="team-home-stats">${stat(P.alerta, d.aguardando, d.aguardando === 1 ? 'aguardando confirmação' : 'aguardando confirmação', 'cadastros', d.aguardando ? 'warn' : '')}${stat(P.membresia || P.membros, d.em_integracao, 'em integração', 'membresia')}${stat(P.cuidado, d.caderno_sem_oracao, d.caderno_sem_oracao === 1 ? 'pedido sem ninguém orando' : 'pedidos sem ninguém orando', 'caderno', d.caderno_sem_oracao ? 'warn' : '')}</ul>` : '<p class="dash-sub">Carregando os números da equipe</p>';
+    return `<section class="box dash-box team-home" aria-labelledby="team-home-title"><div class="dash-head"><div><span class="label">${lid ? 'LIDERANÇA PASTORAL' : 'SECRETARIA DA IGREJA'}</span><h2 id="team-home-title">Equipe da igreja</h2></div></div>${body}<div class="dash-foot team-home-foot">${button('Abrir painel da equipe', 'equipe')}${button('Membros', 'membros')}</div></section>`;
   }
   function teamPanel() {
     eqLoad('painel', () => NibConta.equipePainel(), 'equipe');
