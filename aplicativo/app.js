@@ -122,8 +122,8 @@
   function publicTeamBar() {
     if (!PUBLIC || !account() || !NibConta.equipe()) return null;
     return NibConta.pessoa().papel === 'secretaria'
-      ? [['equipe', 'Painel'], ['membros', 'Membros'], ['cadastros', 'Cadastros'], ['checkin', 'Check-in'], ['avisos', 'Avisos']]
-      : [['equipe', 'Painel'], ['membresia', 'Membresia'], ['membros', 'Membros'], ['caderno', 'Caderno'], ['avisos', 'Avisos']];
+      ? [['inicio', 'Início'], ['equipe', 'Painel'], ['membros', 'Membros'], ['cadastros', 'Cadastros'], ['checkin', 'Check-in']]
+      : [['inicio', 'Início'], ['equipe', 'Painel'], ['membresia', 'Membresia'], ['membros', 'Membros'], ['caderno', 'Caderno']];
   }
   function renderBar() {
     const bar = document.getElementById('bottom-nav');
@@ -675,16 +675,17 @@
         const events = `<section class="home-events-block" aria-labelledby="home-events-title"><div class="section-heading"><div><span class="label">PARTICIPE COM A GENTE</span><h2 id="home-events-title">Próximo evento</h2></div>${button('Ver todos', 'eventos')}</div>${eventCards(true)}</section>`;
         const install = window.NibInstall ? NibInstall.card() : '';
         if (PUBLIC) {
-          const pq = `<section aria-labelledby="quick-title"><div class="section-heading"><h2 id="quick-title">O que você procura?</h2></div><div class="quick-actions">${[
+          const pq = `<section aria-labelledby="quick-title"><div class="section-heading"><h2 id="quick-title">${teamShortcuts() ? 'Atalhos do seu perfil' : 'O que você procura?'}</h2></div><div class="quick-actions">${(teamShortcuts() || [
             ['agenda', 'Agenda da igreja', 'Cultos, escola bíblica e eventos no calendário.'],
             ['eventos', 'Eventos e inscrições', 'Os próximos encontros e as inscrições abertas.'],
             ['generosidade', 'Dízimos e ofertas', 'Contribua pelo Pix com os dados oficiais da igreja.'],
             ['celulas', 'Células', 'Encontre uma célula perto de você.'],
             ['informacoes', 'Horários e endereço', 'Cultos da semana, endereço e liderança.'],
             ['caderno', 'Caderno de oração', 'Compartilhe seus pedidos e ore com a comunidade.']
-          ].map(([view, title, text]) => view === 'youtube' ? `<button type="button" class="quick-action admin-quick" data-open-url="https://www.youtube.com/@nibcasadedeus"><span class="home-action-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7.5C3 6 4 5 5.5 5h13C20 5 21 6 21 7.5v9c0 1.5-1 2.5-2.5 2.5h-13C4 19 3 18 3 16.5z M10 9l5 3-5 3z"/></svg></span><strong>${title}</strong><span class="home-action-description">${text}</span></button>` : `<button type="button" class="quick-action admin-quick" data-view="${view}"><span class="home-action-icon" aria-hidden="true">${navIcon(view)}</span>${view === 'caderno' && cadNovos() ? `<span class="quick-badge" aria-label="${cadNovos()} ${cadNovos() === 1 ? 'pedido novo' : 'pedidos novos'}">${cadNovos() > 9 ? '9+' : cadNovos()}</span>` : ''}<strong>${title}</strong><span class="home-action-description">${text}</span></button>`).join('')}</div></section>`;
-          if (isDesk()) return `${birthNudge()}${teamHome()}<div class="home-desk"><div class="home-col">${dailyBlocks(false,'verse')}${publicCheckin()}${pq}${account() && state.prayersLoaded && state.prayers.some(p => !p.answered) ? communityBlock() : ''}${socialBanners()}</div><div class="home-rail">${homeAvisos()}${install}${dailyBlocks(false,'agenda')}${events}</div></div>`;
-          return `${birthNudge()}${teamHome()}${dailyBlocks(false,'verse')}${publicCheckin()}${homeAvisos()}${install}${pq}${socialBanners()}${account() && state.prayersLoaded && state.prayers.some(p => !p.answered) ? communityBlock() : ''}${dailyBlocks(false,'agenda')}${events}`;
+          ]).map(([view, title, text]) => view === 'youtube' ? `<button type="button" class="quick-action admin-quick" data-open-url="https://www.youtube.com/@nibcasadedeus"><span class="home-action-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7.5C3 6 4 5 5.5 5h13C20 5 21 6 21 7.5v9c0 1.5-1 2.5-2.5 2.5h-13C4 19 3 18 3 16.5z M10 9l5 3-5 3z"/></svg></span><strong>${title}</strong><span class="home-action-description">${text}</span></button>` : `<button type="button" class="quick-action admin-quick" data-view="${view}"><span class="home-action-icon" aria-hidden="true">${navIcon(view)}</span>${view === 'caderno' && cadNovos() ? `<span class="quick-badge" aria-label="${cadNovos()} ${cadNovos() === 1 ? 'pedido novo' : 'pedidos novos'}">${cadNovos() > 9 ? '9+' : cadNovos()}</span>` : ''}${teamBadge(view)}<strong>${title}</strong><span class="home-action-description">${text}</span></button>`).join('')}</div></section>`;
+          const social = account() && NibConta.equipe() ? '' : socialBanners();
+          if (isDesk()) return `${birthNudge()}${teamHome()}<div class="home-desk"><div class="home-col">${dailyBlocks(false,'verse')}${publicCheckin()}${pq}${account() && state.prayersLoaded && state.prayers.some(p => !p.answered) ? communityBlock() : ''}${social}</div><div class="home-rail">${homeAvisos()}${install}${dailyBlocks(false,'agenda')}${events}</div></div>`;
+          return `${birthNudge()}${teamHome()}${dailyBlocks(false,'verse')}${publicCheckin()}${homeAvisos()}${install}${pq}${social}${account() && state.prayersLoaded && state.prayers.some(p => !p.answered) ? communityBlock() : ''}${dailyBlocks(false,'agenda')}${events}`;
         }
         if (isDesk()) return `<div class="home-desk"><div class="home-col">${dailyBlocks(false,'verse')}${quick}${socialBanners()}${communityBlock()}</div><div class="home-rail">${checkinCard()}${install}${homeNotice()}${dailyBlocks(false,'agenda')}${birthdayBlock()}${events}</div></div>`;
         return `${dailyBlocks(false,'verse')}${checkinCard()}${install}${quick}${socialBanners()}${homeNotice()}${dailyBlocks(false,'agenda')}${birthdayBlock()}${events}${communityBlock()}`;
@@ -1381,6 +1382,32 @@
     return `<svg class="dash-chart" viewBox="0 0 ${W} ${base + 30}" role="group" aria-label="Check-ins nos últimos cultos">${grid}${bars}<line x1="${left}" x2="${W}" y1="${y(avg)}" y2="${y(avg)}" class="dash-avg"/></svg><div class="dash-legend"><span><i class="sw is-last"></i>Último culto</span><span><i class="sw is-avg"></i>Média · ${avg}</span></div>`;
   }
   // Início da equipe (Secretaria, Pastoral, admin): resumo do dia no topo, com o caminho para o Painel.
+  // Atalhos do Início por perfil (v153). A barra de baixo já leva ao dia a dia da gestão;
+  // aqui ficam as outras tarefas do perfil e o que a pessoa também usa como membro.
+  function teamShortcuts() {
+    if (!PUBLIC || !account() || !NibConta.equipe()) return null;
+    if (account().papel === 'secretaria') return [
+      ['membresia', 'Membresia', 'Registre formulário, reunião e apresentação no culto.'],
+      ['avisos', 'Avisos da igreja', 'Publique avisos no sino e no mural da igreja.'],
+      ['agenda', 'Agenda da igreja', 'Cultos, escola bíblica e eventos no calendário.'],
+      ['caderno', 'Caderno de oração', 'Acompanhe os pedidos e ore com a comunidade.'],
+      ['eventos', 'Eventos e inscrições', 'Os próximos encontros e as inscrições abertas.'],
+      ['generosidade', 'Dízimos e ofertas', 'Contribua pelo Pix com os dados oficiais da igreja.']
+    ];
+    return [
+      ['cadastros', 'Cadastros', 'Quem disse que é membro e aguarda confirmação.'],
+      ['checkin', 'Check-in dos cultos', 'QR Code do telão, local da igreja e presença.'],
+      ['avisos', 'Avisos da igreja', 'Publique avisos no sino e no mural da igreja.'],
+      ['sugestoes', 'Sugestões para o app', 'Ideias e problemas enviados pelos membros.'],
+      ['agenda', 'Agenda da igreja', 'Cultos, escola bíblica e eventos no calendário.'],
+      ['generosidade', 'Dízimos e ofertas', 'Contribua pelo Pix com os dados oficiais da igreja.']
+    ];
+  }
+  function teamBadge(view) {
+    const d = teamShortcuts() && state.painel; if (!d) return '';
+    const n = { cadastros: d.aguardando, membresia: d.em_integracao, sugestoes: d.sugestoes_novas }[view] || 0;
+    return n ? `<span class="admin-badge" aria-label="${n} pendente${n === 1 ? '' : 's'}">${n > 9 ? '9+' : n}</span>` : '';
+  }
   function teamHome() {
     if (!PUBLIC || !account() || !NibConta.equipe()) return '';
     eqLoad('painel', () => NibConta.equipePainel(), 'inicio');
