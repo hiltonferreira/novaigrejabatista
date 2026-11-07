@@ -1,0 +1,23 @@
+# Plataforma Nib em /app (versão de teste, dados fictícios).
+DirectoryIndex index.html
+Options -Indexes
+<IfModule mod_mime.c>
+  AddType application/manifest+json .webmanifest
+  AddType image/webp .webp
+  AddType font/woff2 .woff2
+</IfModule>
+<IfModule mod_headers.c>
+  Header set X-Robots-Tag "noindex, nofollow"
+  Header set X-Content-Type-Options "nosniff"
+  Header set Referrer-Policy "no-referrer"
+  # Página, service worker e manifesto sempre conferidos, para a versão nova chegar.
+  <FilesMatch "^(index\.html|conheca\.html|sw\.js|manifest\.webmanifest)$">
+    Header set Cache-Control "no-cache, max-age=0"
+  </FilesMatch>
+  <FilesMatch "\.(js|css)$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+  <FilesMatch "\.(webp|png|svg|woff2)$">
+    Header set Cache-Control "public, max-age=604800"
+  </FilesMatch>
+</IfModule>
