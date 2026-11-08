@@ -2,7 +2,7 @@
 // Pílulas de Sabedoria: vídeos curtos do pastor para meditar na Palavra. /app/api/pilulas.php?acao=...
 // Pedido de Hilton (08/11/2026): o pastor envia pelo app, o vídeo vai direto para o YouTube da igreja (não listado)
 // e a igreja assiste dentro do app. Busca por título, tema, passagem e pelas palavras faladas (legenda automática do YouTube).
-// GET (com conta): lista, ver, capa. POST (JSON + X-Nib: 1), só Liderança Pastoral e administração: criar (ou trocar o vídeo, com substituir), parte, capa, sincronizar, conferir, editar, legenda, remover.
+// GET (com conta): lista, ver, capa. POST (JSON + X-Nib: 1), só Liderança Pastoral e administração: criar (ou trocar o vídeo, com substituir; publicar_em programa), parte, capa, ocultar, sincronizar, conferir, editar, legenda, remover.
 // Troca de vídeo (pedido de Hilton, 08/11/2026): o vídeo novo vai para a mesma pílula; o antigo continua no ar até o novo chegar e depois é apagado do canal.
 declare(strict_types=1);
 define('NIB_APP_RUNTIME', true);
@@ -14,8 +14,35 @@ require __DIR__ . '/conta-lib.php';
 require __DIR__ . '/push-lib.php';
 require __DIR__ . '/youtube-lib.php';
 
-// Vídeo visível para a igreja: publicado, ou com a troca de vídeo em andamento (o vídeo anterior continua valendo).
-const NIB_PIL_VISIVEL = "(estado = 'publicado' OR (estado = 'enviando' AND youtube_id IS NOT NULL))";
+// Vídeo visível para a igreja: publicado (ou com a troca de vídeo em andamento, o anterior continua valendo),
+// não oculto e já na data programada.
+function nib_pil_visivel_sql(PDO $db): string {
+  return "((estado = 'publicado' OR (estado = 'enviando' AND youtube_id IS NOT NULL)) AND oculto = 0 AND (publicar_em IS NULL OR publicar_em <= " . $db->quote(nib_agora()) . '))';
+}
+function nib_pil_visivel(array $r): bool {
+  return ($r['estado'] === 'publicado' || ($r['estado'] === 'enviando' && $r['youtube_id'])) && !(int)$r['oculto'] && (!$r['publicar_em'] || $r['publicar_em'] <= nib_agora());
+}
+// Data e hora programadas ("2026-11-12T07:00", horário de Rondônia). Vazio ou no passado: publica assim que ficar pronto.
+function nib_pil_data_programada($v): ?string {
+  if (!is_string($v) || !preg_match('/^(\d{4}-\d{2}-\d{2})[T ](\d{2}:\d{2})/', $v, $m)) return null;
+  $d = DateTimeImmutable::createFromFormat('!Y-m-d H:i', $m[1] . ' ' . $m[2], new DateTimeZone('America/Porto_Velho'));
+  if (!$d) return null; $s = $d->format('Y-m-d H:i:s');
+  if ($s <= nib_agora()) return null;
+  if ($s > nib_em('+400 days')) nib_erro('Programe a publicação para no máximo um ano à frente.');
+  return $s;
+}
+// Aviso no celular da igreja, uma vez por pílula (notificar volta a 0 depois de enviar).
+function nib_pil_avisar(PDO $db, array $r): void {
+  $db->prepare('UPDATE nib_pilulas SET notificar = 0 WHERE id = ?')->execute([$r['id']]);
+  nib_push_depois(null, ['title' => 'Pílula de Sabedoria', 'body' => $r['titulo'] . ($r['passagem'] !== '' ? ' · ' . $r['passagem'] : ''), 'url' => '/app/#pilulas', 'tag' => 'nib-pilula-' . $r['id']]);
+}
+// Pílulas programadas que chegaram na hora: avisa a igreja. Roda na manutenção e pelo Cron (pilulas-agenda.php).
+function nib_pil_avisar_programadas(PDO $db): int {
+  $q = $db->prepare("SELECT * FROM nib_pilulas WHERE removido_em IS NULL AND notificar = 1 AND estado = 'publicado' AND oculto = 0 AND publicar_em IS NOT NULL AND publicar_em <= ? LIMIT 5");
+  $q->execute([nib_agora()]); $n = 0;
+  foreach ($q->fetchAll() as $r) { nib_pil_avisar($db, $r); $n++; }
+  return $n;
+}
 const NIB_PIL_PRIVADO = 'O YouTube deixou o vídeo como privado. Isso acontece até o Google verificar a integração do app; depois, os próximos vídeos saem não listados.';
 
 // Texto para busca: minúsculas, sem acentos e sem pontuação ("Fé, João 3.16" -> "fe joao 3 16").
@@ -40,9 +67,9 @@ function nib_pil_parte(): int {
 }
 function nib_pil_dados(array $r, bool $equipe, bool $completo = false, array $palavras = []): array {
   $o = ['id' => (int)$r['id'], 'titulo' => $r['titulo'], 'tema' => $r['tema'], 'passagem' => $r['passagem'], 'texto' => $r['texto'], 'youtube_id' => $r['youtube_id'],
-    'duracao' => (int)$r['duracao'], 'vertical' => (bool)$r['vertical'], 'data' => $r['publicado_em'] ?: $r['criado_em'], 'transcricao_ok' => trim((string)$r['transcricao']) !== '',
+    'duracao' => (int)$r['duracao'], 'vertical' => (bool)$r['vertical'], 'data' => $r['publicar_em'] ?: ($r['publicado_em'] ?: $r['criado_em']), 'transcricao_ok' => trim((string)$r['transcricao']) !== '',
     'capa' => (int)($r['capa_em'] ?? 0) ? 'api/pilulas.php?acao=capa&id=' . (int)$r['id'] . '&v=' . (int)$r['capa_em'] : ''];
-  if ($equipe) $o += ['troca' => $r['estado'] === 'enviando' && $r['youtube_id'] !== null, 'estado' => $r['estado'], 'aviso' => $r['aviso'], 'progresso' => (int)$r['tamanho'] ? (int)floor((int)$r['recebido'] * 100 / (int)$r['tamanho']) : 0];
+  if ($equipe) $o += ['oculto' => (bool)(int)$r['oculto'], 'publicar_em' => $r['publicar_em'], 'agendado' => $r['publicar_em'] !== null && $r['publicar_em'] > nib_agora(), 'troca' => $r['estado'] === 'enviando' && $r['youtube_id'] !== null, 'estado' => $r['estado'], 'aviso' => $r['aviso'], 'progresso' => (int)$r['tamanho'] ? (int)floor((int)$r['recebido'] * 100 / (int)$r['tamanho']) : 0];
   if ($completo) $o += ['transcricao' => (string)$r['transcricao'], 'legendas' => json_decode((string)$r['legendas'], true) ?: []];
   if ($palavras && $r['legendas']) {
     // Trechos da fala com as palavras buscadas, com o segundo em que aparecem (no máximo 3).
@@ -76,10 +103,10 @@ function nib_pil_conferir(PDO $db, array $r): void {
   }
   if ($up !== 'processed') return;
   if ($priv === 'private') { $db->prepare("UPDATE nib_pilulas SET estado = 'privado', aviso = ?, duracao = ? WHERE id = ?")->execute([NIB_PIL_PRIVADO, $dur, $r['id']]); return; }
-  $primeira = !$r['publicado_em'];
   $db->prepare("UPDATE nib_pilulas SET estado = 'publicado', aviso = '', duracao = ?, publicado_em = COALESCE(publicado_em, ?), legenda_proxima = COALESCE(legenda_proxima, ?) WHERE id = ?")
     ->execute([$dur, nib_agora(), nib_em('+5 minutes'), $r['id']]);
-  if ($primeira && (int)$r['notificar']) nib_push_depois(null, ['title' => 'Pílula de Sabedoria', 'body' => $r['titulo'] . ($r['passagem'] !== '' ? ' · ' . $r['passagem'] : ''), 'url' => '/app/#pilulas', 'tag' => 'nib-pilula-' . $r['id']]);
+  // Avisa no celular agora, ou na hora programada (nib_pil_avisar_programadas). Oculta não avisa.
+  if ((int)$r['notificar'] && !(int)$r['oculto'] && (!$r['publicar_em'] || $r['publicar_em'] <= nib_agora())) nib_pil_avisar($db, $r);
 }
 
 // Busca a legenda automática do YouTube (texto falado com o tempo de cada trecho). Tenta de novo com intervalos cada vez maiores.
@@ -119,6 +146,7 @@ function nib_pil_manutencao(): void {
       $q = $db->prepare("SELECT * FROM nib_pilulas WHERE removido_em IS NULL AND estado = 'publicado' AND legendas IS NULL AND legenda_proxima IS NOT NULL AND legenda_proxima <= ? ORDER BY id DESC LIMIT 1");
       $q->execute([nib_agora()]);
       foreach ($q->fetchAll() as $r) nib_pil_legenda($db, $r);
+      nib_pil_avisar_programadas($db);
     } catch (Throwable $e) { error_log('pilulas manutencao: ' . $e->getMessage()); }
   });
 }
@@ -126,7 +154,7 @@ function nib_pil_concluir(PDO $db, array $r, string $video, int $quem): void {
   $antigo = (string)($r['youtube_id'] ?? '');
   if ($antigo !== '' && $antigo !== $video) {
     // Troca de vídeo: a transcrição do vídeo anterior não vale para o novo; busca de novo depois que ele ficar pronto.
-    $db->prepare("UPDATE nib_pilulas SET youtube_id = ?, estado = 'processando', aviso = '', sessao = NULL, recebido = tamanho, conferido_em = NULL, legendas = NULL, transcricao = '', transcricao_editada = 0, legenda_tentativas = 0, legenda_proxima = NULL WHERE id = ?")->execute([$video, $r['id']]);
+    $db->prepare("UPDATE nib_pilulas SET youtube_id = ?, estado = 'processando', aviso = '', notificar = 0, sessao = NULL, recebido = tamanho, conferido_em = NULL, legendas = NULL, transcricao = '', transcricao_editada = 0, legenda_tentativas = 0, legenda_proxima = NULL WHERE id = ?")->execute([$video, $r['id']]);
     nib_pil_salvar_busca($db, (int)$r['id']);
     nib_registrar($quem, 'pilula-video-trocado', (int)$r['id'], $antigo . ' > ' . $video);
     if (!nib_yt_apagar($antigo)) $db->prepare('UPDATE nib_pilulas SET aviso = ? WHERE id = ?')->execute(['O vídeo anterior não foi apagado do YouTube. Apague no YouTube Studio.', $r['id']]);
@@ -159,14 +187,14 @@ try {
     case 'get:lista': {
       $q = is_string($_GET['q'] ?? null) ? mb_substr($_GET['q'], 0, 80) : ''; $tema = nib_texto($_GET['tema'] ?? '', 60);
       $w = ['removido_em IS NULL']; $args = [];
-      if (!$lider) $w[] = NIB_PIL_VISIVEL;
+      if (!$lider) $w[] = nib_pil_visivel_sql($db);
       if ($tema !== '') { $w[] = 'tema = ?'; $args[] = $tema; }
       $palavras = nib_pil_palavras($q);
       foreach ($palavras as $p) { $w[] = "CONCAT(' ', busca, ' ') LIKE ?"; $args[] = ctype_digit($p) ? "% $p %" : '%' . $p . '%'; }
-      $s = $db->prepare('SELECT * FROM nib_pilulas WHERE ' . implode(' AND ', $w) . ' ORDER BY COALESCE(publicado_em, criado_em) DESC, id DESC LIMIT ' . ($palavras ? 40 : 60));
+      $s = $db->prepare('SELECT * FROM nib_pilulas WHERE ' . implode(' AND ', $w) . ' ORDER BY COALESCE(publicar_em, publicado_em, criado_em) DESC, id DESC LIMIT ' . ($palavras ? 40 : 60));
       $s->execute($args);
       $lista = array_map(fn($r) => nib_pil_dados($r, $lider, false, $palavras), $s->fetchAll());
-      $temas = $db->query("SELECT tema, COUNT(*) n FROM nib_pilulas WHERE removido_em IS NULL AND " . NIB_PIL_VISIVEL . " AND tema <> '' GROUP BY tema ORDER BY n DESC, tema LIMIT 20")->fetchAll(PDO::FETCH_COLUMN);
+      $temas = $db->query("SELECT tema, COUNT(*) n FROM nib_pilulas WHERE removido_em IS NULL AND " . nib_pil_visivel_sql($db) . " AND tema <> '' GROUP BY tema ORDER BY n DESC, tema LIMIT 20")->fetchAll(PDO::FETCH_COLUMN);
       nib_pil_manutencao();
       $extra = $lider ? ['youtube' => ['configurado' => nib_yt_cliente() !== null, 'conectado' => nib_yt_conectado(), 'canal' => (string)nib_ajuste('yt_canal'), 'pode_conectar' => nib_tem_papel($eu, ['admin'])]] : [];
       nib_json(200, ['ok' => true, 'pilulas' => $lista, 'temas' => $temas, 'equipe' => $lider] + $extra);
@@ -174,14 +202,14 @@ try {
 
     case 'get:ver': {
       $r = nib_pil_linha($db, $id);
-      if (!$r || (!$lider && !($r['estado'] === 'publicado' || ($r['estado'] === 'enviando' && $r['youtube_id'])))) nib_erro('Pílula não encontrada.', 404);
+      if (!$r || (!$lider && !nib_pil_visivel($r))) nib_erro('Pílula não encontrada.', 404);
       nib_json(200, ['ok' => true, 'pilula' => nib_pil_dados($r, $lider, true)]);
     }
 
     // Imagem da capa. O endereço muda a cada troca (v=), então pode ficar no cache do aparelho.
     case 'get:capa': {
       $r = nib_pil_linha($db, $id);
-      if (!$r || (!$lider && !($r['estado'] === 'publicado' || ($r['estado'] === 'enviando' && $r['youtube_id'])))) nib_erro('Capa não encontrada.', 404);
+      if (!$r || (!$lider && !nib_pil_visivel($r))) nib_erro('Capa não encontrada.', 404);
       $q = $db->prepare('SELECT tipo, imagem FROM nib_pilula_capas WHERE pilula_id = ?'); $q->execute([$id]); $c = $q->fetch();
       if (!$c) nib_erro('Capa não encontrada.', 404);
       header('Content-Type: ' . $c['tipo']); header('Cache-Control: private, max-age=31536000, immutable');
@@ -221,6 +249,7 @@ try {
       if ($titulo === '') nib_erro('Informe o título da pílula.');
       if ($tamanho < 20000 || $tamanho > 4 * 1024 ** 3) nib_erro('Escolha um arquivo de vídeo válido (até 4 GB).');
       if ($duracao > 1800) nib_erro('A pílula pode ter até 30 minutos.');
+      $programada = $troca ? null : nib_pil_data_programada($d['publicar_em'] ?? '');
       nib_limite('pilula', (string)$eu['id'], 20, 86400);
       $desc = nib_pil_descricao($passagem, $texto);
       try { $sessao = nib_yt_abrir_envio($titulo, $desc, $tamanho, $tipo); }
@@ -232,8 +261,8 @@ try {
         nib_registrar((int)$eu['id'], 'pilula-troca-iniciada', (int)$troca['id']);
         nib_json(201, ['ok' => true, 'id' => (int)$troca['id'], 'parte' => nib_pil_parte()]);
       }
-      $db->prepare('INSERT INTO nib_pilulas (titulo, tema, passagem, texto, estado, sessao, tamanho, duracao, vertical, notificar, criado_por, criado_em) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)')
-        ->execute([$titulo, $tema, $passagem, $texto, 'enviando', $sessao, $tamanho, $duracao, empty($d['vertical']) ? 0 : 1, empty($d['notificar']) ? 0 : 1, $eu['id'], nib_agora()]);
+      $db->prepare('INSERT INTO nib_pilulas (titulo, tema, passagem, texto, estado, sessao, tamanho, duracao, vertical, notificar, publicar_em, criado_por, criado_em) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)')
+        ->execute([$titulo, $tema, $passagem, $texto, 'enviando', $sessao, $tamanho, $duracao, empty($d['vertical']) ? 0 : 1, empty($d['notificar']) ? 0 : 1, $programada, $eu['id'], nib_agora()]);
       $novo = (int)$db->lastInsertId();
       nib_pil_salvar_busca($db, $novo);
       nib_registrar((int)$eu['id'], 'pilula-criada', $novo);
@@ -285,12 +314,23 @@ try {
         $t = is_string($d['transcricao']) ? mb_substr(trim(preg_replace('/\s+/u', ' ', $d['transcricao']) ?? ''), 0, 60000, 'UTF-8') : '';
         $db->prepare('UPDATE nib_pilulas SET titulo = ?, tema = ?, passagem = ?, texto = ?, transcricao = ?, transcricao_editada = 1 WHERE id = ?')->execute([...$campos, $t, $id]);
       } else $db->prepare('UPDATE nib_pilulas SET titulo = ?, tema = ?, passagem = ?, texto = ? WHERE id = ?')->execute([...$campos, $id]);
+      // Programação: só muda se o formulário mandou o campo (vazio = publicar já).
+      if (array_key_exists('publicar_em', $d)) $db->prepare('UPDATE nib_pilulas SET publicar_em = ? WHERE id = ?')->execute([nib_pil_data_programada($d['publicar_em']), $id]);
       nib_pil_salvar_busca($db, $id);
       nib_registrar((int)$eu['id'], 'pilula-editada', $id);
       // Título, passagem ou mensagem mudaram: atualiza também no YouTube.
       $yt = null;
       if ($r['youtube_id'] && ($campos[0] !== $r['titulo'] || $campos[2] !== $r['passagem'] || $campos[3] !== $r['texto'])) $yt = nib_yt_atualizar((string)$r['youtube_id'], $campos[0], nib_pil_descricao($campos[2], $campos[3]));
       nib_json(200, ['ok' => true, 'youtube' => $yt, 'pilula' => nib_pil_dados(nib_pil_linha($db, $id), true, true)]);
+    }
+
+    // Ocultar: a pílula some para a igreja, mas continua no app para a liderança (e no YouTube). Mostrar desfaz.
+    case 'post:ocultar': {
+      $r = nib_pil_linha($db, $id); if (!$r) nib_erro('Pílula não encontrada.', 404);
+      $oculto = !empty($d['oculto']) ? 1 : 0;
+      $db->prepare('UPDATE nib_pilulas SET oculto = ? WHERE id = ?')->execute([$oculto, $id]);
+      nib_registrar((int)$eu['id'], $oculto ? 'pilula-oculta' : 'pilula-mostrada', $id);
+      nib_json(200, ['ok' => true, 'pilula' => nib_pil_dados(nib_pil_linha($db, $id), true, true)]);
     }
 
     // "Buscar transcrição agora": o pastor não precisa esperar a próxima tentativa automática.
