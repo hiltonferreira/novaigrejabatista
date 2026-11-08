@@ -9,6 +9,7 @@ declare(strict_types=1);
 if (isset($_SERVER['REQUEST_METHOD'])) { http_response_code(404); exit; }
 if (PHP_SAPI !== 'cli') { header_remove(); ini_set('html_errors', '0'); }
 $argv = $argv ?? ($_SERVER['argv'] ?? []);
+ini_set('display_errors', '1'); error_reporting(E_ALL);
 echo "Script das chaves do YouTube (PHP " . PHP_VERSION . ', ' . PHP_SAPI . ")\n";
 
 const RETORNO = 'https://novaigrejabatista.com.br/app/api/youtube.php?retorno=1';
@@ -16,6 +17,8 @@ $json = $argv[1] ?? ''; $apply = in_array('--apply', $argv, true);
 $config = getenv('NIB_APP_CONFIG') ?: '/home/novaigre/nib-app-privado/config.php';
 function falha(string $m): never { echo "ERRO: $m\n"; exit(1); }
 
+// Restos de execuções anteriores interrompidas (têm a chave): apaga.
+foreach (glob($config . '.novo-*') ?: [] as $resto) { @unlink($resto); echo "Apagado resto anterior: " . basename($resto) . "\n"; }
 if ($json === '' || !is_file($json)) falha('informe o caminho do JSON baixado do Google.');
 if (!is_file($config)) falha("configuração não encontrada em $config");
 $d = json_decode((string)file_get_contents($json), true);
@@ -38,8 +41,8 @@ if ($n !== 1) falha('não encontrei "return [" na configuração; edite à mão.
 // Confere a versão nova antes de trocar: sintaxe e todos os valores antigos iguais.
 $tmp = $config . '.novo-' . bin2hex(random_bytes(4));
 file_put_contents($tmp, $src2); @chmod($tmp, fileperms($config) & 0777);
-exec('php -l ' . escapeshellarg($tmp) . ' 2>&1', $out, $rc);
-if ($rc !== 0) { unlink($tmp); falha('a nova configuração teria erro de sintaxe: ' . implode(' ', $out)); }
+// Sintaxe conferida sem exec() (desligado nesta hospedagem): o analisador do próprio PHP.
+try { token_get_all($src2, TOKEN_PARSE); } catch (ParseError $e) { unlink($tmp); falha('a nova configuração teria erro de sintaxe: ' . $e->getMessage()); }
 $novo = (static fn($f) => require $f)($tmp);
 foreach ($atual as $k => $v) if (!str_starts_with((string)$k, 'youtube_client_') && ($novo[$k] ?? null) !== $v) { unlink($tmp); falha("a chave $k mudaria; nada foi alterado."); }
 if (($novo['youtube_client_id'] ?? '') !== $id || ($novo['youtube_client_secret'] ?? '') !== $seg) { unlink($tmp); falha('as chaves novas não ficaram corretas.'); }
