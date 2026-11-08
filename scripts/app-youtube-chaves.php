@@ -5,12 +5,16 @@
 //   php app-youtube-chaves.php /home/novaigre/nib-app-privado/client_secret_XXXX.json --apply    -> grava (com backup) e apaga o JSON
 // O JSON é o arquivo baixado em Google Cloud > Google Auth Platform > Clientes > Baixar JSON.
 declare(strict_types=1);
-if (PHP_SAPI !== 'cli') { http_response_code(404); exit; }
+// Só pela linha de comando (no cPanel o "php" do Terminal pode ser CGI, por isso não exige PHP_SAPI === 'cli').
+if (isset($_SERVER['REQUEST_METHOD'])) { http_response_code(404); exit; }
+if (PHP_SAPI !== 'cli') { header_remove(); ini_set('html_errors', '0'); }
+$argv = $argv ?? ($_SERVER['argv'] ?? []);
+echo "Script das chaves do YouTube (PHP " . PHP_VERSION . ', ' . PHP_SAPI . ")\n";
 
 const RETORNO = 'https://novaigrejabatista.com.br/app/api/youtube.php?retorno=1';
 $json = $argv[1] ?? ''; $apply = in_array('--apply', $argv, true);
 $config = getenv('NIB_APP_CONFIG') ?: '/home/novaigre/nib-app-privado/config.php';
-function falha(string $m): never { fwrite(STDERR, "ERRO: $m\n"); exit(1); }
+function falha(string $m): never { echo "ERRO: $m\n"; exit(1); }
 
 if ($json === '' || !is_file($json)) falha('informe o caminho do JSON baixado do Google.');
 if (!is_file($config)) falha("configuração não encontrada em $config");
