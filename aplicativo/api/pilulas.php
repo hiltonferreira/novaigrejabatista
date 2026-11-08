@@ -30,6 +30,8 @@ function nib_pil_palavras(string $q): array {
   $w = array_values(array_filter(explode(' ', nib_dobrar($q)), fn($x) => strlen($x) >= 2 || ctype_digit($x)));
   return array_slice(array_unique($w), 0, 6);
 }
+// Descrição do vídeo no YouTube: passagem, mensagem e a assinatura da igreja.
+function nib_pil_descricao(string $passagem, string $texto): string { return trim(($passagem !== '' ? $passagem . "\n\n" : '') . ($texto !== '' ? $texto . "\n\n" : '') . 'Pílula de Sabedoria · Nova Igreja Batista'); }
 function nib_ini_bytes(string $v): int { $n = (int)$v; $u = strtolower(substr(trim($v), -1)); return $u === 'g' ? $n << 30 : ($u === 'm' ? $n << 20 : ($u === 'k' ? $n << 10 : $n)); }
 // Tamanho de cada parte do envio: múltiplo de 256 KB, abaixo do limite de upload do PHP, no máximo 4 MB.
 function nib_pil_parte(): int {
@@ -220,7 +222,7 @@ try {
       if ($tamanho < 20000 || $tamanho > 4 * 1024 ** 3) nib_erro('Escolha um arquivo de vídeo válido (até 4 GB).');
       if ($duracao > 1800) nib_erro('A pílula pode ter até 30 minutos.');
       nib_limite('pilula', (string)$eu['id'], 20, 86400);
-      $desc = trim(($passagem !== '' ? $passagem . "\n\n" : '') . ($texto !== '' ? $texto . "\n\n" : '') . 'Pílula de Sabedoria · Nova Igreja Batista');
+      $desc = nib_pil_descricao($passagem, $texto);
       try { $sessao = nib_yt_abrir_envio($titulo, $desc, $tamanho, $tipo); }
       catch (DomainException $e) { nib_erro($e->getMessage(), 429); }
       if ($troca) {
@@ -285,7 +287,10 @@ try {
       } else $db->prepare('UPDATE nib_pilulas SET titulo = ?, tema = ?, passagem = ?, texto = ? WHERE id = ?')->execute([...$campos, $id]);
       nib_pil_salvar_busca($db, $id);
       nib_registrar((int)$eu['id'], 'pilula-editada', $id);
-      nib_json(200, ['ok' => true, 'pilula' => nib_pil_dados(nib_pil_linha($db, $id), true, true)]);
+      // Título, passagem ou mensagem mudaram: atualiza também no YouTube.
+      $yt = null;
+      if ($r['youtube_id'] && ($campos[0] !== $r['titulo'] || $campos[2] !== $r['passagem'] || $campos[3] !== $r['texto'])) $yt = nib_yt_atualizar((string)$r['youtube_id'], $campos[0], nib_pil_descricao($campos[2], $campos[3]));
+      nib_json(200, ['ok' => true, 'youtube' => $yt, 'pilula' => nib_pil_dados(nib_pil_linha($db, $id), true, true)]);
     }
 
     // "Buscar transcrição agora": o pastor não precisa esperar a próxima tentativa automática.

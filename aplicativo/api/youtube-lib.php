@@ -106,6 +106,17 @@ function nib_yt_resposta_envio(int $code, string $b, array $h): array {
   throw new RuntimeException('youtube envio: ' . $code);
 }
 
+// Atualiza título e descrição do vídeo no canal (quando o pastor edita a pílula no app). Devolve true se deu certo.
+function nib_yt_atualizar(string $video, string $titulo, string $descricao): bool {
+  if (!preg_match('/^[\w-]{6,20}$/', $video)) return false;
+  $corpo = json_encode(['id' => $video, 'snippet' => ['title' => mb_substr($titulo, 0, 100, 'UTF-8'), 'description' => mb_substr($descricao, 0, 4800, 'UTF-8'), 'categoryId' => '22', 'defaultLanguage' => 'pt-BR', 'defaultAudioLanguage' => 'pt-BR']], JSON_UNESCAPED_UNICODE);
+  try {
+    [$code] = nib_yt_http('PUT', nib_yt_url('api') . '/youtube/v3/videos?part=snippet', ['Authorization: Bearer ' . nib_yt_token(), 'Content-Type: application/json; charset=UTF-8'], $corpo);
+    if ($code === 200) return true;
+    error_log("youtube atualizar $video: $code");
+  } catch (Throwable $e) { error_log('youtube atualizar: ' . $e->getMessage()); }
+  return false;
+}
 // Apaga um vídeo do canal. Devolve true se apagou ou se ele já não existia.
 function nib_yt_apagar(string $video): bool {
   if (!preg_match('/^[\w-]{6,20}$/', $video)) return true;
