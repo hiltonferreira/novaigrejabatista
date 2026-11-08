@@ -604,9 +604,15 @@
       .finally(() => { state.pilLoading = false; });
   }
   // Bloco na tela inicial: a pílula mais recente dos últimos 10 dias.
+  // Atalho do pastor na tela inicial (pedido de Hilton, 08/11/2026): o mesmo cartão "Grave a pílula da semana" da tela das Pílulas.
+  function homePilEstudio() {
+    if (!PUBLIC || !account() || !NibConta.lideranca()) return '';
+    const d = state.pilHomeD; if (!d || !d.youtube || !d.youtube.conectado) return '';
+    return `<div class="pil-home-estudio">${pilEquipe(d)}</div>`;
+  }
   function homePilula() {
     if (!PUBLIC || !account()) return '';
-    if (state.pilHomeKey !== (state.accountKey || '')) { state.pilHomeKey = state.accountKey || ''; state.pilHome = null; NibConta.pilulas('lista').then(d => { state.pilHome = d.pilulas.filter(pilVisivel); if (state.view === 'inicio' && state.pilHome.length) show('inicio', false, false); }).catch(() => { state.pilHome = []; }); return ''; }
+    if (state.pilHomeKey !== (state.accountKey || '')) { state.pilHomeKey = state.accountKey || ''; state.pilHome = null; NibConta.pilulas('lista').then(d => { state.pilHome = d.pilulas.filter(pilVisivel); state.pilHomeD = d; if (state.view === 'inicio' && (state.pilHome.length || NibConta.lideranca())) show('inicio', false, false); }).catch(() => { state.pilHome = []; }); return ''; }
     // Banners como os do "Acompanhe a igreja" (pedido de Hilton, 08/11/2026): as 3 pílulas mais recentes, logo abaixo do versículo.
     const l = (state.pilHome || []).slice(0, 3); if (!l.length) return '';
     const play = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 5.5v13l10.5-6.5z"/></svg>';
@@ -668,7 +674,7 @@
         <div class="form-actions"><button type="submit" class="action primary pil-enviar">Publicar pílula</button><button type="button" class="button" data-pil-cancelar>Cancelar</button></div></form></section>`;
     }
     const pub = (d.pilulas || []).filter(pilVisivel), ult = pub[0], prog = (d.pilulas || []).filter(p => p.agendado && !p.oculto).length;
-    return `<section class="pil-studio">${canal}<span class="pil-studio-icon" aria-hidden="true">${navIcon('pilulas')}</span><h2>Grave a pílula da semana</h2><p>Grave no celular, na vertical, de 1 a 3 minutos. O vídeo vai para o YouTube da igreja e aparece aqui para todos.</p>${escolher(`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4 M7 9l5-5 5 5 M5 20h14"/></svg>Escolher vídeo`, 'pil-studio-btn')}<small class="pil-studio-info">${pub.length ? `${pub.length} ${pub.length === 1 ? 'pílula publicada' : 'pílulas publicadas'} · última em ${escape(pilData(ult.data))}` : 'Nenhuma pílula publicada ainda. A primeira começa aqui.'}${prog ? ` · ${prog} ${prog === 1 ? 'programada' : 'programadas'}` : ''}</small></section>`;
+    return `<section class="pil-studio">${canal}<span class="pil-studio-icon" aria-hidden="true">${navIcon('pilulas')}</span><h2>Grave a pílula da semana</h2><p>Grave no celular, na vertical, de 1 a 3 minutos. O vídeo vai para o YouTube da igreja e aparece aqui para todos.</p>${escolher(`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4 M7 9l5-5 5 5 M5 20h14"/></svg>Escolher vídeo`, 'pil-studio-btn')}<small class="pil-studio-info">${pub.length ? `${pub.length} ${pub.length === 1 ? 'pílula publicada' : 'pílulas publicadas'} · última em ${escape(pilData(ult.data))}` : 'Nenhuma pílula publicada ainda. A primeira começa aqui.'}${prog ? ` · ${prog}\u00a0${prog === 1 ? 'programada' : 'programadas'}` : ''}</small></section>`;
   }
   function pilulasPage() {
     if (!PUBLIC) return `<section class="box"><p>Aqui ficam os vídeos curtos do pastor para meditar na Palavra, com busca por tema, passagem bíblica e pelas palavras faladas no vídeo.</p></section>`;
@@ -731,7 +737,7 @@
     const form = content.querySelector('#pil-form'); if (form) state.pilRasc = { titulo: form.titulo.value, passagem: form.passagem.value, texto: form.texto.value };
     if (state.pilFileUrl) URL.revokeObjectURL(state.pilFileUrl);
     state.pilFile = f; state.pilFileUrl = null; state.pilMeta = null; state.pilForm = true; state.pilUp = null;
-    show('pilulas', false, false);
+    show('pilulas', state.view !== 'pilulas', false);
     pilMeta(f).then(m => { if (state.pilFile !== f) return; state.pilMeta = m; const out = content.querySelector('#pil-info'); if (out) out.textContent = pilResumo(m, f); const pv = content.querySelector('.pil-preview'); if (pv) pv.classList.toggle('is-wide', !m.vertical); });
   }
   async function pilInfo(input) {
@@ -955,8 +961,8 @@
             ['caderno', 'Caderno de oração', 'Compartilhe seus pedidos e ore com a comunidade.']
           ]).map(([view, title, text]) => view === 'youtube' ? `<button type="button" class="quick-action admin-quick" data-open-url="https://www.youtube.com/@nibcasadedeus"><span class="home-action-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7.5C3 6 4 5 5.5 5h13C20 5 21 6 21 7.5v9c0 1.5-1 2.5-2.5 2.5h-13C4 19 3 18 3 16.5z M10 9l5 3-5 3z"/></svg></span><strong>${title}</strong><span class="home-action-description">${text}</span></button>` : `<button type="button" class="quick-action admin-quick" data-view="${view}"><span class="home-action-icon" aria-hidden="true">${navIcon(view)}</span>${view === 'caderno' && cadNovos() ? `<span class="quick-badge" aria-label="${cadNovos()} ${cadNovos() === 1 ? 'pedido novo' : 'pedidos novos'}">${cadNovos() > 9 ? '9+' : cadNovos()}</span>` : ''}${teamBadge(view)}<strong>${title}</strong><span class="home-action-description">${text}</span></button>`).join('')}</div></section>`;
           const social = account() && NibConta.equipe() ? '' : socialBanners();
-          if (isDesk()) return `${birthNudge()}${teamHome()}<div class="home-desk"><div class="home-col">${dailyBlocks(false,'verse')}${homePilula()}${publicCheckin()}${pq}${account() && state.prayersLoaded && state.prayers.some(p => !p.answered) ? communityBlock() : ''}${social}</div><div class="home-rail">${homeAvisos()}${install}${dailyBlocks(false,'agenda')}${events}</div></div>`;
-          return `${birthNudge()}${teamHome()}${dailyBlocks(false,'verse')}${homePilula()}${publicCheckin()}${homeAvisos()}${install}${pq}${social}${account() && state.prayersLoaded && state.prayers.some(p => !p.answered) ? communityBlock() : ''}${dailyBlocks(false,'agenda')}${events}`;
+          if (isDesk()) return `${birthNudge()}${teamHome()}<div class="home-desk"><div class="home-col">${homePilEstudio()}${dailyBlocks(false,'verse')}${homePilula()}${publicCheckin()}${pq}${account() && state.prayersLoaded && state.prayers.some(p => !p.answered) ? communityBlock() : ''}${social}</div><div class="home-rail">${homeAvisos()}${install}${dailyBlocks(false,'agenda')}${events}</div></div>`;
+          return `${birthNudge()}${teamHome()}${homePilEstudio()}${dailyBlocks(false,'verse')}${homePilula()}${publicCheckin()}${homeAvisos()}${install}${pq}${social}${account() && state.prayersLoaded && state.prayers.some(p => !p.answered) ? communityBlock() : ''}${dailyBlocks(false,'agenda')}${events}`;
         }
         if (isDesk()) return `<div class="home-desk"><div class="home-col">${dailyBlocks(false,'verse')}${quick}${socialBanners()}${communityBlock()}</div><div class="home-rail">${checkinCard()}${install}${homeNotice()}${dailyBlocks(false,'agenda')}${birthdayBlock()}${events}</div></div>`;
         return `${dailyBlocks(false,'verse')}${checkinCard()}${install}${quick}${socialBanners()}${homeNotice()}${dailyBlocks(false,'agenda')}${birthdayBlock()}${events}${communityBlock()}`;
