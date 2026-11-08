@@ -2730,3 +2730,7 @@ dialog.ck-telao::backdrop{background:#041e42}
 #nib-proposta .pil-item:has(.pil-card-editar) .pil-card{padding-right:60px}
 #nib-proposta .pil-home-estudio{margin:0 0 24px}
 #nib-proposta .pil-home-estudio .pil-studio{margin:0}
+/* v167: ações da pílula numa linha só (pedido de Hilton). */
+#nib-proposta .pil-acoes{flex-wrap:nowrap;gap:6px}
+#nib-proposta .pil-acoes .button{flex:1 1 auto;min-width:0;padding:10px 6px;font-size:13px;white-space:nowrap}
+@media(max-width:370px){#nib-proposta .pil-acoes{gap:4px}#nib-proposta .pil-acoes .button{padding:10px 4px;font-size:12px}}
