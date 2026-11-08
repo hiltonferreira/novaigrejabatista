@@ -546,8 +546,10 @@
   function homePilula() {
     if (!PUBLIC || !account()) return '';
     if (state.pilHomeKey !== (state.accountKey || '')) { state.pilHomeKey = state.accountKey || ''; state.pilHome = null; NibConta.pilulas('lista').then(d => { state.pilHome = d.pilulas.filter(p => !p.estado || p.estado === 'publicado'); if (state.view === 'inicio' && state.pilHome.length) show('inicio', false, false); }).catch(() => { state.pilHome = []; }); return ''; }
-    const p = (state.pilHome || [])[0]; if (!p || Date.now() - new Date(p.data.replace(' ', 'T') + '-04:00').getTime() > 10 * 864e5) return '';
-    return `<section class="home-pilula" aria-labelledby="home-pil-title"><div class="section-heading"><div><span class="label">PÍLULA DE SABEDORIA</span><h2 id="home-pil-title">Palavra para meditar</h2></div>${button('Ver todas', 'pilulas')}</div><button type="button" class="pil-card is-home" data-pil-abrir="${p.id}">${pilThumb(p)}<span class="pil-card-body">${p.tema ? `<span class="pil-tema">${escape(p.tema)}</span>` : ''}<strong>${escape(p.titulo)}</strong><small>${escape([p.passagem, pilData(p.data)].filter(Boolean).join(' · '))}</small></span></button></section>`;
+    // Banners como os do "Acompanhe a igreja" (pedido de Hilton, 08/11/2026): as 3 pílulas mais recentes, logo abaixo do versículo.
+    const l = (state.pilHome || []).slice(0, 3); if (!l.length) return '';
+    const play = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 5.5v13l10.5-6.5z"/></svg>';
+    return `<section class="pil-banners" aria-labelledby="home-pil-title"><div class="section-heading"><h2 id="home-pil-title">Pílulas de Sabedoria</h2>${button('Ver todas', 'pilulas')}</div><div class="pil-track${l.length === 1 ? ' is-single' : ''}">${l.map(p => `<button type="button" class="social-card pil-banner${p.vertical ? ' is-vertical' : ''}" data-pil-abrir="${p.id}" aria-label="Pílula de Sabedoria: ${escape(p.titulo)}. Assistir.">${p.youtube_id ? `<img src="https://i.ytimg.com/vi/${encodeURIComponent(p.youtube_id)}/hqdefault.jpg" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">` : ''}<span class="pil-banner-art" aria-hidden="true">${navIcon('pilulas')}</span><span class="social-kicker">Pílula de Sabedoria${p.tema ? ' · ' + escape(p.tema) : ''}</span><strong class="social-title">${escape(p.titulo)}</strong><span class="social-box pil-banner-box"><span>${p.passagem ? escape(p.passagem) + ' · ' : ''}<b>Assistir${p.duracao ? ' ' + pilTempo(p.duracao) : ''}</b></span>${play}</span></button>`).join('')}</div></section>`;
   }
   function pilLista() {
     const d = state.pil, l = d.pilulas;
@@ -853,7 +855,7 @@
             ['presenca', 'Check-in', 'Registre sua presença na EBS e nos cultos.'],
             ['generosidade', 'Dízimos e ofertas', 'Contribua pelo Pix com os dados oficiais da igreja.'],
             ['celulas', 'Células', 'Encontre uma célula perto de você.'],
-            ['informacoes', 'Horários e endereço', 'Cultos da semana, endereço e liderança.'],
+            ['pilulas', 'Pílulas de Sabedoria', 'Vídeos curtos do pastor para meditar na Palavra.'],
             ['caderno', 'Caderno de oração', 'Compartilhe seus pedidos e ore com a comunidade.']
           ]).map(([view, title, text]) => view === 'youtube' ? `<button type="button" class="quick-action admin-quick" data-open-url="https://www.youtube.com/@nibcasadedeus"><span class="home-action-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7.5C3 6 4 5 5.5 5h13C20 5 21 6 21 7.5v9c0 1.5-1 2.5-2.5 2.5h-13C4 19 3 18 3 16.5z M10 9l5 3-5 3z"/></svg></span><strong>${title}</strong><span class="home-action-description">${text}</span></button>` : `<button type="button" class="quick-action admin-quick" data-view="${view}"><span class="home-action-icon" aria-hidden="true">${navIcon(view)}</span>${view === 'caderno' && cadNovos() ? `<span class="quick-badge" aria-label="${cadNovos()} ${cadNovos() === 1 ? 'pedido novo' : 'pedidos novos'}">${cadNovos() > 9 ? '9+' : cadNovos()}</span>` : ''}${teamBadge(view)}<strong>${title}</strong><span class="home-action-description">${text}</span></button>`).join('')}</div></section>`;
           const social = account() && NibConta.equipe() ? '' : socialBanners();
