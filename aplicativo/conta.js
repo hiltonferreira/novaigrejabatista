@@ -65,6 +65,17 @@
     caderno: async (acao, body) => api(acao, body, 'caderno'),
     inscricoes: async () => api('inscricoes'),
     avisos: async (acao, body) => api(acao, body, 'avisos'),
+    pilulas: async (acao, body) => api(acao, body, 'pilulas'),
+    youtube: async (acao, body) => api(acao, body, 'youtube'),
+    // Uma parte do vídeo da pílula (corpo binário). O erro leva o código HTTP e, se houver, quanto já chegou.
+    pilulaParte: async (id, inicio, parte) => {
+      let r, d;
+      try { r = await fetch('api/pilulas.php?acao=parte&id=' + id + '&inicio=' + inicio, { method: 'POST', credentials: 'same-origin', cache: 'no-store', headers: { 'X-Nib': '1', 'Content-Type': 'application/octet-stream' }, body: parte }); }
+      catch (_) { const e = new Error('Sem conexão. Confira a internet.'); e.status = 0; throw e; }
+      try { d = await r.json(); } catch (_) { d = null; }
+      if (!r.ok || !d || !d.ok) { const e = new Error((d && d.erro) || 'Falha no envio.'); e.status = r.status; e.recebido = d && typeof d.recebido === 'number' ? d.recebido : null; throw e; }
+      return d;
+    },
     pushChave: async () => (await api('push-chave')).chave,
     push: async (acao, body) => api(acao, body),
     pushEstado: async endpoint => api('push-estado&endpoint=' + encodeURIComponent(endpoint))

@@ -13,12 +13,12 @@
   root.classList.toggle('is-public', PUBLIC);
   const publicViews = ['inicio','agenda','eventos','generosidade','celulas','caderno','informacoes','avisos','sugestoes'];
   const account = () => (PUBLIC && window.NibConta) ? NibConta.pessoa() : null;
-  const allowedPublic = () => publicViews.concat(account() ? ['cadastro', 'presenca'] : [], account() && NibConta.equipe() ? ['equipe', 'membros', 'membresia', 'cadastros', 'checkin'] : []);
+  const allowedPublic = () => publicViews.concat(account() ? ['cadastro', 'presenca', 'pilulas'] : [], account() && NibConta.equipe() ? ['equipe', 'membros', 'membresia', 'cadastros', 'checkin'] : []);
   const publicNav = () => [['inicio', 'Início'], ['agenda', 'Agenda'], ['eventos', 'Eventos'], ['generosidade', 'Generosidade'], ['celulas', 'Células'], ['caderno', 'Caderno de oração'], ['avisos', 'Avisos da igreja'], ['informacoes', 'Informações'], ['sugestoes', 'Sugestões para o app']]
-    .concat(account() ? [['cadastro', 'Meu cadastro'], ['presenca', 'Check-in']] : [['entrar', 'Entrar ou criar cadastro']], account() && NibConta.equipe() ? [['equipe', 'Painel da equipe'], ['membros', 'Membros'], ['membresia', 'Membresia'], ['checkin', 'Check-in dos cultos']] : []);
+    .concat(account() ? [['cadastro', 'Meu cadastro'], ['presenca', 'Check-in'], ['pilulas', 'Pílulas de Sabedoria']] : [['entrar', 'Entrar ou criar cadastro']], account() && NibConta.equipe() ? [['equipe', 'Painel da equipe'], ['membros', 'Membros'], ['membresia', 'Membresia'], ['checkin', 'Check-in dos cultos']] : []);
   // Menu do app oficial em blocos, para não virar uma lista comprida sem respiro.
   const teamGroupName = () => ({ secretaria: 'Secretaria da igreja', pastoral: 'Liderança Pastoral', admin: 'Administração' })[account() && account().papel] || 'Equipe da igreja';
-  const publicGroups = items => (g => account() && NibConta.equipe() ? [g[3]].concat(g.slice(0, 3), g.slice(4)) : g)([['Sua conta',['inicio','cadastro','entrar']],['Vida na igreja',['presenca','agenda','eventos','celulas','caderno']],['Igreja',['avisos','generosidade','informacoes']],[teamGroupName(),['equipe','membros','membresia','checkin']],['Ajude a melhorar',['sugestoes']]])
+  const publicGroups = items => (g => account() && NibConta.equipe() ? [g[3]].concat(g.slice(0, 3), g.slice(4)) : g)([['Sua conta',['inicio','cadastro','entrar']],['Vida na igreja',['presenca','pilulas','agenda','eventos','celulas','caderno']],['Igreja',['avisos','generosidade','informacoes']],[teamGroupName(),['equipe','membros','membresia','checkin']],['Ajude a melhorar',['sugestoes']]])
     .map(([label,keys]) => [label, keys.map(k => items.find(([key]) => key === k)).filter(Boolean)]).filter(([,links]) => links.length);
   // Grupos de opções lado a lado (data-seg) no padrão do login: trilho cinza com pílula branca que desliza (pedido de Hilton, 06/11/2026).
   const segPrev = new Map();
@@ -52,7 +52,7 @@
   }
   const state = { member: { first: 'Jéssica', full: 'Jéssica Exemplo', email: 'jessica@example.com', gender: 'f' }, context: 'membro', view: 'inicio', request: null, presented: null, gift: 'Dízimo', calendarMonth: NibDaily.dayKey(new Date()).slice(0,7), calendarDay: NibDaily.dayKey(new Date()), prayers: demoPrayers(), history: demoHistory(), historyYear: NibDaily.dayKey(new Date()).slice(0,4) };
   const navigation = PUBLIC ? [['inicio', 'Início'], ['agenda', 'Agenda'], ['eventos', 'Eventos'], ['generosidade', 'Generosidade'], ['celulas', 'Células'], ['informacoes', 'Informações']] : [['inicio', 'Início'], ['cadastro', 'Meu cadastro'], ['eventos', 'Eventos'], ['celulas', 'Células'], ['generosidade', 'Generosidade'], ['historico', 'Minhas contribuições'], ['informacoes', 'Informações'], ['agenda', 'Agenda'], ['caderno', 'Caderno de oração']];
-  const labels = { avisos: ['MURAL DA IGREJA', 'Avisos da igreja', 'Comunicados da Secretaria e da Liderança Pastoral para toda a igreja.'], caderno: ['VIDA DE ORAÇÃO', 'Caderno de oração', 'Uma comunidade que cuida e ora em conjunto.'], agenda: ['VIDA NA IGREJA', 'Agenda da igreja', 'Cultos, encontros e próximos eventos em um só lugar.'], inicio: ['BOAS-VINDAS', 'Olá, Jéssica! Você está na plataforma Nib.', 'Acesse seu cadastro, encontre eventos, contribua e acompanhe a vida da igreja.'], cadastro: ['MINHAS INFORMAÇÕES', 'Meu cadastro', 'Consulte seus dados e encaminhe uma atualização à equipe.'], eventos: ['VIDA EM COMUNIDADE', 'Eventos e inscrições', 'Encontre os próximos encontros da igreja.'], celulas: ['CAMINHAR JUNTOS', 'Células', 'Acesse a plataforma de células adotada pela igreja.'], generosidade: ['CONTRIBUIR', 'Generosidade', 'Dízimos, ofertas e campanhas em um só lugar.'], historico: ['MEU HISTÓRICO', 'Minhas contribuições', 'Tudo o que você contribuiu, ano a ano. Só você vê.'], informacoes: ['FIQUE POR PERTO', 'Informações da igreja', 'Programação, endereço e canais da comunidade.'], gestao: ['ADMINISTRAÇÃO', 'Integração e membresia', 'Acompanhe o formulário, a reunião e a apresentação no culto.'], confirmar: ['MEMBRESIA', 'Registrar apresentação', 'O registro documenta a apresentação já realizada no culto.'] };
+  const labels = { pilulas: ['PALAVRA PARA MEDITAR', 'Pílulas de Sabedoria', 'Vídeos curtos do pastor para meditar na Palavra durante a semana.'], avisos: ['MURAL DA IGREJA', 'Avisos da igreja', 'Comunicados da Secretaria e da Liderança Pastoral para toda a igreja.'], caderno: ['VIDA DE ORAÇÃO', 'Caderno de oração', 'Uma comunidade que cuida e ora em conjunto.'], agenda: ['VIDA NA IGREJA', 'Agenda da igreja', 'Cultos, encontros e próximos eventos em um só lugar.'], inicio: ['BOAS-VINDAS', 'Olá, Jéssica! Você está na plataforma Nib.', 'Acesse seu cadastro, encontre eventos, contribua e acompanhe a vida da igreja.'], cadastro: ['MINHAS INFORMAÇÕES', 'Meu cadastro', 'Consulte seus dados e encaminhe uma atualização à equipe.'], eventos: ['VIDA EM COMUNIDADE', 'Eventos e inscrições', 'Encontre os próximos encontros da igreja.'], celulas: ['CAMINHAR JUNTOS', 'Células', 'Acesse a plataforma de células adotada pela igreja.'], generosidade: ['CONTRIBUIR', 'Generosidade', 'Dízimos, ofertas e campanhas em um só lugar.'], historico: ['MEU HISTÓRICO', 'Minhas contribuições', 'Tudo o que você contribuiu, ano a ano. Só você vê.'], informacoes: ['FIQUE POR PERTO', 'Informações da igreja', 'Programação, endereço e canais da comunidade.'], gestao: ['ADMINISTRAÇÃO', 'Integração e membresia', 'Acompanhe o formulário, a reunião e a apresentação no culto.'], confirmar: ['MEMBRESIA', 'Registrar apresentação', 'O registro documenta a apresentação já realizada no culto.'] };
   if (PUBLIC) { const t = document.querySelector('#drawer-title + p'); if (t) t.textContent = 'Sua vida na igreja'; const sb = document.querySelector('.sidebar-bottom small'); if (sb) sb.textContent = 'Ariquemes, RO'; }
   if (PUBLIC) state.prayers = []; // na versão oficial, só pedidos reais vindos do servidor
   if (PUBLIC) Object.assign(labels, {
@@ -525,6 +525,145 @@
     const list = state.avisos.length ? `<ul class="aviso-list">${state.avisos.map(a => `<li class="aviso-card${a.fixado ? ' is-pinned' : ''}"><div class="aviso-top"><span class="aviso-icon" aria-hidden="true">${navIcon('comunicados')}</span><div><h3>${escape(a.titulo)}</h3><small>${a.fixado ? 'Fixado · ' : ''}${escape(avisoData(a.criado_em))}${a.autor ? ' · por ' + escape(a.autor) : ''}</small></div></div><p>${escape(a.texto).replace(/\n/g, '<br>')}</p>${a.link ? `<a class="button button-go" href="${escape(a.link)}" target="_blank" rel="noopener">Saiba mais ${arrow}</a>` : ''}${team ? `<button type="button" class="aviso-remove" data-aviso-remove="${a.id}">Remover aviso</button>` : ''}</li>`).join('')}</ul>` : `<section class="box"><p class="event-empty">${state.avisosErro ? escape(state.avisosErro) : 'Nenhum aviso no momento. Quando a igreja publicar, ele aparece aqui e no sino.'}</p></section>`;
     return form + list;
   }
+  // Pílulas de Sabedoria (pedido de Hilton, 08/11/2026): vídeos curtos do pastor, enviados pelo app direto para o YouTube da igreja (não listado).
+  // A igreja assiste aqui dentro e busca por título, tema, passagem ou pelas palavras faladas (legenda automática do YouTube).
+  const PIL_TEMAS = ['Fé', 'Esperança', 'Ansiedade', 'Família', 'Oração', 'Gratidão', 'Perdão', 'Propósito', 'Santidade', 'Cura'];
+  const pilTempo = s => { s = Math.max(0, Math.floor(s || 0)); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
+  const pilData = d => d ? new Intl.DateTimeFormat('pt-BR', { day: 'numeric', month: 'short', timeZone: 'UTC' }).format(new Date(d.slice(0, 10) + 'T12:00:00Z')).replace('.', '') : '';
+  const pilEstados = { enviando: 'Envio incompleto', processando: 'Processando no YouTube', privado: 'Travado como privado', falhou: 'Não publicado' };
+  function pilThumb(p) {
+    const play = `<span class="pil-play" aria-hidden="true"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M8 5.5v13l10.5-6.5z"/></svg></span>`;
+    return `<span class="pil-thumb${p.vertical ? ' is-vertical' : ''}">${p.youtube_id ? `<img src="https://i.ytimg.com/vi/${encodeURIComponent(p.youtube_id)}/hqdefault.jpg" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">` : ''}${play}${p.duracao ? `<small>${pilTempo(p.duracao)}</small>` : ''}</span>`;
+  }
+  function loadPilulas() {
+    const q = state.pilQ || '', tema = state.pilTema || ''; state.pilLoading = true;
+    return NibConta.pilulas('lista&q=' + encodeURIComponent(q) + '&tema=' + encodeURIComponent(tema))
+      .then(d => { if ((state.pilQ || '') === q && (state.pilTema || '') === tema) { state.pil = d; state.pilErro = ''; } if (!q && !tema) state.pilHome = d.pilulas.filter(p => !p.estado || p.estado === 'publicado'); })
+      .catch(e => { state.pilErro = e.message; state.pil = state.pil || { pilulas: [], temas: [] }; })
+      .finally(() => { state.pilLoading = false; });
+  }
+  // Bloco na tela inicial: a pílula mais recente dos últimos 10 dias.
+  function homePilula() {
+    if (!PUBLIC || !account()) return '';
+    if (state.pilHomeKey !== (state.accountKey || '')) { state.pilHomeKey = state.accountKey || ''; state.pilHome = null; NibConta.pilulas('lista').then(d => { state.pilHome = d.pilulas.filter(p => !p.estado || p.estado === 'publicado'); if (state.view === 'inicio' && state.pilHome.length) show('inicio', false, false); }).catch(() => { state.pilHome = []; }); return ''; }
+    const p = (state.pilHome || [])[0]; if (!p || Date.now() - new Date(p.data.replace(' ', 'T') + '-04:00').getTime() > 10 * 864e5) return '';
+    return `<section class="home-pilula" aria-labelledby="home-pil-title"><div class="section-heading"><div><span class="label">PÍLULA DE SABEDORIA</span><h2 id="home-pil-title">Palavra para meditar</h2></div>${button('Ver todas', 'pilulas')}</div><button type="button" class="pil-card is-home" data-pil-abrir="${p.id}">${pilThumb(p)}<span class="pil-card-body">${p.tema ? `<span class="pil-tema">${escape(p.tema)}</span>` : ''}<strong>${escape(p.titulo)}</strong><small>${escape([p.passagem, pilData(p.data)].filter(Boolean).join(' · '))}</small></span></button></section>`;
+  }
+  function pilLista() {
+    const d = state.pil, l = d.pilulas;
+    if (!l.length) return `<p class="event-empty">${state.pilErro ? escape(state.pilErro) : state.pilQ ? `Nenhuma pílula encontrada para “${escape(state.pilQ)}”. Tente outra palavra ou a passagem bíblica.` : state.pilTema ? 'Nenhuma pílula com este tema ainda.' : 'Ainda não há pílulas publicadas. Quando o pastor enviar, ela aparece aqui e no início do app.'}</p>`;
+    return `<ul class="pil-list">${l.map(p => `<li class="pil-item"><button type="button" class="pil-card" data-pil-abrir="${p.id}">${pilThumb(p)}<span class="pil-card-body">${p.estado && p.estado !== 'publicado' ? `<span class="pil-estado is-${escape(p.estado)}">${escape(pilEstados[p.estado] || p.estado)}${p.estado === 'enviando' ? ` · ${p.progresso}%` : ''}</span>` : p.tema ? `<span class="pil-tema">${escape(p.tema)}</span>` : ''}<strong>${escape(p.titulo)}</strong><small>${escape([p.passagem, pilData(p.data)].filter(Boolean).join(' · '))}</small></span></button>${(p.trechos || []).length ? `<div class="pil-trechos"><span>Falado no vídeo</span>${p.trechos.map(([t, txt]) => `<button type="button" data-pil-abrir="${p.id}" data-t="${t}"><b>${pilTempo(t)}</b>${escape(txt)}</button>`).join('')}</div>` : ''}</li>`).join('')}</ul>`;
+  }
+  let pilTimer = 0;
+  function pilBuscar(v) {
+    clearTimeout(pilTimer);
+    pilTimer = setTimeout(() => { state.pilQ = v.trim(); loadPilulas().then(() => { const box = content.querySelector('#pil-results'); if (box && state.view === 'pilulas' && !state.pilSel) box.innerHTML = pilLista(); }); }, 350);
+  }
+  function pilEquipe(d) {
+    const y = d.youtube || {};
+    if (!y.configurado) return `<section class="box pil-team"><span class="label">LIDERANÇA PASTORAL</span><h2>Enviar pílulas</h2><p>Falta colocar no servidor as chaves do projeto do Google. Depois disso, a administração conecta o canal do YouTube da igreja aqui.</p></section>`;
+    if (!y.conectado) return `<section class="box pil-team"><span class="label">LIDERANÇA PASTORAL</span><h2>Conectar o canal do YouTube</h2><p>${y.pode_conectar ? 'Entre com a conta Google que tem acesso ao canal da igreja e escolha o canal. Só precisa fazer uma vez.' : 'Peça à administração para conectar o canal do YouTube da igreja ao app. Só precisa fazer uma vez.'}</p>${y.pode_conectar ? '<div class="form-actions"><a class="action primary" href="api/youtube.php?acao=conectar">Conectar canal do YouTube</a></div>' : ''}</section>`;
+    const u = state.pilUp;
+    if (u) {
+      const fim = { publicado: ['Pronto! A pílula já está no app.', 'is-ok'], privado: [u.msg, 'is-alert'], falhou: [u.msg, 'is-alert'], erro: [u.msg, 'is-alert'] }[u.fase];
+      const corpo = u.fase === 'enviando' ? `<p class="pil-up-msg">${escape(u.msg || 'Enviando o vídeo')}</p><div class="pil-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${u.pct}"><i data-w="${u.pct}"></i></div><p class="pil-up-pct"><strong>${u.pct}%</strong> · Pode usar o app, mas não feche até terminar.</p>`
+        : u.fase === 'processando' ? `<p>O vídeo chegou ao YouTube. Agora ele está sendo preparado e aparece para a igreja assim que ficar pronto${u.notificar ? ', com aviso no celular' : ''}.</p><div class="pil-bar is-busy"><i></i></div>`
+        : `<p class="pil-up-fim ${fim[1]}">${escape(fim[0])}</p>`;
+      return `<section class="box pil-team pil-up"><span class="label">${u.fase === 'enviando' ? 'ENVIANDO' : u.fase === 'processando' ? 'QUASE LÁ' : 'ENVIO'}</span><h2>${escape(u.titulo)}</h2>${corpo}${u.fase === 'enviando' ? '' : `<div class="form-actions">${u.fase === 'erro' || u.fase === 'falhou' ? '<button type="button" class="action primary" data-pil-nova>Tentar de novo</button>' : ''}<button type="button" class="button" data-pil-fechar>${u.fase === 'processando' ? 'Ok, avise quando ficar pronto' : 'Fechar'}</button></div>`}</section>`;
+    }
+    if (state.pilForm) {
+      const temas = [...new Set((d.temas || []).concat(PIL_TEMAS))];
+      return `<section class="box pil-team"><span class="label">NOVA PÍLULA</span><h2>Enviar vídeo para a igreja</h2><p>O vídeo vai para o canal da igreja no YouTube como não listado: só quem está no app encontra.</p><form id="pil-form" class="pil-form" autocomplete="off"><label class="pil-file"><span>Vídeo</span><input type="file" name="video" accept="video/*" required><small id="pil-info">Grave na vertical. Pode escolher da galeria.</small></label><label>Título<input name="titulo" maxlength="120" required placeholder="Ex.: Não andeis ansiosos"></label><label>Tema central<input name="tema" maxlength="60" list="pil-temas" placeholder="Ex.: Ansiedade"><datalist id="pil-temas">${temas.map(t => `<option value="${escape(t)}">`).join('')}</datalist></label><label>Passagem bíblica<input name="passagem" maxlength="80" placeholder="Ex.: Filipenses 4.6-7"></label><label>Mensagem curta (opcional)<textarea name="texto" rows="3" maxlength="1000" placeholder="Uma frase para acompanhar o vídeo."></textarea></label><label class="check"><input type="checkbox" name="notificar" checked><span>Avisar a igreja no celular quando o vídeo estiver pronto</span></label><div class="form-actions"><button type="submit" class="action primary">Enviar pílula</button><button type="button" class="button" data-pil-cancelar>Cancelar</button></div></form></section>`;
+    }
+    return `<section class="box pil-team pil-team-mini"><div><span class="label">LIDERANÇA PASTORAL</span><p>Canal conectado${y.canal ? `: <strong>${escape(y.canal)}</strong>` : ''}.${y.pode_conectar ? ' <button type="button" class="link-button" data-pil-desconectar>Desconectar</button>' : ''}</p></div><button type="button" class="action primary" data-pil-nova>Enviar nova pílula</button></section>`;
+  }
+  function pilulasPage() {
+    if (!PUBLIC) return `<section class="box"><p>Aqui ficam os vídeos curtos do pastor para meditar na Palavra, com busca por tema, passagem bíblica e pelas palavras faladas no vídeo.</p></section>`;
+    if (!account()) return `<section class="box"><h2>Entre para assistir</h2><p>As Pílulas de Sabedoria são para a igreja: entre na sua conta para ver os vídeos do pastor.</p><div class="form-actions"><button type="button" class="action" data-view="entrar">Entrar ou criar cadastro</button></div></section>`;
+    if (state.pilSel) return pilDetalhe();
+    if (!state.pil) { if (!state.pilLoading) loadPilulas().then(() => { if (state.view === 'pilulas' && !state.pilSel) show('pilulas', false, false); }); return '<p class="event-empty">Carregando as pílulas</p>'; }
+    const d = state.pil, lider = d.equipe && NibConta.lideranca();
+    const temas = d.temas || [];
+    const chips = temas.length > 1 || state.pilTema ? `<div class="pil-temas" role="group" aria-label="Filtrar por tema"><button type="button" class="history-year${state.pilTema ? '' : ' is-active'}" data-pil-tema="" aria-pressed="${!state.pilTema}">Todos</button>${temas.map(t => `<button type="button" class="history-year${state.pilTema === t ? ' is-active' : ''}" data-pil-tema="${escape(t)}" aria-pressed="${state.pilTema === t}">${escape(t)}</button>`).join('')}</div>` : '';
+    return `${lider ? pilEquipe(d) : ''}<div class="pil-search"><label class="visually-hidden" for="pil-q">Buscar nas pílulas</label><input id="pil-q" type="search" value="${escape(state.pilQ || '')}" placeholder="Buscar por tema, passagem ou palavra" autocomplete="off" enterkeyhint="search"></div>${chips}<div id="pil-results">${pilLista()}</div>`;
+  }
+  const pilIframe = (p, t, auto) => `<iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(p.youtube_id)}?rel=0&amp;playsinline=1&amp;modestbranding=1${t ? '&amp;start=' + t : ''}${auto ? '&amp;autoplay=1' : ''}" title="${escape(p.titulo)}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>`;
+  function pilDetalhe() {
+    const sel = state.pilSel, p = state.pilVer && state.pilVer.id === sel.id ? state.pilVer : null;
+    if (!p) { NibConta.pilulas('ver&id=' + sel.id).then(d => { state.pilVer = d.pilula; }).catch(e => { state.pilSel = null; announce(e.message, 'warning'); }).finally(() => { if (state.view === 'pilulas') show('pilulas', false, false); }); return '<p class="event-empty">Carregando a pílula</p>'; }
+    const lider = !!p.estado && NibConta.lideranca(), pronto = p.youtube_id && (!p.estado || p.estado === 'publicado');
+    const palavras = eqFold(state.pilQ || '').split(/\s+/).filter(w => w.length >= 3 || /^\d+$/.test(w));
+    const hit = txt => { const f = ' ' + eqFold(txt).replace(/[^a-z0-9]+/g, ' ') + ' '; return palavras.some(w => /^\d+$/.test(w) ? f.includes(' ' + w + ' ') : f.includes(w)); };
+    const player = pronto ? `<div class="pil-player${p.vertical ? ' is-vertical' : ''}" id="pil-player">${pilIframe(p, sel.t, !!sel.t)}</div>`
+      : `<section class="box pil-wait"><p>${escape(p.aviso || (p.estado === 'enviando' ? `O envio parou em ${p.progresso}%. Remova e envie o vídeo de novo.` : 'O YouTube ainda está preparando o vídeo. Ele aparece aqui assim que ficar pronto.'))}</p></section>`;
+    const leg = p.legendas || [];
+    const transc = leg.length ? `<details class="pil-transc"${palavras.length && leg.some(([, x]) => hit(x)) ? ' open' : ''}><summary>Ler o que foi falado</summary><ol>${leg.map(([t, x]) => `<li${palavras.length && hit(x) ? ' class="is-hit"' : ''}><button type="button" data-pil-t="${t}">${pilTempo(t)}</button><span>${escape(x)}</span></li>`).join('')}</ol>${p.transcricao && p.transcricao !== leg.map(c => c[1]).join(' ') ? `<p class="pil-transc-ed"><b>Texto revisado:</b> ${escape(p.transcricao)}</p>` : ''}</details>`
+      : p.transcricao ? `<details class="pil-transc"><summary>Ler o que foi falado</summary><p>${escape(p.transcricao)}</p></details>`
+      : pronto ? '<p class="pil-transc-wait">A transcrição do que foi falado aparece aqui alguns minutos depois da publicação.</p>' : '';
+    const edit = lider && state.pilEdit ? `<section class="box pil-team"><span class="label">EDITAR</span><form id="pil-edit-form" class="pil-form"><label>Título<input name="titulo" maxlength="120" required value="${escape(p.titulo)}"></label><label>Tema central<input name="tema" maxlength="60" value="${escape(p.tema)}"></label><label>Passagem bíblica<input name="passagem" maxlength="80" value="${escape(p.passagem)}"></label><label>Mensagem curta<textarea name="texto" rows="3" maxlength="1000">${escape(p.texto)}</textarea></label>${p.transcricao || leg.length ? `<label>Transcrição (corrija palavras que o YouTube errou)<textarea name="transcricao" rows="6">${escape(p.transcricao || '')}</textarea></label>` : ''}<p class="note">As mudanças valem no app. O título no YouTube continua o do envio.</p><div class="form-actions"><button type="submit" class="action primary">Salvar</button><button type="button" class="button" data-pil-editar="0">Cancelar</button></div></form></section>` : '';
+    const acoes = lider && !state.pilEdit ? `<div class="pil-acoes">${p.youtube_id ? '<button type="button" class="button" data-pil-editar="1">Editar</button>' : ''}${pronto && !leg.length ? '<button type="button" class="button" data-pil-legenda>Buscar transcrição agora</button>' : ''}<button type="button" class="button pil-remove" data-pil-remover>Tirar do app</button></div>` : '';
+    return `<button type="button" class="pil-back" data-pil-voltar><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>Todas as pílulas</button>${player}<section class="pil-info">${p.tema ? `<span class="pil-tema">${escape(p.tema)}</span>` : ''}<h2>${escape(p.titulo)}</h2><p class="pil-meta">${escape([p.passagem, pilData(p.data), p.duracao ? pilTempo(p.duracao) : ''].filter(Boolean).join(' · '))}</p>${p.texto ? `<p class="pil-texto">${escape(p.texto)}</p>` : ''}${transc}${acoes}</section>${edit}`;
+  }
+  function pilProgresso(pct, msg) {
+    const u = state.pilUp; if (!u) return; u.pct = pct; if (msg) u.msg = msg;
+    const bar = content.querySelector('.pil-up .pil-bar i'), n = content.querySelector('.pil-up-pct strong'), m = content.querySelector('.pil-up-msg');
+    if (bar) { bar.style.width = pct + '%'; bar.parentElement.setAttribute('aria-valuenow', pct); } if (n) n.textContent = pct + '%'; if (m && msg) m.textContent = msg;
+  }
+  function pilMeta(file) {
+    return new Promise(res => {
+      const v = document.createElement('video'), url = URL.createObjectURL(file); let fim = false;
+      const done = m => { if (fim) return; fim = true; URL.revokeObjectURL(url); res(m); };
+      setTimeout(() => done({ duracao: 0, vertical: true }), 8000);
+      v.preload = 'metadata'; v.muted = true;
+      v.onloadedmetadata = () => done({ duracao: Math.round(isFinite(v.duration) ? v.duration : 0), vertical: !(v.videoWidth > v.videoHeight) });
+      v.onerror = () => done({ duracao: 0, vertical: true });
+      v.src = url;
+    });
+  }
+  const pilMB = b => (b / 1048576).toLocaleString('pt-BR', { maximumFractionDigits: b < 10485760 ? 1 : 0 }) + ' MB';
+  async function pilInfo(input) {
+    const f = input.files && input.files[0], out = content.querySelector('#pil-info'); if (!f || !out) return;
+    const m = await pilMeta(f); out.textContent = [m.duracao ? pilTempo(m.duracao) + ' de vídeo' : '', pilMB(f.size), m.vertical ? 'vertical' : 'horizontal'].filter(Boolean).join(' · ');
+  }
+  const pilEspera = ms => new Promise(ok => setTimeout(ok, ms));
+  async function pilEnviar(form) {
+    if (state.pilUp && state.pilUp.fase === 'enviando') return;
+    const f = form.querySelector('[name=video]').files[0]; if (!f) { announce('Escolha o vídeo da pílula.', 'warning'); return; }
+    const v = new FormData(form), meta = await pilMeta(f);
+    if (meta.duracao > 1800) { announce('A pílula pode ter até 30 minutos.', 'warning'); return; }
+    const notificar = v.get('notificar') === 'on';
+    state.pilUp = { titulo: String(v.get('titulo') || ''), pct: 0, fase: 'enviando', msg: 'Preparando o envio', notificar }; state.pilForm = false;
+    if (state.view === 'pilulas') show('pilulas', false, false);
+    let lock = null; try { lock = await navigator.wakeLock.request('screen'); } catch (_) {}
+    const sair = e => { e.preventDefault(); e.returnValue = ''; }; addEventListener('beforeunload', sair);
+    try {
+      const r = await NibConta.pilulas('criar', { titulo: String(v.get('titulo') || ''), tema: String(v.get('tema') || ''), passagem: String(v.get('passagem') || ''), texto: String(v.get('texto') || ''), notificar, tamanho: f.size, tipo: f.type || (/\.mov$/i.test(f.name) ? 'video/quicktime' : 'video/mp4'), duracao: meta.duracao, vertical: meta.vertical });
+      let ini = 0, falhas = 0; pilProgresso(0, 'Enviando o vídeo para o YouTube');
+      while (ini < f.size) {
+        try {
+          const d = await NibConta.pilulaParte(r.id, ini, f.slice(ini, Math.min(f.size, ini + r.parte)));
+          falhas = 0; if (d.pronto) { ini = f.size; break; } ini = d.recebido;
+          pilProgresso(Math.min(99, Math.floor(ini * 100 / f.size)), 'Enviando o vídeo para o YouTube');
+        } catch (e) {
+          if (e.status === 409 && typeof e.recebido === 'number') { ini = e.recebido; continue; }
+          if ([401, 403, 404, 410, 413].includes(e.status)) throw e;
+          if (++falhas > 8) throw new Error('A internet caiu várias vezes. Tente de novo com uma conexão melhor, de preferência no Wi-Fi.');
+          pilProgresso(state.pilUp.pct, 'A conexão oscilou. Tentando de novo');
+          await pilEspera(Math.min(30000, 2500 * falhas));
+          try { const s = await NibConta.pilulas('sincronizar', { id: r.id }); if (s.pronto) { ini = f.size; break; } ini = s.recebido; } catch (_) {}
+        }
+      }
+      Object.assign(state.pilUp, { fase: 'processando', pct: 100, id: r.id }); state.pil = null;
+      if (state.view === 'pilulas' && !state.pilSel) show('pilulas', false, false);
+      removeEventListener('beforeunload', sair);
+      for (let i = 0; i < 40 && state.pilUp && state.pilUp.id === r.id; i++) {
+        await pilEspera(i < 6 ? 5000 : 15000);
+        const c = await NibConta.pilulas('conferir', { id: r.id }).catch(() => null);
+        if (c && c.pilula.estado !== 'processando') { if (state.pilUp && state.pilUp.id === r.id) Object.assign(state.pilUp, { fase: c.pilula.estado, msg: c.pilula.aviso }); if (c.pilula.estado === 'publicado') announce('Pílula publicada para a igreja.', 'success', false); break; }
+      }
+    } catch (e) { if (state.pilUp) Object.assign(state.pilUp, { fase: 'erro', msg: e.message }); }
+    finally { removeEventListener('beforeunload', sair); if (lock) lock.release().catch(() => {}); state.pil = null; state.pilHomeKey = null; if (state.view === 'pilulas' && !state.pilSel) show('pilulas', false, false); }
+  }
   // Check-in do culto (versão oficial): pelo local da igreja (GPS) ou pelo QR Code fixo do telão.
   const ckIcon = done => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${done ? 'm5 12.5 4.5 4.5L19 7.5' : NibAdminIcons.recepcao}"/></svg>`;
   function loadCheckin() {
@@ -634,7 +773,7 @@
       if (nav.dataset.context !== context) {
         if (nav.id === 'navigation') { const link = ([key,label]) => `<a href="#${key}" data-view="${key}" aria-label="${label}">${navIcon(key)}<span>${label}</span></a>`; nav.innerHTML = PUBLIC && !isManagement() ? publicGroups(items).map(([label,links], i) => `<div class="nav-group"><span class="nav-group-label">${label}</span>${links.map(link).join('')}</div>${i === 0 ? viewAsSelect('lateral') : ''}`).join('') : items.map(link).join(''); }
         else {
-          const descriptions = {...admin.descriptions, inicio:'Seu ponto de partida',cadastro: PUBLIC ? 'Seus dados na igreja' : 'Dados e atualizações',eventos:'Encontros e inscrições',generosidade:'Dízimos, ofertas e campanhas',historico:'Seu histórico financeiro',celulas: PUBLIC ? 'Encontre uma célula' : 'Acesso à plataforma', entrar:'Sua conta na Nib', equipe:'Números e atalhos da equipe',membros:'Lista, ficha e exportação',membresia:'Integração e apresentação',presenca:'Presença na EBS e nos cultos',cadastros:'Confirmar membros',checkin:'Presença nos cultos',sugestoes:'Ideias e melhorias',informacoes: PUBLIC ? 'Horários, endereço e liderança' : 'Programação e avisos',gestao:'Integração e apresentações',agenda:'Cultos, eventos e festividades',caderno:'Ore com a comunidade',avisos:'Comunicados para toda a igreja'};
+          const descriptions = {...admin.descriptions, inicio:'Seu ponto de partida',cadastro: PUBLIC ? 'Seus dados na igreja' : 'Dados e atualizações',eventos:'Encontros e inscrições',generosidade:'Dízimos, ofertas e campanhas',historico:'Seu histórico financeiro',celulas: PUBLIC ? 'Encontre uma célula' : 'Acesso à plataforma', entrar:'Sua conta na Nib', equipe:'Números e atalhos da equipe',membros:'Lista, ficha e exportação',membresia:'Integração e apresentação',presenca:'Presença na EBS e nos cultos',pilulas:'Vídeos curtos para meditar',cadastros:'Confirmar membros',checkin:'Presença nos cultos',sugestoes:'Ideias e melhorias',informacoes: PUBLIC ? 'Horários, endereço e liderança' : 'Programação e avisos',gestao:'Integração e apresentações',agenda:'Cultos, eventos e festividades',caderno:'Ore com a comunidade',avisos:'Comunicados para toda a igreja'};
           const groups = isManagement() ? [[admin.profiles[state.context].name,items]] : PUBLIC ? publicGroups(items) : [['Seu acesso',items.filter(([key])=>['inicio','cadastro'].includes(key))],['Vida na igreja',items.filter(([key])=>['agenda','eventos','generosidade','historico','celulas','informacoes','caderno'].includes(key))]];
           nav.innerHTML = groups.map(([label,links],index) => `<section class="menu-group" aria-labelledby="menu-group-${index}"><h3 id="menu-group-${index}">${label}</h3><div class="menu-grid">${links.map(([key,title])=>`<a href="#${key}" data-view="${key}" aria-label="${title}"><span class="menu-icon">${navIcon(key)}</span><strong>${title}</strong><span class="menu-description">${descriptions[key]}</span><span class="mobile-current" hidden>Atual</span></a>`).join('')}</div></section>`).join('');
         }
@@ -661,6 +800,7 @@
     if (PUBLIC && !allowedPublic().includes(view)) view = 'inicio';
     if (PUBLIC && record && view === 'equipe' && !state.painelLoading) state.painel = null; // números sempre atualizados ao abrir
     if (PUBLIC && record && view === 'membresia' && !state.membLoading) state.memb = null;
+    if (PUBLIC && record && view === 'pilulas') { state.pilSel = null; state.pilEdit = false; if (!state.pilLoading) state.pil = null; }
     if (PUBLIC && record && view === 'membros' && !state.memLoading) { state.mem = null; state.memSel = null; state.memPrint = null; }
     if (record && focus && view !== state.view) viewHistory.push(state.view);
     state.view = (labels[view] || admin.labels[view]) ? view : 'inicio';
@@ -693,8 +833,8 @@
             ['caderno', 'Caderno de oração', 'Compartilhe seus pedidos e ore com a comunidade.']
           ]).map(([view, title, text]) => view === 'youtube' ? `<button type="button" class="quick-action admin-quick" data-open-url="https://www.youtube.com/@nibcasadedeus"><span class="home-action-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7.5C3 6 4 5 5.5 5h13C20 5 21 6 21 7.5v9c0 1.5-1 2.5-2.5 2.5h-13C4 19 3 18 3 16.5z M10 9l5 3-5 3z"/></svg></span><strong>${title}</strong><span class="home-action-description">${text}</span></button>` : `<button type="button" class="quick-action admin-quick" data-view="${view}"><span class="home-action-icon" aria-hidden="true">${navIcon(view)}</span>${view === 'caderno' && cadNovos() ? `<span class="quick-badge" aria-label="${cadNovos()} ${cadNovos() === 1 ? 'pedido novo' : 'pedidos novos'}">${cadNovos() > 9 ? '9+' : cadNovos()}</span>` : ''}${teamBadge(view)}<strong>${title}</strong><span class="home-action-description">${text}</span></button>`).join('')}</div></section>`;
           const social = account() && NibConta.equipe() ? '' : socialBanners();
-          if (isDesk()) return `${birthNudge()}${teamHome()}<div class="home-desk"><div class="home-col">${dailyBlocks(false,'verse')}${publicCheckin()}${pq}${account() && state.prayersLoaded && state.prayers.some(p => !p.answered) ? communityBlock() : ''}${social}</div><div class="home-rail">${homeAvisos()}${install}${dailyBlocks(false,'agenda')}${events}</div></div>`;
-          return `${birthNudge()}${teamHome()}${dailyBlocks(false,'verse')}${publicCheckin()}${homeAvisos()}${install}${pq}${social}${account() && state.prayersLoaded && state.prayers.some(p => !p.answered) ? communityBlock() : ''}${dailyBlocks(false,'agenda')}${events}`;
+          if (isDesk()) return `${birthNudge()}${teamHome()}<div class="home-desk"><div class="home-col">${dailyBlocks(false,'verse')}${homePilula()}${publicCheckin()}${pq}${account() && state.prayersLoaded && state.prayers.some(p => !p.answered) ? communityBlock() : ''}${social}</div><div class="home-rail">${homeAvisos()}${install}${dailyBlocks(false,'agenda')}${events}</div></div>`;
+          return `${birthNudge()}${teamHome()}${dailyBlocks(false,'verse')}${homePilula()}${publicCheckin()}${homeAvisos()}${install}${pq}${social}${account() && state.prayersLoaded && state.prayers.some(p => !p.answered) ? communityBlock() : ''}${dailyBlocks(false,'agenda')}${events}`;
         }
         if (isDesk()) return `<div class="home-desk"><div class="home-col">${dailyBlocks(false,'verse')}${quick}${socialBanners()}${communityBlock()}</div><div class="home-rail">${checkinCard()}${install}${homeNotice()}${dailyBlocks(false,'agenda')}${birthdayBlock()}${events}</div></div>`;
         return `${dailyBlocks(false,'verse')}${checkinCard()}${install}${quick}${socialBanners()}${homeNotice()}${dailyBlocks(false,'agenda')}${birthdayBlock()}${events}${communityBlock()}`;
@@ -702,6 +842,7 @@
       agenda: () => calendarPage(),
       caderno: () => notebookPage(),
       avisos: () => avisosPage(),
+      pilulas: () => pilulasPage(),
       sugestoes: () => sugestoesPage(),
       presenca: () => presencaPage(),
       checkin: () => checkinPanel(),
@@ -751,6 +892,7 @@
       if (navigator.clipboard) { navigator.clipboard.writeText(text).then(() => announce('Versículo copiado. É só colar onde quiser compartilhar.', 'success', false), () => announce('Não foi possível copiar o versículo neste navegador.', 'info', false)); return; }
       announce('Compartilhamento indisponível neste navegador.', 'info', false); return;
     }
+    if (action.id === 'mobile-back' && PUBLIC && state.view === 'pilulas' && state.pilSel) { event.preventDefault(); state.pilSel = null; state.pilEdit = false; show('pilulas', true, false); return; }
     if (action.id === 'mobile-back') { event.preventDefault(); show(viewHistory.pop() || (isManagement() ? 'gestao' : 'inicio'), true, false); return; }
     if (action.dataset.month) { state.calendarMonth=NibDaily.moveMonth(state.calendarMonth,Number(action.dataset.month)); state.calendarDay=state.calendarMonth+'-01'; show('agenda',false,false); content.querySelector('[data-month="'+action.dataset.month+'"]').focus({preventScroll:true}); srStatus.textContent=content.querySelector('.calendar-toolbar h2').textContent; return; }
     if (action.dataset.day) { state.calendarDay=action.dataset.day; show('agenda',false,false); content.querySelector('[data-day="'+state.calendarDay+'"]').focus({preventScroll:true}); srStatus.textContent=calendarAnnouncement(); return; }
@@ -771,6 +913,17 @@
     if (action.dataset.ckLocal !== undefined && PUBLIC) { action.disabled = true; action.textContent = 'Lendo a localização'; posicao(15000).then(pos => { if (!pos) throw new Error('Não conseguimos a localização. Permita o acesso e tente de novo.'); return NibConta.checkin('local', pos); }).then(() => { state.ckPanel = null; show('checkin', false, false); announce('Local da igreja definido.', 'success'); }).catch(e => { action.disabled = false; action.textContent = 'Definir o local da igreja aqui'; announce(e.message, 'error'); }); return; }
     if (action.dataset.sugTipo && PUBLIC) { const t = content.querySelector('#sug-texto'); if (t) state.sugDraft = t.value; state.sugTipo = action.dataset.sugTipo; show('sugestoes', false, false); const b = content.querySelector(`[data-sug-tipo="${state.sugTipo}"]`); if (b) b.focus({preventScroll:true}); return; }
     if (action.dataset.sugLida && PUBLIC) { const id = Number(action.dataset.sugLida), lida = action.dataset.lida === '1'; action.disabled = true; NibConta.sugestaoLida(id, lida).then(() => { const s = state.sugList.find(x => Number(x.id) === id); if (s) s.lida = lida; show('sugestoes', false, false); }).catch(e => { action.disabled = false; announce(e.message, 'error'); }); return; }
+    if (PUBLIC && action.dataset.pilAbrir) { state.pilSel = { id: Number(action.dataset.pilAbrir), t: Number(action.dataset.t) || 0 }; state.pilEdit = false; if (!state.pilVer || state.pilVer.id !== state.pilSel.id) state.pilVer = null; show('pilulas', true, false); return; }
+    if (PUBLIC && action.dataset.pilVoltar !== undefined) { state.pilSel = null; state.pilEdit = false; show('pilulas', true, false); return; }
+    if (PUBLIC && action.dataset.pilT !== undefined) { const box = content.querySelector('#pil-player'), p = state.pilVer; if (box && p) { box.innerHTML = pilIframe(p, Number(action.dataset.pilT), true); box.scrollIntoView({ block: 'start', behavior: 'smooth' }); } return; }
+    if (PUBLIC && action.dataset.pilTema !== undefined) { state.pilTema = action.dataset.pilTema; loadPilulas().then(() => { if (state.view === 'pilulas') show('pilulas', false, false); }); return; }
+    if (PUBLIC && action.dataset.pilNova !== undefined) { state.pilForm = true; state.pilUp = null; show('pilulas', false, false); const f = content.querySelector('#pil-form input'); if (f) f.focus({ preventScroll: true }); return; }
+    if (PUBLIC && action.dataset.pilCancelar !== undefined) { state.pilForm = false; show('pilulas', false, false); return; }
+    if (PUBLIC && action.dataset.pilFechar !== undefined) { state.pilUp = null; show('pilulas', false, false); return; }
+    if (PUBLIC && action.dataset.pilEditar !== undefined) { state.pilEdit = action.dataset.pilEditar === '1'; show('pilulas', false, false); return; }
+    if (PUBLIC && action.dataset.pilDesconectar !== undefined) { if (!confirm('Desconectar o canal do YouTube do app? As pílulas já publicadas continuam, mas não dá para enviar novas até conectar de novo.')) return; action.disabled = true; NibConta.youtube('desconectar', {}).then(() => { state.pil = null; show('pilulas', false, false); announce('Canal desconectado.', 'success', false); }).catch(e => { action.disabled = false; announce(e.message, 'warning'); }); return; }
+    if (PUBLIC && action.dataset.pilLegenda !== undefined) { action.disabled = true; action.textContent = 'Buscando no YouTube'; NibConta.pilulas('legenda', { id: state.pilSel.id }).then(d => { state.pilVer = d.pilula; show('pilulas', false, false); announce(d.achou ? 'Transcrição encontrada.' : 'O YouTube ainda não gerou a legenda automática deste vídeo. O app tenta de novo sozinho.', d.achou ? 'success' : 'info', false); }).catch(e => { action.disabled = false; action.textContent = 'Buscar transcrição agora'; announce(e.message, 'warning'); }); return; }
+    if (PUBLIC && action.dataset.pilRemover !== undefined) { if (!confirm('Tirar esta pílula do app? O vídeo continua no canal do YouTube como não listado; para apagar de vez, use o YouTube Studio.')) return; action.disabled = true; NibConta.pilulas('remover', { id: state.pilSel.id }).then(() => { state.pilSel = null; state.pil = null; state.pilHomeKey = null; show('pilulas', false, false); announce('Pílula tirada do app.', 'success', false); }).catch(e => { action.disabled = false; announce(e.message, 'warning'); }); return; }
     if (action.dataset.avisoRemove && PUBLIC) { if (!confirm('Remover este aviso para toda a igreja?')) return; action.disabled = true; NibConta.avisos('remover', { id: Number(action.dataset.avisoRemove) }).then(loadAvisos).then(() => { show('avisos', false, false); refreshNotices(); announce('Aviso removido.', 'success', false); }).catch(e => { action.disabled = false; announce(e.message, 'warning'); }); return; }
     if (action.dataset.prayerRemove && PUBLIC) { const id = action.dataset.prayerRemove; action.disabled = true; NibConta.caderno('remover', { id: Number(id) }).then(() => { state.prayers = state.prayers.filter(x => x.id !== id); show('caderno', false, false); announce('Pedido tirado do caderno.', 'success', false); }).catch(e => { action.disabled = false; announce(e.message, 'error'); }); return; }
     if (PUBLIC && (action.dataset.prayerToggle || action.dataset.prayerDelete)) {
@@ -812,6 +965,8 @@
     if (!form.reportValidity()) return;
     const values = new FormData(form);
     if (isManagement() && admin.submit(form, values)) return;
+    if (PUBLIC && form.id === 'pil-form') { pilEnviar(form); return; }
+    if (PUBLIC && form.id === 'pil-edit-form') { const btn = form.querySelector('[type=submit]'); btn.disabled = true; const body = { id: state.pilSel.id, titulo: String(values.get('titulo') || ''), tema: String(values.get('tema') || ''), passagem: String(values.get('passagem') || ''), texto: String(values.get('texto') || '') }; if (values.has('transcricao') && String(values.get('transcricao')).trim() !== String(state.pilVer.transcricao || '').trim()) body.transcricao = String(values.get('transcricao')); NibConta.pilulas('editar', body).then(d => { state.pilVer = d.pilula; state.pilEdit = false; state.pil = null; state.pilHomeKey = null; show('pilulas', false, false); announce('Pílula atualizada.', 'success', false); }).catch(e => { btn.disabled = false; announce(e.message, 'warning'); }); return; }
     if (PUBLIC && form.id === 'mem-export-form') { eqExport(form); return; }
     if (PUBLIC && form.id === 'sug-form') { const btn = form.querySelector('[type=submit]'), err = form.querySelector('.form-error'), texto = String(values.get('texto') || '').trim(); if (texto.length < 5) { err.textContent = 'Escreva sua mensagem.'; form.elements.texto.focus(); return; } btn.disabled = true; err.textContent = ''; NibConta.sugestao({ tipo: state.sugTipo || 'sugestao', texto }).then(() => { state.sugDraft = ''; state.sugList = null; show('sugestoes', false, false); announce('Obrigado! Sua mensagem foi enviada.', 'success'); }).catch(e => { err.textContent = e.message; btn.disabled = false; }); return; }
     if (PUBLIC && form.id === 'aviso-form') { const btn = form.querySelector('[type=submit]'); btn.disabled = true; NibConta.avisos('publicar', { titulo: String(values.get('titulo') || ''), texto: String(values.get('texto') || ''), link: String(values.get('link') || ''), ate: String(values.get('ate') || ''), fixado: values.get('fixado') === 'on', notificar: values.get('notificar') === 'on' }).then(loadAvisos).then(() => { show('avisos', false, false); refreshNotices(); announce('Aviso publicado para toda a igreja.', 'success', false); }).catch(e => { btn.disabled = false; announce(e.message, 'warning'); }); return; }
@@ -854,9 +1009,9 @@
     document.getElementById('demo-context').value = state.context;
     document.getElementById('demo-context-mobile').value = state.context;
   }
-  root.addEventListener('change', e => { if (PUBLIC && e.target.matches('[data-push-caderno]')) pushCaderno(e.target); if (PUBLIC && e.target.matches('[data-push-lembretes]')) pushLembretes(e.target); });
+  root.addEventListener('change', e => { if (PUBLIC && e.target.name === 'video' && e.target.closest('#pil-form')) pilInfo(e.target); if (PUBLIC && e.target.matches('[data-push-caderno]')) pushCaderno(e.target); if (PUBLIC && e.target.matches('[data-push-lembretes]')) pushLembretes(e.target); });
   root.addEventListener('input', e => { if (e.target.id !== 'acc-cpf') return; const d = e.target.value.replace(/\D/g, '').slice(0, 11); e.target.value = d.replace(/^(\d{3})(\d)/, '$1.$2').replace(/^(\d{3})\.(\d{3})(\d)/, '$1.$2.$3').replace(/\.(\d{3})(\d{1,2})$/, '.$1-$2'); });
-  root.addEventListener('input', e => { if (isManagement() && admin.input && e.target.id === 'mem-q') admin.input(e.target); if (e.target.id === 'team-q') teamFilterList(e.target.value); if (PUBLIC && e.target.id === 'eq-q') eqFilterInput(e.target.value); });
+  root.addEventListener('input', e => { if (isManagement() && admin.input && e.target.id === 'mem-q') admin.input(e.target); if (e.target.id === 'team-q') teamFilterList(e.target.value); if (PUBLIC && e.target.id === 'eq-q') eqFilterInput(e.target.value); if (PUBLIC && e.target.id === 'pil-q') pilBuscar(e.target.value); });
   root.addEventListener('change', e => { if (PUBLIC && e.target.name === 'eq-papel') { eqPapelToggle(e.target); return; } if (PUBLIC && e.target.id === 'eq-cell') { state.memCell = e.target.value; state.memMore = false; show('membros', false, false); return; } if (isManagement() && admin.input && e.target.id === 'mem-cell') { admin.input(e.target); return; } if (e.target.id === 'bday-visible') { state.hideBirthday = !e.target.checked; announce(e.target.checked ? 'Seu aniversário aparece para a igreja (teste).' : 'Seu aniversário não aparece mais para a igreja (teste).', 'success', false); } });
   document.addEventListener('nib-install-change', () => { if (state.view === 'inicio' && !isManagement()) show('inicio', false, false); });
   document.addEventListener('change', e => { if (PUBLIC && e.target.matches('[data-ver-como-select]')) setViewAs(e.target.value); });
@@ -1416,7 +1571,7 @@
       ['checkin', 'Check-in dos cultos', 'QR Code do telão, local da igreja e presença.'],
       ['avisos', 'Avisos da igreja', 'Publique avisos no sino e no mural da igreja.'],
       ['sugestoes', 'Sugestões para o app', 'Ideias e problemas enviados pelos membros.'],
-      ['agenda', 'Agenda da igreja', 'Cultos, escola bíblica e eventos no calendário.'],
+      ['pilulas', 'Pílulas de Sabedoria', 'Envie o vídeo da semana para a igreja.'],
       ['generosidade', 'Dízimos e ofertas', 'Contribua pelo Pix com os dados oficiais da igreja.']
     ];
   }
@@ -1662,8 +1817,15 @@
   }
   if (PUBLIC && window.NibConta && NibConta.available()) {
     const goHash = () => { const v = location.hash.slice(1); if (v && allowedPublic().includes(v)) show(v, false, false); };
-    authReady.then(() => { if (account()) applyAccount(); goHash(); pendingQrCheckin(); });
-    if ('serviceWorker' in navigator) navigator.serviceWorker.addEventListener('message', e => { const v = e.data && e.data.nibView; if (typeof v === 'string' && allowedPublic().includes(v)) { if (v === 'caderno') { state.prayersLoaded = false; } if (v === 'avisos') { state.avisos = null; } show(v, false, false); } });
+    authReady.then(() => { if (account()) applyAccount(); goHash(); pendingQrCheckin(); youtubeVolta(); });
+    // Volta da tela do Google ao conectar o canal (api/youtube.php redireciona para /app/?youtube=...#pilulas).
+    function youtubeVolta() {
+      const r = new URLSearchParams(location.search).get('youtube'); if (!r) return;
+      const u = new URL(location.href); u.searchParams.delete('youtube'); history.replaceState(null, '', u.pathname + u.search + u.hash);
+      const msg = { ok: ['Canal do YouTube conectado. Já dá para enviar as pílulas.', 'success'], cancelado: ['A conexão com o YouTube foi cancelada.', 'info'], expirou: ['A conexão demorou demais. Toque em Conectar de novo.', 'warning'], 'sem-projeto': ['Falta colocar no servidor as chaves do projeto do Google.', 'warning'], 'sem-permissao': ['Só a administração conecta o canal do YouTube.', 'warning'] }[r] || ['Não foi possível conectar o canal do YouTube. Tente de novo.', 'warning'];
+      state.pil = null; if (allowedPublic().includes('pilulas')) show('pilulas', false, false); announce(msg[0], msg[1], false);
+    }
+    if ('serviceWorker' in navigator) navigator.serviceWorker.addEventListener('message', e => { const v = e.data && e.data.nibView; if (typeof v === 'string' && allowedPublic().includes(v)) { if (v === 'caderno') { state.prayersLoaded = false; } if (v === 'avisos') { state.avisos = null; } if (v === 'pilulas') { state.pil = null; state.pilSel = null; } show(v, false, false); } });
     const token = new URLSearchParams(location.search).get('redefinir');
     if (token && /^[a-f0-9]{64}$/.test(token)) resetDialog(token);
   }

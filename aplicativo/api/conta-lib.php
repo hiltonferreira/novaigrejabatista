@@ -25,11 +25,11 @@ function nib_db(): PDO {
   return $db;
 }
 // Cria as tabelas na primeira vez (e só acrescenta o que faltar nas próximas versões).
-const NIB_MIGRACAO = 10;
+const NIB_MIGRACAO = 11;
 function nib_migrar(PDO $db): void {
   $db->exec("CREATE TABLE IF NOT EXISTS nib_versao (v INT NOT NULL) ENGINE=InnoDB");
   $v = (int)($db->query('SELECT MAX(v) FROM nib_versao')->fetchColumn() ?: 0);
-  if ($v >= NIB_MIGRACAO) return; // ao criar a v11, subir NIB_MIGRACAO
+  if ($v >= NIB_MIGRACAO) return; // ao criar a v12, subir NIB_MIGRACAO
   // Uma migração por vez: pedidos simultâneos esperam a primeira terminar (evita versões repetidas).
   if ((int)$db->query("SELECT GET_LOCK('nib_migrar', 15)")->fetchColumn() !== 1) throw new RuntimeException('migração em andamento por outro pedido');
   try { nib_migrar_passos($db, (int)($db->query('SELECT MAX(v) FROM nib_versao')->fetchColumn() ?: 0)); }
@@ -122,6 +122,20 @@ function nib_migrar_passos(PDO $db, int $v): void {
     $tem = $db->query("SHOW COLUMNS FROM nib_pessoas LIKE 'papeis'")->fetch();
     if (!$tem) $db->exec("ALTER TABLE nib_pessoas ADD COLUMN papeis VARCHAR(64) NOT NULL DEFAULT '' AFTER papel");
     $db->exec('INSERT INTO nib_versao (v) VALUES (10)');
+  }
+  if ($v < 11) {
+    // v11: Pílulas de Sabedoria. O vídeo fica no YouTube da igreja (não listado); aqui só os dados, a transcrição e a busca.
+    $db->exec("CREATE TABLE IF NOT EXISTS nib_pilulas (
+      id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY, titulo VARCHAR(120) NOT NULL, tema VARCHAR(60) NOT NULL DEFAULT '', passagem VARCHAR(80) NOT NULL DEFAULT '',
+      texto VARCHAR(1000) NOT NULL DEFAULT '', youtube_id VARCHAR(20) NULL, estado VARCHAR(12) NOT NULL DEFAULT 'enviando', aviso VARCHAR(250) NOT NULL DEFAULT '',
+      sessao VARCHAR(1500) NULL, tamanho BIGINT UNSIGNED NOT NULL DEFAULT 0, recebido BIGINT UNSIGNED NOT NULL DEFAULT 0,
+      duracao INT UNSIGNED NOT NULL DEFAULT 0, vertical TINYINT(1) NOT NULL DEFAULT 1, notificar TINYINT(1) NOT NULL DEFAULT 0,
+      legendas MEDIUMTEXT NULL, transcricao MEDIUMTEXT NULL, transcricao_editada TINYINT(1) NOT NULL DEFAULT 0,
+      legenda_tentativas INT UNSIGNED NOT NULL DEFAULT 0, legenda_proxima DATETIME NULL, conferido_em DATETIME NULL, busca MEDIUMTEXT NULL,
+      criado_por INT UNSIGNED NULL, criado_em DATETIME NOT NULL, publicado_em DATETIME NULL, removido_por INT UNSIGNED NULL, removido_em DATETIME NULL,
+      KEY ix_publicado (estado, publicado_em)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+    $db->exec('INSERT INTO nib_versao (v) VALUES (11)');
   }
 }
 
