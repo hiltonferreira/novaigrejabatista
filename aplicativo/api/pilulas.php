@@ -165,7 +165,7 @@ try {
       $tamanho = (int)($d['tamanho'] ?? 0); $tipo = is_string($d['tipo'] ?? null) && preg_match('~^video/[\w.+-]{1,30}$~', $d['tipo']) ? $d['tipo'] : 'video/mp4';
       $duracao = max(0, min(36000, (int)($d['duracao'] ?? 0)));
       if ($titulo === '') nib_erro('Informe o título da pílula.');
-      if ($tamanho < 50000 || $tamanho > 4 * 1024 ** 3) nib_erro('Escolha um arquivo de vídeo válido (até 4 GB).');
+      if ($tamanho < 20000 || $tamanho > 4 * 1024 ** 3) nib_erro('Escolha um arquivo de vídeo válido (até 4 GB).');
       if ($duracao > 1800) nib_erro('A pílula pode ter até 30 minutos.');
       nib_limite('pilula', (string)$eu['id'], 20, 86400);
       $desc = trim(($passagem !== '' ? $passagem . "\n\n" : '') . ($texto !== '' ? $texto . "\n\n" : '') . 'Pílula de Sabedoria · Nova Igreja Batista');

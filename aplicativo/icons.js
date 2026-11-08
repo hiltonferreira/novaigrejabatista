@@ -44,8 +44,8 @@
     contribuintes: 'M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z M2 21c0-3.5 3-6 7-6s7 2.5 7 6 M16 6h6 M16 10h6 M18 14h4',
     relatorios: 'M8 3h8a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3z M9 17v-4 M12 17V9 M15 17v-6',
     aprovacoes: 'M6 3h9l4 4v14H6z M15 3v4h4 M9 14l2 2 4-4',
-    // Pílulas de Sabedoria: tela arredondada com o botão de play.
-    pilulas: 'M6 4h12a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3z M10 9.2v5.6l4.6-2.8z'
+    // Pílulas de Sabedoria: uma cápsula (pedido de Hilton, 08/11/2026).
+    pilulas: 'M5.03 14.03 14.03 5.03a3.5 3.5 0 0 1 4.94 4.94l-9 9a3.5 3.5 0 0 1-4.94-4.94z M9.53 9.53l4.94 4.94'
   };
   paths.cuidado = paths.caderno; // Caderno de oração e cuidado pastoral são o mesmo assunto.
   // Versões preenchidas para o item ativo da barra inferior.
@@ -81,7 +81,7 @@
     contribuintes: { fill: 'M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z M2 21c0-3.5 3-6 7-6s7 2.5 7 6z', stroke: 'M16 6h6 M16 10h6 M18 14h4' },
     relatorios: { fill: 'M8 3h8a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3z', cut: 'M9 17v-4 M12 17V9 M15 17v-6' },
     fechamento: { fill: 'M6 11h12v10H6z', stroke: 'M8 11V7a4 4 0 0 1 8 0v4', cut: 'M12 15v2' },
-    pilulas: { fill: 'M6 4h12a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3z', cut: 'M10 9.2v5.6l4.6-2.8z' }
+    pilulas: { fill: 'M5.03 14.03 14.03 5.03a3.5 3.5 0 0 1 4.94 4.94l-9 9a3.5 3.5 0 0 1-4.94-4.94z', cut: 'M9.53 9.53l4.94 4.94' }
   });
 
   const svg = (key, width = 1.8) => paths[key] ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${width}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${paths[key]}"/></svg>` : '';

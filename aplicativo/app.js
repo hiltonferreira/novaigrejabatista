@@ -571,11 +571,23 @@
         : `<p class="pil-up-fim ${fim[1]}">${escape(fim[0])}</p>`;
       return `<section class="box pil-team pil-up"><span class="label">${u.fase === 'enviando' ? 'ENVIANDO' : u.fase === 'processando' ? 'QUASE LÁ' : 'ENVIO'}</span><h2>${escape(u.titulo)}</h2>${corpo}${u.fase === 'enviando' ? '' : `<div class="form-actions">${u.fase === 'erro' || u.fase === 'falhou' ? '<button type="button" class="action primary" data-pil-nova>Tentar de novo</button>' : ''}<button type="button" class="button" data-pil-fechar>${u.fase === 'processando' ? 'Ok, avise quando ficar pronto' : 'Fechar'}</button></div>`}</section>`;
     }
-    if (state.pilForm) {
-      const temas = [...new Set((d.temas || []).concat(PIL_TEMAS))];
-      return `<section class="box pil-team"><span class="label">NOVA PÍLULA</span><h2>Enviar vídeo para a igreja</h2><p>O vídeo vai para o canal da igreja no YouTube como não listado: só quem está no app encontra.</p><form id="pil-form" class="pil-form" autocomplete="off"><label class="pil-file"><span>Vídeo</span><input type="file" name="video" accept="video/*" required><small id="pil-info">Grave na vertical. Pode escolher da galeria.</small></label><label>Título<input name="titulo" maxlength="120" required placeholder="Ex.: Não andeis ansiosos"></label><label>Tema central<input name="tema" maxlength="60" list="pil-temas" placeholder="Ex.: Ansiedade"><datalist id="pil-temas">${temas.map(t => `<option value="${escape(t)}">`).join('')}</datalist></label><label>Passagem bíblica<input name="passagem" maxlength="80" placeholder="Ex.: Filipenses 4.6-7"></label><label>Mensagem curta (opcional)<textarea name="texto" rows="3" maxlength="1000" placeholder="Uma frase para acompanhar o vídeo."></textarea></label><label class="check"><input type="checkbox" name="notificar" checked><span>Avisar a igreja no celular quando o vídeo estiver pronto</span></label><div class="form-actions"><button type="submit" class="action primary">Enviar pílula</button><button type="button" class="button" data-pil-cancelar>Cancelar</button></div></form></section>`;
+    const canal = `<div class="pil-canal-wrap"><button type="button" class="pil-canal" data-pil-canal aria-expanded="${!!state.pilCanalMenu}"${y.pode_conectar ? '' : ' disabled'}><span class="pil-canal-dot" aria-hidden="true"></span>YouTube${y.canal ? ' · ' + escape(y.canal) : ''}</button>${state.pilCanalMenu && y.pode_conectar ? '<div class="pil-canal-menu"><p>Canal conectado ao app.</p><button type="button" class="link-button pil-remove" data-pil-desconectar>Desconectar canal</button></div>' : ''}</div>`;
+    const escolher = (txt, cls) => `<label class="${cls}"><input type="file" accept="video/*" data-pil-escolher class="visually-hidden">${txt}</label>`;
+    if (state.pilForm && state.pilFile) {
+      const f = state.pilFile, temas = [...new Set((d.temas || []).concat(PIL_TEMAS))].slice(0, 14), t = state.pilTemaNovo || '';
+      if (!state.pilFileUrl) state.pilFileUrl = URL.createObjectURL(f);
+      return `<section class="pil-studio is-form">${canal}<span class="label">NOVA PÍLULA</span><h2>Conte sobre o vídeo</h2>
+        <div class="pil-preview${state.pilMeta && !state.pilMeta.vertical ? ' is-wide' : ''}"><video src="${state.pilFileUrl}" muted playsinline controls preload="metadata"></video><div><strong>${escape(f.name)}</strong><small id="pil-info">${state.pilMeta ? escape(pilResumo(state.pilMeta, f)) : pilMB(f.size)}</small>${escolher('Trocar vídeo', 'pil-trocar')}</div></div>
+        <form id="pil-form" class="pil-form" autocomplete="off"><label>Título<input name="titulo" maxlength="120" required placeholder="Ex.: Não andeis ansiosos" value="${escape(state.pilRasc && state.pilRasc.titulo || '')}"></label>
+        <fieldset class="pil-temas-escolha"><legend>Tema central</legend><input type="hidden" name="tema" value="${escape(t)}"><div>${temas.map(x => `<button type="button" class="pil-chip${t === x ? ' is-on' : ''}" data-pil-tema-escolha="${escape(x)}" aria-pressed="${t === x}">${escape(x)}</button>`).join('')}<button type="button" class="pil-chip${t && !temas.includes(t) ? ' is-on' : ''}" data-pil-tema-outro>Outro tema</button></div><input class="pil-tema-outro" name="tema_outro" maxlength="60" placeholder="Escreva o tema" value="${t && !temas.includes(t) ? escape(t) : ''}"${t && !temas.includes(t) ? '' : ' hidden'}></fieldset>
+        <label>Passagem bíblica<input name="passagem" maxlength="80" placeholder="Ex.: Filipenses 4.6-7" value="${escape(state.pilRasc && state.pilRasc.passagem || '')}"></label>
+        <label>Mensagem curta (opcional)<textarea name="texto" rows="3" maxlength="1000" placeholder="Uma frase para acompanhar o vídeo.">${escape(state.pilRasc && state.pilRasc.texto || '')}</textarea></label>
+        <label class="check"><input type="checkbox" name="notificar" checked><span>Avisar a igreja no celular quando o vídeo estiver pronto</span></label>
+        <p class="note">Vai para o YouTube da igreja como não listado: só quem está no app encontra.</p>
+        <div class="form-actions"><button type="submit" class="action primary pil-enviar">Publicar pílula</button><button type="button" class="button" data-pil-cancelar>Cancelar</button></div></form></section>`;
     }
-    return `<section class="box pil-team pil-team-mini"><div><span class="label">LIDERANÇA PASTORAL</span><p>Canal conectado${y.canal ? `: <strong>${escape(y.canal)}</strong>` : ''}.${y.pode_conectar ? ' <button type="button" class="link-button" data-pil-desconectar>Desconectar</button>' : ''}</p></div><button type="button" class="action primary" data-pil-nova>Enviar nova pílula</button></section>`;
+    const pub = (d.pilulas || []).filter(p => !p.estado || p.estado === 'publicado'), ult = pub[0];
+    return `<section class="pil-studio">${canal}<span class="pil-studio-icon" aria-hidden="true">${navIcon('pilulas')}</span><h2>Grave a pílula da semana</h2><p>Grave no celular, na vertical, de 1 a 3 minutos. O vídeo vai para o YouTube da igreja e aparece aqui para todos.</p>${escolher(`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4 M7 9l5-5 5 5 M5 20h14"/></svg>Escolher vídeo`, 'pil-studio-btn')}<small class="pil-studio-info">${pub.length ? `${pub.length} ${pub.length === 1 ? 'pílula publicada' : 'pílulas publicadas'} · última em ${escape(pilData(ult.data))}` : 'Nenhuma pílula publicada ainda. A primeira começa aqui.'}</small></section>`;
   }
   function pilulasPage() {
     if (!PUBLIC) return `<section class="box"><p>Aqui ficam os vídeos curtos do pastor para meditar na Palavra, com busca por tema, passagem bíblica e pelas palavras faladas no vídeo.</p></section>`;
@@ -620,7 +632,17 @@
       v.src = url;
     });
   }
-  const pilMB = b => (b / 1048576).toLocaleString('pt-BR', { maximumFractionDigits: b < 10485760 ? 1 : 0 }) + ' MB';
+  const pilMB = b => b < 1048576 ? Math.max(1, Math.round(b / 1024)) + ' KB' : (b / 1048576).toLocaleString('pt-BR', { maximumFractionDigits: b < 10485760 ? 1 : 0 }) + ' MB';
+  const pilResumo = (m, f) => [m.duracao ? pilTempo(m.duracao) + ' de vídeo' : '', pilMB(f.size), m.vertical ? 'vertical' : 'horizontal'].filter(Boolean).join(' · ');
+  // Vídeo escolhido no cartão do pastor: guarda o arquivo e abre o formulário com a prévia.
+  function pilEscolher(input) {
+    const f = input.files && input.files[0]; if (!f) return;
+    const form = content.querySelector('#pil-form'); if (form) state.pilRasc = { titulo: form.titulo.value, passagem: form.passagem.value, texto: form.texto.value };
+    if (state.pilFileUrl) URL.revokeObjectURL(state.pilFileUrl);
+    state.pilFile = f; state.pilFileUrl = null; state.pilMeta = null; state.pilForm = true; state.pilUp = null;
+    show('pilulas', false, false);
+    pilMeta(f).then(m => { if (state.pilFile !== f) return; state.pilMeta = m; const out = content.querySelector('#pil-info'); if (out) out.textContent = pilResumo(m, f); const pv = content.querySelector('.pil-preview'); if (pv) pv.classList.toggle('is-wide', !m.vertical); });
+  }
   async function pilInfo(input) {
     const f = input.files && input.files[0], out = content.querySelector('#pil-info'); if (!f || !out) return;
     const m = await pilMeta(f); out.textContent = [m.duracao ? pilTempo(m.duracao) + ' de vídeo' : '', pilMB(f.size), m.vertical ? 'vertical' : 'horizontal'].filter(Boolean).join(' · ');
@@ -628,11 +650,13 @@
   const pilEspera = ms => new Promise(ok => setTimeout(ok, ms));
   async function pilEnviar(form) {
     if (state.pilUp && state.pilUp.fase === 'enviando') return;
-    const f = form.querySelector('[name=video]').files[0]; if (!f) { announce('Escolha o vídeo da pílula.', 'warning'); return; }
-    const v = new FormData(form), meta = await pilMeta(f);
+    const f = state.pilFile; if (!f) { announce('Escolha o vídeo da pílula.', 'warning'); return; }
+    const v = new FormData(form), meta = state.pilMeta || await pilMeta(f);
+    if (v.get('tema_outro')) v.set('tema', String(v.get('tema_outro')));
     if (meta.duracao > 1800) { announce('A pílula pode ter até 30 minutos.', 'warning'); return; }
     const notificar = v.get('notificar') === 'on';
-    state.pilUp = { titulo: String(v.get('titulo') || ''), pct: 0, fase: 'enviando', msg: 'Preparando o envio', notificar }; state.pilForm = false;
+    state.pilUp = { titulo: String(v.get('titulo') || ''), pct: 0, fase: 'enviando', msg: 'Preparando o envio', notificar }; state.pilForm = false; state.pilRasc = null; state.pilTemaNovo = '';
+    if (state.pilFileUrl) { URL.revokeObjectURL(state.pilFileUrl); state.pilFileUrl = null; }
     if (state.view === 'pilulas') show('pilulas', false, false);
     let lock = null; try { lock = await navigator.wakeLock.request('screen'); } catch (_) {}
     const sair = e => { e.preventDefault(); e.returnValue = ''; }; addEventListener('beforeunload', sair);
@@ -662,7 +686,7 @@
         if (c && c.pilula.estado !== 'processando') { if (state.pilUp && state.pilUp.id === r.id) Object.assign(state.pilUp, { fase: c.pilula.estado, msg: c.pilula.aviso }); if (c.pilula.estado === 'publicado') announce('Pílula publicada para a igreja.', 'success', false); break; }
       }
     } catch (e) { if (state.pilUp) Object.assign(state.pilUp, { fase: 'erro', msg: e.message }); }
-    finally { removeEventListener('beforeunload', sair); if (lock) lock.release().catch(() => {}); state.pil = null; state.pilHomeKey = null; if (state.view === 'pilulas' && !state.pilSel) show('pilulas', false, false); }
+    finally { state.pilFile = null; removeEventListener('beforeunload', sair); if (lock) lock.release().catch(() => {}); state.pil = null; state.pilHomeKey = null; if (state.view === 'pilulas' && !state.pilSel) show('pilulas', false, false); }
   }
   // Check-in do culto (versão oficial): pelo local da igreja (GPS) ou pelo QR Code fixo do telão.
   const ckIcon = done => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${done ? 'm5 12.5 4.5 4.5L19 7.5' : NibAdminIcons.recepcao}"/></svg>`;
@@ -917,8 +941,11 @@
     if (PUBLIC && action.dataset.pilVoltar !== undefined) { state.pilSel = null; state.pilEdit = false; show('pilulas', true, false); return; }
     if (PUBLIC && action.dataset.pilT !== undefined) { const box = content.querySelector('#pil-player'), p = state.pilVer; if (box && p) { box.innerHTML = pilIframe(p, Number(action.dataset.pilT), true); box.scrollIntoView({ block: 'start', behavior: 'smooth' }); } return; }
     if (PUBLIC && action.dataset.pilTema !== undefined) { state.pilTema = action.dataset.pilTema; loadPilulas().then(() => { if (state.view === 'pilulas') show('pilulas', false, false); }); return; }
-    if (PUBLIC && action.dataset.pilNova !== undefined) { state.pilForm = true; state.pilUp = null; show('pilulas', false, false); const f = content.querySelector('#pil-form input'); if (f) f.focus({ preventScroll: true }); return; }
-    if (PUBLIC && action.dataset.pilCancelar !== undefined) { state.pilForm = false; show('pilulas', false, false); return; }
+    if (PUBLIC && action.dataset.pilNova !== undefined) { state.pilUp = null; state.pilForm = !!state.pilFile; show('pilulas', false, false); return; }
+    if (PUBLIC && action.dataset.pilCancelar !== undefined) { state.pilForm = false; state.pilFile = null; state.pilRasc = null; state.pilTemaNovo = ''; if (state.pilFileUrl) { URL.revokeObjectURL(state.pilFileUrl); state.pilFileUrl = null; } show('pilulas', false, false); return; }
+    if (PUBLIC && action.dataset.pilCanal !== undefined) { state.pilCanalMenu = !state.pilCanalMenu; show('pilulas', false, false); return; }
+    if (PUBLIC && action.dataset.pilTemaEscolha !== undefined) { const fs = action.closest('fieldset'); const on = !action.classList.contains('is-on'); fs.querySelectorAll('.pil-chip').forEach(b => { b.classList.remove('is-on'); b.setAttribute('aria-pressed', 'false'); }); if (on) { action.classList.add('is-on'); action.setAttribute('aria-pressed', 'true'); } fs.querySelector('[name=tema]').value = on ? action.dataset.pilTemaEscolha : ''; const o = fs.querySelector('.pil-tema-outro'); o.hidden = true; o.value = ''; state.pilTemaNovo = on ? action.dataset.pilTemaEscolha : ''; return; }
+    if (PUBLIC && action.dataset.pilTemaOutro !== undefined) { const fs = action.closest('fieldset'); fs.querySelectorAll('.pil-chip').forEach(b => { b.classList.remove('is-on'); b.setAttribute('aria-pressed', 'false'); }); action.classList.add('is-on'); fs.querySelector('[name=tema]').value = ''; const o = fs.querySelector('.pil-tema-outro'); o.hidden = false; o.focus(); return; }
     if (PUBLIC && action.dataset.pilFechar !== undefined) { state.pilUp = null; show('pilulas', false, false); return; }
     if (PUBLIC && action.dataset.pilEditar !== undefined) { state.pilEdit = action.dataset.pilEditar === '1'; show('pilulas', false, false); return; }
     if (PUBLIC && action.dataset.pilDesconectar !== undefined) { if (!confirm('Desconectar o canal do YouTube do app? As pílulas já publicadas continuam, mas não dá para enviar novas até conectar de novo.')) return; action.disabled = true; NibConta.youtube('desconectar', {}).then(() => { state.pil = null; show('pilulas', false, false); announce('Canal desconectado.', 'success', false); }).catch(e => { action.disabled = false; announce(e.message, 'warning'); }); return; }
@@ -1009,7 +1036,7 @@
     document.getElementById('demo-context').value = state.context;
     document.getElementById('demo-context-mobile').value = state.context;
   }
-  root.addEventListener('change', e => { if (PUBLIC && e.target.name === 'video' && e.target.closest('#pil-form')) pilInfo(e.target); if (PUBLIC && e.target.matches('[data-push-caderno]')) pushCaderno(e.target); if (PUBLIC && e.target.matches('[data-push-lembretes]')) pushLembretes(e.target); });
+  root.addEventListener('change', e => { if (PUBLIC && e.target.matches('[data-pil-escolher]')) pilEscolher(e.target); if (PUBLIC && e.target.matches('[data-push-caderno]')) pushCaderno(e.target); if (PUBLIC && e.target.matches('[data-push-lembretes]')) pushLembretes(e.target); });
   root.addEventListener('input', e => { if (e.target.id !== 'acc-cpf') return; const d = e.target.value.replace(/\D/g, '').slice(0, 11); e.target.value = d.replace(/^(\d{3})(\d)/, '$1.$2').replace(/^(\d{3})\.(\d{3})(\d)/, '$1.$2.$3').replace(/\.(\d{3})(\d{1,2})$/, '.$1-$2'); });
   root.addEventListener('input', e => { if (isManagement() && admin.input && e.target.id === 'mem-q') admin.input(e.target); if (e.target.id === 'team-q') teamFilterList(e.target.value); if (PUBLIC && e.target.id === 'eq-q') eqFilterInput(e.target.value); if (PUBLIC && e.target.id === 'pil-q') pilBuscar(e.target.value); });
   root.addEventListener('change', e => { if (PUBLIC && e.target.name === 'eq-papel') { eqPapelToggle(e.target); return; } if (PUBLIC && e.target.id === 'eq-cell') { state.memCell = e.target.value; state.memMore = false; show('membros', false, false); return; } if (isManagement() && admin.input && e.target.id === 'mem-cell') { admin.input(e.target); return; } if (e.target.id === 'bday-visible') { state.hideBirthday = !e.target.checked; announce(e.target.checked ? 'Seu aniversário aparece para a igreja (teste).' : 'Seu aniversário não aparece mais para a igreja (teste).', 'success', false); } });

@@ -2646,3 +2646,41 @@ dialog.ck-telao::backdrop{background:#041e42}
 #nib-proposta .pil-up-fim.is-ok{color:#1d7a46}
 #nib-proposta .pil-up-fim.is-alert{color:#a12626}
 #nib-proposta .pil-wait p{margin:0;color:#2a3a52}
+/* v160: cartão do pastor ("estúdio") para enviar a pílula, com o canal como etiqueta no canto. */
+#nib-proposta .pil-studio{position:relative;margin:0 0 18px;padding:24px 20px 20px;border-radius:24px;background:linear-gradient(150deg,#041e42 0%,#163a6b 100%);color:#fff;box-shadow:0 12px 32px #041e4226;overflow:hidden}
+#nib-proposta .pil-studio::after{content:"";position:absolute;right:-60px;top:-60px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,#ff7f4033,transparent 70%);pointer-events:none}
+#nib-proposta .pil-studio h2{margin:14px 0 6px;font-size:23px;line-height:1.2;color:#fff}
+#nib-proposta .pil-studio>p{margin:0 0 18px;color:#d6e0ee;line-height:1.5;font-size:15px}
+#nib-proposta .pil-studio .label{color:#ffb38c}
+#nib-proposta .pil-studio-icon{display:grid;place-items:center;width:52px;height:52px;border-radius:16px;background:#ff7f40;color:#fff}
+#nib-proposta .pil-studio-icon svg{width:28px;height:28px}
+#nib-proposta .pil-studio-btn{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:54px;border-radius:999px;background:#fff;color:#041e42;font-weight:700;font-size:16.5px;cursor:pointer}
+#nib-proposta .pil-studio-btn svg{width:20px;height:20px}
+#nib-proposta .pil-studio-btn:focus-within{outline:3px solid #ff7f40;outline-offset:3px}
+#nib-proposta .pil-studio-info{display:block;margin-top:12px;text-align:center;color:#b9c7da;font-size:13px}
+#nib-proposta .pil-canal-wrap{position:absolute;top:16px;right:16px;z-index:2;display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+#nib-proposta main .pil-canal{display:inline-flex;align-items:center;gap:6px;min-height:30px;padding:4px 11px;border:1px solid #ffffff33;border-radius:999px;background:#ffffff14;color:#e6edf6;font-size:12px;font-weight:600}
+#nib-proposta main .pil-canal:disabled{opacity:1;cursor:default}
+#nib-proposta .pil-canal-dot{width:7px;height:7px;border-radius:50%;background:#4ade80;box-shadow:0 0 0 3px #4ade8033}
+#nib-proposta .pil-canal-menu{padding:12px 14px;border-radius:14px;background:#fff;color:#2a3a52;box-shadow:0 10px 30px #041e4240;text-align:right}
+#nib-proposta .pil-canal-menu p{margin:0 0 6px;font-size:13px}
+#nib-proposta .pil-studio.is-form{background:#fff;color:#041e42;border:1px solid #dce3eb;box-shadow:none}
+#nib-proposta .pil-studio.is-form::after{display:none}
+#nib-proposta .pil-studio.is-form h2{color:#041e42;margin-top:6px}
+#nib-proposta .pil-studio.is-form .label{color:#a8441a}
+#nib-proposta .pil-studio.is-form main .pil-canal,#nib-proposta main .pil-studio.is-form .pil-canal{background:#eef7f1;border-color:#cde8d6;color:#1d5a36}
+#nib-proposta .pil-preview{display:flex;gap:14px;align-items:center;margin:14px 0 18px;padding:12px;border-radius:18px;background:#f3f6fa}
+#nib-proposta .pil-preview video{width:92px;aspect-ratio:9/16;border-radius:12px;background:#041e42;object-fit:cover;flex:0 0 auto}
+#nib-proposta .pil-preview.is-wide video{width:140px;aspect-ratio:16/9}
+#nib-proposta .pil-preview>div{display:flex;flex-direction:column;gap:4px;min-width:0}
+#nib-proposta .pil-preview strong{font-size:14px;word-break:break-all}
+#nib-proposta .pil-preview small{color:#5b6b80;font-size:13px}
+#nib-proposta .pil-trocar{align-self:flex-start;margin-top:4px;color:#1f5fa8;font-weight:600;font-size:14px;text-decoration:underline;cursor:pointer}
+#nib-proposta .pil-temas-escolha{margin:0;padding:0;border:0;display:grid;gap:8px}
+#nib-proposta .pil-temas-escolha legend{margin-bottom:8px;padding:0;font-weight:600;color:#041e42}
+#nib-proposta .pil-temas-escolha>div{display:flex;flex-wrap:wrap;gap:8px}
+#nib-proposta main .pil-chip{min-height:38px;padding:6px 14px;border:1px solid #c9d2de;border-radius:999px;background:#fff;color:#041e42;font-size:14px;font-weight:600}
+#nib-proposta main .pil-chip.is-on{background:#041e42;border-color:#041e42;color:#fff}
+#nib-proposta .pil-enviar{flex:1}
+#nib-proposta .pil-canal-wrap{max-width:calc(100% - 100px)}
+#nib-proposta main .pil-canal{max-width:100%;text-align:left;line-height:1.3}
