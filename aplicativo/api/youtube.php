@@ -13,7 +13,7 @@ require __DIR__ . '/youtube-lib.php';
 
 function nib_yt_voltar(string $resultado): never {
   header('Cache-Control: no-store');
-  header('Location: /app/?youtube=' . rawurlencode($resultado) . '#pilulas', true, 303);
+  header('Location: /app/?youtube=' . rawurlencode($resultado) . '#equipe', true, 303);
   exit;
 }
 
