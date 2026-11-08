@@ -25,11 +25,11 @@ function nib_db(): PDO {
   return $db;
 }
 // Cria as tabelas na primeira vez (e só acrescenta o que faltar nas próximas versões).
-const NIB_MIGRACAO = 12;
+const NIB_MIGRACAO = 13;
 function nib_migrar(PDO $db): void {
   $db->exec("CREATE TABLE IF NOT EXISTS nib_versao (v INT NOT NULL) ENGINE=InnoDB");
   $v = (int)($db->query('SELECT MAX(v) FROM nib_versao')->fetchColumn() ?: 0);
-  if ($v >= NIB_MIGRACAO) return; // ao criar a v13, subir NIB_MIGRACAO
+  if ($v >= NIB_MIGRACAO) return; // ao criar a v14, subir NIB_MIGRACAO
   // Uma migração por vez: pedidos simultâneos esperam a primeira terminar (evita versões repetidas).
   if ((int)$db->query("SELECT GET_LOCK('nib_migrar', 15)")->fetchColumn() !== 1) throw new RuntimeException('migração em andamento por outro pedido');
   try { nib_migrar_passos($db, (int)($db->query('SELECT MAX(v) FROM nib_versao')->fetchColumn() ?: 0)); }
@@ -138,14 +138,17 @@ function nib_migrar_passos(PDO $db, int $v): void {
     $db->exec('INSERT INTO nib_versao (v) VALUES (11)');
   }
   if ($v < 12) {
-    // v12: capa escolhida pelo pastor (e as colunas oculto e publicar_em, logo abaixo) (foto do celular ou quadro do vídeo). Fica numa tabela à parte para a lista não carregar as imagens.
+    // v12: capa escolhida pelo pastor (foto do celular ou quadro do vídeo). Fica numa tabela à parte para a lista não carregar as imagens.
     $tem = $db->query("SHOW COLUMNS FROM nib_pilulas LIKE 'capa_em'")->fetch();
     if (!$tem) $db->exec("ALTER TABLE nib_pilulas ADD COLUMN capa_em INT UNSIGNED NOT NULL DEFAULT 0 AFTER vertical");
-    // Também na v12: ocultar sem excluir e programar a publicação (pedido de Hilton, 08/11/2026).
-    if (!$db->query("SHOW COLUMNS FROM nib_pilulas LIKE 'oculto'")->fetch()) $db->exec("ALTER TABLE nib_pilulas ADD COLUMN oculto TINYINT(1) NOT NULL DEFAULT 0 AFTER capa_em");
-    if (!$db->query("SHOW COLUMNS FROM nib_pilulas LIKE 'publicar_em'")->fetch()) $db->exec("ALTER TABLE nib_pilulas ADD COLUMN publicar_em DATETIME NULL AFTER oculto");
     $db->exec("CREATE TABLE IF NOT EXISTS nib_pilula_capas (pilula_id INT UNSIGNED PRIMARY KEY, tipo VARCHAR(20) NOT NULL, imagem MEDIUMBLOB NOT NULL) ENGINE=InnoDB");
     $db->exec('INSERT INTO nib_versao (v) VALUES (12)');
+  }
+  if ($v < 13) {
+    // v13: ocultar sem excluir e programar a publicação das pílulas (pedido de Hilton, 08/11/2026).
+    if (!$db->query("SHOW COLUMNS FROM nib_pilulas LIKE 'oculto'")->fetch()) $db->exec("ALTER TABLE nib_pilulas ADD COLUMN oculto TINYINT(1) NOT NULL DEFAULT 0 AFTER capa_em");
+    if (!$db->query("SHOW COLUMNS FROM nib_pilulas LIKE 'publicar_em'")->fetch()) $db->exec("ALTER TABLE nib_pilulas ADD COLUMN publicar_em DATETIME NULL AFTER oculto");
+    $db->exec('INSERT INTO nib_versao (v) VALUES (13)');
   }
 }
 
