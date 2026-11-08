@@ -16,12 +16,16 @@
   };
   // txid: até 25 letras/números (sem acento ou espaço); "***" quando não houver identificador.
   const cleanTxid = txid => (String(txid || '').normalize('NFD').replace(/[^A-Za-z0-9]/g, '').toUpperCase().slice(0, 25)) || '***';
-  const brCode = ({ amount, txid } = {}) => {
-    const account = field('00', 'br.gov.bcb.pix') + field('01', church.key);
+  // Descrição (campo 26-02 "infoAdicional"): aparece para quem paga e, em muitos bancos, no detalhe do Pix recebido.
+  // Sem acentos e com no máximo 40 caracteres, para caber no campo 26 (até 99) em qualquer banco.
+  const cleanDescription = d => String(d || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^A-Za-z0-9 .,\-]/g, '').replace(/\s+/g, ' ').trim().slice(0, 40).trim();
+  const brCode = ({ amount, txid, description } = {}) => {
+    const desc = cleanDescription(description);
+    const account = field('00', 'br.gov.bcb.pix') + field('01', church.key) + (desc ? field('02', desc) : '');
     let payload = field('00', '01') + field('26', account) + field('52', '0000') + field('53', '986');
     if (amount) payload += field('54', Number(amount).toFixed(2));
     payload += field('58', 'BR') + field('59', church.name) + field('60', church.city) + field('62', field('05', cleanTxid(txid))) + '6304';
     return payload + crc16(payload);
   };
-  scope.NibPix = { church, brCode, crc16, cleanTxid };
+  scope.NibPix = { church, brCode, crc16, cleanTxid, cleanDescription };
 })(typeof window === 'undefined' ? globalThis : window);
