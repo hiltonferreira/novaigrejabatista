@@ -686,7 +686,7 @@
         if (PUBLIC) {
           const pq = `<section aria-labelledby="quick-title"><div class="section-heading"><h2 id="quick-title">${teamShortcuts() ? 'Atalhos do seu perfil' : 'O que você procura?'}</h2></div><div class="quick-actions">${(teamShortcuts() || [
             ['agenda', 'Agenda da igreja', 'Cultos, escola bíblica e eventos no calendário.'],
-            ['eventos', 'Eventos e inscrições', 'Os próximos encontros e as inscrições abertas.'],
+            ['presenca', 'Check-in', 'Registre sua presença na EBS e nos cultos.'],
             ['generosidade', 'Dízimos e ofertas', 'Contribua pelo Pix com os dados oficiais da igreja.'],
             ['celulas', 'Células', 'Encontre uma célula perto de você.'],
             ['informacoes', 'Horários e endereço', 'Cultos da semana, endereço e liderança.'],
