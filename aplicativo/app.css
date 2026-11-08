@@ -2574,3 +2574,9 @@ dialog.ck-telao::backdrop{background:#041e42}
 #nib-proposta .eq-confirm p{margin:0 0 10px;color:#41506a;font-size:14px;line-height:1.45}
 #nib-proposta .eq-confirm p strong{color:#041e42}
 #nib-proposta .eq-confirm .form-actions{margin:0;display:flex;flex-wrap:wrap;gap:10px}
+/* v156: tela Check-in do membro fora do horário */
+#nib-proposta .ck-info h2{margin:4px 0 8px}
+#nib-proposta .ck-horarios{list-style:none;margin:12px 0;padding:0;border-top:1px solid #e3e8ef}
+#nib-proposta .ck-horarios li{display:flex;flex-direction:column;gap:2px;padding:12px 0;border-bottom:1px solid #e3e8ef}
+#nib-proposta .ck-horarios strong{color:#041e42;font-size:15px}
+#nib-proposta .ck-horarios span{color:#41506a;font-size:14px}

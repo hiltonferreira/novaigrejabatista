@@ -13,12 +13,12 @@
   root.classList.toggle('is-public', PUBLIC);
   const publicViews = ['inicio','agenda','eventos','generosidade','celulas','caderno','informacoes','avisos','sugestoes'];
   const account = () => (PUBLIC && window.NibConta) ? NibConta.pessoa() : null;
-  const allowedPublic = () => publicViews.concat(account() ? ['cadastro'] : [], account() && NibConta.equipe() ? ['equipe', 'membros', 'membresia', 'cadastros', 'checkin'] : []);
+  const allowedPublic = () => publicViews.concat(account() ? ['cadastro', 'presenca'] : [], account() && NibConta.equipe() ? ['equipe', 'membros', 'membresia', 'cadastros', 'checkin'] : []);
   const publicNav = () => [['inicio', 'Início'], ['agenda', 'Agenda'], ['eventos', 'Eventos'], ['generosidade', 'Generosidade'], ['celulas', 'Células'], ['caderno', 'Caderno de oração'], ['avisos', 'Avisos da igreja'], ['informacoes', 'Informações'], ['sugestoes', 'Sugestões para o app']]
-    .concat(account() ? [['cadastro', 'Meu cadastro']] : [['entrar', 'Entrar ou criar cadastro']], account() && NibConta.equipe() ? [['equipe', 'Painel da equipe'], ['membros', 'Membros'], ['membresia', 'Membresia'], ['checkin', 'Check-in dos cultos']] : []);
+    .concat(account() ? [['cadastro', 'Meu cadastro'], ['presenca', 'Check-in']] : [['entrar', 'Entrar ou criar cadastro']], account() && NibConta.equipe() ? [['equipe', 'Painel da equipe'], ['membros', 'Membros'], ['membresia', 'Membresia'], ['checkin', 'Check-in dos cultos']] : []);
   // Menu do app oficial em blocos, para não virar uma lista comprida sem respiro.
   const teamGroupName = () => ({ secretaria: 'Secretaria da igreja', pastoral: 'Liderança Pastoral', admin: 'Administração' })[account() && account().papel] || 'Equipe da igreja';
-  const publicGroups = items => (g => account() && NibConta.equipe() ? [g[3]].concat(g.slice(0, 3), g.slice(4)) : g)([['Sua conta',['inicio','cadastro','entrar']],['Vida na igreja',['agenda','eventos','celulas','caderno']],['Igreja',['avisos','generosidade','informacoes']],[teamGroupName(),['equipe','membros','membresia','checkin']],['Ajude a melhorar',['sugestoes']]])
+  const publicGroups = items => (g => account() && NibConta.equipe() ? [g[3]].concat(g.slice(0, 3), g.slice(4)) : g)([['Sua conta',['inicio','cadastro','entrar']],['Vida na igreja',['presenca','agenda','eventos','celulas','caderno']],['Igreja',['avisos','generosidade','informacoes']],[teamGroupName(),['equipe','membros','membresia','checkin']],['Ajude a melhorar',['sugestoes']]])
     .map(([label,keys]) => [label, keys.map(k => items.find(([key]) => key === k)).filter(Boolean)]).filter(([,links]) => links.length);
   // Grupos de opções lado a lado (data-seg) no padrão do login: trilho cinza com pílula branca que desliza (pedido de Hilton, 06/11/2026).
   const segPrev = new Map();
@@ -56,6 +56,7 @@
   if (PUBLIC) { const t = document.querySelector('#drawer-title + p'); if (t) t.textContent = 'Sua vida na igreja'; const sb = document.querySelector('.sidebar-bottom small'); if (sb) sb.textContent = 'Ariquemes, RO'; }
   if (PUBLIC) state.prayers = []; // na versão oficial, só pedidos reais vindos do servidor
   if (PUBLIC) Object.assign(labels, {
+    presenca: ['PRESENÇA', 'Check-in', 'Registre sua presença na EBS e nos cultos, estando na igreja.'],
     inicio: ['BOAS-VINDAS', 'Que bom ter você na Nib!', 'Cultos, eventos, células e contribuições da Nova Igreja Batista em um só lugar.'],
     celulas: ['CAMINHAR JUNTOS', 'Células', 'Encontre uma célula perto de você e fale com o líder pelo WhatsApp.'],
     cadastro: ['MINHAS INFORMAÇÕES', 'Meu cadastro', 'Seus dados na igreja. Só você e a equipe da igreja veem.'],
@@ -81,7 +82,7 @@
   const button = (text, view, primary = false) => { const back = !primary && /^Voltar/.test(text); return `<button type="button" class="button ${primary ? 'action primary' : back ? 'button-go button-back' : 'button-go'}" data-view="${view}">${back ? backArrow : ''}<span>${text}</span>${primary || back ? '' : arrow}</button>`; };
   // Ícones reaproveitados da função icon() do painel; sem ícones nas ações.
   // Ícones: conjunto único em icons.js (NibIcons).
-  const iconAlias = { entrar: 'cadastro', equipe: 'relatorios', cadastros: 'solicitacoes', avisos: 'comunicados', checkin: 'recepcao' };
+  const iconAlias = { presenca: 'recepcao', entrar: 'cadastro', equipe: 'relatorios', cadastros: 'solicitacoes', avisos: 'comunicados', checkin: 'recepcao' };
   const navIcon = key => NibIcons.svg(iconAlias[key] || key);
   const events = [
     { name: 'Mulheres Virtuosas', image: 'assets/mulheres.webp', date: '30/10/2026', active: false },
@@ -533,24 +534,31 @@
   }
   function publicCheckin() {
     if (!PUBLIC || !account()) return '';
-    if (!state.ckLoading && (state.ckFor !== state.accountKey || Date.now() - (state.ckAt || 0) > 300000)) { state.ckAt = Date.now(); state.ckFor = state.accountKey; loadCheckin().then(() => { if (state.view === 'inicio' && state.ck && state.ck.culto) show('inicio', false, false); }); }
+    if (!state.ckLoading && (state.ckFor !== state.accountKey || Date.now() - (state.ckAt || 0) > 300000)) { state.ckAt = Date.now(); state.ckFor = state.accountKey; loadCheckin().then(() => { if ((state.view === 'inicio' && state.ck && state.ck.culto) || state.view === 'presenca') show(state.view, false, false); }); }
     if (state.ckKey !== state.accountKey) return '';
     const r = state.ck; if (!r || !r.culto) return '';
     const done = r.feito, c = r.culto;
-    return `<section class="checkin-card${done ? ' is-done' : ''}" aria-labelledby="checkin-title"><span class="checkin-icon">${ckIcon(done)}</span><div class="checkin-text"><span class="label">CHECK-IN DO CULTO</span><h2 id="checkin-title" tabindex="-1">${done ? 'Presença registrada' : escape(c.nome)}</h2><p>${done ? `Você está no ${escape(c.nome)}. Que bom ter você aqui!` : `Hoje, às ${escape(c.hora)}. Chegou? Registre sua presença.`}</p>${done ? '' : `<p class="checkin-note" id="checkin-msg">${state.ckMsg ? escape(state.ckMsg) : 'Usamos sua localização só para confirmar que você está na igreja. Ela não fica guardada.'}</p>`}</div>${done ? '' : `<button type="button" class="action primary" data-checkin-go>${state.ckBusy ? 'Confirmando' : 'Fazer check-in'}</button>`}</section>`;
+    return `<section class="checkin-card${done ? ' is-done' : ''}" aria-labelledby="checkin-title"><span class="checkin-icon">${ckIcon(done)}</span><div class="checkin-text"><span class="label">${/^EBS/.test(c.nome) ? 'CHECK-IN DA EBS' : 'CHECK-IN DO CULTO'}</span><h2 id="checkin-title" tabindex="-1">${done ? 'Presença registrada' : escape(c.nome)}</h2><p>${done ? `Você está ${escape(c.artigo || 'no')} ${escape(c.nome)}. Que bom ter você aqui!` : `Hoje, às ${escape(c.hora)}. Chegou? Registre sua presença.`}</p>${done ? '' : `<p class="checkin-note" id="checkin-msg">${state.ckMsg ? escape(state.ckMsg) : 'Usamos sua localização só para confirmar que você está na igreja. Ela não fica guardada.'}</p>`}</div>${done ? '' : `<button type="button" class="action primary" data-checkin-go>${state.ckBusy ? 'Confirmando' : 'Fazer check-in'}</button>`}</section>`;
+  }
+  // Tela "Check-in" do menu (v156): o cartão quando há encontro aberto; fora do horário, quando abre.
+  function presencaPage() {
+    const card = publicCheckin();
+    if (card) return card;
+    if (state.ckKey !== state.accountKey || state.ckLoading) return '<p class="event-empty">Carregando</p>';
+    return `<section class="box ck-info"><span class="label">FORA DO HORÁRIO</span><h2>O check-in abre 1 hora antes</h2><p>Ele aparece aqui e no Início de 1 hora antes até 2 horas depois de cada encontro:</p><ul class="ck-horarios"><li><strong>Domingo, 9h30</strong><span>EBS · Escola Bíblica de Sabedoria</span></li><li><strong>Domingo, 19h</strong><span>Noite de Glória</span></li><li><strong>Quinta, 19h30</strong><span>Culto da Fé</span></li></ul><p class="note">Na igreja, você também pode ler o QR Code do telão com a câmera do celular.</p></section>`;
   }
   // Posição atual do celular (resolve null se negar, demorar ou não tiver GPS).
   const posicao = (ms = 12000) => new Promise(res => { if (!navigator.geolocation) return res(null); navigator.geolocation.getCurrentPosition(p => res({ lat: p.coords.latitude, lng: p.coords.longitude, precisao: Math.round(p.coords.accuracy) }), () => res(null), { enableHighAccuracy: true, timeout: ms, maximumAge: 30000 }); });
   async function doCheckin(via, codigo) {
-    state.ckBusy = true; state.ckMsg = ''; if (state.view === 'inicio') show('inicio', false, false);
+    state.ckBusy = true; state.ckMsg = ''; if (state.view === 'inicio' || state.view === 'presenca') show(state.view, false, false);
     const pos = await posicao(via === 'qr' ? 7000 : 12000);
     try {
       if (via === 'local' && !pos) throw new Error('Não conseguimos sua localização. Permita o acesso à localização ou leia o QR Code do telão.');
       const r = await NibConta.checkin('fazer', Object.assign({ via, codigo: codigo || '' }, pos || {}));
       state.ck = { culto: r.culto, feito: true, local: true }; state.ckKey = state.accountKey;
-      announce(`Presença registrada no ${r.culto.nome}. Que bom ter você aqui!`, 'success', false);
+      announce(`Presença registrada ${r.culto.artigo || 'no'} ${r.culto.nome}. Que bom ter você aqui!`, 'success', false);
     } catch (e) { state.ckMsg = e.message; if (via === 'qr') announce(e.message, 'error', false); }
-    finally { state.ckBusy = false; show('inicio', false, false); }
+    finally { state.ckBusy = false; show(state.view === 'presenca' ? 'presenca' : 'inicio', false, false); }
   }
   // QR Code do telão: /app/?checkin=CODIGO. Guarda o código até a pessoa entrar na conta.
   try { const qc = new URLSearchParams(location.search).get('checkin'); if (qc && /^[a-f0-9]{24}$/.test(qc)) { sessionStorage.setItem('nib-checkin-qr', qc); const u = new URL(location.href); u.searchParams.delete('checkin'); history.replaceState(null, '', u.pathname + u.search + u.hash); } } catch (_) {}
@@ -626,7 +634,7 @@
       if (nav.dataset.context !== context) {
         if (nav.id === 'navigation') { const link = ([key,label]) => `<a href="#${key}" data-view="${key}" aria-label="${label}">${navIcon(key)}<span>${label}</span></a>`; nav.innerHTML = PUBLIC && !isManagement() ? publicGroups(items).map(([label,links], i) => `<div class="nav-group"><span class="nav-group-label">${label}</span>${links.map(link).join('')}</div>${i === 0 ? viewAsSelect('lateral') : ''}`).join('') : items.map(link).join(''); }
         else {
-          const descriptions = {...admin.descriptions, inicio:'Seu ponto de partida',cadastro: PUBLIC ? 'Seus dados na igreja' : 'Dados e atualizações',eventos:'Encontros e inscrições',generosidade:'Dízimos, ofertas e campanhas',historico:'Seu histórico financeiro',celulas: PUBLIC ? 'Encontre uma célula' : 'Acesso à plataforma', entrar:'Sua conta na Nib', equipe:'Números e atalhos da equipe',membros:'Lista, ficha e exportação',membresia:'Integração e apresentação',cadastros:'Confirmar membros',checkin:'Presença nos cultos',sugestoes:'Ideias e melhorias',informacoes: PUBLIC ? 'Horários, endereço e liderança' : 'Programação e avisos',gestao:'Integração e apresentações',agenda:'Cultos, eventos e festividades',caderno:'Ore com a comunidade',avisos:'Comunicados para toda a igreja'};
+          const descriptions = {...admin.descriptions, inicio:'Seu ponto de partida',cadastro: PUBLIC ? 'Seus dados na igreja' : 'Dados e atualizações',eventos:'Encontros e inscrições',generosidade:'Dízimos, ofertas e campanhas',historico:'Seu histórico financeiro',celulas: PUBLIC ? 'Encontre uma célula' : 'Acesso à plataforma', entrar:'Sua conta na Nib', equipe:'Números e atalhos da equipe',membros:'Lista, ficha e exportação',membresia:'Integração e apresentação',presenca:'Presença na EBS e nos cultos',cadastros:'Confirmar membros',checkin:'Presença nos cultos',sugestoes:'Ideias e melhorias',informacoes: PUBLIC ? 'Horários, endereço e liderança' : 'Programação e avisos',gestao:'Integração e apresentações',agenda:'Cultos, eventos e festividades',caderno:'Ore com a comunidade',avisos:'Comunicados para toda a igreja'};
           const groups = isManagement() ? [[admin.profiles[state.context].name,items]] : PUBLIC ? publicGroups(items) : [['Seu acesso',items.filter(([key])=>['inicio','cadastro'].includes(key))],['Vida na igreja',items.filter(([key])=>['agenda','eventos','generosidade','historico','celulas','informacoes','caderno'].includes(key))]];
           nav.innerHTML = groups.map(([label,links],index) => `<section class="menu-group" aria-labelledby="menu-group-${index}"><h3 id="menu-group-${index}">${label}</h3><div class="menu-grid">${links.map(([key,title])=>`<a href="#${key}" data-view="${key}" aria-label="${title}"><span class="menu-icon">${navIcon(key)}</span><strong>${title}</strong><span class="menu-description">${descriptions[key]}</span><span class="mobile-current" hidden>Atual</span></a>`).join('')}</div></section>`).join('');
         }
@@ -695,6 +703,7 @@
       caderno: () => notebookPage(),
       avisos: () => avisosPage(),
       sugestoes: () => sugestoesPage(),
+      presenca: () => presencaPage(),
       checkin: () => checkinPanel(),
       cadastros: () => teamPage(),
       equipe: () => teamPanel(),

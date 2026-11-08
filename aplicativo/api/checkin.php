@@ -12,8 +12,12 @@ header('Referrer-Policy: same-origin');
 header('Cache-Control: no-store');
 require __DIR__ . '/conta-lib.php';
 
-// Cultos fixos da semana (iguais ao site): dia da semana (0 = domingo) => [hora, nome].
-const NIB_CULTOS = [0 => ['19:00', 'Noite de Glória'], 4 => ['19:30', 'Culto da Fé']];
+// Encontros fixos da semana com check-in (iguais à agenda do app): dia da semana (0 = domingo) => [[hora, nome, artigo], ...].
+// v156: EBS de domingo de manhã entrou (Hilton, 08/11/2026). As janelas do mesmo dia não se sobrepõem.
+const NIB_CULTOS = [
+  0 => [['09:30', 'EBS · Escola Bíblica de Sabedoria', 'na'], ['19:00', 'Noite de Glória', 'na']],
+  4 => [['19:30', 'Culto da Fé', 'no']],
+];
 const NIB_CHECKIN_ANTES = 60, NIB_CHECKIN_DEPOIS = 120; // minutos
 const NIB_CHECKIN_RAIO = 150;  // metros a partir do local da igreja
 const NIB_CHECKIN_LONGE = 3000; // pelo QR, acima disso (com localização informada) não vale
@@ -22,11 +26,12 @@ function nib_tz(): DateTimeZone { return new DateTimeZone('America/Porto_Velho')
 // Culto com check-in aberto agora (ou null).
 function nib_culto_aberto(?DateTimeImmutable $agora = null): ?array {
   $agora ??= new DateTimeImmutable('now', nib_tz());
-  $c = NIB_CULTOS[(int)$agora->format('w')] ?? null; if (!$c) return null;
-  $inicio = new DateTimeImmutable($agora->format('Y-m-d') . ' ' . $c[0], nib_tz());
-  $abre = $inicio->modify('-' . NIB_CHECKIN_ANTES . ' minutes'); $fecha = $inicio->modify('+' . NIB_CHECKIN_DEPOIS . ' minutes');
-  if ($agora < $abre || $agora > $fecha) return null;
-  return ['dia' => $agora->format('Y-m-d'), 'hora' => $c[0], 'nome' => $c[1]];
+  foreach (NIB_CULTOS[(int)$agora->format('w')] ?? [] as $c) {
+    $inicio = new DateTimeImmutable($agora->format('Y-m-d') . ' ' . $c[0], nib_tz());
+    $abre = $inicio->modify('-' . NIB_CHECKIN_ANTES . ' minutes'); $fecha = $inicio->modify('+' . NIB_CHECKIN_DEPOIS . ' minutes');
+    if ($agora >= $abre && $agora <= $fecha) return ['dia' => $agora->format('Y-m-d'), 'hora' => $c[0], 'nome' => $c[1], 'artigo' => $c[2] ?? 'no'];
+  }
+  return null;
 }
 function nib_ajuste(PDO $db, string $k): ?string { $q = $db->prepare('SELECT valor FROM nib_ajustes WHERE chave = ?'); $q->execute([$k]); $v = $q->fetchColumn(); return $v === false ? null : (string)$v; }
 function nib_ajuste_set(PDO $db, string $k, string $v): void { $db->prepare('INSERT INTO nib_ajustes (chave, valor) VALUES (?, ?) ON DUPLICATE KEY UPDATE valor = VALUES(valor)')->execute([$k, $v]); }
