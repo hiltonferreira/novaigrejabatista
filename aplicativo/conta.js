@@ -76,6 +76,15 @@
       if (!r.ok || !d || !d.ok) { const e = new Error((d && d.erro) || 'Falha no envio.'); e.status = r.status; e.recebido = d && typeof d.recebido === 'number' ? d.recebido : null; throw e; }
       return d;
     },
+    // Capa da pílula (imagem em binário). Sem imagem, volta para a miniatura automática do YouTube.
+    pilulaCapa: async (id, imagem) => {
+      let r, d;
+      try { r = await fetch('api/pilulas.php?acao=capa&id=' + id + (imagem ? '' : '&remover=1'), { method: 'POST', credentials: 'same-origin', cache: 'no-store', headers: { 'X-Nib': '1', 'Content-Type': imagem ? (imagem.type || 'image/jpeg') : 'application/octet-stream' }, body: imagem || '' }); }
+      catch (_) { throw new Error('Sem conexão. Confira a internet.'); }
+      try { d = await r.json(); } catch (_) { d = null; }
+      if (!r.ok || !d || !d.ok) throw new Error((d && d.erro) || 'Não foi possível salvar a capa.');
+      return d;
+    },
     pushChave: async () => (await api('push-chave')).chave,
     push: async (acao, body) => api(acao, body),
     pushEstado: async endpoint => api('push-estado&endpoint=' + encodeURIComponent(endpoint))

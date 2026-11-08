@@ -25,11 +25,11 @@ function nib_db(): PDO {
   return $db;
 }
 // Cria as tabelas na primeira vez (e só acrescenta o que faltar nas próximas versões).
-const NIB_MIGRACAO = 11;
+const NIB_MIGRACAO = 12;
 function nib_migrar(PDO $db): void {
   $db->exec("CREATE TABLE IF NOT EXISTS nib_versao (v INT NOT NULL) ENGINE=InnoDB");
   $v = (int)($db->query('SELECT MAX(v) FROM nib_versao')->fetchColumn() ?: 0);
-  if ($v >= NIB_MIGRACAO) return; // ao criar a v12, subir NIB_MIGRACAO
+  if ($v >= NIB_MIGRACAO) return; // ao criar a v13, subir NIB_MIGRACAO
   // Uma migração por vez: pedidos simultâneos esperam a primeira terminar (evita versões repetidas).
   if ((int)$db->query("SELECT GET_LOCK('nib_migrar', 15)")->fetchColumn() !== 1) throw new RuntimeException('migração em andamento por outro pedido');
   try { nib_migrar_passos($db, (int)($db->query('SELECT MAX(v) FROM nib_versao')->fetchColumn() ?: 0)); }
@@ -136,6 +136,13 @@ function nib_migrar_passos(PDO $db, int $v): void {
       KEY ix_publicado (estado, publicado_em)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
     $db->exec('INSERT INTO nib_versao (v) VALUES (11)');
+  }
+  if ($v < 12) {
+    // v12: capa escolhida pelo pastor (foto do celular ou quadro do vídeo). Fica numa tabela à parte para a lista não carregar as imagens.
+    $tem = $db->query("SHOW COLUMNS FROM nib_pilulas LIKE 'capa_em'")->fetch();
+    if (!$tem) $db->exec("ALTER TABLE nib_pilulas ADD COLUMN capa_em INT UNSIGNED NOT NULL DEFAULT 0 AFTER vertical");
+    $db->exec("CREATE TABLE IF NOT EXISTS nib_pilula_capas (pilula_id INT UNSIGNED PRIMARY KEY, tipo VARCHAR(20) NOT NULL, imagem MEDIUMBLOB NOT NULL) ENGINE=InnoDB");
+    $db->exec('INSERT INTO nib_versao (v) VALUES (12)');
   }
 }
 

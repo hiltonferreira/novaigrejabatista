@@ -106,6 +106,17 @@ function nib_yt_resposta_envio(int $code, string $b, array $h): array {
   throw new RuntimeException('youtube envio: ' . $code);
 }
 
+// Apaga um vídeo do canal. Devolve true se apagou ou se ele já não existia.
+function nib_yt_apagar(string $video): bool {
+  if (!preg_match('/^[\w-]{6,20}$/', $video)) return true;
+  try {
+    [$code] = nib_yt_http('DELETE', nib_yt_url('api') . '/youtube/v3/videos?' . http_build_query(['id' => $video]), ['Authorization: Bearer ' . nib_yt_token()]);
+    if ($code === 204 || $code === 200 || $code === 404) return true;
+    error_log("youtube apagar $video: $code");
+  } catch (Throwable $e) { error_log('youtube apagar: ' . $e->getMessage()); }
+  return false;
+}
+
 // Duração ISO 8601 (PT1H2M3S) em segundos.
 function nib_yt_duracao(string $iso): int {
   return preg_match('/^P(?:\d+D)?T?(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?$/', $iso, $m) ? (int)($m[1] ?? 0) * 3600 + (int)($m[2] ?? 0) * 60 + (int)($m[3] ?? 0) : 0;
