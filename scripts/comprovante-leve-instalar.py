@@ -29,11 +29,12 @@ def main():
     if not os.path.isfile(f): sys.exit('NAO_ENCONTRADO: ' + f)
     s = open(f, encoding='utf-8').read()
     if 'comprovante-leve.js' in s: print('JA_TEM: ' + p); continue
-    if 'name="receipt"' not in s and "name='receipt'" not in s: sys.exit('SEM_CAMPO_RECEIPT: ' + p)
+    if 'name="receipt"' not in s and "name='receipt'" not in s: print('PULADO_SEM_CAMPO_RECEIPT: ' + p + ' (inscrições encerradas, nada a fazer)'); continue
     n = s.count('</body>')
     if n != 1: sys.exit(f'BODY_{n}x: ' + p)
     novos[f] = s.replace('</body>', LINHA + '</body>')
     print('CONFERIDO: ' + p)
+  if not novos: sys.exit('NADA_A_FAZER')
   if not apply: print('Nada foi alterado. Rode de novo com --apply para gravar.'); return
   bak = os.path.expanduser('~/nib-manutencao/comprovante-leve-' + time.strftime('%Y%m%d-%H%M%S'))
   os.makedirs(bak, mode=0o700)
