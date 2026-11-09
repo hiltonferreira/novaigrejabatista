@@ -36,7 +36,7 @@ Estes arquivos só redirecionam para o endereço atual. Ficam porque os links j�
 
 As versões `.webp` substituíram várias imagens em 06/11/2026. Os originais `.jpg`/`.png` continuam no repositório e no servidor. O `index.html` de produção e os JSON privados do painel (fora do Git) podem ainda apontar para eles. Não apague sem antes procurar o nome do arquivo em produção (`public_html` e `nib-inscricoes-privado`).
 
-Os únicos candidatos claros a remoção são as versões antigas da imagem de compartilhamento do painel: `assets/gestao-inscricoes-compartilhar-v411.png`, `-v412.png` e `-v415.png`, cerca de 3,2 MB no total. A versão atual é a `-v416`.
+As versões antigas da imagem de compartilhamento do painel (`-v411`, `-v412` e `-v415`, cerca de 3,2 MB) saíram do repositório em 09/11/2026, depois que o grep em produção não achou referência a elas. A versão atual é a `-v416`.
 
 ## Fora do Git
 
@@ -62,4 +62,4 @@ Os únicos candidatos claros a remoção são as versões antigas da imagem de c
 2. Ao terminar, apague o `source.tgz` (cópia inteira do repositório, cerca de 56 MB) e qualquer arquivo extraído para montar o pacote.
 3. Guarde só o backup dos arquivos substituídos e o dump do banco (`antes.sql.gz`).
 4. Mantenha os backups das 3 publicações mais recentes do app e da última de cada outra área (site, painel, NXT). Apague os mais antigos depois que a publicação seguinte for confirmada.
-5. O backup completo de 20/10/2026 (`nib-manutencao/auditoria-2026-10-20`) fica como referência até existir outro backup completo mais novo.
+5. O backup completo de referência é `nib-manutencao/backup-completo-20261109` (site, dados privados e dump do banco). O dump é feito com `scripts/dump-banco.php`, porque o PHP do servidor não chama o `mysqldump`. Depois da limpeza de 09/11/2026, a pasta inicial ficou com 163 MB.
