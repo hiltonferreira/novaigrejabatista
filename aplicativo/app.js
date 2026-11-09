@@ -3,83 +3,210 @@
   const root = document.getElementById('nib-proposta');
   const content = document.getElementById('content');
   const feedback = document.getElementById('feedback');
+  const srStatus = document.getElementById('sr-status') || feedback;
   // Estado fictício em memória: nunca importar participantes ou dados reais aqui.
+  // Versão pública (endereço oficial): só informações reais da igreja, sem login e sem dados de exemplo.
+  // Onde vale cada versão: no endereço oficial abre a pública (a demonstração fica em /app/?demo);
+  // fora dele (link de apresentação) abre a demonstração, a menos que a página peça data-mode="publico".
+  const official = /(^|\.)novaigrejabatista\.com\.br$/.test(location.hostname);
+  const PUBLIC = document.documentElement.dataset.mode === 'publico' || (official && !/[?&]demo\b/.test(location.search));
+  root.classList.toggle('is-public', PUBLIC);
+  const publicViews = ['inicio','agenda','eventos','generosidade','celulas','caderno','informacoes','avisos','sugestoes'];
+  const account = () => (PUBLIC && window.NibConta) ? NibConta.pessoa() : null;
+  const allowedPublic = () => publicViews.concat(account() ? ['cadastro', 'presenca', 'pilulas'] : [], account() && NibConta.equipe() ? ['equipe', 'membros', 'membresia', 'cadastros', 'checkin'] : []);
+  const publicNav = () => [['inicio', 'Início'], ['agenda', 'Agenda'], ['eventos', 'Eventos'], ['generosidade', 'Generosidade'], ['celulas', 'Células'], ['caderno', 'Caderno de oração'], ['avisos', 'Avisos da igreja'], ['informacoes', 'Informações'], ['sugestoes', 'Sugestões para o app']]
+    .concat(account() ? [['cadastro', 'Meu cadastro'], ['presenca', 'Check-in'], ['pilulas', 'Pílulas de Sabedoria']] : [['entrar', 'Entrar ou criar cadastro']], account() && NibConta.equipe() ? [['equipe', 'Painel da equipe'], ['membros', 'Membros'], ['membresia', 'Membresia'], ['checkin', 'Check-in dos cultos']] : []);
+  // Menu do app oficial em blocos, para não virar uma lista comprida sem respiro.
+  const teamGroupName = () => ({ secretaria: 'Secretaria da igreja', pastoral: 'Liderança Pastoral', admin: 'Administração' })[account() && account().papel] || 'Equipe da igreja';
+  const publicGroups = items => (g => account() && NibConta.equipe() ? [g[3]].concat(g.slice(0, 3), g.slice(4)) : g)([['Sua conta',['inicio','cadastro','entrar']],['Vida na igreja',['presenca','pilulas','agenda','eventos','celulas','caderno']],['Igreja',['avisos','generosidade','informacoes']],[teamGroupName(),['equipe','membros','membresia','checkin']],['Ajude a melhorar',['sugestoes']]])
+    .map(([label,keys]) => [label, keys.map(k => items.find(([key]) => key === k)).filter(Boolean)]).filter(([,links]) => links.length);
+  // Grupos de opções lado a lado (data-seg) no padrão do login: trilho cinza com pílula branca que desliza (pedido de Hilton, 06/11/2026).
+  const segPrev = new Map();
+  function segify(scope) {
+    scope.querySelectorAll('[data-seg]').forEach(g => {
+      const btns = [...g.querySelectorAll(':scope > button')]; if (!btns.length) return;
+      const i = Math.max(0, btns.findIndex(b => b.classList.contains('is-active') || b.getAttribute('aria-pressed') === 'true'));
+      const key = g.dataset.seg, from = segPrev.has(key) ? segPrev.get(key) : i; segPrev.set(key, i);
+      g.classList.add('seg', 'seg-auto'); g.style.setProperty('--n', btns.length); g.style.setProperty('--i', i); g.style.setProperty('--from', from);
+      if (!g.querySelector(':scope > .seg-pill')) { const pill = document.createElement('span'); pill.className = 'seg-pill' + (from !== i ? ' is-moving' : ''); pill.setAttribute('aria-hidden', 'true'); g.prepend(pill); }
+    });
+  }
   const viewHistory = [];
   let notebookSequence = 0;
   const demoPrayers = () => [
     {id:'exemplo-1',author:'João Exemplo',name:'Pela nossa caminhada em família',reason:'Pedido fictício para demonstrar como a comunidade pode se unir em oração.',answered:false,supporters:0,supported:false,own:false},
-    {id:'exemplo-2',author:'Ana Exemplo',name:'Gratidão por uma nova etapa',reason:'Exemplo de oração marcada como atendida por quem publicou.',answered:true,supporters:0,supported:false,own:true}
+    {id:'exemplo-3',author:'Marcos Exemplo',name:'Por um novo emprego',reason:'Pedido fictício: oração por uma porta de trabalho para a família.',answered:false,supporters:3,supported:false,own:false},
+    {id:'exemplo-2',author:'Jéssica Exemplo',name:'Gratidão por uma nova etapa',reason:'Exemplo de oração marcada como atendida por quem publicou.',answered:true,supporters:0,supported:false,own:true}
   ];
-  const state = { context: 'membro', view: 'inicio', request: null, presented: null, gift: 'Dízimo', calendarMonth: NibDaily.dayKey(new Date()).slice(0,7), calendarDay: NibDaily.dayKey(new Date()), prayers: demoPrayers() };
-  const navigation = [['inicio', 'Início'], ['cadastro', 'Meu cadastro'], ['eventos', 'Eventos'], ['celulas', 'Células'], ['generosidade', 'Generosidade'], ['informacoes', 'Informações'], ['agenda', 'Agenda'], ['caderno', 'Caderno de oração']];
-  const labels = { caderno: ['VIDA DE ORAÇÃO', 'Caderno de oração', 'Uma comunidade que cuida e ora em conjunto.'], agenda: ['VIDA NA IGREJA', 'Agenda da igreja', 'Cultos, encontros e próximos eventos em um só lugar.'], inicio: ['SEJA BEM-VINDA', 'Olá, Ana! Você está na plataforma Nib.', 'Acesse seu cadastro, encontre eventos, contribua e acompanhe a vida da igreja.'], cadastro: ['MINHAS INFORMAÇÕES', 'Meu cadastro', 'Consulte seus dados e encaminhe uma atualização à equipe.'], eventos: ['VIDA EM COMUNIDADE', 'Eventos e inscrições', 'Encontre os próximos encontros da igreja.'], celulas: ['CAMINHAR JUNTOS', 'Células', 'Acesse a plataforma de células adotada pela igreja.'], generosidade: ['CONTRIBUIR', 'Generosidade', 'Dízimos, ofertas e campanhas em um só lugar.'], informacoes: ['FIQUE POR PERTO', 'Informações da igreja', 'Programação, endereço e canais da comunidade.'], gestao: ['ADMINISTRAÇÃO', 'Integração e membresia', 'Acompanhe o formulário, a reunião e a apresentação no culto.'], confirmar: ['MEMBRESIA', 'Registrar apresentação', 'O registro documenta a apresentação já realizada no culto.'] };
+  // Histórico fictício: dízimo mensal, algumas ofertas e a campanha da obra.
+  function demoHistory() {
+    const h = [], today = NibDaily.dayKey(new Date());
+    for (let y = 2025; y <= 2026; y++) for (let m = 1; m <= 12; m++) {
+      const k = `${y}-${String(m).padStart(2, '0')}`;
+      if (k < '2025-03' || k + '-28' > today) continue;
+      h.push({ day: k + '-05', type: 'Dízimo', amount: 300, status: 'ok' });
+      if (m % 3 === 0) h.push({ day: k + '-19', type: 'Oferta', amount: 50, status: 'ok' });
+      if ((y === 2026 && [4, 8].includes(m)) || (y === 2025 && m === 11)) h.push({ day: k + '-12', type: 'Campanha', amount: 100, status: 'ok' });
+    }
+    return h;
+  }
+  const state = { member: { first: 'Jéssica', full: 'Jéssica Exemplo', email: 'jessica@example.com', gender: 'f' }, context: 'membro', view: 'inicio', request: null, presented: null, gift: 'Dízimo', calendarMonth: NibDaily.dayKey(new Date()).slice(0,7), calendarDay: NibDaily.dayKey(new Date()), prayers: demoPrayers(), history: demoHistory(), historyYear: NibDaily.dayKey(new Date()).slice(0,4) };
+  const navigation = PUBLIC ? [['inicio', 'Início'], ['agenda', 'Agenda'], ['eventos', 'Eventos'], ['generosidade', 'Generosidade'], ['celulas', 'Células'], ['informacoes', 'Informações']] : [['inicio', 'Início'], ['cadastro', 'Meu cadastro'], ['eventos', 'Eventos'], ['celulas', 'Células'], ['generosidade', 'Generosidade'], ['historico', 'Minhas contribuições'], ['informacoes', 'Informações'], ['agenda', 'Agenda'], ['caderno', 'Caderno de oração']];
+  const labels = { pilulas: ['PALAVRA PARA MEDITAR', 'Pílulas de Sabedoria', 'Vídeos curtos do pastor para meditar na Palavra durante a semana.'], avisos: ['MURAL DA IGREJA', 'Avisos da igreja', 'Comunicados da Secretaria e da Liderança Pastoral para toda a igreja.'], caderno: ['VIDA DE ORAÇÃO', 'Caderno de oração', 'Uma comunidade que cuida e ora em conjunto.'], agenda: ['VIDA NA IGREJA', 'Agenda da igreja', 'Cultos, encontros e próximos eventos em um só lugar.'], inicio: ['BOAS-VINDAS', 'Olá, Jéssica! Você está na plataforma Nib.', 'Acesse seu cadastro, encontre eventos, contribua e acompanhe a vida da igreja.'], cadastro: ['MINHAS INFORMAÇÕES', 'Meu cadastro', 'Consulte seus dados e encaminhe uma atualização à equipe.'], eventos: ['VIDA EM COMUNIDADE', 'Eventos e inscrições', 'Encontre os próximos encontros da igreja.'], celulas: ['CAMINHAR JUNTOS', 'Células', 'Acesse a plataforma de células adotada pela igreja.'], generosidade: ['CONTRIBUIR', 'Generosidade', 'Dízimos, ofertas e campanhas em um só lugar.'], historico: ['MEU HISTÓRICO', 'Minhas contribuições', 'Tudo o que você contribuiu, ano a ano. Só você vê.'], informacoes: ['FIQUE POR PERTO', 'Informações da igreja', 'Programação, endereço e canais da comunidade.'], gestao: ['ADMINISTRAÇÃO', 'Integração e membresia', 'Acompanhe o formulário, a reunião e a apresentação no culto.'], confirmar: ['MEMBRESIA', 'Registrar apresentação', 'O registro documenta a apresentação já realizada no culto.'] };
+  if (PUBLIC) { const t = document.querySelector('#drawer-title + p'); if (t) t.textContent = 'Sua vida na igreja'; const sb = document.querySelector('.sidebar-bottom small'); if (sb) sb.textContent = 'Ariquemes, RO'; }
+  if (PUBLIC) state.prayers = []; // na versão oficial, só pedidos reais vindos do servidor
+  if (PUBLIC) Object.assign(labels, {
+    presenca: ['PRESENÇA', 'Check-in', 'Registre sua presença na EBS e nos cultos, estando na igreja.'],
+    inicio: ['BOAS-VINDAS', 'Que bom ter você na Nib!', 'Cultos, eventos, células e contribuições da Nova Igreja Batista em um só lugar.'],
+    celulas: ['CAMINHAR JUNTOS', 'Células', 'Encontre uma célula perto de você e fale com o líder pelo WhatsApp.'],
+    cadastro: ['MINHAS INFORMAÇÕES', 'Meu cadastro', 'Seus dados na igreja. Só você e a equipe da igreja veem.'],
+    cadastros: ['EQUIPE DA IGREJA', 'Cadastros', 'Quem criou conta no app. Confirme quem é membro da igreja.'],
+    eventos: ['VIDA EM COMUNIDADE', 'Eventos', 'Os próximos encontros da igreja e as inscrições abertas.'],
+    informacoes: ['FIQUE POR PERTO', 'Informações da igreja', 'Horários dos cultos, endereço, liderança e canais oficiais.'],
+    equipe: ['EQUIPE DA IGREJA', 'Painel da equipe', 'Números reais do app, atalhos e o que precisa de atenção.'],
+    membresia: ['EQUIPE DA IGREJA', 'Membresia', 'Caminho até a membresia: formulário, reunião e apresentação no culto.'],
+    membros: ['EQUIPE DA IGREJA', 'Membros', 'Lista completa, ficha de cada pessoa e exportação.'],
+    checkin: ['EQUIPE DA IGREJA', 'Check-in dos cultos', 'QR Code do telão, local da igreja e quem registrou presença.'],
+    sugestoes: ['SUA OPINIÃO', 'Sugestões para o app', 'Conte o que podemos melhorar no app: ideias, problemas ou o que você gostou.']
+  });
+  // Concordância com o perfil: g('obrigado', 'obrigada').
+  const g = (male, female) => state.member.gender === 'm' ? male : female;
   const escape = value => String(value).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-  const button = (text, view, primary = false) => `<button type="button" class="button ${primary ? 'action primary' : ''}" data-view="${view}">${text}</button>`;
+  const properName = n => String(n).trim().split(/\s+/).map((w, i) => { w = w.toLocaleLowerCase('pt-BR'); return i > 0 && ['da','das','de','do','dos','e'].includes(w) ? w : w.split('-').map(x => x.charAt(0).toLocaleUpperCase('pt-BR') + x.slice(1)).join('-'); }).join(' ');
+  const fmtPhone = d => { d = String(d || '').replace(/\D/g, ''); return d.length === 11 ? `(${d.slice(0,2)}) ${d.slice(2,3)} ${d.slice(3,7)}-${d.slice(7)}` : d.length === 10 ? `(${d.slice(0,2)}) ${d.slice(2,6)}-${d.slice(6)}` : d; };
+  const fmtCpf = c => { const d = String(c || '').replace(/\D/g, ''); return d.length === 11 ? `${d.slice(0,3)}.${d.slice(3,6)}.${d.slice(6,9)}-${d.slice(9)}` : d; };
+  const cpfOk = c => { if (!/^\d{11}$/.test(c) || /^(\d)\1{10}$/.test(c)) return false; for (let t = 9; t < 11; t++) { let s = 0; for (let i = 0; i < t; i++) s += +c[i] * (t + 1 - i); if (+c[t] !== ((10 * s) % 11) % 10) return false; } return true; };
+  const fmtDay = s => s ? String(s).slice(0,10).split('-').reverse().join('/') : '';
+  const arrow = '<svg class="button-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14 M13 6l6 6-6 6"/></svg>';
+  const backArrow = '<svg class="back-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5 M11 6l-6 6 6 6"/></svg>';
+  const button = (text, view, primary = false) => { const back = !primary && /^Voltar/.test(text); return `<button type="button" class="button ${primary ? 'action primary' : back ? 'button-go button-back' : 'button-go'}" data-view="${view}">${back ? backArrow : ''}<span>${text}</span>${primary || back ? '' : arrow}</button>`; };
   // Ícones reaproveitados da função icon() do painel; sem ícones nas ações.
-  const iconPaths = { heart: 'M12 20s-8-4.7-8-10a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 5.3-8 10-8 10z', user: 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8z M4 21c0-4 4-6 8-6s8 2 8 6', grid: 'M3 3h7v7H3z M14 3h7v7h-7z M3 14h7v7H3z M14 14h7v7h-7z', calendar: 'M4 5h16v16H4z M8 3v4 M16 3v4 M4 11h16', receipt: 'M6 3h12v18l-3-2-3 2-3-2-3 2z M9 8h6 M9 12h6', archive: 'M3 4h18v5H3z M5 9v12h14V9 M10 13h4' };
-  const navIcon = key => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${iconPaths[({ inicio: 'grid', cadastro: 'user', eventos: 'calendar', celulas: 'grid', generosidade: 'heart', informacoes: 'archive', gestao: 'grid', agenda: 'calendar', oracao: 'heart', caderno: 'receipt' })[key]]}"/></svg>`;
+  // Ícones: conjunto único em icons.js (NibIcons).
+  const iconAlias = { presenca: 'recepcao', entrar: 'cadastro', equipe: 'relatorios', cadastros: 'solicitacoes', avisos: 'comunicados', checkin: 'recepcao' };
+  const navIcon = key => NibIcons.svg(iconAlias[key] || key);
   const events = [
     { name: 'Mulheres Virtuosas', image: 'assets/mulheres.webp', date: '30/10/2026', active: false },
-    { name: 'NXT CAMP', image: 'assets/nxt.png', date: '21/11/2026', active: true },
+    { name: 'NXT CAMP', image: 'assets/nxt.webp', date: '21/11/2026', active: true },
     { name: 'Jornada DNA', image: 'assets/jornada.webp', date: '25/10/2026', active: false }
   ];
-  const eventCards = (compact = false) => `<div class="cards ${compact ? 'home-events' : ''}">${[...events].filter(e => !compact || e.active).sort((a,b) => Number(b.active) - Number(a.active)).map(e => `<article class="event ${e.name === 'Mulheres Virtuosas' ? 'event-mulheres-virtuosas' : ''} ${e.active ? '' : 'event-ended'}"><div class="event-cover"><img src="${e.image}" alt="${e.name}" width="800" height="400"></div><div class="event-content"><div class="event-top"><span class="tag ${e.active ? 'status-active' : 'status-ended'}">${e.active ? 'Ativo' : 'Encerrado'}</span><time class="event-date">${e.date}</time></div><${compact ? 'h3' : 'h2'}>${e.name}</${compact ? 'h3' : 'h2'}><p>${e.active ? 'Conheça o encontro e as informações do evento.' : 'Evento realizado. Consulte as informações.'}</p><button type="button" class="button primary" aria-label="Ver informações: ${e.name}" data-message="${e.name}: catálogo demonstrativo. A integração com as inscrições ainda será conectada; nenhum cadastro ou pagamento é realizado aqui.">Ver informações</button></div></article>`).join('')}</div>`;
-  const isManagement = () => ['secretaria', 'pastoral'].includes(state.context);
-  const barPaths = {
-    inicio: 'M3 11l9-8 9 8 M5 10v10h5v-6h4v6h5V10',
-    agenda: iconPaths.calendar,
-    eventos: 'M3 6h18v4a2 2 0 0 0 0 4v4H3v-4a2 2 0 0 0 0-4z M15 6v2 M15 11v2 M15 16v2',
-    generosidade: 'M12 20s-8-4.7-8-10a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 5.3-8 10-8 10z',
-    celulas: iconPaths.grid,
-    cadastro: 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8z M4 21c0-4 4-6 8-6s8 2 8 6',
-    mais: 'M4 7h16 M4 12h16 M4 17h16'
-  };
-  const barFilledPaths = {
-    inicio: 'M12 3 2 11h3v10h5v-7h4v7h5V11h3Z',
-    agenda: 'M7 2h2v3h6V2h2v3h2a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h2Zm-2 9v9h14v-9Zm2 2h3v3H7Zm5 0h3v3h-3Z',
-    eventos: 'M2 5h20v5a2 2 0 0 0 0 4v5H2v-5a2 2 0 0 0 0-4Zm12 2v2h2V7Zm0 4v2h2v-2Zm0 4v2h2v-2Z',
-    generosidade: barPaths.generosidade,
-    cadastro: 'M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm-9 9a9 7 0 0 1 18 0v1H3Z',
-    celulas: 'M3 3h8v8H3Zm10 0h8v8h-8ZM3 13h8v8H3Zm10 0h8v8h-8Z'
-  };
-  const barIcon = (key, selected = false) => selected
-    ? `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="${barFilledPaths[key]}"/></svg>`
-    : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${barPaths[key]}"/></svg>`;
+  const demoEventCards = (compact = false) => `<div class="cards ${compact ? 'home-events' : ''}">${[...events].filter(e => !compact || e.active).sort((a,b) => Number(b.active) - Number(a.active)).map(e => `<article class="event ${e.name === 'Mulheres Virtuosas' ? 'event-mulheres-virtuosas' : ''} ${e.active ? '' : 'event-ended'}"><div class="event-cover"><img src="${e.image}" alt="${e.name}" width="800" height="400"></div><div class="event-content"><div class="event-top"><span class="tag ${e.active ? 'status-active' : 'status-ended'}">${e.active ? 'Ativo' : 'Encerrado'}</span><time class="event-date">${e.date}</time></div><${compact ? 'h3' : 'h2'}>${e.name}</${compact ? 'h3' : 'h2'}><p>${e.active ? 'Conheça o encontro e as informações do evento.' : 'Evento realizado. Consulte as informações.'}</p><button type="button" class="button primary" aria-label="Ver informações: ${e.name}" data-message="${e.name}: catálogo demonstrativo. A integração com as inscrições ainda será conectada; nenhum cadastro ou pagamento é realizado aqui.">Ver informações</button></div></article>`).join('')}</div>`;
+  // Eventos do painel de eventos do site (NibSite). Antes de carregar, usa a lista conhecida.
+  // Banners que o app já traz em WebP leve (e guarda no celular): evita baixar o PNG grande do site (2,5 MB no NXT CAMP).
+  const localBanners = { 'NXT CAMP': 'assets/nxt.webp', 'Mulheres Virtuosas': 'assets/mulheres.webp' };
+  const localBanner = e => localBanners[e.name] || '';
+  const siteUrl = u => !u ? 'https://novaigrejabatista.com.br/' : /^https:\/\//.test(u) ? u : 'https://novaigrejabatista.com.br' + u;
+  function eventDate(e) {
+    const fmt = (v, o) => new Intl.DateTimeFormat('pt-BR', { timeZone: 'America/Porto_Velho', ...o }).format(new Date(v.slice(0, 10) + 'T12:00:00-04:00'));
+    const hr = v => !e.tbd && v && v.length > 10 && v.slice(11, 16) !== '00:00' ? ', ' + v.slice(11, 16).replace(':', 'h').replace('h00', 'h') : '';
+    let t = fmt(e.start, { day: '2-digit', month: 'long' });
+    if (e.end && e.end.slice(0, 10) !== e.start.slice(0, 10)) { const a = hr(e.start), b = hr(e.end); t += a || b ? a + ' a ' + fmt(e.end, { day: '2-digit', month: 'long' }) + b : ' a ' + fmt(e.end, { day: '2-digit', month: 'long' }); }
+    else t += hr(e.start);
+    return t;
+  }
+  const knownEvents = () => events.filter(e => e.active).map(e => ({ name: e.name, category: 'Acampamento', summary: 'Dois dias de palavra, worship, gincanas e comunhão para adolescentes de 12 a 17 anos.', start: '2026-11-21T14:00', end: '2026-11-22T14:00', tbd: false, location: '', price: 'R$ 80,00', cta: 'Ver inscrição', open: true, url: '/next/camp-sbgp1-nov26/inscricao.html', image: e.image }));
+  function eventCards(compact = false) {
+    if (!PUBLIC) return demoEventCards(compact);
+    const loaded = window.NibSite && NibSite.eventos();
+    const list = (loaded || knownEvents()).slice(0, compact ? 1 : 20);
+    if (!list.length) return `<section class="box event-empty"><h2>Nenhum evento com data marcada agora</h2><p>Quando a igreja publicar um novo evento no site, ele aparece aqui.</p><a class="button button-go" href="https://novaigrejabatista.com.br/#eventos" target="_blank" rel="noopener">Ver no site ${arrow}</a></section>`;
+    const tag = compact ? 'h3' : 'h2';
+    return `<div class="cards ${compact ? 'home-events' : ''}">${list.map((e, i) => { const img = e.image || localBanner(e) || (e.banner ? siteUrl(e.banner) : ''); return `<article class="event">${img ? `<div class="event-cover"><img src="${escape(img)}" alt="" width="800" height="400" ${i === 0 ? 'fetchpriority="high"' : 'loading="lazy"'} decoding="async"></div>` : ''}<div class="event-content"><div class="event-top">${e.category ? `<span class="tag status-active">${escape(e.category)}</span>` : ''}<time class="event-date">${escape(eventDate(e))}</time></div><${tag}>${escape(e.name)}</${tag}>${e.summary ? `<p>${escape(e.summary)}</p>` : ''}${e.price || e.location ? `<p class="event-meta">${[e.location, e.price].filter(Boolean).map(escape).join(' · ')}</p>` : ''}<a class="button primary" href="${escape(siteUrl(e.url))}" target="_blank" rel="noopener">${escape(e.open ? e.cta : 'Ver informações')}</a></div></article>`; }).join('')}</div>`;
+  }
+  const isManagement = () => ['secretaria', 'pastoral', 'tesouraria'].includes(state.context);
+  const NibAdminIcons = NibIcons.paths;
+  const barIcon = (key, selected = false) => (key = iconAlias[key] || key, selected) && NibIcons.mixed && NibIcons.mixed[key]
+    ? ((x) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${x.stroke ? `<path d="${x.stroke}"/>` : ''}${x.fill ? `<path fill="currentColor" stroke-width="1.6" d="${x.fill}"/>` : ''}${x.cut ? `<path class="bar-cut" stroke-width="1.7" d="${x.cut}"/>` : ''}</svg>`)(NibIcons.mixed[key])
+    : selected && NibIcons.filled[key]
+    ? `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="${NibIcons.filled[key]}"/></svg>`
+    : NibIcons.svg(key, selected ? 2.3 : 1.8);
+  // App oficial: quem é da equipe (ou o admin vendo como Secretaria/Liderança) usa a barra inferior da gestão, como na demonstração.
+  function publicTeamBar() {
+    if (!PUBLIC || !account() || !NibConta.equipe()) return null;
+    return NibConta.pessoa().papel === 'secretaria'
+      ? [['inicio', 'Início'], ['equipe', 'Painel'], ['membros', 'Membros'], ['checkin', 'Check-in'], ['avisos', 'Avisos']]
+      : [['inicio', 'Início'], ['equipe', 'Painel'], ['membresia', 'Membresia'], ['membros', 'Membros'], ['caderno', 'Caderno']];
+  }
   function renderBar() {
     const bar = document.getElementById('bottom-nav');
-    bar.hidden = isManagement();
-    if (bar.hidden) return;
-    if (!bar.children.length) bar.innerHTML = [['inicio','Início'],['agenda','Calendário'],['generosidade','Contribuir'],['eventos','Eventos'],['celulas','Células']].map(([view,label]) => `<a href="#${view}" data-view="${view}" class="${view === 'generosidade' ? 'bar-main' : ''}"><span class="bar-icon">${barIcon(view)}</span><span>${label}</span></a>`).join('');
+    const team = publicTeamBar(), gestao = isManagement() || !!team;
+    const barKey = isManagement() ? state.context : team ? 'pub-equipe-' + NibConta.pessoa().papel : 'membro';
+    if (bar.dataset.context !== barKey) { bar.innerHTML = ''; bar.dataset.context = barKey; }
+    bar.classList.toggle('is-admin', gestao);
+    bar.hidden = false; bar.setAttribute('aria-label', gestao ? 'Acessos da gestão' : 'Acessos do membro');
+    if (!bar.children.length) bar.innerHTML = (isManagement() ? admin.bar() : team ? team : [['inicio','Início'],['agenda','Calendário'],['generosidade','Contribuir'],['eventos','Eventos'],['celulas','Células']]).map(([view,label]) => `<a href="#${view}" data-view="${view}" class="${view === 'generosidade' ? 'bar-main' : ''}"><span class="bar-icon">${barIcon(view)}</span><span>${label}</span></a>`).join('');
     bar.querySelectorAll('a').forEach(a => {
-      const active = a.dataset.view === state.view;
+      const active = a.dataset.view === state.view || (a.dataset.view === 'membresia' && state.view === 'confirmar');
       if (active) a.setAttribute('aria-current','page'); else a.removeAttribute('aria-current');
       a.querySelector('.bar-icon').innerHTML = barIcon(a.dataset.view, active);
     });
+  }
+  // Check-in do culto: o membro registra a presença pelo app (na versão real, abre 1 h antes e fecha 2 h depois do culto).
+  function nextService() { const key = NibDaily.dayKey(new Date()); return NibDaily.agenda(key, 8).find(x => x.type === 'Culto'); }
+  function checkinCard() {
+    const c = nextService(); if (!c) return '';
+    if (c.day !== NibDaily.dayKey(new Date()) && !state.simulateService) return '';
+    const key = NibDaily.dayKey(new Date()), done = admin.checkins().some(x => x.day === c.day && x.name === c.name && x.who === state.member.full);
+    const when = c.day === key ? `Hoje${c.time ? ', às ' + escape(c.time) : ''}` : `${escape(new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Porto_Velho',weekday:'long',day:'2-digit',month:'short'}).format(new Date(c.day+'T12:00:00-04:00')).replace('.',''))}${c.time ? ', às ' + escape(c.time) : ''}`;
+    const icon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${done ? 'm5 12.5 4.5 4.5L19 7.5' : NibAdminIcons.recepcao}"/></svg>`;
+    return `<section class="checkin-card${done ? ' is-done' : ''}" aria-labelledby="checkin-title"><span class="checkin-icon">${icon}</span><div class="checkin-text"><span class="label">CHECK-IN DO CULTO</span><h2 id="checkin-title" tabindex="-1">${done ? 'Presença registrada' : escape(c.name)}</h2><p>${done ? `Você está no ${escape(c.name)}. Que bom ter você aqui!` : `${when}. Chegou? Registre sua presença.`}</p>${done ? '' : '<p class="checkin-note">Abre 1 h antes do culto e fecha 2 h depois.</p>'}</div>${done ? '' : `<button type="button" class="action primary" data-checkin="${escape(c.day)}">Fazer check-in</button>`}</section>`;
   }
   function dailyBlocks(full = false, part = 'all') {
     const key = NibDaily.dayKey(new Date());
     const verse = NibDaily.verseForDay(key);
     const clock = new Intl.DateTimeFormat('en-GB',{timeZone:'America/Porto_Velho',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(new Date());
-    const items = NibDaily.agenda(key).filter(item => item.day > key || !item.time || item.time >= clock);
+    const items = withCell(NibDaily.agenda(key), key, 14).filter(item => item.day > key || !item.time || item.time >= clock);
     const list = (full ? items : items.slice(0,3)).map(item => {
       const date = new Date(item.day+'T12:00:00-04:00');
       const day = new Intl.DateTimeFormat('pt-BR',{day:'2-digit',timeZone:'America/Porto_Velho'}).format(date);
-      const month = new Intl.DateTimeFormat('pt-BR',{month:'short',timeZone:'America/Porto_Velho'}).format(date);
-      return `<li><span class="agenda-date"><strong>${day}</strong><small>${month}</small></span><div><span class="agenda-type">${item.type}</span><h3>${item.name}</h3><p>${new Intl.DateTimeFormat('pt-BR',{weekday:'long',timeZone:'America/Porto_Velho'}).format(date)}${item.time ? ' · '+item.time : ' · horário a confirmar'}</p></div></li>`;
+      const month = new Intl.DateTimeFormat('pt-BR',{month:'short',timeZone:'America/Porto_Velho'}).format(date).replace('.','');
+      const week = new Intl.DateTimeFormat('pt-BR',{weekday:'short',timeZone:'America/Porto_Velho'}).format(date).replace('.','');
+      return `<li><span class="agenda-date"><small>${month}</small><strong>${day}</strong><em>${week}</em></span><div><span class="agenda-type">${calendarDot(calendarKind(item))}${escape(item.type)}</span><h3>${escape(item.name)}</h3><p>${new Intl.DateTimeFormat('pt-BR',{weekday:'long',timeZone:'America/Porto_Velho'}).format(date)}${item.time ? ' · '+item.time : ' · horário a confirmar'}</p></div></li>`;
     }).join('');
-    const agenda = `<section class="home-agenda" aria-labelledby="agenda-title"><div class="section-heading"><div><span class="label">CAMINHE COM A GENTE</span><h2 id="agenda-title">${full ? 'Próximos encontros' : 'Na agenda da igreja'}</h2></div>${full ? '' : button('Ver calendário completo','agenda')}</div><div class="box agenda-content"><ul class="agenda-list">${list}</ul><p class="note">Programação de referência do site da igreja, ainda sem sincronização. Confirme mudanças com a igreja.${full ? ' Novas festividades aparecerão após o cadastro pela equipe.' : ''}</p></div></section>`;
-    const verseBlock = `<section class="daily-verse" aria-label="Versículo do dia"><span class="label">PALAVRA PARA O SEU DIA</span><blockquote>“${verse[0]}”</blockquote><cite>${verse[1]}</cite></section>`;
+    const agenda = `<section class="home-agenda" aria-labelledby="agenda-title"><div class="section-heading"><div><span class="label">CAMINHE COM A GENTE</span><h2 id="agenda-title">${full ? 'Próximos encontros' : 'Na agenda da igreja'}</h2></div></div><div class="box agenda-content"><ul class="agenda-list">${list}</ul>${full ? '' : '<div class="agenda-more">'+button('Ver calendário completo','agenda')+'</div>'}<p class="note">Programação de referência do site da igreja, ainda sem sincronização. Confirme mudanças com a igreja.${full ? ' Novas festividades aparecerão após o cadastro pela equipe.' : ''}</p></div></section>`;
+    const verseBlock = `<section class="daily-verse" aria-labelledby="verse-label"><div class="verse-top"><span class="verse-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.5C10.2 5 7.6 4.5 4 4.5v13c3.6 0 6.2.5 8 2 1.8-1.5 4.4-2 8-2v-13c-3.6 0-6.2.5-8 2Z"/><path d="M12 6.5v13"/></svg></span><span class="label" id="verse-label">Palavra para o seu dia</span></div><blockquote><span class="verse-mark" aria-hidden="true">“</span>${verse[0]}</blockquote><div class="verse-foot"><div class="verse-ref"><cite>${verse[1]}</cite>${verse[2]?'<small class="verse-pick">Escolhido pela igreja</small>':''}</div><button type="button" class="verse-share" id="verse-share"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3 M7.5 7.5 12 3l4.5 4.5 M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg><span>Compartilhar</span></button></div></section>`;
     return full || part === 'agenda' ? agenda : part === 'verse' ? verseBlock : verseBlock + agenda;
   }
   const fullDate = key => new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Porto_Velho',weekday:'long',day:'2-digit',month:'long',year:'numeric'}).format(new Date(key+'T12:00:00-04:00'));
-  const calendarKinds = {culto:'Cultos',escola:'Escola bíblica',evento:'Eventos'};
-  const calendarKind = item => item.type==='Culto'?'culto':item.type==='Programação semanal'?'escola':'evento';
+  const admin = NibAdmin.create({ qrSvg: t => qrSvg(t), state, escape, button, arrow, backArrow, NibDaily, fullDate, show: (...a) => show(...a), announce: (...a) => announce(...a), refreshNotices: () => refreshNotices(), notify: n => notify(n), giftConfirmed: e => giftConfirmed(e) });
+  const adminOnly = ['recepcao','gestao','membresia','confirmar','solicitacoes','programacao','comunicados','palavra','cuidado'];
+  const calendarKinds = {celula:'Minha célula',culto:'Cultos',escola:'Escola bíblica',evento:'Eventos'};
+  // Célula do membro (exemplo): na versão final vem do vínculo do membro com a célula na plataforma de células.
+  const myCell = { name: 'Célula Exemplo', weekday: 3, time: '19:30', place: 'Casa da família Exemplo · Bairro Exemplo', leader: 'Paulo e Lúcia Exemplo' };
+  // Célula escolhida no cadastro ("Dia|Nome", da lista de células do site). Na demonstração, a célula de exemplo.
+  const weekdays = ['domingo','segunda','terça','quarta','quinta','sexta','sábado'];
+  const cellKey = (dia, nome) => dia + '|' + nome;
+  function findCell(key) {
+    if (!key || !window.NibSite) return null;
+    const [dia, nome] = String(key).split('|');
+    const d = NibSite.celulas().find(x => x.dia === dia); const c = d && d.celulas.find(x => x.nome === nome);
+    return c ? { ...c, dia } : null;
+  }
+  function memberCell() {
+    if (!PUBLIC) return state.demoCell === null ? null : state.demoCell || myCell;
+    const c = account() && findCell(account().celula); if (!c) return null;
+    const wd = weekdays.findIndex(w => c.dia.toLowerCase().startsWith(w)); const t = (c.horario.match(/(\d{1,2})[:h](\d{2})/) || []);
+    return wd < 0 ? null : { name: c.nome, weekday: wd, time: t[1] ? t[1].padStart(2, '0') + ':' + t[2] : '', place: c.local, leader: c.lider, site: c };
+  }
+  function cellOptions(selected) {
+    if (!window.NibSite) return '';
+    return NibSite.celulas().map(d => `<optgroup label="${escape(d.dia)}">${d.celulas.map(c => { const k = cellKey(d.dia, c.nome); return `<option value="${escape(k)}"${k === selected ? ' selected' : ''}>${escape(c.nome)}</option>`; }).join('')}</optgroup>`).join('');
+  }
+  function withCell(items, fromKey, days) {
+    const myCell = memberCell(); if (!myCell) return items;
+    const base = new Date(fromKey+'T12:00:00-04:00'); const extra = [];
+    for (let i = 0; i < days; i++) { const d = new Date(base); d.setUTCDate(base.getUTCDate()+i); if (d.getUTCDay() === myCell.weekday) extra.push({ day: NibDaily.dayKey(d), time: myCell.time, name: myCell.name, type: 'Minha célula', place: myCell.place }); }
+    return items.concat(extra).sort((a,b)=>(a.day+' '+(a.time||'99')).localeCompare(b.day+' '+(b.time||'99')));
+  }
+  const monthItems = month => withCell(NibDaily.monthAgenda(month), month+'-01', NibDaily.monthInfo(month).count);
+  const calendarKind = item => item.type==='Minha célula'?'celula':item.type==='Culto'?'culto':item.type==='Programação semanal'?'escola':'evento';
   const calendarDot = kind => `<i class="calendar-dot" data-kind="${kind}" aria-hidden="true"></i>`;
-  function calendarAnnouncement() { const items=NibDaily.monthAgenda(state.calendarMonth).filter(x=>x.day===state.calendarDay); return fullDate(state.calendarDay)+': '+(items.length?items.length+' encontro(s). '+items.map(x=>x.name+', '+(x.time||'horário a confirmar')).join('. '):'Nenhum encontro de referência.'); }
+  function calendarAnnouncement() { const items=monthItems(state.calendarMonth).filter(x=>x.day===state.calendarDay); return fullDate(state.calendarDay)+': '+(items.length?items.length+' encontro(s). '+items.map(x=>x.name+', '+(x.time||'horário a confirmar')).join('. '):'Nenhum encontro de referência.'); }
+  const deskQuery = typeof matchMedia === 'function' ? matchMedia('(min-width: 1100px)') : null;
+  const isDesk = () => !!(deskQuery && deskQuery.matches);
   function calendarPage() {
     const month = state.calendarMonth;
     const {count,offset} = NibDaily.monthInfo(month);
-    const items = NibDaily.monthAgenda(month);
+    const items = monthItems(month);
     const today = NibDaily.dayKey(new Date());
     const title = new Intl.DateTimeFormat('pt-BR',{month:'long',year:'numeric',timeZone:'America/Porto_Velho'}).format(new Date(month+'-01T12:00:00-04:00'));
     const cells = Array.from({length:offset},()=>'<span aria-hidden="true"></span>').join('') + Array.from({length:count},(_,i)=>{
@@ -88,113 +215,899 @@
       return `<button type="button" class="calendar-day" data-day="${day}" aria-pressed="${day===state.calendarDay}" ${day===today?'aria-current="date"':''} aria-label="${fullDate(day)} · ${entries.length ? entries.length+' encontro(s)' : 'Sem encontros'}"><span>${i+1}</span>${entries.length?'<span class="calendar-dots" aria-hidden="true">'+[...new Set(entries.map(calendarKind))].map(calendarDot).join('')+'</span>':''}</button>`;
     }).join('');
     const selected = items.filter(x=>x.day===state.calendarDay);
-    return `<section class="box calendar-box" aria-label="Calendário mensal"><div class="calendar-toolbar"><button type="button" data-month="-1" aria-label="Mês anterior">‹</button><div><h2>${title.charAt(0).toUpperCase()+title.slice(1)}</h2><p>Toque em uma data para ver os encontros</p></div><button type="button" data-month="1" aria-label="Próximo mês">›</button></div><div class="calendar-week" aria-hidden="true">${['S','T','Q','Q','S','S','D'].map(x=>'<span>'+x+'</span>').join('')}</div><div class="calendar-grid">${cells}</div><div class="calendar-legend">${Object.entries(calendarKinds).map(([key,name])=>'<span>'+calendarDot(key)+name+'</span>').join('')}<span>Contorno: hoje</span><button type="button" id="calendar-today">Hoje</button></div></section><section class="box calendar-selection"><span class="label">${state.calendarDay===today?'HOJE':'DIA SELECIONADO'}</span><h2>${fullDate(state.calendarDay)}</h2>${selected.length?'<ul class="day-entries">'+selected.map(x=>`<li><time>${x.time||'A confirmar'}</time><div><strong>${x.name}</strong><p class="calendar-entry-kind">${calendarDot(calendarKind(x))}${x.type}</p></div></li>`).join('')+'</ul>':'<p>Nenhum encontro de referência para esta data.</p>'}</section><p class="note">Programação de referência do site da igreja, ainda sem sincronização; as recorrências não representam histórico de encontros realizados. Confirme mudanças com a igreja. Festividades aparecerão após o cadastro pela equipe.</p>`;
+    const sel = new Date(state.calendarDay+'T12:00:00-04:00');
+    const fmt = o => new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Porto_Velho',...o}).format(sel);
+    const weekday = fmt({weekday:'long'}), cap = weekday.charAt(0).toUpperCase()+weekday.slice(1);
+    const countLabel = selected.length ? selected.length+(selected.length>1?' encontros':' encontro') : 'Sem encontros';
+    const entries = selected.length ? '<ul class="day-entries">'+selected.map(x=>{ const kind = calendarKind(x); return `<li data-kind="${kind}"><time${x.time?'':' class="is-tbd"'}>${x.time ? x.time : 'Horário<br>a definir'}</time><div><strong>${escape(x.name)}</strong><p class="calendar-entry-kind">${calendarDot(kind)}${escape(x.type)}</p>${x.place?'<p class="calendar-entry-place">'+escape(x.place)+'</p>':''}</div></li>`; }).join('')+'</ul>' : '<p class="day-empty">Nenhum encontro de referência para esta data.</p>';
+    const clock = new Intl.DateTimeFormat('en-GB',{timeZone:'America/Porto_Velho',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(new Date());
+    const upcoming = withCell(NibDaily.agenda(today, 14), today, 14).find(x => x.day > today || (x.day === today && (!x.time || x.time >= clock)));
+    const short = key => new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Porto_Velho',weekday:'short',day:'2-digit'}).format(new Date(key+'T12:00:00-04:00')).replace('.','');
+    const todayLong = new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Porto_Velho',weekday:'long',day:'numeric',month:'long'}).format(new Date(today+'T12:00:00-04:00'));
+    const nextLine = upcoming ? `${calendarDot(calendarKind(upcoming))}<span>Próximo: <b>${escape(upcoming.name)}</b> · ${upcoming.day===today?'hoje':short(upcoming.day)}${upcoming.time?', '+upcoming.time:''}</span>` : '<span>Sem encontros nos próximos dias</span>';
+    return `<div class="calendar-actions"><div class="calendar-now"><span class="label">HOJE</span><strong>${todayLong.charAt(0).toUpperCase()+todayLong.slice(1)}</strong><small>${nextLine}</small></div><button type="button" id="calendar-today" class="calendar-today"${state.calendarDay===today?' aria-pressed="true"':''}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3v3 M17 3v3 M4 8h16 M5 5h14a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1z"/><circle cx="12" cy="14" r="1.6" fill="currentColor" stroke="none"/></svg><span>Hoje</span></button></div><section class="box calendar-box" aria-label="Calendário mensal"><div class="calendar-toolbar"><button type="button" data-month="-1" aria-label="Mês anterior">‹</button><div><h2>${title.charAt(0).toUpperCase()+title.slice(1)}</h2></div><button type="button" data-month="1" aria-label="Próximo mês">›</button></div><div class="calendar-week" aria-hidden="true">${['D','S','T','Q','Q','S','S'].map(x=>'<span>'+x+'</span>').join('')}</div><div class="calendar-grid">${cells}</div><div class="calendar-legend">${Object.entries(calendarKinds).filter(([k])=>k!=='celula'||memberCell()).map(([key,name])=>'<span>'+calendarDot(key)+name+'</span>').join('')}</div></section><section class="box calendar-selection"><div class="selection-head"><span class="selection-date" aria-hidden="true"><small>${fmt({month:'short'}).replace('.','')}</small><strong>${fmt({day:'2-digit'})}</strong></span><div><span class="label">${state.calendarDay===today?'HOJE':'DIA SELECIONADO'}</span><h2>${cap}</h2><p>${fmt({day:'numeric',month:'long',year:'numeric'})}</p></div><span class="selection-count">${countLabel}</span></div>${entries}</section><p class="note">Programação de referência do site da igreja, ainda sem sincronização; as recorrências não representam histórico de encontros realizados. Confirme mudanças com a igreja. Festividades aparecerão após o cadastro pela equipe.</p>`;
   }
-  function prayerCards(compact=false) {
-    return [...state.prayers].reverse().slice(0,compact?2:state.prayers.length).map(p=>`<article class="prayer-post" data-post="${p.id}"><div class="prayer-post-author"><span class="profile-avatar" aria-hidden="true">${escape(p.author.charAt(0))}</span><div><strong>${escape(p.author)}</strong><small>Pedido fictício · Demonstração</small></div>${p.answered?'<span class="tag">Oração atendida</span>':''}</div><h3>${escape(p.name)}</h3><p class="prayer-reason">${escape(p.reason)}</p><div class="prayer-post-footer"><button type="button" class="prayer-support" data-prayer-support="${p.id}" aria-pressed="${p.supported}" aria-label="Estou orando por: ${escape(p.name)}">${navIcon('oracao')}<span>Estou orando</span><strong class="support-count" aria-live="polite">${p.supporters}</strong></button><span class="prayer-support-caption">${p.supporters===1?'pessoa orando':'pessoas orando'}</span></div>${!compact&&p.own?'<div class="form-actions prayer-own-actions"><button type="button" data-prayer-toggle="'+p.id+'" aria-label="'+(p.answered?'Marcar em oração':'Marcar como atendida')+': '+escape(p.name)+'">'+(p.answered?'Marcar em oração':'Oração atendida')+'</button><button type="button" data-prayer-delete="'+p.id+'" aria-label="Excluir pedido: '+escape(p.name)+'">Excluir</button></div>':''}</article>`).join('');
+  const prayHeart = '<svg class="pray-heart" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20.5s-8-4.7-8-10.2A4.6 4.6 0 0 1 12 7.4a4.6 4.6 0 0 1 8 2.9c0 5.5-8 10.2-8 10.2z"/></svg>';
+  function verseAdmin() {
+    const today = NibDaily.dayKey(new Date()), current = NibDaily.verseForDay(today);
+    return `<section class="box verse-admin" aria-labelledby="verse-admin-title"><span class="label">PALAVRA DO DIA</span><h2 id="verse-admin-title" tabindex="-1">Versículo escolhido pela igreja</h2><p>Defina o versículo de uma data, alinhado à série de mensagens. Quando não houver escolha, o app usa a lista anual automática, com um versículo diferente por dia.</p><p class="verse-admin-now"><b>Hoje:</b> ${escape(current[1])}${current[2] ? ' · escolhido pela igreja' : ' · lista automática'}</p><form id="verse-form"><label for="verse-date">Data</label><input id="verse-date" name="data" type="date" value="${today}" required><label for="verse-text">Texto do versículo</label><textarea id="verse-text" name="texto" maxlength="280" rows="3" required placeholder="Digite o texto conforme a versão bíblica da igreja"></textarea><label for="verse-ref">Referência</label><input id="verse-ref" name="referencia" maxlength="40" required placeholder="Ex.: Salmos 23:1"><div class="form-actions"><button type="submit" class="primary">Salvar para esta data</button>${current[2] ? '<button type="button" id="verse-clear">Voltar à lista automática</button>' : ''}</div></form><p class="note">Nesta versão de teste, a escolha vale só nesta sessão.</p></section>`;
+  }
+  const money = v => v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+  const qrSvg = text => { if (typeof qrcode !== 'function') return ''; const qr = qrcode(0, 'M'); qr.addData(text); qr.make(); const n = qr.getModuleCount(), q = 4; let d = ''; for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) if (qr.isDark(r, c)) d += `M${c+q} ${r+q}h1v1h-1z`; return `<svg viewBox="0 0 ${n+q*2} ${n+q*2}" shape-rendering="crispEdges" aria-hidden="true"><rect width="100%" height="100%" fill="#fff"/><path d="${d}" fill="#041e42"/></svg>`; };
+  function renderPixQr() {
+    const box = content.querySelector('#pix-qr'); if (!box || !state.giftCode || typeof qrcode !== 'function') return;
+    const qr = qrcode(0, 'M'); qr.addData(state.giftCode); qr.make();
+    const n = qr.getModuleCount(), q = 4; let d = '';
+    for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) if (qr.isDark(r, c)) d += `M${c+q} ${r+q}h1v1h-1z`;
+    box.innerHTML = `<svg viewBox="0 0 ${n+q*2} ${n+q*2}" shape-rendering="crispEdges" aria-hidden="true"><rect width="100%" height="100%" fill="#fff"/><path d="${d}" fill="#041e42"/></svg>`;
+  }
+  // Dados da obra: mesma fonte do site (novaigrejabatista.com.br/dados/obra.json). Sem conexão, ficam os últimos valores conhecidos.
+  const obra = { percentual: 30, lugares: '1.500', entrega: '2028' };
+  function syncCampaignBar() { const bar = content.querySelector('.campaign-bar span'); if (bar) bar.style.setProperty('width', obra.percentual + '%'); }
+  function loadObra() {
+    if (!window.fetch) return;
+    fetch('https://novaigrejabatista.com.br/dados/obra.json', { cache: 'no-cache', credentials: 'omit' }).then(r => r.ok ? r.json() : null).then(d => {
+      const raw = d && typeof d === 'object' ? d.percentual : undefined;
+      if (!(typeof raw === 'number' || (typeof raw === 'string' && raw.trim() !== ''))) return;
+      const value = Number(raw);
+      if (!Number.isFinite(value) || value < 0 || value > 100) return;
+      obra.percentual = Math.round(value);
+      if (d.lugares) obra.lugares = String(d.lugares).slice(0, 12);
+      if (d.entrega) obra.entrega = String(d.entrega).slice(0, 12);
+      if (state.view === 'generosidade') { const pct = content.querySelector('[data-obra-pct]'); if (pct) pct.textContent = obra.percentual + '% concluída'; syncCampaignBar(); }
+    }).catch(() => {});
+  }
+  const giftLabel = () => state.gift === 'Campanha' ? 'Obra do templo' : state.gift;
+  const monthShort = key => new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Porto_Velho',month:'short'}).format(new Date(key+'T12:00:00-04:00')).replace('.','');
+  const typeLabel = t => t === 'Campanha' ? 'Obra do templo' : t;
+  const shortDate = key => new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Porto_Velho',day:'2-digit',month:'short'}).format(new Date(key+'T12:00:00-04:00')).replace('.','');
+  const yearItems = year => state.history.filter(x => x.day.startsWith(year)).sort((a, b) => b.day.localeCompare(a.day));
+  const sum = list => list.reduce((t, x) => t + x.amount, 0);
+  function historyPeek() {
+    const year = NibDaily.dayKey(new Date()).slice(0,4), items = yearItems(year), last = items[0];
+    return `<section class="box history-peek" aria-labelledby="history-peek-title"><div class="history-peek-text"><span class="label">MINHAS CONTRIBUIÇÕES</span><h2 id="history-peek-title">${items.length ? `Em ${year} você fez ${items.length} ${items.length === 1 ? 'contribuição' : 'contribuições'}` : `Suas contribuições de ${year}`}</h2>${last ? `<p>Última: ${escape(typeLabel(last.type))} em ${escape(shortDate(last.day))} · efetuado.</p>` : '<p>Nenhuma contribuição registrada neste ano.</p>'}</div>${button('Ver histórico','historico')}</section>`;
+  }
+  function historyPage() {
+    if (state.giftStep === 'obrigado') { state.giftStep = 'finalidade'; state.giftAmount = null; }
+    const years = [...new Set(state.history.map(x => x.day.slice(0,4)))].sort().reverse();
+    if (!years.includes(state.historyYear)) state.historyYear = years[0] || NibDaily.dayKey(new Date()).slice(0,4);
+    const year = state.historyYear, items = yearItems(year), ok = items.filter(x => x.status === 'ok'), pending = items.filter(x => x.status !== 'ok');
+    const chips = years.map(y => `<button type="button" class="history-year${y === year ? ' is-active' : ''}" data-history-year="${y}" aria-pressed="${y === year}">${y}</button>`).join('');
+    const parts = ['Dízimo','Oferta','Campanha'].map(t => { const n = items.filter(x => x.type === t).length; return `<div><dt>${escape(typeLabel(t) === t ? t + 's' : typeLabel(t))}</dt><dd>${n}</dd></div>`; }).join('');
+    const months = []; for (const x of items) { const m = x.day.slice(0,7); let g = months.find(g => g.m === m); if (!g) months.push(g = { m, list: [] }); g.list.push(x); }
+    const monthName = m => new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Porto_Velho',month:'long'}).format(new Date(m+'-15T12:00:00-04:00'));
+    const rows = months.map(g => `<li class="history-month"><h3>${escape(monthName(g.m))}</h3><ul>${g.list.map(x => `<li><span class="admin-when"><small>${escape(monthShort(x.day))}</small><strong>${x.day.slice(8)}</strong></span><span class="history-what"><b>${escape(typeLabel(x.type))}</b><small><span class="history-status">Efetuado</span> · Pix${x.app ? ' pelo app' : ''}</small></span></li>`).join('')}</ul></li>`).join('');
+    return `<div class="history-years" role="group" aria-label="Ano" data-seg="anos">${chips}</div><div class="history-layout"><section class="box history-summary" aria-labelledby="history-total-title"><span class="label">RESUMO DE ${year}</span><h2 id="history-total-title" class="history-total">${items.length} ${items.length === 1 ? 'contribuição' : 'contribuições'}</h2><p class="history-total-note">Obrigado por semear na obra de Deus.</p><dl class="bank-details history-parts">${parts}</dl>${button('Contribuir agora','generosidade',true)}</section><section class="box history-list" aria-labelledby="history-list-title"><h2 id="history-list-title">Lançamentos</h2>${rows ? `<ul class="history-months">${rows}</ul>` : '<p class="gift-intro">Nenhuma contribuição neste ano.</p>'}</section></div><section class="box history-how"><h2>Como o histórico funciona</h2><p>Cada contribuição aparece como <b>Efetuado</b>, sem valores. O Pix feito direto no app do banco aparece depois que a tesouraria confere o extrato da igreja.</p><p class="note">Demonstração com dados fictícios. Os valores ficam só com a tesouraria e a liderança pastoral.</p></section>`;
+  }
+  function giftBack() {
+    const prev = ({valor:'finalidade', confirmar:'valor', pix: PUBLIC ? 'valor' : 'confirmar'})[state.giftStep || 'finalidade'];
+    return prev ? `<button type="button" class="button-back gift-back" data-gift-step="${prev}">${backArrow}<span>Voltar</span></button>` : '';
+  }
+  function giftFlow() {
+    const step = state.giftStep || 'finalidade', m = state.member;
+    const order = PUBLIC ? ['finalidade','valor','pix','obrigado'] : ['finalidade','valor','confirmar','pix','obrigado'], idx = order.indexOf(step);
+    const tick = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>';
+    const steps = (PUBLIC ? ['Finalidade','Valor','Pix'] : ['Finalidade','Valor','Seus dados','Pix']).map((label,i) => `<li class="${idx > i ? 'is-done' : idx === i ? 'is-current' : ''}"${idx === i ? ' aria-current="step"' : ''}><span class="gift-dot">${idx > i ? tick : '0' + (i+1)}</span><span class="gift-step-label">${label}</span></li>`).join('');
+    const head = `${giftBack() ? `<div class="gift-backrow">${giftBack()}</div>` : ''}<ol class="gift-steps" aria-label="Etapas da contribuição">${steps}</ol>`;
+    const title = (text, intro) => `<div class="gift-step-head"><div><h3 id="gift-step-title" tabindex="-1" class="gift-step-title">${text}</h3>${intro ? `<p class="gift-intro">${intro}</p>` : ''}</div></div>`;
+    const summary = () => `<div class="gift-summary"><span>${escape(giftLabel())}</span><strong>${money(state.giftAmount)}</strong></div>`;
+    if (step === 'confirmar') return `${head}${title('Confira seus dados', 'Já preenchemos com o seu cadastro. Confira e toque em Gerar Pix.')}${summary()}<div class="gift-payer"><span class="profile-avatar" aria-hidden="true">${escape(m.first.charAt(0))}</span><div><span class="gift-payer-label">Contribuindo como</span><strong>${escape(m.full)}</strong><small>${escape(m.email)}</small></div><span class="gift-auto">Preenchido</span></div><label class="check gift-check"><input id="gift-receipt" type="checkbox" checked><span>Enviar o comprovante para ${escape(m.email)}</span></label><div class="form-actions gift-actions"><button type="button" class="action primary" data-gift-step="pix">Gerar Pix</button></div><p class="gift-foot">Dados errados? Atualize em <button type="button" class="auth-link" data-view="cadastro">Meu cadastro</button>.</p>`;
+    if (step === 'pix') return `${head}${title('Pague no app do seu banco', 'Leia o QR Code ou copie o código e siga os passos abaixo.')}${summary()}<div class="pix-qr" id="pix-qr" role="img" aria-label="QR Code Pix de ${money(state.giftAmount)} para a Nova Igreja Batista"></div><label for="pix-code">Pix copia e cola</label><div class="pix-copy"><input id="pix-code" readonly value="${escape(state.giftCode)}"><button type="button" id="pix-copy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 9h10v10H9z M5 15V5h10"/></svg><span>Copiar</span></button></div><ol class="pix-howto" aria-label="Como pagar"><li><span>1</span><p>Abra o app do seu banco e escolha <b>Pix</b>.</p></li><li><span>2</span><p>Use <b>Ler QR Code</b> ou <b>Pix copia e cola</b>.</p></li><li><span>3</span><p>Confira o nome <b>Nova Igreja Batista</b> e confirme.</p></li></ol><div class="form-actions gift-actions"><button type="button" class="action primary" data-gift-step="obrigado">Já fiz o Pix</button></div><p class="gift-foot">Pix real, direto para a conta da igreja (CNPJ 40.518.758/0001-30). Seu banco já informa o seu nome.</p>`;
+    if (step === 'obrigado' && PUBLIC) return `${head}<div class="gift-thanks"><span class="gift-thanks-icon" aria-hidden="true">${tick}</span><h3 id="gift-step-title" tabindex="-1" class="gift-step-title">Obrigado pela sua generosidade!</h3><p>${escape(giftLabel())} de ${money(state.giftAmount)}. O Pix cai direto na conta da Nova Igreja Batista, e a tesouraria confere pelo extrato.</p><p class="note">O comprovante fica no app do seu banco.</p></div><div class="form-actions gift-actions"><button type="button" class="action primary" data-gift-step="finalidade" data-done="1">Fazer outra contribuição</button></div>`;
+    if (step === 'obrigado') return `${head}<div class="gift-thanks"><span class="gift-thanks-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span><h3 id="gift-step-title" tabindex="-1" class="gift-step-title">Obrigado pela sua generosidade, ${escape(m.first)}!</h3><p>${escape(giftLabel())} de ${money(state.giftAmount)} registrado em Minhas contribuições como efetuado.</p>${state.giftReceipt === false ? '' : `<p class="note">O comprovante chega em ${escape(m.email)}.</p>`}</div><div class="form-actions gift-actions"><button type="button" class="action primary" data-view="historico">Ver minhas contribuições</button><button type="button" data-gift-step="finalidade" data-done="1">Fazer outra contribuição</button></div>`;
+    if (step === 'finalidade') {
+      const icons = {
+        'Dízimo': '<path d="M12 21s-7-4.4-7-10.2A4.3 4.3 0 0 1 12 8a4.3 4.3 0 0 1 7 2.8C19 16.6 12 21 12 21Z"/>',
+        'Oferta': '<path d="M20 12v9H4v-9 M2 7h20v5H2z M12 21V7 M12 7H7.5a2.5 2.5 0 1 1 0-5C11 2 12 7 12 7Z M12 7h4.5a2.5 2.5 0 1 0 0-5C13 2 12 7 12 7Z"/>',
+        'Campanha': '<path d="M3 21h18 M5 21V10l7-5 7 5v11 M9 21v-6h6v6"/>'
+      };
+      const info = {
+        'Dízimo': 'Sua fidelidade sustenta a missão e o cuidado da igreja.',
+        'Oferta': 'Uma expressão de gratidão, no valor que o seu coração decidir.',
+        'Campanha': 'Construção do novo templo da Nib.'
+      };
+      const option = name => `<button type="button" class="gift-choice" data-gift="${name}" aria-pressed="${state.gift === name}"><span class="gift-choice-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${icons[name]}</svg></span><span class="gift-choice-text"><strong>${name}</strong><small>${info[name]}</small>${name === 'Campanha' ? `<span class="gift-choice-obra"><img src="assets/campanha-templo.webp" alt="" width="900" height="506"><span><span class="campaign-bar" aria-hidden="true"><span></span></span><em data-obra-pct>${obra.percentual}% concluída</em></span></span>` : ''}</span><span class="gift-choice-radio" aria-hidden="true"></span></button>`;
+      return `${head}${title('O que você quer contribuir?', 'Escolha uma opção e toque em Continuar.')}<div class="gift-choices" role="group" aria-label="Finalidade da contribuição">${['Dízimo','Oferta','Campanha'].map(option).join('')}</div><div class="form-actions gift-actions"><button type="button" class="action primary" data-gift-step="valor">Continuar</button></div><p class="gift-foot">Pix real, direto para a conta da igreja.</p>`;
+    }
+    const amounts = [50,100,200,500];
+    return `${head}${title(state.gift === 'Campanha' ? 'Quanto você quer doar para a obra?' : state.gift === 'Dízimo' ? 'Qual o valor do seu dízimo?' : 'Qual o valor da sua oferta?', 'Toque em um valor sugerido ou digite outro e avance.')}<form id="gift-form"><div class="gift-amounts" role="group" aria-label="Valores sugeridos">${amounts.map(v => `<button type="button" data-gift-amount="${v}" aria-pressed="${state.giftAmount === v}">${money(v).replace(',00','')}</button>`).join('')}</div><label for="gift-value">Outro valor (R$)</label><input id="gift-value" name="amount" type="number" inputmode="decimal" min="1" max="1000000" step="0.01" placeholder="0,00" value="${state.giftAmount || ''}" required><div class="form-actions gift-actions"><button class="action primary" type="submit">Continuar</button></div></form><p class="gift-foot">Pix real, direto para a conta da igreja.</p>`;
+  }
+  function prayCaption(p) {
+    const others = p.supporters - (p.supported ? 1 : 0);
+    if (p.supported) return others ? `<b>Você</b> e mais ${others} ${others===1?'pessoa estão':'pessoas estão'} orando` : '<b>Você</b> está orando por este pedido';
+    return others ? `<b>${others}</b> ${others===1?'pessoa está':'pessoas estão'} orando` : 'Seja o primeiro a orar por este pedido';
+  }
+  function prayerCards(compact=false, only=null) {
+    const base = only || (PUBLIC ? state.prayers.filter(p => !p.answered) : state.prayers);
+    return base.filter(p => isManagement() || !p.hidden || p.own).reverse().slice(0,compact?3:base.length).map(p=>`<article class="prayer-post" data-post="${p.id}"><div class="prayer-post-author"><span class="profile-avatar" aria-hidden="true">${escape(p.author.charAt(0))}</span><div><strong>${escape(p.author)}</strong><small>${PUBLIC ? escape(fmtDay(p.at) || '') : 'Pedido fictício · Demonstração'}</small></div>${p.answered?'<span class="prayer-answered"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>Oração atendida</span>':''}</div>${p.hidden && p.own && !isManagement() ? '<p class="prayer-hidden-note">A liderança tirou este pedido do mural. Só você e a equipe pastoral o veem, e a equipe continua orando por você.</p>' : ''}<h3>${escape(p.name)}</h3><p class="prayer-reason">${escape(p.reason)}</p><div class="prayer-post-footer"><button type="button" class="prayer-support" data-prayer-support="${p.id}" aria-pressed="${p.supported}" aria-label="Estou orando por: ${escape(p.name)}">${prayHeart}<span class="prayer-support-label">${p.supported?'Orando':'Vou orar'}</span></button><span class="prayer-support-caption" aria-live="polite">${prayCaption(p)}</span></div>${!compact && PUBLIC && state.prayerTeam && !p.own ? `<div class="prayer-own-actions"><span class="prayer-own-label">Equipe da igreja</span><button type="button" class="prayer-own-btn" data-prayer-remove="${p.id}">Tirar do caderno</button></div>` : ''}${!compact&&p.own?'<div class="prayer-own-actions"><span class="prayer-own-label">Seu pedido</span><button type="button" class="prayer-own-btn" data-prayer-toggle="'+p.id+'" aria-label="'+(p.answered?'Reabrir pedido':'Marcar como atendida')+': '+escape(p.name)+'">'+(p.answered?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.3-5.6 M4 4v4h4"/></svg><span>Reabrir</span>':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg><span>Marcar atendida</span>')+'</button><button type="button" class="prayer-own-btn is-danger" data-prayer-delete="'+p.id+'" aria-label="Excluir pedido: '+escape(p.name)+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16 M9 7V4h6v3 M6 7l1 13h10l1-13 M10 11v6 M14 11v6"/></svg><span>Excluir</span></button></div>':''}</article>`).join('');
+  }
+  // Banners das redes oficiais: foto da igreja, chapéu, título e caixa azul translúcida.
+  const socialLinks = [
+    ['Instagram','Acompanhe a NIB no dia a dia','Fotos, avisos e bastidores de cada semana.','Siga agora!','https://www.instagram.com/nibcasadedeus/','assets/social-instagram.webp'],
+    ['YouTube','Cultos e mensagens na íntegra','Assista ao vivo e reveja as pregações quando quiser.','Assista agora!','https://www.youtube.com/@nibcasadedeus','assets/social-youtube.webp'],
+    ['Site da igreja','A NIB em um só lugar','Cultos, células, eventos e inscrições.','Acesse o site!','https://novaigrejabatista.com.br/','assets/social-site.webp']
+  ];
+  function socialBanners() {
+    return `<section class="social-banners" aria-labelledby="social-title"><div class="section-heading"><h2 id="social-title">Acompanhe a igreja na internet</h2></div><div class="social-track">${socialLinks.map(([network,title,text,action,url,image]) => `<a class="social-card" href="${url}" target="_blank" rel="noopener noreferrer" aria-label="${network}: ${title}. ${text} ${action}. Abre em nova aba."><img src="${image}" alt="" width="900" height="682" loading="lazy"><span class="social-kicker">${network}</span><strong class="social-title">${title}</strong><span class="social-box"><span>${text} <b>${action}</b></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></span></a>`).join('')}</div><div class="social-dots" aria-hidden="true">${socialLinks.map((_,i)=>`<span${i?'':' class="is-active"'}></span>`).join('')}</div></section>`;
+  }
+  function bindSocialBanners() { content.querySelectorAll('.social-track').forEach(bindSocialTrack); pilResumos(); }
+  // Mensagem curta no banner da pílula: tira palavras do fim até caber em 2 linhas (sem reticências, regra do Hilton).
+  function pilResumos() {
+    content.querySelectorAll('.pil-resumo[data-resumo]').forEach(el => {
+      const w = el.dataset.resumo.split(/\s+/); el.textContent = w.join(' ');
+      while (w.length > 1 && el.scrollHeight > el.clientHeight + 1) { w.pop(); el.textContent = w.join(' ').replace(/[\s,;:–—-]+$/, ''); }
+    });
+  }
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => pilResumos());
+  addEventListener('resize', () => pilResumos());
+  function bindSocialTrack(track) {
+    const dots = [...track.parentElement.querySelectorAll('.social-dots span')];
+    const cards = [...track.children];
+    // Paralaxe só nos cartões do "Acompanhe a igreja" (as capas das pílulas têm o próprio enquadramento).
+    const images = cards.map(card => card.classList.contains('pil-banner') ? null : card.querySelector('img'));
+    const still = matchMedia('(prefers-reduced-motion: reduce)');
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const left = track.scrollLeft;
+      let index = 0;
+      cards.forEach((card,i) => { if (Math.abs(card.offsetLeft - track.offsetLeft - left) < Math.abs(cards[index].offsetLeft - track.offsetLeft - left)) index = i; });
+      dots.forEach((dot,i) => dot.classList.toggle('is-active', i === index));
+      // Paralaxe: a foto anda mais devagar que o card ao deslizar.
+      cards.forEach((card,i) => {
+        const offset = (card.offsetLeft - track.offsetLeft - left) / card.offsetWidth;
+        if (images[i]) images[i].style.transform = (still.matches || track.scrollWidth <= track.clientWidth + 1) ? '' : `translate3d(${(Math.max(-1.2, Math.min(1.2, offset)) * -10).toFixed(2)}%,0,0) scale(1.04)`;
+      });
+    };
+    track.addEventListener('scroll', () => { if (!frame) frame = requestAnimationFrame(update); }, {passive:true});
+    addEventListener('resize', () => { if (!frame) frame = requestAnimationFrame(update); });
+    update();
+  }
+  // Aniversariantes da semana: visível para todos os membros (só nome, dia e mês).
+  // Mensagem só para o aniversariante: popup com fundo de vidro, uma vez por sessão,
+  // depois da abertura do app e da animação do brasão.
+  // Quem deu parabéns (fictício): nome, tempo e, às vezes, um recado curto.
+  const birthdayFans = [
+    ['Ana Exemplo', 'agora', 'Feliz aniversário! Deus te abençoe muito 🙏'], ['Paulo Exemplo', '5 min', ''], ['Lúcia Exemplo', '12 min', 'Muitas felicidades!'], ['Marcos Exemplo', '25 min', ''],
+    ['Rafael Exemplo', '40 min', ''], ['Bianca Exemplo', '1 h', 'Parabéns, que Deus continue te usando!'], ['Carlos Exemplo', '1 h', ''], ['Joana Exemplo', '2 h', ''], ['Pedro Exemplo', '2 h', 'Feliz vida!'],
+    ['Marta Exemplo', '3 h', ''], ['Tiago Exemplo', '3 h', ''], ['Débora Exemplo', '4 h', ''], ['Samuel Exemplo', '5 h', ''], ['Raquel Exemplo', '6 h', 'Te amamos, parabéns!'],
+    ['André Exemplo', '7 h', ''], ['Sara Exemplo', '8 h', ''], ['Lucas Exemplo', '9 h', ''], ['Ester Exemplo', '10 h', '']
+  ];
+  const fansFace = (n, i) => `<span class="fan-av c${i % 4}">${escape(n.charAt(0))}</span>`;
+  const fansSummary = () => { const f = birthdayFans; return `<b>${escape(f[0][0].split(' ')[0])}, ${escape(f[1][0].split(' ')[0])}</b> e mais ${f.length - 2} pessoas te deram parabéns`; };
+  const fansStack = () => `<span class="fan-stack" aria-hidden="true">${birthdayFans.slice(0, 3).map(([n], i) => fansFace(n, i)).join('')}<span class="fan-av more">+${birthdayFans.length - 3}</span></span>`;
+  function openFans() {
+    let dlg = document.getElementById('fans-dialog');
+    if (!dlg) { dlg = document.createElement('dialog'); dlg.id = 'fans-dialog'; dlg.setAttribute('aria-labelledby', 'fans-title'); document.body.append(dlg); dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); }); }
+    dlg.innerHTML = `<div class="fans-sheet" tabindex="-1"><span class="fans-grip" aria-hidden="true"></span><div class="fans-head"><div><h2 id="fans-title">Parabéns</h2><p>${birthdayFans.length} pessoas da igreja</p></div><button type="button" class="fans-close" data-fans-close="1" aria-label="Fechar lista"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12 M18 6 6 18"/></svg></button></div><label class="visually-hidden" for="fans-search">Buscar</label><input id="fans-search" class="fans-search" type="search" placeholder="Buscar" autocomplete="off"><ul class="fans-list">${birthdayFans.map(([n, t, msg], i) => `<li data-name="${escape(n.toLowerCase())}">${fansFace(n, i)}<div><strong>${escape(n)}</strong>${msg ? `<p>${escape(msg)}</p>` : '<p class="is-muted">Deu parabéns</p>'}</div><small>${escape(t)}</small></li>`).join('')}</ul></div>`;
+    const search = dlg.querySelector('#fans-search');
+    search.addEventListener('input', () => { const q = search.value.trim().toLowerCase(); dlg.querySelectorAll('.fans-list li').forEach(li => { li.hidden = !!q && !li.dataset.name.includes(q); }); });
+    dlg.showModal();
+    dlg.querySelector('.fans-sheet').focus({ preventScroll: true });
+  }
+  function openCongrats(btn) {
+    const name = btn.closest('.bday').querySelector('.bday-text strong').textContent; const first = name.split(' ')[0];
+    let dlg = document.getElementById('congrats-dialog');
+    if (!dlg) { dlg = document.createElement('dialog'); dlg.id = 'congrats-dialog'; dlg.setAttribute('aria-labelledby', 'congrats-title'); document.body.append(dlg); dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); }); }
+    const chips = ['Feliz aniversário! 🎉', 'Deus te abençoe muito!', 'Muitas felicidades!', 'Que Deus continue te usando!'];
+    dlg.innerHTML = `<form class="fans-sheet congrats-sheet" method="dialog" tabindex="-1"><span class="fans-grip" aria-hidden="true"></span><div class="fans-head"><div><h2 id="congrats-title">Parabéns para ${escape(first)}</h2><p>A mensagem é opcional</p></div><button type="button" class="fans-close" data-congrats-close="1" aria-label="Fechar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12 M18 6 6 18"/></svg></button></div><div class="congrats-chips">${chips.map(c => `<button type="button" class="congrats-chip" data-chip="${escape(c)}">${escape(c)}</button>`).join('')}</div><label class="visually-hidden" for="congrats-msg">Mensagem</label><textarea id="congrats-msg" class="congrats-msg" maxlength="140" rows="3" placeholder="Escreva uma mensagem para ${escape(first)}"></textarea><div class="congrats-count"><span>Só ${escape(first)} vê a mensagem.</span><span id="congrats-n">0/140</span></div><button type="submit" class="congrats-send">Enviar parabéns</button></form>`;
+    const msg = dlg.querySelector('#congrats-msg'), n = dlg.querySelector('#congrats-n');
+    const count = () => { n.textContent = msg.value.length + '/140'; };
+    msg.addEventListener('input', count);
+    dlg.querySelectorAll('.congrats-chip').forEach(c => c.addEventListener('click', () => { msg.value = c.dataset.chip; count(); dlg.querySelectorAll('.congrats-chip').forEach(o => o.classList.toggle('is-on', o === c)); }));
+    dlg.querySelector('[data-congrats-close]').addEventListener('click', () => dlg.close());
+    dlg.querySelector('form').addEventListener('submit', e => {
+      const text = msg.value.trim();
+      if (text && NibModeration.offensive(text)) { e.preventDefault(); msg.setAttribute('aria-invalid', 'true'); return announce('Sua mensagem tem palavras ofensivas ou de baixo calão. Revise o texto.', 'warning'); }
+      const k = btn.dataset.congrats; state.congrats[k] = text || true;
+      e.preventDefault(); dlg.close(); btn.classList.add('is-sent'); btn.setAttribute('aria-pressed', 'true'); btn.textContent = 'Parabéns enviado';
+      announce(`Parabéns enviado para ${first} (teste). Na versão real, a pessoa recebe uma notificação${text ? ' com a sua mensagem' : ''}.`, 'success', false);
+    });
+    dlg.showModal(); dlg.querySelector('form').focus({ preventScroll: true });
+  }
+  function myBirthdayPopup(tries = 0) {
+    if (PUBLIC) return;
+    const me = admin.birthdays().find(b => b.today && b.name === state.member.full);
+    if (!me || state.birthdayShown || isManagement() || state.view !== 'inicio') return;
+    const ready = ['app-splash', 'app-auth', 'app-onboarding', 'app-enter'].every(id => { const el = document.getElementById(id); return !el || el.hidden; });
+    if (!ready) { if (tries < 60) setTimeout(() => myBirthdayPopup(tries + 1), 400); return; }
+    state.birthdayShown = true;
+    setTimeout(openBirthday, 700); // respiro depois do brasão
+  }
+  function openBirthday() {
+    if (state.view !== 'inicio' || isManagement()) return;
+    let dlg = document.getElementById('bday-dialog');
+    if (!dlg) { dlg = document.createElement('dialog'); dlg.id = 'bday-dialog'; dlg.setAttribute('aria-labelledby', 'my-bday-title'); document.body.append(dlg); dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); }); }
+    const date = new Intl.DateTimeFormat('pt-BR', { timeZone: 'America/Porto_Velho', day: 'numeric', month: 'long' }).format(new Date());
+    dlg.innerHTML = `<div class="my-bday" tabindex="-1"><div class="my-bday-confetti" aria-hidden="true">${'<i></i>'.repeat(16)}</div><img class="my-bday-water" src="assets/brasao-branco.webp" alt="" width="271" height="293"><button type="button" class="my-bday-close" data-bday-close="1" aria-label="Fechar mensagem"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12 M18 6 6 18"/></svg></button>
+      <div class="my-bday-crest" aria-hidden="true"><img src="assets/brasao-branco.webp" alt="" width="271" height="293"></div>
+      <span class="my-bday-date">${escape(date.toUpperCase())} · HOJE É O SEU DIA</span>
+      <h2 id="my-bday-title">Feliz aniversário,<span>${escape(state.member.first)}</span></h2>
+      <span class="my-bday-rule" aria-hidden="true"><i></i></span>
+      <p class="my-bday-msg">A Nova Igreja Batista celebra a sua vida e agradece a Deus por você caminhar com a gente. Que este novo ano seja cheio da graça e da paz do Senhor.</p>
+      <blockquote class="my-bday-verse"><p>“Ensina-nos a contar os nossos dias, de tal maneira que alcancemos corações sábios.”</p><cite>SALMOS 90:12</cite></blockquote>
+      <button type="button" class="my-bday-fans" data-fans-open="1">${fansStack()}<span class="fan-text">${fansSummary()}</span><span class="fan-chev" aria-hidden="true">›</span></button>
+      <button type="button" class="my-bday-ok" data-bday-close="1">Amém, ${g('obrigado', 'obrigada')}!</button></div>`;
+    dlg.querySelectorAll('.my-bday-confetti i').forEach((el, i) => { el.style.setProperty('--x', ((i * 37) % 100) + '%'); el.style.setProperty('--d', (i % 5) * .35 + 's'); el.style.setProperty('--t', 2.8 + (i % 4) * .5 + 's'); el.style.setProperty('--r', (i * 47 % 180) + 'deg'); });
+    dlg.showModal();
+    dlg.querySelector('.my-bday').focus({ preventScroll: true });
+  }
+  function myRequestsBox() {
+    const list = admin.myRequests(state.member.full); if (!list.length) return '';
+    return `<section class="box my-requests" aria-labelledby="my-req-title"><h2 id="my-req-title">Minhas solicitações</h2><ol class="req-list">${list.map(r => { const done = r.status === 'atualizado'; return `<li><div class="req-head"><strong>${escape(r.note)}</strong><span class="tag ${done ? 'status-active' : 'is-wait'}">${done ? 'Atualizado' : 'Em conferência'}</span></div><ol class="req-steps" aria-label="Andamento"><li class="is-done">Enviado · ${escape(r.at)}</li><li class="${done ? 'is-done' : 'is-now'}">Em conferência pela Secretaria</li><li class="${done ? 'is-done' : ''}">${done ? 'Cadastro atualizado · ' + escape(r.done || '') : 'Cadastro atualizado'}</li></ol></li>`; }).join('')}</ol></section>`;
+  }
+  // Células do site: mesma lista da home (novaigrejabatista.com.br/#celulas), filtrada por dia.
+  function siteCellsPage() {
+    const days = NibSite.celulas(), total = NibSite.totalCelulas();
+    const mine = account() && findCell(account().celula);
+    const sel = days.some(d => d.dia === state.cellDay) ? state.cellDay : '';
+    const selIdx = sel ? days.findIndex(d => d.dia === sel) + 1 : 0, fromIdx = state.cellDayFrom === undefined ? selIdx : state.cellDayFrom; state.cellDayFrom = selIdx;
+    const hoje = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'][new Date().getDay()];
+    const chips = [['', 'Todos', total, 'Todos os dias']].concat(days.map(d => [d.dia, d.dia.slice(0, 3), d.celulas.length, d.dia])).map(([v, l, n, full]) => `<button type="button" class="day-pick-btn${v === sel ? ' is-active' : ''}${v && v === hoje ? ' is-today' : ''}" data-cell-day="${escape(v)}" aria-pressed="${v === sel}" aria-label="${escape(full)}, ${n} ${n === 1 ? 'célula' : 'células'}${v && v === hoje ? ', hoje' : ''}"><strong>${escape(l)}</strong><small aria-hidden="true">${n}</small></button>`).join('');
+    const wa = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11.5a8.5 8.5 0 0 1-12.6 7.4L3 20l1.2-4.2A8.5 8.5 0 1 1 20 11.5Z M9 8.5c0 3.5 3 6.5 6.5 6.5l1-1.6-2-1-1 .9a4 4 0 0 1-2.8-2.8l.9-1-1-2Z"/></svg>';
+    const groups = days.filter(d => !sel || d.dia === sel).map(d => `<section class="cell-day" aria-labelledby="cd-${escape(d.dia.slice(0,3))}"><div class="section-heading"><h2 id="cd-${escape(d.dia.slice(0,3))}">${escape(d.dia)}</h2><span class="cell-count">${d.celulas.length} ${d.celulas.length === 1 ? 'célula' : 'células'}</span></div><ul class="cell-list">${d.celulas.map(c => `<li class="cell-card${mine && mine.dia === d.dia && mine.nome === c.nome ? ' is-mine' : ''}">${mine && mine.dia === d.dia && mine.nome === c.nome ? '<span class="cell-mine-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>Sua célula</span>' : ''}<h3>${escape(c.nome)}</h3><p class="cell-leader">${escape(c.lider)}</p><p class="cell-row">${navIcon('informacoes')}<span>${escape(c.horario)}</span></p><p class="cell-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21Z M12 12a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z"/></svg><span>${escape(c.local)}</span></p>${c.whatsapp ? `<a class="button button-go cell-wa" href="${escape(c.whatsapp)}" target="_blank" rel="noopener">${wa}<span>Falar com o líder</span></a>` : ''}</li>`).join('')}</ul></section>`).join('');
+    const mineBox = mine ? `<section class="box my-cell" aria-labelledby="my-cell-title"><span class="label">SUA CÉLULA</span><h2 id="my-cell-title">${escape(mine.nome)}</h2><p class="cell-leader">${escape(mine.lider)}</p><div class="place-card cell-place"><div class="cell-place-row"><span class="place-pin"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></span><div><strong>${escape(mine.dia)}</strong><span>${escape(mine.horario)}</span></div></div><div class="cell-place-row"><span class="place-pin"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21Z M12 12a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z"/></svg></span><div><strong>Local</strong><span>${escape(mine.local)}</span></div></div></div>${mine.whatsapp ? `<a class="place-route cell-wa-main" href="${escape(mine.whatsapp)}" target="_blank" rel="noopener">${wa}<span>Falar com o líder</span></a>` : ''}<div class="place-links"><a href="#agenda" data-view="agenda">${navIcon('agenda')}<span><strong>Calendário</strong><small>Ver os dias</small></span></a><a href="#cadastro" data-view="cadastro"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4 3.5 7.5 7 11 M3.5 7.5H17 M17 13l3.5 3.5L17 20 M20.5 16.5H7"/></svg><span><strong>Trocar</strong><small>Outra célula</small></span></a></div></section>`
+      : account() ? `<section class="box my-cell is-empty"><span class="label">SUA CÉLULA</span><p>${account().celula ? 'A célula do seu cadastro não está mais na lista. Escolha de novo em Meu cadastro.' : 'Já participa de uma célula? Informe em Meu cadastro para ela aparecer aqui e no seu calendário.'}</p><button type="button" class="button" data-view="cadastro">Informar minha célula</button></section>` : '';
+    const intro = `<section class="box cell-intro"><span class="label">NOSSAS CÉLULAS</span><h2>${total} células em Ariquemes</h2><p>É nos lares que a fé encontra espaço para ser vivida de perto. Escolha o dia que fica melhor para você e chame o líder no WhatsApp.</p></section>`;
+    return `${mineBox ? `<div class="cell-top">${mineBox}${intro}</div>` : intro}<div class="day-pick seg" role="group" aria-label="Dia da semana" style="--n:${days.length + 1};--i:${selIdx};--from:${fromIdx}"><span class="seg-pill${fromIdx !== selIdx ? ' is-moving' : ''}" aria-hidden="true"></span>${chips}</div>${groups}`;
+  }
+  // Informações reais da igreja: horários, endereço, liderança e canais.
+  function siteInfoPage() {
+    const leaders = NibSite.lideranca().map(l => `<li class="leader"><img src="${l.photo}" alt="" width="480" height="600" loading="lazy"><div><small>${escape(l.role)}</small><strong>${escape(l.name)}</strong></div></li>`).join('');
+    return `<div class="admin-grid info-grid"><section class="box"><span class="label">TODA SEMANA</span><h2>Cultos e encontros</h2><ul class="admin-upcoming info-week"><li><span class="admin-when"><small>qui</small><strong>19h30</strong></span><span><b>Culto da Fé</b><small>Quinta-feira</small></span></li><li><span class="admin-when"><small>dom</small><strong>9h30</strong></span><span><b>EBS · Escola Bíblica de Sabedoria</b><small>Domingo de manhã</small></span></li><li><span class="admin-when"><small>dom</small><strong>19h</strong></span><span><b>Noite de Glória</b><small>Domingo à noite</small></span></li><li><span class="admin-when"><small>lares</small><strong>${NibSite.totalCelulas()}</strong></span><span><b>Células</b><small>Durante a semana, nos lares</small></span></li></ul><div class="form-actions">${button('Ver células', 'celulas')}</div></section><section class="box church-contact"><span class="label">ESTAMOS TE ESPERANDO</span><h2>Endereço</h2><div class="place-card"><span class="place-pin"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21Z M12 12a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z"/></svg></span><div><strong>Nova Igreja Batista</strong><span>Rua França, 1409</span><span>Áreas Especiais 01</span><span>Ariquemes, RO · 76870-013</span></div></div><a class="place-route" href="https://www.google.com/maps/dir/?api=1&amp;destination=Nova%20Igreja%20Batista%20Rua%20Fran%C3%A7a%201409%20Ariquemes%20RO" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11 21 3l-8 18-2-8-8-2Z"/></svg><span>Como chegar</span></a><div class="place-links"><a href="https://www.instagram.com/nibcasadedeus/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><path d="M17.2 6.8h.01"/></svg><span><strong>Instagram</strong><small>Fotos e avisos</small></span></a><a href="https://www.youtube.com/@nibcasadedeus" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.5C3 6.6 4.4 5.5 6 5.4 8 5.2 10 5.1 12 5.1s4 .1 6 .3c1.6.1 3 1.2 3 3.1v7c0 1.9-1.4 3-3 3.1-2 .2-4 .3-6 .3s-4-.1-6-.3C4.4 18.5 3 17.4 3 15.5Z M10 9l5 3-5 3Z"/></svg><span><strong>YouTube</strong><small>Cultos ao vivo</small></span></a></div></section></div><section class="box leaders-box" aria-labelledby="leaders-title"><span class="label">QUEM CONDUZ</span><h2 id="leaders-title">Nossa liderança</h2><ul class="leaders">${leaders}</ul></section>`;
+  }
+  function cellsPage() {
+    if (PUBLIC) return siteCellsPage();
+    const myCell = memberCell() || { name: 'Célula Exemplo', weekday: 3, time: '19:30', place: 'Casa da família Exemplo · Bairro Exemplo', leader: 'Paulo e Lúcia Exemplo' };
+    const wd = ['domingo','segunda-feira','terça-feira','quarta-feira','quinta-feira','sexta-feira','sábado'][myCell.weekday];
+    return `<div class="cells-layout"><section class="box my-cell" aria-labelledby="my-cell-title"><span class="label">MINHA CÉLULA</span><h2 id="my-cell-title">${escape(myCell.name)}</h2><dl class="profile"><dt>Quando</dt><dd>Toda ${wd}, às ${escape(myCell.time)}</dd><dt>Onde</dt><dd>${escape(myCell.place)}</dd><dt>Líder</dt><dd>${escape(myCell.leader)}</dd></dl><div class="form-actions"><button type="button" class="action primary" data-message="No app real, este botão abre o WhatsApp do líder da célula. Nesta versão de teste o número é fictício.">Falar com o líder</button><button type="button" class="button button-go" data-view="agenda">Ver no calendário ${arrow}</button></div><p class="note">Dados fictícios. Na versão real, a célula vem da plataforma de células ou do cadastro feito pela Secretaria.</p></section><section class="box"><span class="label">PLATAFORMA DE CÉLULAS</span><h2>Estudos e presença</h2><p>Os estudos, a presença e os relatórios da célula ficam na plataforma de células, que será conectada ao app.</p><button type="button" disabled>Acesso em preparação</button></section></div>`;
+  }
+  function homeNotice() {
+    const n = admin.latestNotice(); if (!n) return '';
+    return `<section class="home-notice" aria-labelledby="home-notice-title"><span class="home-notice-icon" aria-hidden="true">${navIcon('comunicados')}</span><div class="home-notice-text"><span class="label">AVISO DA IGREJA</span><h2 id="home-notice-title">${escape(n.title)}</h2><p>${escape(n.text)}</p>${n.when ? `<small>${escape(n.when)}</small>` : ''}</div><button type="button" class="home-notice-more" data-view="informacoes" aria-label="Ver todos os avisos">›</button></section>`;
+  }
+  function birthdayBlock() {
+    const list = admin.birthdays().filter(b => !(b.name === state.member.full && state.hideBirthday)); if (!list.length) return '';
+    state.congrats = state.congrats || {};
+    const cake = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 21h16 M5 21v-8h14v8 M5 16c2 1 4-1 7 0s5 1 7 0 M12 13V9 M12 6.5c-.8-.6-.8-1.9 0-2.5.8.6.8 1.9 0 2.5z"/></svg>';
+    const extra = list.length > 4 && !state.bdayAll; const cards = list.map((b, i) => { if (extra && i >= 4 && b.name !== state.member.full) return ''; if (b.name === state.member.full) return `<li class="bday bday-mine"><div class="bday-mine-top"><span class="profile-avatar" aria-hidden="true">${escape(b.name.charAt(0))}<i>${cake}</i></span><div class="bday-text"><strong>${escape(b.name)}</strong><small class="is-me">Hoje é o seu dia</small></div><span class="bday-mine-tag">Parabéns!</span></div><button type="button" class="bday-mine-fans" data-fans-open="1">${fansStack()}<span class="fan-text">${fansSummary()}</span><span class="fan-chev" aria-hidden="true">›</span></button></li>`; const sent = state.congrats[b.key + b.name]; return `<li class="bday${b.today ? ' is-today' : ''}"><span class="profile-avatar" aria-hidden="true">${escape(b.name.charAt(0))}${b.today ? `<i>${cake}</i>` : ''}</span><div class="bday-text"><strong>${escape(b.name)}</strong><small${b.name === state.member.full ? ' class="is-me"' : ''}>${b.name === state.member.full ? 'Hoje é o seu dia · ver parabéns' : b.today ? 'Hoje' : escape(b.week) + ', ' + b.date}</small></div>${b.name === state.member.full ? `<button type="button" class="bday-me" data-fans-open="1" aria-label="Ver quem te deu parabéns">${fansStack()}<span class="fan-count">${birthdayFans.length}</span></button>` : `<button type="button" class="bday-btn${sent ? ' is-sent' : ''}" data-congrats="${escape(b.key + b.name)}" aria-pressed="${!!sent}">${sent ? 'Parabéns enviado' : 'Dar parabéns'}</button>`}</li>`; }).join('');
+    return `<section class="home-birthdays" aria-labelledby="bday-title"><div class="section-heading"><div><span class="label">ESTA SEMANA</span><h2 id="bday-title">Aniversariantes</h2></div><span class="bday-icon">${cake}</span></div><ul class="bday-list box">${cards}${extra ? `<li class="bday-more"><button type="button" data-bday-all="1">Ver todos os ${list.length} aniversariantes</button></li>` : ''}</ul><p class="note">Aparecem só o nome, o dia e o mês. Quem não quiser aparecer pode desmarcar em Meu cadastro.</p></section>`;
   }
   function communityBlock() {
-    return `<section class="community-prayer" aria-labelledby="community-prayer-title"><div class="section-heading"><div><span class="label">CUIDADO EM COMUNIDADE</span><h2 id="community-prayer-title">Caderno de oração</h2></div>${button('Ver caderno','caderno')}</div><p>Vamos orar uns pelos outros.</p><div class="prayer-feed">${prayerCards(true)}</div><p class="note">Mural demonstrativo com pedidos fictícios. O contador representa pessoas orando. Ainda sem compartilhamento entre usuários.</p></section>`;
+    return `<section class="community-prayer" aria-labelledby="community-prayer-title"><div class="section-heading"><div><span class="label">CUIDADO EM COMUNIDADE</span><h2 id="community-prayer-title">Caderno de oração</h2></div>${button('Ver caderno','caderno')}</div><p>Vamos orar uns pelos outros.</p><div class="prayer-feed">${prayerCards(true)}</div>${PUBLIC ? '' : '<p class="note">Mural demonstrativo com pedidos fictícios. O contador representa pessoas orando. Ainda sem compartilhamento entre usuários.</p>'}</section>`;
+  }
+  function loadPrayers() {
+    return NibConta.caderno('lista').then(d => { state.prayers = d.pedidos.slice().reverse().map(x => ({ id: String(x.id), author: x.autor, name: x.titulo, reason: x.motivo, answered: x.atendido, supporters: x.orando, supported: x.eu_orando, own: x.meu, at: x.criado_em })); state.prayerTeam = d.equipe && NibConta.equipe(); state.prayersLoaded = true; state.prayerError = ''; })
+      .catch(e => { state.prayersLoaded = true; state.prayerError = e.message; });
+  }
+  // Minhas inscrições (contas reais): eventos do site ligados ao celular da conta. Só para cadastro confirmado pela Secretaria (decisão de Hilton, 06/11/2026).
+  function loadRegistrations() {
+    state.regsLoading = true;
+    return NibConta.inscricoes().then(d => { state.regs = d; }).catch(e => { state.regs = { erro: e.message }; }).finally(() => { state.regsLoading = false; state.regsKey = state.accountKey; });
+  }
+  const legacyRegsBox = () => `<section class="box event-follow-up"><h2>Minhas inscrições</h2><p>As inscrições são feitas no site da igreja. Para ver a sua, use a consulta com o nome ou o protocolo e o WhatsApp informado.</p><a class="button button-go" href="https://novaigrejabatista.com.br/consulta-inscricao/" target="_blank" rel="noopener">Consultar minha inscrição ${arrow}</a></section>`;
+  function myRegistrations() {
+    const consult = `<a class="button button-go" href="https://novaigrejabatista.com.br/consulta-inscricao/" target="_blank" rel="noopener">Consultar pelo site ${arrow}</a>`;
+    const head = '<span class="label">MINHAS INSCRIÇÕES</span><h2>Suas inscrições em eventos</h2>';
+    if (!state.regs || state.regsKey !== state.accountKey) { if (!state.regsLoading) loadRegistrations().then(() => { if (state.view === 'eventos') show('eventos', false, false); }); return `<section class="box event-follow-up my-regs">${head}<p class="event-empty">Carregando suas inscrições</p></section>`; }
+    const d = state.regs;
+    if (d.desativado) return legacyRegsBox();
+    if (d.erro) return `<section class="box event-follow-up my-regs">${head}<p>${escape(d.erro)}</p>${consult}</section>`;
+    if (!d.liberado) return `<section class="box event-follow-up my-regs">${head}<p>Assim que a Secretaria confirmar seu cadastro, suas inscrições aparecem aqui sozinhas, sem precisar digitar nada. Até lá, use a consulta do site.</p>${consult}</section>`;
+    if (!d.inscricoes.length) return `<section class="box event-follow-up my-regs">${head}<p>Não encontramos inscrições com o celular ${escape(fmtPhone(account().celular || ''))}. Se a inscrição foi feita com outro número, use a consulta do site.</p>${consult}</section>`;
+    const items = d.inscricoes.map(r => `<li class="reg-card"><div class="reg-top"><strong>${escape(r.evento)}</strong><span class="reg-status ${r.confirmada ? 'is-ok' : 'is-wait'}">${escape(r.situacao)}</span></div><p class="reg-name">${escape(r.nome)}</p><p class="reg-proto">Protocolo <b>${escape(r.protocolo)}</b></p></li>`).join('');
+    return `<section class="box event-follow-up my-regs">${head}<p>Inscrições feitas com o celular do seu cadastro, inclusive as de filhos em que você é o responsável.</p><ul class="reg-list">${items}</ul></section>`;
+  }
+  // Avisos da igreja (reais): a Secretaria e a Liderança Pastoral publicam; todos veem (pedido de Hilton, 06/11/2026).
+  function loadAvisos() {
+    state.avisosLoading = true;
+    return NibConta.avisos('lista').then(d => { state.avisos = d.avisos; state.avisosEquipe = d.equipe && NibConta.equipe(); state.avisosErro = ''; })
+      .catch(e => { state.avisosErro = e.message; state.avisos = state.avisos || []; })
+      .finally(() => { state.avisosLoading = false; state.avisosKey = state.accountKey || ''; });
+  }
+  function ensureAvisos() {
+    if (!PUBLIC || !window.NibConta || !NibConta.available() || state.avisosLoading || (state.avisos && state.avisosKey === (state.accountKey || ''))) return;
+    loadAvisos().then(() => { refreshNotices(); if (['inicio', 'avisos'].includes(state.view)) show(state.view, false, false); });
+  }
+  const avisosVistos = () => { try { return JSON.parse(localStorage.getItem('nib-avisos-lidos') || '[]'); } catch (_) { return []; } };
+  function avisosNovos() { ensureAvisos(); const v = avisosVistos(); return (state.avisos || []).filter(a => !v.includes(a.id)).length; }
+  function avisoData(t) { const d = new Date(String(t).replace(' ', 'T') + '-04:00'); return isNaN(d) ? '' : new Intl.DateTimeFormat('pt-BR', { timeZone: 'America/Porto_Velho', day: '2-digit', month: 'long' }).format(d); }
+  // Bloco na tela inicial com os avisos ativos (até a data final informada), pedido de Hilton em 06/11/2026.
+  // Cadastro incompleto (nascimento, CPF ou endereço): lembrete discreto na inicial até completar.
+  function birthNudge() {
+    const p = account(); if (!p) return '';
+    const falta = [!p.nascimento && 'data de nascimento', !p.cpf && 'CPF', !p.endereco && 'endereço'].filter(Boolean); if (!falta.length) return '';
+    const lista = falta.length > 1 ? falta.slice(0, -1).join(', ') + ' e ' + falta[falta.length - 1] : falta[0];
+    return `<a class="birth-nudge" href="#cadastro" data-view="cadastro"><span class="birth-nudge-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21h16M5 21v-7a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v7M5 16c1.5 1 3 1 4.5 0s3-1 4.5 0 3 1 4.5 0M12 12V8M12 5.5c.8-.8.8-1.7 0-2.5-.8.8-.8 1.7 0 2.5Z"/></svg></span><span><strong>Complete seu cadastro</strong><small>Falta informar ${escape(lista)}.</small></span><span class="birth-nudge-go" aria-hidden="true">›</span></a>`;
+  }
+  function homeAvisos() {
+    ensureAvisos(); const list = (state.avisos || []).slice(0, 2); if (!list.length) return '';
+    const v = avisosVistos();
+    return `<section class="home-avisos" aria-labelledby="home-avisos-title"><div class="section-heading"><div><span class="label">MURAL DA IGREJA</span><h2 id="home-avisos-title">${list.length === 1 ? 'Aviso da igreja' : 'Avisos da igreja'}</h2></div>${button('Ver todos', 'avisos')}</div>${list.map(a => `<article class="home-aviso${a.fixado ? ' is-pinned' : ''}"><span class="aviso-icon" aria-hidden="true">${navIcon('comunicados')}</span><div><div class="home-aviso-top"><h3>${escape(a.titulo)}</h3>${v.includes(a.id) ? '' : '<span class="home-aviso-new">Novo</span>'}</div><p>${escape(a.texto)}</p>${a.ate ? `<small>Até ${escape(fmtDay(a.ate))}</small>` : ''}${a.link ? `<a class="home-aviso-link" href="${escape(a.link)}" target="_blank" rel="noopener">Saiba mais ${arrow}</a>` : ''}</div></article>`).join('')}</section>`;
+  }
+  function avisosPage() {
+    if (!PUBLIC) return `<section class="box"><p>Os avisos publicados pela igreja aparecem aqui.</p></section>`;
+    if (!state.avisos) { ensureAvisos(); return '<p class="event-empty">Carregando os avisos</p>'; }
+    try { localStorage.setItem('nib-avisos-lidos', JSON.stringify(state.avisos.map(a => a.id).slice(0, 60))); } catch (_) {}
+    const team = account() && NibConta.equipe();
+    const form = team ? `<section class="box aviso-form-box"><span class="label">NOVO AVISO</span><h2>Publicar para toda a igreja</h2><form id="aviso-form" class="aviso-form"><label>Título<input name="titulo" maxlength="120" required placeholder="Ex.: Culto de Santa Ceia"></label><label>Aviso<textarea name="texto" rows="4" maxlength="1500" required placeholder="Escreva o aviso como ele deve aparecer para a igreja."></textarea></label><label>Link (opcional)<input name="link" type="url" maxlength="300" placeholder="https://"></label><label>Mostrar até<input name="ate" type="date" required min="${NibDaily.dayKey(new Date())}" value="${NibDaily.dayKey(new Date(Date.now() + 7 * 864e5))}"></label><label class="check"><input type="checkbox" name="fixado"><span>Fixar no topo</span></label><label class="check"><input type="checkbox" name="notificar" checked><span>Enviar notificação no celular de quem ativou</span></label><div class="form-actions"><button type="submit" class="action">Publicar aviso</button></div></form></section>` : '';
+    const list = state.avisos.length ? `<ul class="aviso-list">${state.avisos.map(a => `<li class="aviso-card${a.fixado ? ' is-pinned' : ''}"><div class="aviso-top"><span class="aviso-icon" aria-hidden="true">${navIcon('comunicados')}</span><div><h3>${escape(a.titulo)}</h3><small>${a.fixado ? 'Fixado · ' : ''}${escape(avisoData(a.criado_em))}${a.autor ? ' · por ' + escape(a.autor) : ''}</small></div></div><p>${escape(a.texto).replace(/\n/g, '<br>')}</p>${a.link ? `<a class="button button-go" href="${escape(a.link)}" target="_blank" rel="noopener">Saiba mais ${arrow}</a>` : ''}${team ? `<button type="button" class="aviso-remove" data-aviso-remove="${a.id}">Remover aviso</button>` : ''}</li>`).join('')}</ul>` : `<section class="box"><p class="event-empty">${state.avisosErro ? escape(state.avisosErro) : 'Nenhum aviso no momento. Quando a igreja publicar, ele aparece aqui e no sino.'}</p></section>`;
+    return form + list;
+  }
+  // Pílulas de Sabedoria (pedido de Hilton, 08/11/2026): vídeos curtos do pastor, enviados pelo app direto para o YouTube da igreja (não listado).
+  // A igreja assiste aqui dentro e busca por título, tema, passagem ou pelas palavras faladas (legenda automática do YouTube).
+  const PIL_TEMAS = ['Fé', 'Esperança', 'Ansiedade', 'Família', 'Oração', 'Gratidão', 'Perdão', 'Propósito', 'Santidade', 'Cura'];
+  const pilTempo = s => { s = Math.max(0, Math.floor(s || 0)); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
+  // Pílula que a igreja vê agora (para a liderança a lista traz também as ocultas, programadas e em processamento).
+  const pilVisivel = p => (!p.estado || p.estado === 'publicado' || p.troca) && !p.oculto && !p.agendado;
+  // "qui., 12 de nov. às 7h" para a publicação programada.
+  const pilQuando = s => { if (!s) return ''; const d = new Date(s.replace(' ', 'T')); if (isNaN(d)) return ''; return new Intl.DateTimeFormat('pt-BR', { weekday: 'short', day: 'numeric', month: 'short' }).format(d).replace(/\./g, '') + ' às ' + d.getHours() + 'h' + (d.getMinutes() ? String(d.getMinutes()).padStart(2, '0') : ''); };
+  const pilLocal = s => s ? s.replace(' ', 'T').slice(0, 16) : '';
+  const pilAgoraLocal = () => { const d = new Date(Date.now() + 5 * 60000); return new Date(d - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16); };
+  const pilData = d => d ? new Intl.DateTimeFormat('pt-BR', { day: 'numeric', month: 'short', timeZone: 'UTC' }).format(new Date(d.slice(0, 10) + 'T12:00:00Z')).replace('.', '') : '';
+  const pilEstados = { enviando: 'Envio incompleto', processando: 'Processando no YouTube', privado: 'Travado como privado', falhou: 'Não publicado' };
+  // Capa escolhida pelo pastor (guardada no app) ou, sem ela, a miniatura automática do YouTube.
+  const pilCapaImg = p => p.capa ? `<img class="is-capa" src="${escape(p.capa)}" alt="" loading="lazy">`
+    : p.youtube_id ? `<img src="https://i.ytimg.com/vi/${encodeURIComponent(p.youtube_id)}/hqdefault.jpg" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">` : '';
+  // Quadro da capa: no formulário (p = null) usa o vídeo escolhido; numa pílula publicada, uma foto ou um quadro de um vídeo do celular.
+  function pilCapaBox(p) {
+    const nova = p ? null : state.pilCapa, src = nova ? nova.url : p && p.capa ? p.capa : '';
+    const foto = `<label class="button">Foto do celular<input type="file" accept="image/*" data-pil-capa-foto class="visually-hidden"></label>`;
+    const auto = (nova || (p && p.capa)) ? '<button type="button" class="link-button" data-pil-capa-auto>Usar a automática do YouTube</button>' : '';
+    const acoes = p ? `<label class="button">Quadro de um vídeo<input type="file" accept="video/*" data-pil-capa-video class="visually-hidden"></label>${foto}${auto}` : `<button type="button" class="button" data-pil-capa-quadros>Um quadro do vídeo</button>${foto}${auto}`;
+    const dica = p ? (state.pilCapaVid ? 'Pause o vídeo no ponto que quiser e toque em "Usar este quadro".' : src ? 'Capa escolhida por você.' : 'Hoje a capa é a automática do YouTube.') : src ? 'Capa escolhida por você.' : state.pilCapaQuadros ? 'Pause o vídeo no ponto que quiser e toque em "Usar este quadro".' : 'Automática do YouTube. Você pode escolher um momento do vídeo ou uma foto do celular.';
+    const vsrc = p ? state.pilCapaVid : state.pilCapaQuadros ? state.pilFileUrl : null;
+    const vid = vsrc ? `<div class="pil-capa-video"><video src="${vsrc}" muted playsinline controls preload="metadata"></video><div class="form-actions"><button type="button" class="action primary" data-pil-quadro>Usar este quadro</button><button type="button" class="button" data-pil-capa-fechar>Cancelar</button></div></div>` : '';
+    return `<div class="pil-capa" id="pil-capa"><span class="pil-capa-img${(p ? p.vertical : !state.pilMeta || state.pilMeta.vertical) ? ' is-vertical' : ''}">${src ? `<img src="${escape(src)}" alt="Capa da pílula">` : p && p.youtube_id ? pilCapaImg(p) : '<small>Automática</small>'}</span><div><strong>Capa</strong><small>${escape(dica)}</small><div class="pil-capa-acoes">${acoes}</div></div>${vid}</div>`;
+  }
+  // Reduz a imagem (foto ou quadro do vídeo) para no máximo 1280 px e devolve um JPEG.
+  function pilCapaJpeg(fonte, w, h) {
+    const k = Math.min(1, 1280 / Math.max(w, h)), c = document.createElement('canvas');
+    c.width = Math.round(w * k); c.height = Math.round(h * k);
+    c.getContext('2d').drawImage(fonte, 0, 0, c.width, c.height);
+    return new Promise((res, rej) => c.toBlob(b => b ? res(b) : rej(new Error('Não foi possível preparar a imagem.')), 'image/jpeg', 0.86));
+  }
+  async function pilCapaFoto(file) {
+    const url = URL.createObjectURL(file);
+    try {
+      const img = await new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = () => rej(new Error('Não foi possível abrir essa imagem. Escolha uma foto JPEG ou PNG.')); i.src = url; });
+      return await pilCapaJpeg(img, img.naturalWidth, img.naturalHeight);
+    } finally { URL.revokeObjectURL(url); }
+  }
+  function pilCapaQuadro(video) {
+    if (!video || video.readyState < 2 || !video.videoWidth) return Promise.reject(new Error('Toque no play e pause o vídeo no ponto que quiser usar como capa.'));
+    return pilCapaJpeg(video, video.videoWidth, video.videoHeight);
+  }
+  // Capa nova: no formulário fica guardada até publicar; numa pílula publicada, salva na hora.
+  async function pilCapaUsar(blob) {
+    if (state.pilSel && state.pilVer) {
+      const d = await NibConta.pilulaCapa(state.pilVer.id, blob);
+      state.pilVer = d.pilula; state.pil = null; state.pilHomeKey = null; pilCapaVidFechar();
+      show('pilulas', false, false); announce(blob ? 'Capa salva.' : 'A capa voltou a ser a automática do YouTube.', 'success', false); return;
+    }
+    if (state.pilCapa) URL.revokeObjectURL(state.pilCapa.url);
+    state.pilCapaQuadros = false;
+    state.pilCapa = blob ? { blob, url: URL.createObjectURL(blob) } : null;
+    const box = content.querySelector('#pil-capa'); if (box) box.outerHTML = pilCapaBox(null);
+  }
+  function pilCapaVidFechar() { if (state.pilCapaVid) URL.revokeObjectURL(state.pilCapaVid); state.pilCapaVid = null; }
+  function pilCapaLimpar() { if (state.pilCapa) URL.revokeObjectURL(state.pilCapa.url); state.pilCapa = null; state.pilCapaQuadros = false; pilCapaVidFechar(); }
+  function pilThumb(p) {
+    const play = `<span class="pil-play" aria-hidden="true"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M8 5.5v13l10.5-6.5z"/></svg></span>`;
+    return `<span class="pil-thumb${p.vertical ? ' is-vertical' : ''}">${pilCapaImg(p)}${play}${p.duracao ? `<small>${pilTempo(p.duracao)}</small>` : ''}</span>`;
+  }
+  function loadPilulas() {
+    const q = state.pilQ || '', tema = state.pilTema || ''; state.pilLoading = true;
+    return NibConta.pilulas('lista&q=' + encodeURIComponent(q) + '&tema=' + encodeURIComponent(tema))
+      .then(d => { if ((state.pilQ || '') === q && (state.pilTema || '') === tema) { state.pil = d; state.pilErro = ''; } if (!q && !tema) state.pilHome = d.pilulas.filter(pilVisivel); })
+      .catch(e => { state.pilErro = e.message; state.pil = state.pil || { pilulas: [], temas: [] }; })
+      .finally(() => { state.pilLoading = false; });
+  }
+  // Bloco na tela inicial: a pílula mais recente dos últimos 10 dias.
+  // Atalho do pastor na tela inicial (pedido de Hilton, 08/11/2026): o mesmo cartão "Grave a pílula da semana" da tela das Pílulas.
+  function homePilEstudio() {
+    if (!PUBLIC || !account() || !NibConta.lideranca()) return '';
+    const d = state.pilHomeD; if (!d || !d.youtube || !d.youtube.conectado) return '';
+    return `<div class="pil-home-estudio">${pilEquipe(d)}</div>`;
+  }
+  function homePilula() {
+    if (!PUBLIC || !account()) return '';
+    if (state.pilHomeKey !== (state.accountKey || '')) { state.pilHomeKey = state.accountKey || ''; state.pilHome = null; NibConta.pilulas('lista').then(d => { state.pilHome = d.pilulas.filter(pilVisivel); state.pilHomeD = d; if (state.view === 'inicio' && (state.pilHome.length || NibConta.lideranca())) show('inicio', false, false); }).catch(() => { state.pilHome = []; }); return ''; }
+    // Banners como os do "Acompanhe a igreja" (pedido de Hilton, 08/11/2026): as 3 pílulas mais recentes, logo abaixo do versículo.
+    const l = (state.pilHome || []).slice(0, 3); if (!l.length) return '';
+    const play = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 5.5v13l10.5-6.5z"/></svg>';
+    const seta = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>';
+    // Título de 2 palavras quebra em 2 linhas; no quadro laranja, a mensagem curta em até 2 linhas (cortada em palavra inteira, sem reticências).
+    const titulo = t => { const w = String(t).trim().split(/\s+/); return w.length === 2 ? escape(w[0]) + '<br>' + escape(w[1]) : escape(t); };
+    const caixa = p => p.texto ? `<span class="pil-resumo" data-resumo="${escape(p.texto)}">${escape(p.texto)}</span>` : `<span>${p.passagem ? escape(p.passagem) + ' · ' : ''}<b>Assistir${p.duracao ? ' ' + pilTempo(p.duracao) : ''}</b></span>`;
+    return `<section class="social-banners pil-banners" aria-labelledby="home-pil-title"><div class="section-heading"><h2 id="home-pil-title">Pílulas de Sabedoria</h2>${button('Ver todas', 'pilulas')}</div><div class="social-track pil-track">${l.map(p => `<button type="button" class="social-card pil-banner${p.vertical ? ' is-vertical' : ''}" data-pil-abrir="${p.id}" aria-label="Pílula de Sabedoria: ${escape(p.titulo)}. Assistir.">${pilCapaImg(p) || `<span class="pil-banner-art" aria-hidden="true">${navIcon('pilulas')}</span>`}${p.tema ? `<span class="social-kicker">${escape(p.tema)}</span>` : ''}<strong class="social-title">${titulo(p.titulo)}</strong><span class="social-box pil-banner-box">${caixa(p)}${seta}</span></button>`).join('')}</div>${l.length > 1 ? `<div class="social-dots" aria-hidden="true">${l.map((_, i) => `<span${i ? '' : ' class="is-active"'}></span>`).join('')}</div>` : ''}</section>`;
+  }
+  function pilLista() {
+    const d = state.pil, l = d.pilulas;
+    if (!l.length) return `<p class="event-empty">${state.pilErro ? escape(state.pilErro) : state.pilQ ? `Nenhuma pílula encontrada para “${escape(state.pilQ)}”. Tente outra palavra ou a passagem bíblica.` : state.pilTema ? 'Nenhuma pílula com este tema ainda.' : 'Ainda não há pílulas publicadas. Quando o pastor enviar, ela aparece aqui e no início do app.'}</p>`;
+    return `<ul class="pil-list">${l.map(p => `<li class="pil-item"><button type="button" class="pil-card" data-pil-abrir="${p.id}">${pilThumb(p)}<span class="pil-card-body">${p.estado && p.estado !== 'publicado' ? `<span class="pil-estado is-${escape(p.estado)}">${escape(p.troca ? 'Trocando o vídeo' : pilEstados[p.estado] || p.estado)}${p.estado === 'enviando' ? ` · ${p.progresso}%` : ''}</span>` : p.oculto ? '<span class="pil-estado is-oculta">Oculta</span>' : p.agendado ? `<span class="pil-estado is-programada">Programada · ${escape(pilQuando(p.publicar_em))}</span>` : p.tema ? `<span class="pil-tema">${escape(p.tema)}</span>` : ''}<strong>${escape(p.titulo)}</strong><small>${escape([p.passagem, pilData(p.data)].filter(Boolean).join(' · '))}</small></span></button>${p.estado && p.youtube_id ? `<button type="button" class="pil-card-editar" data-pil-editar-id="${p.id}" aria-label="Editar ${escape(p.titulo)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L18.5 9.5a2.1 2.1 0 0 0-3-3L5 17v3z M13.5 8.5l3 3"/></svg></button>` : ''}${(p.trechos || []).length ? `<div class="pil-trechos"><span>Falado no vídeo</span>${p.trechos.map(([t, txt]) => `<button type="button" data-pil-abrir="${p.id}" data-t="${t}"><b>${pilTempo(t)}</b>${escape(txt)}</button>`).join('')}</div>` : ''}</li>`).join('')}</ul>`;
+  }
+  let pilTimer = 0;
+  function pilBuscar(v) {
+    clearTimeout(pilTimer);
+    pilTimer = setTimeout(() => { state.pilQ = v.trim(); loadPilulas().then(() => { const box = content.querySelector('#pil-results'); if (box && state.view === 'pilulas' && !state.pilSel) box.innerHTML = pilLista(); }); }, 350);
+  }
+  const pilAdmin = () => !!(account() && NibConta.pessoa().papel === 'admin');
+  // Canal do YouTube no Painel da administração (pedido de Hilton, 08/11/2026): conectar e desconectar ficam só aqui.
+  function adminYoutube() {
+    if (!PUBLIC || !pilAdmin()) return '';
+    if (!state.ytEstado) { if (!state.ytLoading) { state.ytLoading = true; NibConta.youtube('estado').then(d => { state.ytEstado = d; }).catch(e => { state.ytEstado = { erro: e.message }; }).finally(() => { state.ytLoading = false; if (state.view === 'equipe') show('equipe', false, false); }); } return ''; }
+    const y = state.ytEstado, head = '<section class="box yt-box"><span class="label">ADMINISTRAÇÃO · INTEGRAÇÕES</span><h2>Canal do YouTube</h2>';
+    if (y.erro) return head + `<p class="form-error">${escape(y.erro)}</p></section>`;
+    if (!y.configurado) return head + '<p>Falta colocar no servidor as chaves do projeto do Google.</p></section>';
+    if (!y.conectado) return head + '<p>Conecte o canal da igreja para a Liderança Pastoral enviar as Pílulas de Sabedoria pelo app. Entre com a conta Google que tem acesso ao canal.</p><div class="form-actions"><a class="action primary" href="api/youtube.php?acao=conectar">Conectar canal do YouTube</a></div></section>';
+    return head + `<p class="yt-status"><span class="pil-canal-dot" aria-hidden="true"></span><span>Conectado${y.canal ? `: <strong>${escape(y.canal)}</strong>` : ''}. As Pílulas de Sabedoria enviadas pela Liderança Pastoral vão para este canal como não listadas.</span></p><div class="form-actions"><button type="button" class="button" data-view="pilulas">Ver as pílulas</button><button type="button" class="button pil-remove" data-pil-desconectar>Desconectar canal</button></div></section>`;
+  }
+  function pilEquipe(d) {
+    const y = d.youtube || {};
+    if (!y.configurado) return `<section class="box pil-team"><span class="label">LIDERANÇA PASTORAL</span><h2>Enviar pílulas</h2><p>Falta colocar no servidor as chaves do projeto do Google. Depois disso, a administração conecta o canal do YouTube da igreja aqui.</p></section>`;
+    if (!y.conectado) return `<section class="box pil-team"><span class="label">LIDERANÇA PASTORAL</span><h2>Conectar o canal do YouTube</h2><p>${pilAdmin() ? 'A conexão com o canal fica no Painel da administração. Só precisa fazer uma vez.' : 'Peça à administração para conectar o canal do YouTube da igreja ao app. Só precisa fazer uma vez.'}</p>${pilAdmin() ? '<div class="form-actions"><button type="button" class="action primary" data-view="equipe">Abrir o Painel</button></div>' : ''}</section>`;
+    const u = state.pilUp;
+    if (u) {
+      const fim = { publicado: [u.troca ? 'Pronto! O vídeo da pílula foi trocado.' : u.quando ? `Pronto! A pílula aparece para a igreja ${pilQuando(u.quando)}.` : 'Pronto! A pílula já está no app.', 'is-ok'], privado: [u.msg, 'is-alert'], falhou: [u.msg, 'is-alert'], erro: [u.msg, 'is-alert'] }[u.fase];
+      const corpo = u.fase === 'enviando' ? `<p class="pil-up-msg">${escape(u.msg || 'Enviando o vídeo')}</p><div class="pil-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${u.pct}"><i data-w="${u.pct}"></i></div><p class="pil-up-pct"><strong>${u.pct}%</strong> · Pode usar o app, mas não feche até terminar.</p>`
+        : u.fase === 'processando' ? `<p>${u.troca ? 'O vídeo novo chegou ao YouTube e o anterior foi apagado do canal. A pílula volta a aparecer para a igreja assim que o vídeo novo ficar pronto.' : `O vídeo chegou ao YouTube. Agora ele está sendo preparado e aparece para a igreja assim que ficar pronto${u.notificar ? ', com aviso no celular' : ''}.`}</p><div class="pil-bar is-busy"><i></i></div>`
+        : `<p class="pil-up-fim ${fim[1]}">${escape(fim[0])}</p>`;
+      return `<section class="box pil-team pil-up"><span class="label">${u.fase === 'enviando' ? 'ENVIANDO' : u.fase === 'processando' ? 'QUASE LÁ' : 'ENVIO'}</span><h2>${escape(u.titulo)}</h2>${corpo}${u.fase === 'enviando' ? '' : `<div class="form-actions">${(u.fase === 'erro' || u.fase === 'falhou') && !u.troca ? '<button type="button" class="action primary" data-pil-nova>Tentar de novo</button>' : ''}<button type="button" class="button" data-pil-fechar>${u.fase === 'processando' ? 'Ok, avise quando ficar pronto' : 'Fechar'}</button></div>`}</section>`;
+    }
+    const canal = `<div class="pil-canal-wrap"><span class="pil-canal"><span class="pil-canal-dot" aria-hidden="true"></span>YouTube${y.canal ? ' · ' + escape(y.canal) : ''}</span></div>`;
+    const escolher = (txt, cls) => `<label class="${cls}"><input type="file" accept="video/*" data-pil-escolher class="visually-hidden">${txt}</label>`;
+    if (state.pilForm && state.pilFile) {
+      const f = state.pilFile, temas = [...new Set((d.temas || []).concat(PIL_TEMAS))].slice(0, 14), t = state.pilTemaNovo || '';
+      if (!state.pilFileUrl) state.pilFileUrl = URL.createObjectURL(f);
+      return `<section class="pil-studio is-form">${canal}<span class="label">NOVA PÍLULA</span><h2>Conte sobre o vídeo</h2>
+        <div class="pil-preview${state.pilMeta && !state.pilMeta.vertical ? ' is-wide' : ''}"><video src="${state.pilFileUrl}" muted playsinline controls preload="metadata"></video><div><strong>${escape(f.name)}</strong><small id="pil-info">${state.pilMeta ? escape(pilResumo(state.pilMeta, f)) : pilMB(f.size)}</small>${escolher('Trocar vídeo', 'pil-trocar')}</div></div>
+        ${pilCapaBox(null)}
+        <form id="pil-form" class="pil-form" autocomplete="off"><label>Título<input name="titulo" maxlength="120" required placeholder="Ex.: Não andeis ansiosos" value="${escape(state.pilRasc && state.pilRasc.titulo || '')}"></label>
+        <fieldset class="pil-temas-escolha"><legend>Tema central</legend><input type="hidden" name="tema" value="${escape(t)}"><div>${temas.map(x => `<button type="button" class="pil-chip${t === x ? ' is-on' : ''}" data-pil-tema-escolha="${escape(x)}" aria-pressed="${t === x}">${escape(x)}</button>`).join('')}<button type="button" class="pil-chip${t && !temas.includes(t) ? ' is-on' : ''}" data-pil-tema-outro>Outro tema</button></div><input class="pil-tema-outro" name="tema_outro" maxlength="60" placeholder="Escreva o tema" value="${t && !temas.includes(t) ? escape(t) : ''}"${t && !temas.includes(t) ? '' : ' hidden'}></fieldset>
+        <label>Passagem bíblica<input name="passagem" maxlength="80" placeholder="Ex.: Filipenses 4.6-7" value="${escape(state.pilRasc && state.pilRasc.passagem || '')}"></label>
+        <label>Mensagem curta (opcional)<textarea name="texto" rows="3" maxlength="1000" placeholder="Uma frase para acompanhar o vídeo.">${escape(state.pilRasc && state.pilRasc.texto || '')}</textarea></label>
+        <label class="check"><input type="checkbox" name="programar" data-pil-programar><span>Programar a publicação</span></label>
+        <label class="pil-programar" hidden>Publicar em<input type="datetime-local" name="publicar_em" min="${pilAgoraLocal()}"></label>
+        <label class="check"><input type="checkbox" name="notificar" checked><span>Avisar a igreja no celular quando a pílula for publicada</span></label>
+        <p class="note">Vai para o YouTube da igreja como não listado: só quem está no app encontra.</p>
+        <div class="form-actions"><button type="submit" class="action primary pil-enviar">Publicar pílula</button><button type="button" class="button" data-pil-cancelar>Cancelar</button></div></form></section>`;
+    }
+    const pub = (d.pilulas || []).filter(pilVisivel), ult = pub[0], prog = (d.pilulas || []).filter(p => p.agendado && !p.oculto).length;
+    return `<section class="pil-studio">${canal}<span class="pil-studio-icon" aria-hidden="true">${navIcon('pilulas')}</span><h2>Grave a pílula da semana</h2><p>Grave no celular, na vertical, de 1 a 3 minutos. O vídeo vai para o YouTube da igreja e aparece aqui para todos.</p>${escolher(`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4 M7 9l5-5 5 5 M5 20h14"/></svg>Escolher vídeo`, 'pil-studio-btn')}<small class="pil-studio-info">${pub.length ? `${pub.length} ${pub.length === 1 ? 'pílula publicada' : 'pílulas publicadas'} · última em ${escape(pilData(ult.data))}` : 'Nenhuma pílula publicada ainda. A primeira começa aqui.'}${prog ? ` · ${prog}\u00a0${prog === 1 ? 'programada' : 'programadas'}` : ''}</small></section>`;
+  }
+  function pilulasPage() {
+    if (!PUBLIC) return `<section class="box"><p>Aqui ficam os vídeos curtos do pastor para meditar na Palavra, com busca por tema, passagem bíblica e pelas palavras faladas no vídeo.</p></section>`;
+    if (!account()) return `<section class="box"><h2>Entre para assistir</h2><p>As Pílulas de Sabedoria são para a igreja: entre na sua conta para ver os vídeos do pastor.</p><div class="form-actions"><button type="button" class="action" data-view="entrar">Entrar ou criar cadastro</button></div></section>`;
+    if (state.pilSel) return pilDetalhe();
+    if (!state.pil) { if (!state.pilLoading) loadPilulas().then(() => { if (state.view === 'pilulas' && !state.pilSel) show('pilulas', false, false); }); return '<p class="event-empty">Carregando as pílulas</p>'; }
+    const d = state.pil, lider = d.equipe && NibConta.lideranca();
+    const temas = d.temas || [];
+    const chips = temas.length > 1 || state.pilTema ? `<div class="pil-temas" role="group" aria-label="Filtrar por tema"><button type="button" class="history-year${state.pilTema ? '' : ' is-active'}" data-pil-tema="" aria-pressed="${!state.pilTema}">Todos</button>${temas.map(t => `<button type="button" class="history-year${state.pilTema === t ? ' is-active' : ''}" data-pil-tema="${escape(t)}" aria-pressed="${state.pilTema === t}">${escape(t)}</button>`).join('')}</div>` : '';
+    return `${lider ? pilEquipe(d) : ''}<div class="pil-search"><label class="visually-hidden" for="pil-q">Buscar nas pílulas</label><input id="pil-q" type="search" value="${escape(state.pilQ || '')}" placeholder="Buscar por tema, passagem ou palavra" autocomplete="off" enterkeyhint="search"></div>${chips}<div id="pil-results">${pilLista()}</div>`;
+  }
+  const pilIframe = (p, t, auto) => `<iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(p.youtube_id)}?rel=0&amp;playsinline=1&amp;modestbranding=1${t ? '&amp;start=' + t : ''}${auto ? '&amp;autoplay=1' : ''}" title="${escape(p.titulo)}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>`;
+  function pilDetalhe() {
+    const sel = state.pilSel, p = state.pilVer && state.pilVer.id === sel.id ? state.pilVer : null;
+    if (!p) { NibConta.pilulas('ver&id=' + sel.id).then(d => { state.pilVer = d.pilula; }).catch(e => { state.pilSel = null; announce(e.message, 'warning'); }).finally(() => { if (state.view === 'pilulas') show('pilulas', false, false); }); return '<p class="event-empty">Carregando a pílula</p>'; }
+    const lider = !!p.estado && NibConta.lideranca(), pronto = p.youtube_id && (!p.estado || p.estado === 'publicado' || p.troca);
+    const palavras = eqFold(state.pilQ || '').split(/\s+/).filter(w => w.length >= 3 || /^\d+$/.test(w));
+    const hit = txt => { const f = ' ' + eqFold(txt).replace(/[^a-z0-9]+/g, ' ') + ' '; return palavras.some(w => /^\d+$/.test(w) ? f.includes(' ' + w + ' ') : f.includes(w)); };
+    const player = pronto ? `<div class="pil-player${p.vertical ? ' is-vertical' : ''}" id="pil-player">${pilIframe(p, sel.t, !!sel.t)}</div>`
+      : `<section class="box pil-wait"><p>${escape(p.aviso || (p.estado === 'enviando' ? `O envio parou em ${p.progresso}%. Remova e envie o vídeo de novo.` : 'O YouTube ainda está preparando o vídeo. Ele aparece aqui assim que ficar pronto.'))}</p></section>`;
+    const leg = p.legendas || [];
+    const transc = leg.length ? `<details class="pil-transc"${palavras.length && leg.some(([, x]) => hit(x)) ? ' open' : ''}><summary>Ler o que foi falado</summary><ol>${leg.map(([t, x]) => `<li${palavras.length && hit(x) ? ' class="is-hit"' : ''}><button type="button" data-pil-t="${t}">${pilTempo(t)}</button><span>${escape(x)}</span></li>`).join('')}</ol>${p.transcricao && p.transcricao !== leg.map(c => c[1]).join(' ') ? `<p class="pil-transc-ed"><b>Texto revisado:</b> ${escape(p.transcricao)}</p>` : ''}</details>`
+      : p.transcricao ? `<details class="pil-transc"><summary>Ler o que foi falado</summary><p>${escape(p.transcricao)}</p></details>`
+      : pronto ? '<p class="pil-transc-wait">A transcrição do que foi falado aparece aqui alguns minutos depois da publicação.</p>' : '';
+    const edit = lider && state.pilEdit ? `<section class="box pil-team"><span class="label">EDITAR</span><form id="pil-edit-form" class="pil-form"><label>Título<input name="titulo" maxlength="120" required value="${escape(p.titulo)}"></label><label>Tema central<input name="tema" maxlength="60" value="${escape(p.tema)}"></label><label>Passagem bíblica<input name="passagem" maxlength="80" value="${escape(p.passagem)}"></label><label>Mensagem curta<textarea name="texto" rows="3" maxlength="1000">${escape(p.texto)}</textarea></label>${p.transcricao || leg.length ? `<label>Transcrição (corrija palavras que o YouTube errou)<textarea name="transcricao" rows="6">${escape(p.transcricao || '')}</textarea></label>` : ''}<label>Publicação programada (vazio: aparece já)<input type="datetime-local" name="publicar_em" value="${escape(p.agendado ? pilLocal(p.publicar_em) : '')}" min="${pilAgoraLocal()}"></label><p class="note">Título, passagem e mensagem também mudam no YouTube. Tema e transcrição ficam só no app.</p><div class="form-actions"><button type="submit" class="action primary">Salvar</button><button type="button" class="button" data-pil-editar="0">Cancelar</button></div></form></section>` : '';
+    const enviando = state.pilUp && state.pilUp.fase === 'enviando';
+    const acoes = lider && !state.pilEdit ? `${p.oculto ? '<p class="pil-aviso">Oculta: a igreja não vê esta pílula. Toque em Mostrar para voltar.</p>' : ''}${p.agendado && !p.oculto ? `<p class="pil-aviso is-info">Programada: aparece para a igreja ${escape(pilQuando(p.publicar_em))}.</p>` : ''}${p.troca ? `<p class="pil-aviso">Trocando o vídeo: ${p.progresso}% enviado. Até terminar, a igreja continua vendo o vídeo anterior.</p>` : p.aviso && pronto ? `<p class="pil-aviso">${escape(p.aviso)}</p>` : ''}<div class="pil-acoes">${p.youtube_id ? '<button type="button" class="button" data-pil-editar="1">Editar</button>' : ''}${p.youtube_id ? `<button type="button" class="button" data-pil-capa-ed="${state.pilCapaEd ? 0 : 1}" aria-expanded="${!!state.pilCapaEd}">Trocar capa</button>` : ''}${p.youtube_id && !enviando ? '<label class="button">Trocar vídeo<input type="file" accept="video/*" data-pil-trocar-video class="visually-hidden"></label>' : ''}${p.oculto ? '<button type="button" class="button" data-pil-ocultar="0">Mostrar</button>' : ''}<button type="button" class="button pil-remove" data-pil-remover>Excluir</button></div>${state.pilCapaEd && p.youtube_id ? pilCapaBox(p) : ''}` : '';
+    return `<button type="button" class="pil-back" data-pil-voltar><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>Todas as pílulas</button>${player}<section class="pil-info">${p.tema ? `<span class="pil-tema">${escape(p.tema)}</span>` : ''}<h2>${escape(p.titulo)}</h2><p class="pil-meta">${escape([p.passagem, pilData(p.data), p.duracao ? pilTempo(p.duracao) : ''].filter(Boolean).join(' · '))}</p>${p.texto ? `<p class="pil-texto">${escape(p.texto)}</p>` : ''}${transc}${acoes}</section>${edit}`;
+  }
+  function pilProgresso(pct, msg) {
+    const u = state.pilUp; if (!u) return; u.pct = pct; if (msg) u.msg = msg;
+    const bar = content.querySelector('.pil-up .pil-bar i'), n = content.querySelector('.pil-up-pct strong'), m = content.querySelector('.pil-up-msg');
+    if (bar) { bar.style.width = pct + '%'; bar.parentElement.setAttribute('aria-valuenow', pct); } if (n) n.textContent = pct + '%'; if (m && msg) m.textContent = msg;
+  }
+  function pilMeta(file) {
+    return new Promise(res => {
+      const v = document.createElement('video'), url = URL.createObjectURL(file); let fim = false;
+      const done = m => { if (fim) return; fim = true; URL.revokeObjectURL(url); res(m); };
+      setTimeout(() => done({ duracao: 0, vertical: true }), 8000);
+      v.preload = 'metadata'; v.muted = true;
+      v.onloadedmetadata = () => done({ duracao: Math.round(isFinite(v.duration) ? v.duration : 0), vertical: !(v.videoWidth > v.videoHeight) });
+      v.onerror = () => done({ duracao: 0, vertical: true });
+      v.src = url;
+    });
+  }
+  const pilMB = b => b < 1048576 ? Math.max(1, Math.round(b / 1024)) + ' KB' : (b / 1048576).toLocaleString('pt-BR', { maximumFractionDigits: b < 10485760 ? 1 : 0 }) + ' MB';
+  const pilResumo = (m, f) => [m.duracao ? pilTempo(m.duracao) + ' de vídeo' : '', pilMB(f.size), m.vertical ? 'vertical' : 'horizontal'].filter(Boolean).join(' · ');
+  // Arquivos escolhidos na pílula: foto da capa, vídeo para tirar um quadro da capa, ou vídeo novo para trocar.
+  function pilArquivo(input) {
+    const f = input.files && input.files[0]; input.value = ''; if (!f) return;
+    if (input.matches('[data-pil-capa-foto]')) { pilCapaFoto(f).then(pilCapaUsar).catch(e => announce(e.message, 'warning')); return; }
+    if (input.matches('[data-pil-capa-video]')) { pilCapaVidFechar(); state.pilCapaVid = URL.createObjectURL(f); show('pilulas', false, false); return; }
+    const p = state.pilVer; if (!p) return;
+    if (!confirm('Trocar o vídeo desta pílula por "' + f.name + '"? O título, o tema, a passagem e a capa continuam. O vídeo anterior será apagado do canal do YouTube quando o novo chegar.')) return;
+    state.pilFile = f; state.pilMeta = null; pilEnviar(null, { id: p.id, titulo: p.titulo });
+  }
+  // Vídeo escolhido no cartão do pastor: guarda o arquivo e abre o formulário com a prévia.
+  function pilEscolher(input) {
+    const f = input.files && input.files[0]; if (!f) return;
+    const form = content.querySelector('#pil-form'); if (form) state.pilRasc = { titulo: form.titulo.value, passagem: form.passagem.value, texto: form.texto.value };
+    if (state.pilFileUrl) URL.revokeObjectURL(state.pilFileUrl);
+    state.pilFile = f; state.pilFileUrl = null; state.pilMeta = null; state.pilForm = true; state.pilUp = null;
+    show('pilulas', state.view !== 'pilulas', false);
+    pilMeta(f).then(m => { if (state.pilFile !== f) return; state.pilMeta = m; const out = content.querySelector('#pil-info'); if (out) out.textContent = pilResumo(m, f); const pv = content.querySelector('.pil-preview'); if (pv) pv.classList.toggle('is-wide', !m.vertical); });
+  }
+  async function pilInfo(input) {
+    const f = input.files && input.files[0], out = content.querySelector('#pil-info'); if (!f || !out) return;
+    const m = await pilMeta(f); out.textContent = [m.duracao ? pilTempo(m.duracao) + ' de vídeo' : '', pilMB(f.size), m.vertical ? 'vertical' : 'horizontal'].filter(Boolean).join(' · ');
+  }
+  const pilEspera = ms => new Promise(ok => setTimeout(ok, ms));
+  // Envio de uma pílula nova (form) ou troca do vídeo de uma pílula publicada (troca = { id, titulo }).
+  async function pilEnviar(form, troca) {
+    if (state.pilUp && state.pilUp.fase === 'enviando') return;
+    const f = state.pilFile; if (!f) { announce('Escolha o vídeo da pílula.', 'warning'); return; }
+    const v = form ? new FormData(form) : new FormData(), meta = state.pilMeta || await pilMeta(f);
+    if (v.get('tema_outro')) v.set('tema', String(v.get('tema_outro')));
+    if (meta.duracao > 1800) { state.pilFile = null; announce('A pílula pode ter até 30 minutos.', 'warning'); return; }
+    const notificar = !troca && v.get('notificar') === 'on', capa = troca ? null : state.pilCapa, publicar_em = !troca && v.get('programar') === 'on' ? String(v.get('publicar_em') || '') : '';
+    if (!troca && v.get('programar') === 'on' && (!publicar_em || new Date(publicar_em) <= new Date())) { announce('Escolha a data e a hora da publicação, no futuro.', 'warning'); return; }
+    state.pilUp = { titulo: troca ? troca.titulo : String(v.get('titulo') || ''), pct: 0, fase: 'enviando', msg: troca ? 'Preparando a troca do vídeo' : 'Preparando o envio', notificar, troca: !!troca }; state.pilForm = false; state.pilRasc = null; state.pilTemaNovo = '';
+    if (troca) { state.pilSel = null; state.pilVer = null; state.pilCapaEd = false; }
+    if (state.pilFileUrl) { URL.revokeObjectURL(state.pilFileUrl); state.pilFileUrl = null; }
+    if (state.view === 'pilulas') show('pilulas', false, false);
+    let lock = null; try { lock = await navigator.wakeLock.request('screen'); } catch (_) {}
+    const sair = e => { e.preventDefault(); e.returnValue = ''; }; addEventListener('beforeunload', sair);
+    try {
+      const tipo = f.type || (/\.mov$/i.test(f.name) ? 'video/quicktime' : 'video/mp4');
+      const r = await NibConta.pilulas('criar', troca ? { substituir: troca.id, tamanho: f.size, tipo, duracao: meta.duracao, vertical: meta.vertical }
+        : { titulo: String(v.get('titulo') || ''), tema: String(v.get('tema') || ''), passagem: String(v.get('passagem') || ''), texto: String(v.get('texto') || ''), notificar, publicar_em, tamanho: f.size, tipo, duracao: meta.duracao, vertical: meta.vertical });
+      if (capa) { await NibConta.pilulaCapa(r.id, capa.blob).catch(e => announce('A capa não foi salva (' + e.message + '). Dá para escolher depois, na pílula.', 'warning')); }
+      pilCapaLimpar();
+      let ini = 0, falhas = 0; pilProgresso(0, 'Enviando o vídeo para o YouTube');
+      while (ini < f.size) {
+        try {
+          const d = await NibConta.pilulaParte(r.id, ini, f.slice(ini, Math.min(f.size, ini + r.parte)));
+          falhas = 0; if (d.pronto) { ini = f.size; break; } ini = d.recebido;
+          pilProgresso(Math.min(99, Math.floor(ini * 100 / f.size)), 'Enviando o vídeo para o YouTube');
+        } catch (e) {
+          if (e.status === 409 && typeof e.recebido === 'number') { ini = e.recebido; continue; }
+          if ([401, 403, 404, 410, 413].includes(e.status)) throw e;
+          if (++falhas > 8) throw new Error('A internet caiu várias vezes. Tente de novo com uma conexão melhor, de preferência no Wi-Fi.');
+          pilProgresso(state.pilUp.pct, 'A conexão oscilou. Tentando de novo');
+          await pilEspera(Math.min(30000, 2500 * falhas));
+          try { const s = await NibConta.pilulas('sincronizar', { id: r.id }); if (s.pronto) { ini = f.size; break; } ini = s.recebido; } catch (_) {}
+        }
+      }
+      Object.assign(state.pilUp, { fase: 'processando', pct: 100, id: r.id }); state.pil = null;
+      if (state.view === 'pilulas' && !state.pilSel) show('pilulas', false, false);
+      removeEventListener('beforeunload', sair);
+      for (let i = 0; i < 40 && state.pilUp && state.pilUp.id === r.id; i++) {
+        await pilEspera(i < 6 ? 5000 : 15000);
+        const c = await NibConta.pilulas('conferir', { id: r.id }).catch(() => null);
+        if (c && c.pilula.estado !== 'processando') { if (state.pilUp && state.pilUp.id === r.id) Object.assign(state.pilUp, { fase: c.pilula.estado, msg: c.pilula.aviso, quando: c.pilula.agendado ? c.pilula.publicar_em : '' }); if (c.pilula.estado === 'publicado') announce(troca ? 'Vídeo da pílula trocado.' : c.pilula.agendado ? 'Pílula pronta e programada.' : 'Pílula publicada para a igreja.', 'success', false); break; }
+      }
+    } catch (e) { if (state.pilUp) Object.assign(state.pilUp, { fase: 'erro', msg: e.message }); }
+    finally { state.pilFile = null; state.pilMeta = null; removeEventListener('beforeunload', sair); if (lock) lock.release().catch(() => {}); state.pil = null; state.pilHomeKey = null; if (state.view === 'pilulas' && !state.pilSel) show('pilulas', false, false); }
+  }
+  // Check-in do culto (versão oficial): pelo local da igreja (GPS) ou pelo QR Code fixo do telão.
+  const ckIcon = done => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${done ? 'm5 12.5 4.5 4.5L19 7.5' : NibAdminIcons.recepcao}"/></svg>`;
+  function loadCheckin() {
+    if (!account() || state.ckLoading) return Promise.resolve();
+    state.ckLoading = true;
+    return NibConta.checkin('estado').then(r => { state.ck = r; state.ckKey = state.accountKey; }).catch(() => { state.ck = null; }).finally(() => { state.ckLoading = false; });
+  }
+  function publicCheckin() {
+    if (!PUBLIC || !account()) return '';
+    if (!state.ckLoading && (state.ckFor !== state.accountKey || Date.now() - (state.ckAt || 0) > 300000)) { state.ckAt = Date.now(); state.ckFor = state.accountKey; loadCheckin().then(() => { if ((state.view === 'inicio' && state.ck && state.ck.culto) || state.view === 'presenca') show(state.view, false, false); }); }
+    if (state.ckKey !== state.accountKey) return '';
+    const r = state.ck; if (!r || !r.culto) return '';
+    const done = r.feito, c = r.culto;
+    return `<section class="checkin-card${done ? ' is-done' : ''}" aria-labelledby="checkin-title"><span class="checkin-icon">${ckIcon(done)}</span><div class="checkin-text"><span class="label">${/^EBS/.test(c.nome) ? 'CHECK-IN DA EBS' : 'CHECK-IN DO CULTO'}</span><h2 id="checkin-title" tabindex="-1">${done ? 'Presença registrada' : escape(c.nome)}</h2><p>${done ? `Você está ${escape(c.artigo || 'no')} ${escape(c.nome)}. Que bom ter você aqui!` : `Hoje, às ${escape(c.hora)}. Chegou? Registre sua presença.`}</p>${done ? '' : `<p class="checkin-note" id="checkin-msg">${state.ckMsg ? escape(state.ckMsg) : 'Usamos sua localização só para confirmar que você está na igreja. Ela não fica guardada.'}</p>`}</div>${done ? '' : `<button type="button" class="action primary" data-checkin-go>${state.ckBusy ? 'Confirmando' : 'Fazer check-in'}</button>`}</section>`;
+  }
+  // Tela "Check-in" do menu (v156): o cartão quando há encontro aberto; fora do horário, quando abre.
+  function presencaPage() {
+    const card = publicCheckin();
+    if (card) return card;
+    if (state.ckKey !== state.accountKey || state.ckLoading) return '<p class="event-empty">Carregando</p>';
+    return `<section class="box ck-info"><span class="label">FORA DO HORÁRIO</span><h2>O check-in abre 1 hora antes</h2><p>Ele aparece aqui e no Início de 1 hora antes até 2 horas depois de cada encontro:</p><ul class="ck-horarios"><li><strong>Domingo, 9h30</strong><span>EBS · Escola Bíblica de Sabedoria</span></li><li><strong>Domingo, 19h</strong><span>Noite de Glória</span></li><li><strong>Quinta, 19h30</strong><span>Culto da Fé</span></li></ul><p class="note">Na igreja, você também pode ler o QR Code do telão com a câmera do celular.</p></section>`;
+  }
+  // Posição atual do celular (resolve null se negar, demorar ou não tiver GPS).
+  const posicao = (ms = 12000) => new Promise(res => { if (!navigator.geolocation) return res(null); navigator.geolocation.getCurrentPosition(p => res({ lat: p.coords.latitude, lng: p.coords.longitude, precisao: Math.round(p.coords.accuracy) }), () => res(null), { enableHighAccuracy: true, timeout: ms, maximumAge: 30000 }); });
+  async function doCheckin(via, codigo) {
+    state.ckBusy = true; state.ckMsg = ''; if (state.view === 'inicio' || state.view === 'presenca') show(state.view, false, false);
+    const pos = await posicao(via === 'qr' ? 7000 : 12000);
+    try {
+      if (via === 'local' && !pos) throw new Error('Não conseguimos sua localização. Permita o acesso à localização ou leia o QR Code do telão.');
+      const r = await NibConta.checkin('fazer', Object.assign({ via, codigo: codigo || '' }, pos || {}));
+      state.ck = { culto: r.culto, feito: true, local: true }; state.ckKey = state.accountKey;
+      announce(`Presença registrada ${r.culto.artigo || 'no'} ${r.culto.nome}. Que bom ter você aqui!`, 'success', false);
+    } catch (e) { state.ckMsg = e.message; if (via === 'qr') announce(e.message, 'error', false); }
+    finally { state.ckBusy = false; show(state.view === 'presenca' ? 'presenca' : 'inicio', false, false); }
+  }
+  // QR Code do telão: /app/?checkin=CODIGO. Guarda o código até a pessoa entrar na conta.
+  try { const qc = new URLSearchParams(location.search).get('checkin'); if (qc && /^[a-f0-9]{24}$/.test(qc)) { sessionStorage.setItem('nib-checkin-qr', qc); const u = new URL(location.href); u.searchParams.delete('checkin'); history.replaceState(null, '', u.pathname + u.search + u.hash); } } catch (_) {}
+  function pendingQrCheckin() {
+    if (!PUBLIC || !account()) return; let qc = null;
+    try { qc = sessionStorage.getItem('nib-checkin-qr'); sessionStorage.removeItem('nib-checkin-qr'); } catch (_) {}
+    if (qc) doCheckin('qr', qc);
+  }
+  function checkinPanel() {
+    if (!PUBLIC || !(account() && NibConta.equipe())) return '';
+    if (!state.ckPanel) { NibConta.checkin('painel').then(r => { state.ckPanel = r; if (state.view === 'checkin') show('checkin', false, false); }).catch(e => announce(e.message, 'error')); return '<p class="event-empty">Carregando</p>'; }
+    const r = state.ckPanel, url = location.origin + location.pathname.replace(/[^/]*$/, '') + '?checkin=' + r.qr;
+    const local = r.local ? `<p>Local da igreja definido${(r.pode_local && NibConta.lideranca()) ? '. Se mudar, defina de novo estando na igreja.' : '.'}</p>` : `<p><strong>O local da igreja ainda não foi definido.</strong> ${(r.pode_local && NibConta.lideranca()) ? 'Esteja dentro da igreja e toque no botão abaixo.' : 'Peça à Liderança Pastoral para definir, estando na igreja.'} Enquanto isso, o check-in funciona só pelo QR Code.</p>`;
+    const hoje = r.culto ? `<section class="box ck-box"><span class="label">AGORA</span><h2>${escape(r.culto.nome)} · ${r.presentes.length} ${r.presentes.length === 1 ? 'presença' : 'presenças'}</h2>${r.presentes.length ? `<ul class="ck-list">${r.presentes.map(p => `<li><span>${escape(p.nome)}</span><small>${escape(p.hora)} · ${p.via === 'qr' ? 'QR Code' : 'local'}</small></li>`).join('')}</ul>` : '<p>Ninguém registrou presença ainda.</p>'}</section>` : '';
+    const hist = r.cultos.length ? `<section class="box ck-box"><span class="label">ÚLTIMOS CULTOS</span><ul class="ck-list">${r.cultos.map(c => `<li><span>${escape(c.culto)} · ${escape(fmtDay(c.dia))}</span><small>${c.total} ${c.total === 1 ? 'presença' : 'presenças'}${c.qr ? ` (${c.qr} pelo QR)` : ''}</small></li>`).join('')}</ul></section>` : '';
+    return `${hoje}<section class="box ck-box"><span class="label">QR CODE DO TELÃO</span><h2>Sempre o mesmo código</h2><p>Projete este QR Code no telão. Quem ler com a câmera abre o app e registra a presença. Ele só vale durante o culto (1 h antes até 2 h depois).</p><div class="ck-qr" role="img" aria-label="QR Code do check-in">${qrSvg(url)}</div><div class="form-actions"><button type="button" class="action primary" data-ck-telao>Mostrar em tela cheia</button></div></section><section class="box ck-box"><span class="label">LOCAL DA IGREJA</span><h2>Check-in pela localização</h2>${local}<p class="note">Vale num raio de 150 m. A localização de cada pessoa não fica guardada, só a distância.</p>${(r.pode_local && NibConta.lideranca()) ? `<div class="form-actions"><button type="button" class="action" data-ck-local>${r.local ? 'Definir de novo aqui' : 'Definir o local da igreja aqui'}</button></div>` : ''}</section>${hist}`;
+  }
+  // Sugestões para o app: qualquer pessoa com conta envia; administração e Liderança Pastoral leem.
+  const sugTipos = [['sugestao', 'Sugestão'], ['problema', 'Problema'], ['elogio', 'Elogio']];
+  function sugestoesPage() {
+    if (!PUBLIC) return `<section class="box"><p>As sugestões enviadas pelo app chegam para a administração.</p></section>`;
+    const tipo = state.sugTipo || 'sugestao', ti = sugTipos.findIndex(t => t[0] === tipo), from = state.sugFrom === undefined ? ti : state.sugFrom; state.sugFrom = ti;
+    const seg = `<div class="sug-tipos seg" role="radiogroup" aria-label="Tipo de mensagem" style="--n:3;--i:${ti};--from:${from}"><span class="seg-pill${from !== ti ? ' is-moving' : ''}" aria-hidden="true"></span>${sugTipos.map(([v, l]) => `<button type="button" role="radio" aria-checked="${v === tipo}" data-sug-tipo="${v}">${l}</button>`).join('')}</div>`;
+    const form = `<section class="box sug-box"><h2>Como podemos melhorar o app?</h2><p>Sua mensagem vai direto para quem cuida do app. Pode ser uma ideia, algo que não funcionou ou o que você gostou.</p><form id="sug-form" novalidate>${seg}<label for="sug-texto">Sua mensagem</label><textarea id="sug-texto" name="texto" rows="5" maxlength="1500" required placeholder="${tipo === 'problema' ? 'O que aconteceu? Em qual tela?' : tipo === 'elogio' ? 'O que você mais gostou?' : 'Qual a sua ideia?'}">${escape(state.sugDraft || '')}</textarea><p class="form-error" role="alert"></p><div class="form-actions"><button class="action primary" type="submit">Enviar</button></div></form></section>`;
+    if (!(account() && NibConta.lideranca())) return form;
+    if (!state.sugList) { NibConta.sugestoes().then(l => { state.sugList = l; if (state.view === 'sugestoes') show('sugestoes', false, false); }).catch(() => {}); return form + '<p class="event-empty">Carregando as sugestões</p>'; }
+    const label = Object.fromEntries(sugTipos), novas = state.sugList.filter(s => !s.lida).length;
+    const list = state.sugList.length ? `<ul class="sug-list">${state.sugList.map(s => `<li class="sug-item${s.lida ? ' is-read' : ''}"><div class="sug-top"><span class="sug-tag is-${escape(s.tipo)}">${escape(label[s.tipo] || 'Sugestão')}</span><small>${escape(s.nome)} · ${escape(avisoData(s.criado_em))}</small></div><p>${escape(s.texto)}</p><button type="button" class="sug-read" data-sug-lida="${s.id}" data-lida="${s.lida ? 0 : 1}">${s.lida ? 'Marcar como nova' : 'Marcar como lida'}</button></li>`).join('')}</ul>` : '<p class="event-empty">Nenhuma sugestão recebida ainda.</p>';
+    return form + `<section class="box sug-inbox"><span class="label">RECEBIDAS</span><h2>${state.sugList.length} ${state.sugList.length === 1 ? 'mensagem' : 'mensagens'}${novas ? ` · ${novas} ${novas === 1 ? 'nova' : 'novas'}` : ''}</h2>${list}</section>`;
+  }
+  // Pedidos novos no caderno desde a última visita (balão no atalho da inicial). Guarda o maior id já visto neste aparelho.
+  const cadVistoKey = () => 'nib-caderno-visto-' + (account() ? account().id : '');
+  function cadNovos() {
+    if (!PUBLIC || !account() || !state.prayersLoaded) return 0;
+    const ids = state.prayers.map(p => Number(p.id)); const max = ids.length ? Math.max(...ids) : 0;
+    let visto = null; try { visto = localStorage.getItem(cadVistoKey()); } catch (_) { return 0; }
+    if (visto === null) { try { localStorage.setItem(cadVistoKey(), String(max)); } catch (_) {} return 0; }
+    return state.prayers.filter(p => !p.own && !p.answered && Number(p.id) > Number(visto)).length;
+  }
+  function cadMarcarVisto() { const ids = state.prayers.map(p => Number(p.id)); try { const v = Number(localStorage.getItem(cadVistoKey()) || 0); localStorage.setItem(cadVistoKey(), String(Math.max(v, ...ids, 0))); } catch (_) {} }
+  // Painel do caderno (Secretaria, Liderança Pastoral e admin): só números, sem nomes nem textos dos pedidos.
+  function cadPainel() {
+    if (!state.cadPainel) { NibConta.caderno('painel').then(d => { state.cadPainel = d.painel; if (state.view === 'caderno') show('caderno', false, false); }).catch(e => { state.cadPainel = { erro: e.message }; if (state.view === 'caderno') show('caderno', false, false); }); return '<p class="event-empty">Carregando o painel</p>'; }
+    const d = state.cadPainel; if (d.erro) return `<p class="form-error" role="alert">${escape(d.erro)}</p>`;
+    const pct = d.total ? Math.round(d.atendidos / d.total * 100) : 0;
+    const tile = (n, l, extra = '') => `<div class="cad-stat${extra}"><strong>${n}</strong><span>${l}</span></div>`;
+    const nomeMes = m => new Intl.DateTimeFormat('pt-BR', { month: 'short', timeZone: 'UTC' }).format(new Date(m + '-15T12:00:00Z')).replace('.', '');
+    const maxM = Math.max(1, ...d.meses.map(m => m.pedidos));
+    const meses = d.meses.length ? `<ul class="cad-bars">${d.meses.map(m => `<li><span class="cad-bar" style="--h:${Math.round(m.pedidos / maxM * 100)}%"><i style="--h:${m.pedidos ? Math.round(m.atendidos / m.pedidos * 100) : 0}%"></i></span><b>${m.pedidos}</b><small>${nomeMes(m.mes)}</small></li>`).join('')}</ul><p class="cad-legend"><span><i class="is-total"></i>Pedidos</span><span><i class="is-ok"></i>Atendidos</span></p>` : '<p class="event-empty">Ainda sem pedidos nos últimos meses.</p>';
+    return `<section class="box cad-panel" aria-labelledby="cad-panel-title"><span class="label">EQUIPE DA IGREJA</span><h2 id="cad-panel-title" tabindex="-1">Painel do caderno</h2><p>Visão geral para a Secretaria e a Liderança Pastoral. Mostra só números: os pedidos continuam no caderno e o histórico de atendidas é de cada pessoa.</p><div class="cad-stats">${tile(d.andamento, 'em oração agora')}${tile(d.atendidos, `atendidas · ${pct}%`, ' is-ok')}${tile(d.novos_30, 'novos em 30 dias')}${tile(d.sem_oracao, 'sem ninguém orando ainda', d.sem_oracao ? ' is-alert' : '')}${tile(d.orantes, 'pessoas orando')}${tile(d.apoios, '“Vou orar” marcados')}${tile(d.autores, 'pessoas pediram oração')}${tile(d.removidos, 'tirados pela equipe')}</div><h3 class="cad-sub">Últimos 6 meses</h3>${meses}</section>`;
+  }
+  function publicNotebook() {
+    if (!account()) return `<section class="box prayer-box"><span class="label">CUIDADO EM COMUNIDADE</span><h2>Vamos orar uns pelos outros</h2><p>No caderno de oração, quem tem cadastro no app compartilha pedidos e marca “Vou orar” nos pedidos dos irmãos. Os pedidos ficam visíveis só para quem entrou na conta.</p><div class="form-actions"><button type="button" class="action" data-view="entrar">Entrar ou criar cadastro</button></div></section>`;
+    if (!state.prayersLoaded) { loadPrayers().then(() => { if (state.view === 'caderno') show('caderno', false, false); }); return '<p class="event-empty">Carregando o caderno</p>'; }
+    cadMarcarVisto();
+    const ativos = state.prayers.filter(p => !p.answered), minhas = state.prayers.filter(p => p.answered && p.own);
+    const tab = state.cadTab === 'painel' && !state.prayerTeam ? 'pedidos' : (state.cadTab || 'pedidos');
+    const tabs = [['pedidos', 'Pedidos', ativos.length], ['atendidas', 'Minhas atendidas', minhas.length], ...(state.prayerTeam ? [['painel', 'Painel', null]] : [])];
+    const chips = `<div class="cell-days cad-tabs" role="group" aria-label="Caderno de oração" data-seg="caderno">${tabs.map(([k, l, n]) => `<button type="button" class="history-year${tab === k ? ' is-active' : ''}" data-cad-tab="${k}" aria-pressed="${tab === k}">${l}${n === null ? '' : `<small>${n}</small>`}</button>`).join('')}</div>`;
+    if (tab === 'atendidas') return `${chips}<section class="community-prayer" aria-labelledby="prayer-feed-title"><div class="section-heading"><div><span class="label">SÓ VOCÊ VÊ</span><h2 id="prayer-feed-title" tabindex="-1">Minhas orações atendidas</h2></div></div><p>Quando você marca um pedido como atendido, ele sai do caderno da igreja e fica guardado aqui como o seu histórico. Se marcou por engano, toque de novo para voltar ao caderno.</p><div class="prayer-feed">${prayerCards(false, minhas) || '<p class="event-empty">Nenhuma oração atendida ainda. Quando Deus responder um pedido seu, marque como atendida e ele aparece aqui.</p>'}</div></section>`;
+    if (tab === 'painel') return `${chips}${cadPainel()}`;
+    return `${chips}<section class="box prayer-box"><h2>Compartilhe um pedido com a comunidade</h2><p>Seu pedido aparece para quem tem conta no app. Cada pessoa pode marcar “Vou orar”, e só você marca quando a oração for atendida.</p><form id="notebook-form" autocomplete="off"><label for="notebook-name">Título do pedido</label><input id="notebook-name" name="name" maxlength="120" required placeholder="Ex.: Pela saúde da minha mãe" autocomplete="off"><label for="notebook-reason">O que você deseja compartilhar?</label><textarea id="notebook-reason" name="reason" maxlength="1000" required autocomplete="off" placeholder="Escreva seu pedido de oração."></textarea><p class="note">Evite expor dados pessoais de outras pessoas. A equipe da igreja pode tirar do caderno pedidos inadequados.</p><div class="form-actions"><button type="submit" class="action">Publicar pedido</button><button type="reset">Limpar</button></div></form></section>${state.prayerError ? `<p class="form-error" role="alert">${escape(state.prayerError)}</p>` : ''}<section class="community-prayer" aria-labelledby="prayer-feed-title"><div class="section-heading"><h2 id="prayer-feed-title" tabindex="-1">Orando em comunidade</h2><span class="note">${ativos.length} ${ativos.length === 1 ? 'pedido' : 'pedidos'}</span></div><div class="prayer-feed">${prayerCards(false, ativos) || '<p>Ainda não há pedidos. Seja o primeiro a compartilhar.</p>'}</div></section>`;
   }
   function notebookPage() {
+    if (PUBLIC) return publicNotebook();
     return `<section class="box prayer-box"><h2>Compartilhe um pedido com a comunidade</h2><p>No mural, cada pessoa poderá conhecer os pedidos e sinalizar “Estou orando”. A indicação de oração atendida é feita por quem publicou.</p><p class="note">Preview com dados fictícios: nenhuma publicação é enviada à igreja ou compartilhada entre usuários. Os testes ficam só nesta aba e reiniciam ao recarregar ou trocar o perfil.</p><form id="notebook-form" autocomplete="off"><label for="notebook-name">Título do pedido</label><input id="notebook-name" name="name" maxlength="120" required placeholder="Ex.: Pela Família Exemplo" autocomplete="off"><label for="notebook-reason">O que você deseja compartilhar?</label><textarea id="notebook-reason" name="reason" maxlength="1000" required autocomplete="off" placeholder="Escreva um pedido fictício para o mural."></textarea><p class="note">Na versão compartilhada, o pedido será visível à comunidade. Evite expor dados pessoais de outras pessoas.</p><div class="form-actions"><button type="submit" class="action">Publicar pedido de teste</button><button type="reset">Limpar</button></div></form></section><section class="community-prayer" aria-labelledby="prayer-feed-title"><div class="section-heading"><h2 id="prayer-feed-title" tabindex="-1">Orando em comunidade</h2><span class="note">${state.prayers.length} pedidos de exemplo</span></div><div class="prayer-feed">${prayerCards()||'<p>Nenhum pedido neste mural de teste.</p>'}</div></section>`;
   }
   function announce(message, tone = 'info', reveal = true) { feedback.dataset.tone=tone; feedback.textContent = message; if(reveal) feedback.scrollIntoView({block:"nearest",behavior:"instant"}); }
   function renderNavigation() {
-    const items = isManagement() ? [['gestao', 'Membresia'], ['informacoes', 'Informações']] : navigation;
-    const context = isManagement() ? 'gestao' : 'membro';
+    const items = isManagement() ? admin.views() : PUBLIC ? publicNav() : navigation;
+    const context = isManagement() ? state.context : PUBLIC ? 'pub-' + (account() ? account().id + '-' + account().papel : 'anon') : 'membro';
     for (const nav of [document.getElementById('navigation'), document.getElementById('mobile-navigation')]) {
       if (nav.dataset.context !== context) {
-        if (nav.id === 'navigation') nav.innerHTML = items.map(([key,label]) => `<a href="#${key}" data-view="${key}" aria-label="${label}">${navIcon(key)}<span>${label}</span></a>`).join('');
+        if (nav.id === 'navigation') { const link = ([key,label]) => `<a href="#${key}" data-view="${key}" aria-label="${label}">${navIcon(key)}<span>${label}</span></a>`; nav.innerHTML = PUBLIC && !isManagement() ? publicGroups(items).map(([label,links], i) => `<div class="nav-group"><span class="nav-group-label">${label}</span>${links.map(link).join('')}</div>${i === 0 ? viewAsSelect('lateral') : ''}`).join('') : items.map(link).join(''); }
         else {
-          const descriptions = {inicio:'Seu ponto de partida',cadastro:'Dados e atualizações',eventos:'Encontros e inscrições',generosidade:'Dízimos, ofertas e campanhas',celulas:'Acesso à plataforma',informacoes:'Programação e avisos',gestao:'Integração e apresentações',agenda:'Cultos, eventos e festividades',caderno:'Ore com a comunidade'};
-          const groups = isManagement() ? [['Gestão',items]] : [['Seu acesso',items.filter(([key])=>['inicio','cadastro'].includes(key))],['Vida na igreja',items.filter(([key])=>['agenda','eventos','generosidade','celulas','informacoes','caderno'].includes(key))]];
+          const descriptions = {...admin.descriptions, inicio:'Seu ponto de partida',cadastro: PUBLIC ? 'Seus dados na igreja' : 'Dados e atualizações',eventos:'Encontros e inscrições',generosidade:'Dízimos, ofertas e campanhas',historico:'Seu histórico financeiro',celulas: PUBLIC ? 'Encontre uma célula' : 'Acesso à plataforma', entrar:'Sua conta na Nib', equipe:'Números e atalhos da equipe',membros:'Lista, ficha e exportação',membresia:'Integração e apresentação',presenca:'Presença na EBS e nos cultos',pilulas:'Vídeos curtos para meditar',cadastros:'Confirmar membros',checkin:'Presença nos cultos',sugestoes:'Ideias e melhorias',informacoes: PUBLIC ? 'Horários, endereço e liderança' : 'Programação e avisos',gestao:'Integração e apresentações',agenda:'Cultos, eventos e festividades',caderno:'Ore com a comunidade',avisos:'Comunicados para toda a igreja'};
+          const groups = isManagement() ? [[admin.profiles[state.context].name,items]] : PUBLIC ? publicGroups(items) : [['Seu acesso',items.filter(([key])=>['inicio','cadastro'].includes(key))],['Vida na igreja',items.filter(([key])=>['agenda','eventos','generosidade','historico','celulas','informacoes','caderno'].includes(key))]];
           nav.innerHTML = groups.map(([label,links],index) => `<section class="menu-group" aria-labelledby="menu-group-${index}"><h3 id="menu-group-${index}">${label}</h3><div class="menu-grid">${links.map(([key,title])=>`<a href="#${key}" data-view="${key}" aria-label="${title}"><span class="menu-icon">${navIcon(key)}</span><strong>${title}</strong><span class="menu-description">${descriptions[key]}</span><span class="mobile-current" hidden>Atual</span></a>`).join('')}</div></section>`).join('');
         }
         nav.dataset.context = context;
       }
       nav.querySelectorAll('a').forEach(item => {
-      const active = state.view === item.dataset.view || (item.dataset.view === 'gestao' && state.view === 'confirmar');
+      const active = state.view === item.dataset.view || (item.dataset.view === 'membresia' && state.view === 'confirmar');
       item.classList.toggle('selected', active);
+      if (item.dataset.on !== String(active)) { item.dataset.on = String(active); const holder = item.querySelector('.menu-icon'); const icon = barIcon(item.dataset.view, active); if (holder) holder.innerHTML = icon; else { const old = item.querySelector('svg'); if (old) old.outerHTML = icon; } }
       const current = item.querySelector('.mobile-current');
       if (current) current.hidden = !active;
       if (active) item.setAttribute('aria-current', 'page'); else item.removeAttribute('aria-current');
       });
     }
-    document.getElementById('member-shortcuts').hidden = isManagement();
-    document.getElementById('menu-profile').innerHTML = isManagement() ? '<div class="menu-profile-card"><strong>' + (state.context === 'secretaria' ? 'Secretaria da igreja' : 'Liderança Pastoral') + '</strong><span>Experiência de teste</span></div>' : '<a class="menu-profile-card" href="#cadastro" data-view="cadastro"><span class="profile-avatar" aria-hidden="true">A</span><span><strong>Ana Exemplo</strong><small>ana@example.com</small></span><span class="profile-demo">Teste</span></a>';
+    const ms = document.getElementById('member-shortcuts'); if (ms) ms.hidden = isManagement();
+    document.getElementById('menu-profile').innerHTML = PUBLIC ? (account() ? '<a class="menu-profile-card" href="#cadastro" data-view="cadastro"><span class="profile-avatar" aria-hidden="true">' + escape(account().primeiro.charAt(0).toUpperCase()) + '</span><span><strong>' + escape(account().nome) + '</strong><small>' + escape(account().email) + '</small>' + (NibConta.papeisReais().some(k => k !== 'membro') ? '<small>' + papeisTexto(NibConta.papeisReais()) + '</small>' : '') + '</span></a>' + viewAsSelect('menu') : '') : isManagement() ? '<div class="menu-profile-card"><strong>' + admin.profiles[state.context].name + '</strong><span>Experiência de teste</span></div>' : '<a class="menu-profile-card" href="#cadastro" data-view="cadastro"><span class="profile-avatar" aria-hidden="true">' + escape(state.member.first.charAt(0).toUpperCase()) + '</span><span><strong>' + escape(state.member.full) + '</strong><small>' + escape(state.member.email) + '</small></span><span class="profile-demo">Teste</span></a>';
     renderBar();
   }
   function show(view, focus = true, record = true) {
     if(view==='oracao') view='caderno'; // Compatibilidade com o destino anterior.
-    if (isManagement() && !['gestao','confirmar','informacoes'].includes(view)) view = 'gestao';
-    if (['gestao', 'confirmar'].includes(view) && !isManagement()) view = 'inicio';
+    if (PUBLIC && view === 'cadastros') { state.memStatus = 'Aguardando'; state.memSel = null; state.memMore = false; view = 'membros'; } // v155: Cadastros virou um filtro de Membros.
+    if (isManagement() && !admin.allowed(view)) view = 'gestao';
+    if (adminOnly.includes(view) && !isManagement() && !(PUBLIC && allowedPublic().includes(view))) view = 'inicio';
+    if (PUBLIC && !allowedPublic().includes(view)) view = 'inicio';
+    if (PUBLIC && record && view === 'equipe' && !state.painelLoading) state.painel = null; // números sempre atualizados ao abrir
+    if (PUBLIC && record && view === 'membresia' && !state.membLoading) state.memb = null;
+    if (PUBLIC && record && view === 'pilulas') { state.pilSel = null; state.pilEdit = false; state.pilCapaEd = false; pilCapaVidFechar(); if (!state.pilLoading) state.pil = null; }
+    if (PUBLIC && record && view === 'membros' && !state.memLoading) { state.mem = null; state.memSel = null; state.memPrint = null; }
     if (record && focus && view !== state.view) viewHistory.push(state.view);
-    state.view = labels[view] ? view : 'inicio';
+    state.view = (labels[view] || admin.labels[view]) ? view : 'inicio';
     root.dataset.view = state.view;
-    document.getElementById('mobile-return').hidden = state.view === 'inicio' || (isManagement() && state.view === 'gestao');
-    const [eyebrow, title, description] = labels[state.view];
+    document.getElementById('mobile-return').hidden = state.view === 'inicio' || (isManagement() && state.view === 'gestao') || (state.view === 'equipe' && !!publicTeamBar());
+    const [eyebrow, title, description] = (isManagement() && admin.pageLabels(state.view)) || labels[state.view];
     document.getElementById('eyebrow').textContent = eyebrow;
-    document.getElementById('heading').textContent = title;
+    document.getElementById('heading').textContent = state.view === 'inicio' ? (PUBLIC ? (account() ? `Olá, ${account().primeiro}! Que bom ter você aqui.` : title) : title.replace('Jéssica', state.member.first)) : title;
     document.getElementById('description').textContent = description;
     feedback.textContent = ''; feedback.dataset.tone='info';
     const pages = {
-      inicio: () => `${dailyBlocks(false,'verse')}<section aria-labelledby="quick-title"><div class="section-heading"><h2 id="quick-title">O que você precisa está aqui</h2></div><div class="quick-actions">${[
+      inicio: () => {
+        const quick = `<section aria-labelledby="quick-title"><div class="section-heading"><h2 id="quick-title">O que você precisa está aqui</h2></div><div class="quick-actions">${[
         ['cadastro', 'Meu cadastro', 'Consulte seus dados e solicite uma atualização.'],
         ['eventos', 'Eventos e inscrições', 'Veja os encontros e acompanhe suas inscrições.'],
         ['generosidade', 'Dízimos e ofertas', 'Encontre as opções para contribuir e as campanhas.'],
         ['celulas', 'Células', 'Saiba como acessar a plataforma de células.'],
         ['informacoes', 'Programação e avisos', 'Consulte as informações e os canais da igreja.'],
         ['caderno', 'Caderno de oração', 'Compartilhe seus pedidos e ore com a comunidade.']
-      ].map(([view, title, text]) => `<button type="button" class="quick-action" data-view="${view}"><span class="home-action-icon" aria-hidden="true">${navIcon(view)}</span><strong>${title}</strong><span class="home-action-description">${text}</span></button>`).join('')}</div></section><figure class="church-banner"><img src="assets/hero-nib.webp" alt="Nova Igreja Batista" width="2048" height="861" loading="lazy"></figure>${dailyBlocks(false,'agenda')}${communityBlock()}<section aria-labelledby="home-events-title"><div class="section-heading"><h2 id="home-events-title">Eventos da igreja</h2>${button('Ver todos', 'eventos')}</div>${eventCards(true)}</section>`,
+      ].map(([view, title, text]) => `<button type="button" class="quick-action admin-quick" data-view="${view}"><span class="home-action-icon" aria-hidden="true">${navIcon(view)}</span>${view === 'caderno' && cadNovos() ? `<span class="quick-badge" aria-label="${cadNovos()} ${cadNovos() === 1 ? 'pedido novo' : 'pedidos novos'}">${cadNovos() > 9 ? '9+' : cadNovos()}</span>` : ''}${view === 'informacoes' && unreadNotices() ? `<span class="admin-badge notice-badge" aria-label="${unreadNotices()} ${unreadNotices() === 1 ? 'aviso novo' : 'avisos novos'}">${unreadNotices()}</span>` : ''}<strong>${title}</strong><span class="home-action-description">${text}</span></button>`).join('')}</div></section>`;
+        const events = `<section class="home-events-block" aria-labelledby="home-events-title"><div class="section-heading"><div><span class="label">PARTICIPE COM A GENTE</span><h2 id="home-events-title">Próximo evento</h2></div>${button('Ver todos', 'eventos')}</div>${eventCards(true)}</section>`;
+        const install = window.NibInstall ? NibInstall.card() : '';
+        if (PUBLIC) {
+          const pq = `<section aria-labelledby="quick-title"><div class="section-heading"><h2 id="quick-title">${teamShortcuts() ? 'Atalhos do seu perfil' : 'O que você procura?'}</h2></div><div class="quick-actions">${(teamShortcuts() || [
+            ['agenda', 'Agenda da igreja', 'Cultos, escola bíblica e eventos no calendário.'],
+            ['presenca', 'Check-in', 'Registre sua presença na EBS e nos cultos.'],
+            ['generosidade', 'Dízimos e ofertas', 'Contribua pelo Pix com os dados oficiais da igreja.'],
+            ['celulas', 'Células', 'Encontre uma célula perto de você.'],
+            ['pilulas', 'Pílulas de Sabedoria', 'Vídeos curtos do pastor para meditar na Palavra.'],
+            ['caderno', 'Caderno de oração', 'Compartilhe seus pedidos e ore com a comunidade.']
+          ]).map(([view, title, text]) => view === 'youtube' ? `<button type="button" class="quick-action admin-quick" data-open-url="https://www.youtube.com/@nibcasadedeus"><span class="home-action-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7.5C3 6 4 5 5.5 5h13C20 5 21 6 21 7.5v9c0 1.5-1 2.5-2.5 2.5h-13C4 19 3 18 3 16.5z M10 9l5 3-5 3z"/></svg></span><strong>${title}</strong><span class="home-action-description">${text}</span></button>` : `<button type="button" class="quick-action admin-quick" data-view="${view}"><span class="home-action-icon" aria-hidden="true">${navIcon(view)}</span>${view === 'caderno' && cadNovos() ? `<span class="quick-badge" aria-label="${cadNovos()} ${cadNovos() === 1 ? 'pedido novo' : 'pedidos novos'}">${cadNovos() > 9 ? '9+' : cadNovos()}</span>` : ''}${teamBadge(view)}<strong>${title}</strong><span class="home-action-description">${text}</span></button>`).join('')}</div></section>`;
+          const social = account() && NibConta.equipe() ? '' : socialBanners();
+          if (isDesk()) return `${birthNudge()}${teamHome()}<div class="home-desk"><div class="home-col">${homePilEstudio()}${dailyBlocks(false,'verse')}${homePilula()}${publicCheckin()}${pq}${account() && state.prayersLoaded && state.prayers.some(p => !p.answered) ? communityBlock() : ''}${social}</div><div class="home-rail">${homeAvisos()}${install}${dailyBlocks(false,'agenda')}${events}</div></div>`;
+          return `${birthNudge()}${teamHome()}${homePilEstudio()}${dailyBlocks(false,'verse')}${homePilula()}${publicCheckin()}${homeAvisos()}${install}${pq}${social}${account() && state.prayersLoaded && state.prayers.some(p => !p.answered) ? communityBlock() : ''}${dailyBlocks(false,'agenda')}${events}`;
+        }
+        if (isDesk()) return `<div class="home-desk"><div class="home-col">${dailyBlocks(false,'verse')}${quick}${socialBanners()}${communityBlock()}</div><div class="home-rail">${checkinCard()}${install}${homeNotice()}${dailyBlocks(false,'agenda')}${birthdayBlock()}${events}</div></div>`;
+        return `${dailyBlocks(false,'verse')}${checkinCard()}${install}${quick}${socialBanners()}${homeNotice()}${dailyBlocks(false,'agenda')}${birthdayBlock()}${events}${communityBlock()}`;
+      },
       agenda: () => calendarPage(),
       caderno: () => notebookPage(),
-      cadastro: () => `<div class="profile-layout"><section class="box profile-summary"><span class="tag">Membro · exemplo</span><h2>Ana Exemplo</h2><p>Confira seu cadastro na igreja.</p><dl class="profile"><dt>E-mail</dt><dd>ana@example.com</dd><dt>Telefone</dt><dd>Não informado</dd><dt>Endereço</dt><dd>Não informado</dd><dt>Apresentação no culto</dt><dd>Apresentação registrada · exemplo</dd></dl><p class="note">As alterações são encaminhadas para conferência da Secretaria.</p></section><section class="box profile-edit"><h2>O que você deseja atualizar?</h2><p>Preencha somente os dados que precisam mudar.</p><form id="profile-form"><fieldset><legend>Dados para atualização</legend><div class="form-grid"><div><label for="new-name">Nome completo</label><input id="new-name" name="newName" autocomplete="off" placeholder="Informe o nome corrigido" maxlength="160"></div><div><label for="new-email">Novo e-mail</label><input id="new-email" name="newEmail" type="email" autocomplete="off" placeholder="nome@exemplo.com" maxlength="160"></div><div><label for="new-phone">Novo telefone / WhatsApp</label><input id="new-phone" name="newPhone" type="tel" inputmode="tel" autocomplete="off" placeholder="(69) 99999-9999" maxlength="25"></div><div><label for="new-address">Endereço</label><input id="new-address" name="newAddress" autocomplete="off" placeholder="Rua, número, bairro e cidade" maxlength="250"></div></div></fieldset><fieldset><legend>Contato e observações</legend><label for="contact-email">E-mail para retorno</label><input id="contact-email" name="email" type="email" autocomplete="off" placeholder="exemplo@example.com" maxlength="160" required><label for="contact-note">Outra alteração ou observação (opcional)</label><textarea id="contact-note" name="note" placeholder="Descreva o que a Secretaria precisa conferir." maxlength="500"></textarea></fieldset><div class="form-actions"><button class="action" type="submit">Enviar solicitação de teste</button><button type="reset">Limpar alterações</button></div></form><p class="note">Use dados fictícios. A solicitação fica nesta sessão; nenhum cadastro real é alterado.</p></section></div>`,
-      eventos: () => `${eventCards()}<section class="box event-follow-up"><h2>Minhas inscrições</h2><p>Nenhuma inscrição vinculada nesta demonstração.</p><p class="note">Inscrições anteriores não serão vinculadas automaticamente por nome ou telefone.</p></section>`,
-      celulas: () => `<section class="box"><span class="label">PLATAFORMA EXTERNA</span><h2>Encontre sua comunidade</h2><p>A igreja utilizará uma plataforma de células pronta. O endereço de acesso será configurado após a definição da integração.</p><button type="button" disabled>Acesso em preparação</button><p class="note">A entrada sem um novo login depende do serviço externo.</p></section>`,
-      generosidade: () => `<div class="gift-options" role="group" aria-label="Finalidade da contribuição">${['Dízimo', 'Oferta', 'Campanha'].map(name => `<button type="button" data-gift="${name}" aria-pressed="${state.gift === name}">${name === 'Campanha' ? 'Campanhas' : name + 's'}</button>`).join('')}</div><div class="giving-layout"><section class="box"><h2>${state.gift === 'Campanha' ? 'Campanhas da igreja' : state.gift}</h2>${state.gift === 'Campanha' ? '<p>Nenhuma campanha cadastrada nesta versão de teste.</p>' : '<p>Experimente a escolha do valor nesta demonstração.</p><form id="gift-form"><label for="gift-value">Valor da contribuição (R$)</label><input id="gift-value" name="amount" type="number" inputmode="decimal" min="0.01" max="1000000" step="0.01" placeholder="0,00" required><div class="form-actions"><button class="action" type="submit">Simular próximo passo</button></div></form>'}<p class="note">A simulação não gera cobrança, não confirma recebimento e não altera o QR Code ao lado.</p></section><section class="box giving-details"><h2>Dados da igreja</h2><p>Nova Igreja Batista · Ariquemes/RO</p><dl class="bank-details"><div><dt>Pix (CNPJ)</dt><dd>40.518.758/0001-30</dd></div><div><dt>Banco</dt><dd>Sicoob</dd></div><div><dt>Agência / Conta</dt><dd>3315 / 51.404-7</dd></div></dl><figure class="church-qr"><img src="assets/pix-qrcode.png" alt="QR Code Pix oficial da Nova Igreja Batista" width="220" height="220"><figcaption>O mesmo QR Code disponível no site da igreja.</figcaption></figure><p class="qr-warning">Dados e QR Code reais, exibidos como referência. Não efetue transferências durante os testes.</p></section></div>`,
-      informacoes: () => `<section class="box"><h2>Programação e avisos</h2><p>Os horários e conteúdos oficiais serão incluídos pela igreja.</p></section><section class="box"><h2>Endereço e contato</h2><p>Os canais de atendimento serão configurados nesta área.</p></section>`,
-      gestao: () => `<section class="box"><span class="label">PESSOA FICTÍCIA · NOVA INTEGRAÇÃO</span><h2>João Exemplo</h2><ul><li>Formulário de membros: registrado</li><li>Reunião de integração: registrada</li><li>Apresentação no culto: ${state.presented ? escape(state.presented.dateLabel) : 'a registrar'}</li></ul>${state.presented ? '<span class="tag">Membro · exemplo</span><p>Registro efetuado por ' + escape(state.presented.actor) + '.</p><p class="note">Registrado em ' + escape(state.presented.registeredAt) + ' · somente nesta sessão.</p>' : button('Revisar apresentação', 'confirmar', true)}</section><section class="box"><h2>Solicitações de atualização</h2>${state.request ? '<p>Solicitação demonstrativa de Ana Exemplo.</p><dl class="profile"><dt>Contato</dt><dd>' + escape(state.request.email) + '</dd><dt>Atualização solicitada</dt><dd>' + escape(state.request.note) + '</dd></dl>' : '<p>Nenhuma solicitação nesta sessão.</p>'}</section><p class="note">Secretaria da igreja e Liderança Pastoral podem confirmar o reconhecimento. Este seletor de demonstração não é autenticação ou controle de permissões.</p>`,
-      confirmar: () => `<section class="box"><h2>João Exemplo</h2><p>Formulário e reunião de integração já registrados neste exemplo.</p><form id="membership-form"><label for="presented-date">Data da apresentação no culto</label><input id="presented-date" name="date" type="date" required><label class="check"><input name="confirm" type="checkbox" required><span>Confirmo que a pessoa foi apresentada à igreja no culto.</span></label><button type="submit" class="action">Confirmar registro de teste</button></form><p class="note">O reconhecimento decorre da apresentação. Esta confirmação registra o fato e seu responsável.</p>${button('Voltar à gestão', 'gestao')}</section>`
+      avisos: () => avisosPage(),
+      pilulas: () => pilulasPage(),
+      sugestoes: () => sugestoesPage(),
+      presenca: () => presencaPage(),
+      checkin: () => checkinPanel(),
+      cadastros: () => teamPage(),
+      equipe: () => teamPanel(),
+      membros: () => membersRealPage(),
+      membresia: () => membershipRealPage(),
+      cadastro: () => PUBLIC ? accountPage() : `<div class="profile-layout"><section class="box profile-summary"><span class="tag">Membro · exemplo</span><h2>${escape(state.member.full)}</h2><p>Confira seu cadastro na igreja.</p><dl class="profile"><dt>E-mail</dt><dd>jessica@example.com</dd><dt>Tratamento</dt><dd>${g('Masculino', 'Feminino')}</dd><dt>Telefone</dt><dd>Não informado</dd><dt>Endereço</dt><dd>Não informado</dd><dt>Apresentação no culto</dt><dd>Apresentação registrada · exemplo</dd></dl><label class="check profile-bday"><input type="checkbox" id="bday-visible"${state.hideBirthday ? '' : ' checked'}><span>Mostrar meu aniversário (dia e mês) na tela inicial da igreja</span></label><p class="note">As alterações são encaminhadas para conferência da Secretaria.</p></section><section class="box profile-edit"><h2>O que você deseja atualizar?</h2><p>Preencha somente os dados que precisam mudar.</p><form id="profile-form"><fieldset><legend>Dados para atualização</legend><div class="form-grid"><div><label for="new-name">Nome completo</label><input id="new-name" name="newName" autocomplete="off" placeholder="Informe o nome corrigido" maxlength="160"></div><div><label for="new-email">Novo e-mail</label><input id="new-email" name="newEmail" type="email" autocomplete="off" placeholder="nome@exemplo.com" maxlength="160"></div><div><label for="new-phone">Novo telefone / WhatsApp</label><input id="new-phone" name="newPhone" type="tel" inputmode="tel" autocomplete="off" placeholder="(69) 99999-9999" maxlength="25"></div><div><label for="new-address">Endereço</label><input id="new-address" name="newAddress" autocomplete="off" placeholder="Rua, número, bairro e cidade" maxlength="250"></div></div></fieldset><fieldset><legend>Contato e observações</legend><label for="contact-email">E-mail para retorno</label><input id="contact-email" name="email" type="email" autocomplete="email" value="${escape(state.member.email)}" placeholder="exemplo@example.com" maxlength="160" required><label for="contact-note">Outra alteração ou observação (opcional)</label><textarea id="contact-note" name="note" placeholder="Descreva o que a Secretaria precisa conferir." maxlength="500"></textarea></fieldset><div class="form-actions"><button class="action" type="submit">Enviar solicitação de teste</button><button type="reset">Limpar alterações</button></div></form><p class="note">Use dados fictícios. A solicitação fica nesta sessão; nenhum cadastro real é alterado.</p></section></div>${myRequestsBox()}`,
+      eventos: () => `${eventCards()}${PUBLIC && account() ? myRegistrations() : legacyRegsBox()}`,
+      celulas: () => cellsPage(),
+      historico: () => historyPage(),
+      generosidade: () => `${(state.giftStep || 'finalidade') === 'finalidade' && !PUBLIC ? historyPeek() : ''}<div class="giving-layout${(state.giftStep || 'finalidade') === 'finalidade' ? '' : ' is-flow'}"><section class="box gift-box" aria-labelledby="gift-step-title">${giftFlow()}</section>${(state.giftStep || 'finalidade') === 'finalidade' ? `<section class="box giving-details"><h2>Outras formas de contribuir</h2><p class="giving-church">Se preferir, faça o Pix direto no app do seu banco com os dados oficiais da igreja, os mesmos do site.</p><dl class="bank-details"><div><dt>Pix (CNPJ)</dt><dd>40.518.758/0001-30</dd></div><div><dt>Banco</dt><dd>Sicoob</dd></div><div><dt>Agência / Conta</dt><dd>3315 / 51.404-7</dd></div></dl><figure class="church-qr church-qr-open"><img src="assets/pix-qrcode.png" alt="QR Code Pix oficial da Nova Igreja Batista" width="200" height="200"><figcaption>Abra o app do seu banco e escaneie o QR Code para fazer o Pix.</figcaption><button type="button" class="action church-pix-copy" id="church-pix-copy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 9h10v10H9z M5 15V5h10"/></svg><span>Copiar código Pix</span></button><small class="church-pix-note">Depois, cole em Pix copia e cola e informe o valor no app do banco.</small></figure></section>` : ''}</div>`,
+      informacoes: () => PUBLIC ? siteInfoPage() : `${admin.infoProgram()}<section class="box church-contact"><h2>Endereço e contato</h2><p class="church-address"><strong>Nova Igreja Batista</strong>Rua França, 1409 · Áreas Especiais 01<br>Ariquemes, RO · 76870-013</p><div class="form-actions"><a class="button button-go" href="https://www.google.com/maps/search/?api=1&amp;query=Nova%20Igreja%20Batista%20Rua%20Fran%C3%A7a%201409%20Ariquemes%20RO" target="_blank" rel="noopener">Abrir no mapa ${arrow}</a><a class="button button-go" href="https://www.instagram.com/nibcasadedeus/" target="_blank" rel="noopener">Instagram ${arrow}</a><a class="button button-go" href="https://www.youtube.com/@nibcasadedeus" target="_blank" rel="noopener">YouTube ${arrow}</a></div><p class="note">O WhatsApp da Secretaria entra aqui quando a igreja definir o número oficial.</p></section>`
     };
-    content.innerHTML = pages[state.view]();
+    syncViewAsBar();
+    content.innerHTML = (isManagement() && admin.pages[state.view] ? admin.pages[state.view] : pages[state.view])();
+    content.dataset.view = state.view;
+    segify(content);
+    content.querySelectorAll('[data-w]').forEach(el => el.style.setProperty('width', el.dataset.w + '%'));
+    if (state.view === 'inicio') myBirthdayPopup();
+    if (state.view === 'informacoes' && !isManagement()) { state.noticesSeen = admin.noticesCount(); refreshNotices(); }
+    bindSocialBanners(); renderPixQr(); syncCampaignBar();
     renderNavigation();
     closeDrawer();
     if (notices.open) notices.close();
     const dateField = document.getElementById('presented-date');
     if (dateField) dateField.max = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Manaus', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
-    if (focus) { document.getElementById('heading').focus({preventScroll:true}); window.scrollTo({top:0,behavior:'instant'}); }
+    if (focus) { document.getElementById('heading').focus({preventScroll:true}); window.scrollTo({top:0,behavior:'instant'}); const m = document.getElementById('main'); m.classList.remove('is-entering'); void m.offsetWidth; m.classList.add('is-entering'); }
   }
   root.addEventListener('click', event => {
     const action = event.target.closest('button,a[data-view],a[data-back]');
     if (!action || action.disabled) return;
-    if (action.id === 'header-notices') { notices.showModal(); root.classList.add('nib-dialog-open'); document.getElementById('notices-close').focus(); return; }
+    if (isManagement() && admin.click(action)) return;
+    if (action.dataset.fansOpen) { openFans(); return; }
+    if (action.dataset.fansClose) { const d = document.getElementById('fans-dialog'); if (d) d.close(); return; }
+    if (action.dataset.bdayClose) { const d = document.getElementById('bday-dialog'); if (d) d.close(); return; }
+    if (action.dataset.bdayAll) { state.bdayAll = true; show('inicio', false, false); return; }
+    if (action.dataset.congrats) { state.congrats = state.congrats || {}; const k = action.dataset.congrats; if (!state.congrats[k]) return openCongrats(action); state.congrats[k] = false; action.classList.toggle('is-sent', state.congrats[k]); action.setAttribute('aria-pressed', String(state.congrats[k])); action.textContent = state.congrats[k] ? 'Parabéns enviado' : 'Dar parabéns'; if (state.congrats[k]) announce('Parabéns enviado (teste). Na versão real, a pessoa recebe uma notificação.', 'success', false); return; }
+    if (action.dataset.checkin) { const c = nextService(); if (c) admin.addCheckin({ day: c.day, name: c.name, who: state.member.full }); show('inicio', false, false); announce('Check-in feito. Sua presença no culto foi registrada (teste).', 'success', false); const t = content.querySelector('#checkin-title'); if (t) t.focus({preventScroll:true}); return; }
+    if (action.id === 'header-notices') { markNoticesSeen(); notices.showModal(); root.classList.add('nib-dialog-open'); document.getElementById('notices-close').focus(); return; }
     if (action.id === 'notices-close') { notices.close(); return; }
     if (action.id === 'header-menu') { document.querySelector('.test-options').open = false; drawer.showModal(); root.classList.add('nib-dialog-open'); action.setAttribute('aria-expanded','true'); document.getElementById('drawer-close').focus({preventScroll:true}); return; }
     if (action.id === 'drawer-close') { closeDrawer(); return; }
+    if (action.id === 'verse-share') {
+      const text = '“' + content.querySelector('.daily-verse blockquote').lastChild.textContent.trim() + '” ' + content.querySelector('.daily-verse cite').textContent + ' · Nova Igreja Batista';
+      if (navigator.share) { navigator.share({ text }).catch(() => {}); return; }
+      if (navigator.clipboard) { navigator.clipboard.writeText(text).then(() => announce('Versículo copiado. É só colar onde quiser compartilhar.', 'success', false), () => announce('Não foi possível copiar o versículo neste navegador.', 'info', false)); return; }
+      announce('Compartilhamento indisponível neste navegador.', 'info', false); return;
+    }
+    if (action.id === 'mobile-back' && PUBLIC && state.view === 'pilulas' && state.pilSel) { event.preventDefault(); state.pilSel = null; state.pilEdit = false; state.pilCapaEd = false; pilCapaVidFechar(); show('pilulas', true, false); return; }
     if (action.id === 'mobile-back') { event.preventDefault(); show(viewHistory.pop() || (isManagement() ? 'gestao' : 'inicio'), true, false); return; }
-    if (action.dataset.month) { state.calendarMonth=NibDaily.moveMonth(state.calendarMonth,Number(action.dataset.month)); state.calendarDay=state.calendarMonth+'-01'; show('agenda',false,false); content.querySelector('[data-month="'+action.dataset.month+'"]').focus({preventScroll:true}); feedback.textContent=content.querySelector('.calendar-toolbar h2').textContent; return; }
-    if (action.dataset.day) { state.calendarDay=action.dataset.day; show('agenda',false,false); content.querySelector('[data-day="'+state.calendarDay+'"]').focus({preventScroll:true}); feedback.textContent=calendarAnnouncement(); return; }
-    if (action.id==='calendar-today') { state.calendarDay=NibDaily.dayKey(new Date()); state.calendarMonth=state.calendarDay.slice(0,7); show('agenda',false,false); content.querySelector('#calendar-today').focus({preventScroll:true}); feedback.textContent=calendarAnnouncement(); return; }
+    if (action.dataset.month) { state.calendarMonth=NibDaily.moveMonth(state.calendarMonth,Number(action.dataset.month)); state.calendarDay=state.calendarMonth+'-01'; show('agenda',false,false); content.querySelector('[data-month="'+action.dataset.month+'"]').focus({preventScroll:true}); srStatus.textContent=content.querySelector('.calendar-toolbar h2').textContent; return; }
+    if (action.dataset.day) { state.calendarDay=action.dataset.day; show('agenda',false,false); content.querySelector('[data-day="'+state.calendarDay+'"]').focus({preventScroll:true}); srStatus.textContent=calendarAnnouncement(); return; }
+    if (action.id==='calendar-today') { state.calendarDay=NibDaily.dayKey(new Date()); state.calendarMonth=state.calendarDay.slice(0,7); show('agenda',false,false); content.querySelector('#calendar-today').focus({preventScroll:true}); srStatus.textContent=calendarAnnouncement(); return; }
+    if (action.id==='verse-clear') { NibDaily.setCurated(NibDaily.dayKey(new Date())); show(isManagement() ? 'palavra' : 'inicio',false,false); announce('Hoje volta a usar a lista automática.','success',false); return; }
     if (action.dataset.prayerSupport) {
       const p=state.prayers.find(x=>x.id===action.dataset.prayerSupport); if(!p||isManagement()) return;
       p.supported=!p.supported; p.supporters+=p.supported?1:-1;
+      if (PUBLIC) { const want = p.supported; NibConta.caderno('orar', { id: Number(p.id), orando: want }).then(r => { p.supporters = r.orando; const cap = content.querySelector('[data-prayer-support="' + p.id + '"]'); if (cap) cap.parentElement.querySelector('.prayer-support-caption').innerHTML = prayCaption(p); }).catch(e => { p.supported = !want; p.supporters += want ? -1 : 1; announce(e.message, 'error'); show(state.view, false, false); }); }
       action.setAttribute('aria-pressed',String(p.supported));
-      action.querySelector('.support-count').textContent=p.supporters;
-      action.parentElement.querySelector('.prayer-support-caption').textContent=p.supporters===1?'pessoa orando':'pessoas orando';
+      action.querySelector('.prayer-support-label').textContent=p.supported?'Orando':'Vou orar';
+      action.parentElement.querySelector('.prayer-support-caption').innerHTML=prayCaption(p);
+      feedback.textContent=p.supported?'Você está orando por este pedido.':'Você deixou de marcar este pedido.';
       return;
     }
-    if (action.dataset.prayerToggle) { const p=state.prayers.find(x=>x.id===action.dataset.prayerToggle); if(!p||!p.own) return; p.answered=!p.answered; show('caderno',false,false); content.querySelector('[data-prayer-toggle="'+p.id+'"]').focus({preventScroll:true}); feedback.textContent=p.answered?'Oração marcada como atendida.':'Pedido marcado em oração.'; return; }
+    if (action.dataset.checkinGo !== undefined && PUBLIC) { if (!state.ckBusy) doCheckin('local'); return; }
+    if (action.dataset.ckTelao !== undefined && PUBLIC) { const r = state.ckPanel; if (!r) return; const url = location.origin + location.pathname.replace(/[^/]*$/, '') + '?checkin=' + r.qr; const d = document.createElement('dialog'); d.className = 'ck-telao'; d.innerHTML = `<div class="ck-telao-in"><img src="assets/splash-logo-final.webp" alt="Nib" width="200" height="75"><h2>Check-in do culto</h2><div class="ck-qr">${qrSvg(url)}</div><p>Aponte a câmera do celular e registre sua presença.</p><button type="button" class="action">Fechar</button></div>`; document.body.append(d); d.querySelector('button').addEventListener('click', () => { d.close(); d.remove(); }); d.addEventListener('close', () => d.remove()); d.showModal(); if (d.requestFullscreen) d.requestFullscreen().catch(() => {}); return; }
+    if (action.dataset.ckLocal !== undefined && PUBLIC) { action.disabled = true; action.textContent = 'Lendo a localização'; posicao(15000).then(pos => { if (!pos) throw new Error('Não conseguimos a localização. Permita o acesso e tente de novo.'); return NibConta.checkin('local', pos); }).then(() => { state.ckPanel = null; show('checkin', false, false); announce('Local da igreja definido.', 'success'); }).catch(e => { action.disabled = false; action.textContent = 'Definir o local da igreja aqui'; announce(e.message, 'error'); }); return; }
+    if (action.dataset.sugTipo && PUBLIC) { const t = content.querySelector('#sug-texto'); if (t) state.sugDraft = t.value; state.sugTipo = action.dataset.sugTipo; show('sugestoes', false, false); const b = content.querySelector(`[data-sug-tipo="${state.sugTipo}"]`); if (b) b.focus({preventScroll:true}); return; }
+    if (action.dataset.sugLida && PUBLIC) { const id = Number(action.dataset.sugLida), lida = action.dataset.lida === '1'; action.disabled = true; NibConta.sugestaoLida(id, lida).then(() => { const s = state.sugList.find(x => Number(x.id) === id); if (s) s.lida = lida; show('sugestoes', false, false); }).catch(e => { action.disabled = false; announce(e.message, 'error'); }); return; }
+    if (PUBLIC && action.dataset.pilAbrir) { state.pilSel = { id: Number(action.dataset.pilAbrir), t: Number(action.dataset.t) || 0 }; state.pilEdit = false; state.pilCapaEd = false; pilCapaVidFechar(); if (!state.pilVer || state.pilVer.id !== state.pilSel.id) state.pilVer = null; show('pilulas', true, false); return; }
+    if (PUBLIC && action.dataset.pilVoltar !== undefined) { state.pilSel = null; state.pilEdit = false; state.pilCapaEd = false; pilCapaVidFechar(); show('pilulas', true, false); return; }
+    if (PUBLIC && action.dataset.pilT !== undefined) { const box = content.querySelector('#pil-player'), p = state.pilVer; if (box && p) { box.innerHTML = pilIframe(p, Number(action.dataset.pilT), true); box.scrollIntoView({ block: 'start', behavior: 'smooth' }); } return; }
+    if (PUBLIC && action.dataset.pilTema !== undefined) { state.pilTema = action.dataset.pilTema; loadPilulas().then(() => { if (state.view === 'pilulas') show('pilulas', false, false); }); return; }
+    if (PUBLIC && action.dataset.pilNova !== undefined) { state.pilUp = null; state.pilForm = !!state.pilFile; show('pilulas', false, false); return; }
+    if (PUBLIC && action.dataset.pilCancelar !== undefined) { state.pilForm = false; state.pilFile = null; pilCapaLimpar(); state.pilRasc = null; state.pilTemaNovo = ''; if (state.pilFileUrl) { URL.revokeObjectURL(state.pilFileUrl); state.pilFileUrl = null; } show('pilulas', false, false); return; }
+    if (PUBLIC && action.dataset.pilTemaEscolha !== undefined) { const fs = action.closest('fieldset'); const on = !action.classList.contains('is-on'); fs.querySelectorAll('.pil-chip').forEach(b => { b.classList.remove('is-on'); b.setAttribute('aria-pressed', 'false'); }); if (on) { action.classList.add('is-on'); action.setAttribute('aria-pressed', 'true'); } fs.querySelector('[name=tema]').value = on ? action.dataset.pilTemaEscolha : ''; const o = fs.querySelector('.pil-tema-outro'); o.hidden = true; o.value = ''; state.pilTemaNovo = on ? action.dataset.pilTemaEscolha : ''; return; }
+    if (PUBLIC && action.dataset.pilTemaOutro !== undefined) { const fs = action.closest('fieldset'); fs.querySelectorAll('.pil-chip').forEach(b => { b.classList.remove('is-on'); b.setAttribute('aria-pressed', 'false'); }); action.classList.add('is-on'); fs.querySelector('[name=tema]').value = ''; const o = fs.querySelector('.pil-tema-outro'); o.hidden = false; o.focus(); return; }
+    if (PUBLIC && action.dataset.pilFechar !== undefined) { state.pilUp = null; show('pilulas', false, false); return; }
+    if (PUBLIC && action.dataset.pilEditar !== undefined) { state.pilEdit = action.dataset.pilEditar === '1'; show('pilulas', false, false); return; }
+    if (PUBLIC && action.dataset.pilDesconectar !== undefined) { if (!confirm('Desconectar o canal do YouTube do app? As pílulas já publicadas continuam, mas não dá para enviar novas até conectar de novo.')) return; action.disabled = true; NibConta.youtube('desconectar', {}).then(() => { state.pil = null; state.ytEstado = null; show(state.view, false, false); announce('Canal desconectado.', 'success', false); }).catch(e => { action.disabled = false; announce(e.message, 'warning'); }); return; }
+    if (PUBLIC && action.dataset.pilLegenda !== undefined) { action.disabled = true; action.textContent = 'Buscando no YouTube'; NibConta.pilulas('legenda', { id: state.pilSel.id }).then(d => { state.pilVer = d.pilula; show('pilulas', false, false); announce(d.achou ? 'Transcrição encontrada.' : 'O YouTube ainda não gerou a legenda automática deste vídeo. O app tenta de novo sozinho.', d.achou ? 'success' : 'info', false); }).catch(e => { action.disabled = false; action.textContent = 'Buscar transcrição agora'; announce(e.message, 'warning'); }); return; }
+    if (PUBLIC && action.dataset.pilEditarId) { state.pilSel = { id: Number(action.dataset.pilEditarId), t: 0 }; state.pilEdit = true; state.pilCapaEd = false; pilCapaVidFechar(); if (!state.pilVer || state.pilVer.id !== state.pilSel.id) state.pilVer = null; show('pilulas', true, false); return; }
+    if (PUBLIC && action.dataset.pilOcultar !== undefined) { const oc = action.dataset.pilOcultar === '1'; action.disabled = true; NibConta.pilulas('ocultar', { id: state.pilSel.id, oculto: oc }).then(d => { state.pilVer = d.pilula; state.pil = null; state.pilHomeKey = null; show('pilulas', false, false); announce(oc ? 'Pílula oculta. A igreja não vê mais.' : 'Pílula visível para a igreja de novo.', 'success', false); }).catch(e => { action.disabled = false; announce(e.message, 'warning'); }); return; }
+    if (PUBLIC && action.dataset.pilCapaEd !== undefined) { state.pilCapaEd = action.dataset.pilCapaEd === '1'; if (!state.pilCapaEd) pilCapaVidFechar(); show('pilulas', false, false); return; }
+    if (PUBLIC && action.dataset.pilCapaFechar !== undefined) { if (state.pilSel) { pilCapaVidFechar(); show('pilulas', false, false); } else { state.pilCapaQuadros = false; const b = content.querySelector('#pil-capa'); if (b) b.outerHTML = pilCapaBox(null); } return; }
+    if (PUBLIC && action.dataset.pilCapaQuadros !== undefined) { state.pilCapaQuadros = true; const b = content.querySelector('#pil-capa'); if (b) { b.outerHTML = pilCapaBox(null); const v = content.querySelector('.pil-capa-video video'); if (v) v.scrollIntoView({ block: 'center', behavior: 'smooth' }); } return; }
+    if (PUBLIC && action.dataset.pilQuadro !== undefined) { const vid = content.querySelector('.pil-capa-video video'); action.disabled = true; pilCapaQuadro(vid).then(pilCapaUsar).catch(e => announce(e.message, 'warning')).finally(() => { action.disabled = false; }); return; }
+    if (PUBLIC && action.dataset.pilCapaAuto !== undefined) { action.disabled = true; pilCapaUsar(null).catch(e => { action.disabled = false; announce(e.message, 'warning'); }); return; }
+    if (PUBLIC && action.dataset.pilRemover !== undefined) { if (!confirm('Excluir esta pílula? Ela sai do app e o vídeo é apagado do canal do YouTube. Não dá para desfazer.')) return; action.disabled = true; NibConta.pilulas('remover', { id: state.pilSel.id }).then(r => { state.pilSel = null; state.pilVer = null; state.pilCapaEd = false; pilCapaVidFechar(); state.pil = null; state.pilHomeKey = null; show('pilulas', false, false); announce(r.youtube_apagado ? 'Pílula excluída do app e do YouTube.' : 'Pílula excluída do app. O vídeo não foi apagado do YouTube; apague no YouTube Studio.', r.youtube_apagado ? 'success' : 'warning', !r.youtube_apagado); }).catch(e => { action.disabled = false; announce(e.message, 'warning'); }); return; }
+    if (action.dataset.avisoRemove && PUBLIC) { if (!confirm('Remover este aviso para toda a igreja?')) return; action.disabled = true; NibConta.avisos('remover', { id: Number(action.dataset.avisoRemove) }).then(loadAvisos).then(() => { show('avisos', false, false); refreshNotices(); announce('Aviso removido.', 'success', false); }).catch(e => { action.disabled = false; announce(e.message, 'warning'); }); return; }
+    if (action.dataset.prayerRemove && PUBLIC) { const id = action.dataset.prayerRemove; action.disabled = true; NibConta.caderno('remover', { id: Number(id) }).then(() => { state.prayers = state.prayers.filter(x => x.id !== id); show('caderno', false, false); announce('Pedido tirado do caderno.', 'success', false); }).catch(e => { action.disabled = false; announce(e.message, 'error'); }); return; }
+    if (PUBLIC && (action.dataset.prayerToggle || action.dataset.prayerDelete)) {
+      const id = action.dataset.prayerToggle || action.dataset.prayerDelete, p = state.prayers.find(x => x.id === id); if (!p || !p.own) return; action.disabled = true;
+      const del = !!action.dataset.prayerDelete;
+      NibConta.caderno(del ? 'remover' : 'atendido', del ? { id: Number(id) } : { id: Number(id), atendido: !p.answered }).then(() => { if (del) state.prayers = state.prayers.filter(x => x.id !== id); else p.answered = !p.answered; show('caderno', false, false); announce(del ? 'Pedido excluído do caderno.' : p.answered ? 'Oração marcada como atendida.' : 'Pedido reaberto: voltou para em oração.', 'success', false); }).catch(e => { action.disabled = false; announce(e.message, 'error'); });
+      return;
+    }
+    if (action.dataset.prayerToggle) { const p=state.prayers.find(x=>x.id===action.dataset.prayerToggle); if(!p||!p.own) return; p.answered=!p.answered; show('caderno',false,false); content.querySelector('[data-prayer-toggle="'+p.id+'"]').focus({preventScroll:true}); feedback.textContent=p.answered?'Oração marcada como atendida.':'Pedido reaberto: voltou para em oração.'; return; }
     if (action.dataset.prayerDelete) { const p=state.prayers.find(x=>x.id===action.dataset.prayerDelete); if(!p||!p.own) return; state.prayers=state.prayers.filter(x=>x.id!==p.id); show('caderno',false,false); content.querySelector('#prayer-feed-title').focus({preventScroll:true}); announce('Pedido removido do caderno de teste.','success',false); return; }
     if (action.dataset.view) { event.preventDefault(); show(action.dataset.view); }
     if (action.dataset.message) announce(action.dataset.message);
-    if (action.dataset.gift) { state.gift = action.dataset.gift; show('generosidade', false); content.querySelector('[data-gift="' + state.gift + '"]').focus({preventScroll:true}); }
+    if (action.dataset.giftAmount) { const input = content.querySelector('#gift-value'); input.value = action.dataset.giftAmount; content.querySelectorAll('[data-gift-amount]').forEach(b => b.setAttribute('aria-pressed', String(b === action))); return; }
+    if (PUBLIC && (action.dataset.view === 'entrar' || action.dataset.accountOpen)) { event.preventDefault(); openAccount(action.dataset.accountOpen || 'login'); return; }
+    if (action.dataset.teamStatus) { teamSet(action); return; }
+    if (PUBLIC && action.dataset.push) { if (action.dataset.push === 'on') pushOn(action); else pushOffCall(); return; }
+    if (PUBLIC && action.dataset.eqMem !== undefined) { state.memSel = action.dataset.eqMem || null; state.memPrint = null; show('membros', false, false); scrollTo(0, 0); return; }
+    if (PUBLIC && action.dataset.eqPapel) { eqSalvarPapel(action); return; }
+    if (PUBLIC && action.dataset.eqConfirm) { eqConfirmar(action); return; }
+    if (PUBLIC && action.dataset.eqEtapa) { eqEtapa(action); return; }
+    if (PUBLIC && action.dataset.eqStatus) { state.memStatus = action.dataset.eqStatus; state.memMore = false; show('membros', false, false); return; }
+    if (PUBLIC && action.dataset.eqBday) { state.memBday = !state.memBday; show('membros', false, false); return; }
+    if (PUBLIC && action.dataset.eqClear) { state.memQ = ''; state.memCell = ''; state.memBday = false; state.memStatus = 'todos'; show('membros', false, false); return; }
+    if (PUBLIC && action.dataset.eqMore) { state.memMore = true; show('membros', false, false); return; }
+    if (action.dataset.verComo && PUBLIC) { setViewAs(action.dataset.verComo); return; }
+    if (action.dataset.cadTab !== undefined) { state.cadTab = action.dataset.cadTab; if (state.cadTab === 'painel') state.cadPainel = null; show('caderno', false, false); return; }
+    if (action.dataset.teamFilter !== undefined) { state.teamFilter = action.dataset.teamFilter; show('cadastros', false, false); return; }
+    if (action.dataset.openUrl) { window.open(action.dataset.openUrl, '_blank', 'noopener'); return; }
+    if (action.dataset.cellDay !== undefined) { state.cellDay = action.dataset.cellDay; show('celulas', false, false); const b = content.querySelector('[data-cell-day="' + state.cellDay + '"]'); if (b) b.focus({preventScroll:true}); return; }
+    if (action.dataset.historyYear) { state.historyYear = action.dataset.historyYear; show('historico', false, false); content.querySelector('[data-history-year="' + state.historyYear + '"]').focus({preventScroll:true}); return; }
+    if (action.dataset.giftStep) { state.giftStep = action.dataset.giftStep; if (!PUBLIC && state.giftStep === 'obrigado' && state.giftAmount && state.giftLogged !== state.giftCode) { state.giftLogged = state.giftCode; const txid = 'E2E' + Date.now().toString().slice(-9); state.history.push({ day: NibDaily.dayKey(new Date()), type: state.gift, amount: state.giftAmount, status: 'pending', app: true, txid }); admin.addAppPix({ day: NibDaily.dayKey(new Date()), type: state.gift, amount: state.giftAmount, txid }); } if (action.dataset.done) state.giftAmount = null; if (state.giftStep === 'pix') { if (content.querySelector('#gift-receipt')) state.giftReceipt = content.querySelector('#gift-receipt').checked; state.giftCode = NibPix.brCode({ amount: state.giftAmount, description: ({'Dízimo':'Dizimo','Oferta':'Oferta','Campanha':'Campanha Obra do Templo'})[state.gift], txid: ({'Dízimo':'DIZ','Oferta':'OFE','Campanha':'OBRA'})[state.gift] + NibDaily.dayKey(new Date()).replace(/-/g,'') + Math.random().toString(36).slice(2,8) }); } show('generosidade', false, false); const t = content.querySelector('#gift-step-title'); if (t) t.focus({preventScroll:true});  return; }
+    if (action.id === 'church-pix-copy') { const label = action.querySelector('span'); const done = () => { label.textContent = 'Código copiado!'; action.classList.add('is-copied'); announce('Código Pix da igreja copiado. Cole no app do seu banco e informe o valor.','success',false); setTimeout(() => { label.textContent = 'Copiar código Pix'; action.classList.remove('is-copied'); }, 2200); }; if (navigator.clipboard) navigator.clipboard.writeText(NibPix.brCode()).then(done, done); else done(); return; }
+    if (action.id === 'pix-copy') { const code = content.querySelector('#pix-code').value; const ok = () => { action.querySelector('span').textContent = 'Copiado'; announce('Código Pix copiado. Cole no app do seu banco.','success',false); }; if (navigator.clipboard) navigator.clipboard.writeText(code).then(ok, ok); else ok(); return; }
+    if (action.dataset.gift) { state.gift = action.dataset.gift; state.giftStep = 'finalidade'; show('generosidade', false, false); content.querySelector('[data-gift="' + state.gift + '"]').focus({preventScroll:true}); return; }
   });
   root.addEventListener('submit', event => {
     event.preventDefault();
     const form = event.target;
     if (!form.reportValidity()) return;
     const values = new FormData(form);
+    if (isManagement() && admin.submit(form, values)) return;
+    if (PUBLIC && form.id === 'pil-form') { pilEnviar(form); return; }
+    if (PUBLIC && form.id === 'pil-edit-form') { const btn = form.querySelector('[type=submit]'); btn.disabled = true; const body = { id: state.pilSel.id, titulo: String(values.get('titulo') || ''), tema: String(values.get('tema') || ''), passagem: String(values.get('passagem') || ''), texto: String(values.get('texto') || ''), publicar_em: String(values.get('publicar_em') || '') }; if (values.has('transcricao') && String(values.get('transcricao')).trim() !== String(state.pilVer.transcricao || '').trim()) body.transcricao = String(values.get('transcricao')); NibConta.pilulas('editar', body).then(d => { state.pilVer = d.pilula; state.pilEdit = false; state.pil = null; state.pilHomeKey = null; show('pilulas', false, false); announce(d.youtube === false ? 'Pílula atualizada no app. No YouTube o título não mudou; tente salvar de novo mais tarde.' : d.youtube ? 'Pílula atualizada no app e no YouTube.' : 'Pílula atualizada.', d.youtube === false ? 'warning' : 'success', false); }).catch(e => { btn.disabled = false; announce(e.message, 'warning'); }); return; }
+    if (PUBLIC && form.id === 'mem-export-form') { eqExport(form); return; }
+    if (PUBLIC && form.id === 'sug-form') { const btn = form.querySelector('[type=submit]'), err = form.querySelector('.form-error'), texto = String(values.get('texto') || '').trim(); if (texto.length < 5) { err.textContent = 'Escreva sua mensagem.'; form.elements.texto.focus(); return; } btn.disabled = true; err.textContent = ''; NibConta.sugestao({ tipo: state.sugTipo || 'sugestao', texto }).then(() => { state.sugDraft = ''; state.sugList = null; show('sugestoes', false, false); announce('Obrigado! Sua mensagem foi enviada.', 'success'); }).catch(e => { err.textContent = e.message; btn.disabled = false; }); return; }
+    if (PUBLIC && form.id === 'aviso-form') { const btn = form.querySelector('[type=submit]'); btn.disabled = true; NibConta.avisos('publicar', { titulo: String(values.get('titulo') || ''), texto: String(values.get('texto') || ''), link: String(values.get('link') || ''), ate: String(values.get('ate') || ''), fixado: values.get('fixado') === 'on', notificar: values.get('notificar') === 'on' }).then(loadAvisos).then(() => { show('avisos', false, false); refreshNotices(); announce('Aviso publicado para toda a igreja.', 'success', false); }).catch(e => { btn.disabled = false; announce(e.message, 'warning'); }); return; }
+    if (PUBLIC && accountSubmit(form, values)) return;
     if (form.id === 'profile-form') {
       const email = String(values.get('email')).trim();
       const changes = [['Nome', 'newName'], ['E-mail', 'newEmail'], ['Telefone', 'newPhone'], ['Endereço', 'newAddress']].map(([label,key]) => { const value = String(values.get(key) || '').trim(); return value ? label + ': ' + value : ''; }).filter(Boolean);
@@ -202,55 +1115,146 @@
       if (observation) changes.push('Observação: ' + observation);
       const note = changes.join(' · ');
       if (!note) return announce('Preencha ao menos um dado para atualização ou descreva outra alteração.','warning');
-      state.request = { email, note };
-      announce('Solicitação fictícia registrada nesta sessão. Você pode consultá-la na experiência de gestão.','success');
-      form.reset();
+      admin.addRequest({ name: state.member.full, email, note });
+      show('cadastro', false, false);
+      announce('Solicitação enviada à Secretaria (teste). Acompanhe o andamento em Minhas solicitações.','success');
     }
     if (form.id === 'notebook-form') {
       const name=String(values.get('name')||'').trim(); const reason=String(values.get('reason')||'').trim();
       if(!name||!reason) return announce('Informe a pessoa ou título e o motivo da oração.','warning');
-      state.prayers.push({id:String(++notebookSequence),name:name.slice(0,120),reason:reason.slice(0,1000),author:'Ana Exemplo',answered:false,supporters:0,supported:false,own:true});
+      if(NibModeration.offensive(name+' '+reason)) { form.querySelector('#notebook-reason').setAttribute('aria-invalid','true'); return announce('Seu pedido tem palavras ofensivas ou de baixo calão. Revise o texto para publicar no caderno.','warning'); }
+      form.querySelector('#notebook-reason').removeAttribute('aria-invalid');
+      if (PUBLIC) { const btn = form.querySelector('[type=submit]'); btn.disabled = true; NibConta.caderno('publicar', { titulo: name.slice(0,120), motivo: reason.slice(0,1000) }).then(loadPrayers).then(() => { show('caderno', false, false); announce(state.prayerError || 'Pedido publicado no caderno de oração.', state.prayerError ? 'error' : 'success', false); }).catch(e => { btn.disabled = false; announce(e.message, 'warning'); }); return; }
+      state.prayers.push({id:String(++notebookSequence),name:name.slice(0,120),reason:reason.slice(0,1000),author:state.member.full,answered:false,supporters:0,supported:false,own:true});
       show('caderno',false,false); content.querySelector('#notebook-name').focus({preventScroll:true}); announce('Pedido publicado apenas neste mural de teste. Não foi compartilhado com outros usuários.','success',false);
     }
-    if (form.id === 'gift-form') announce('Simulação concluída. Nenhuma cobrança foi criada ou contribuição recebida.','success');
-    if (form.id === 'membership-form' && isManagement()) {
-      const raw = String(values.get('date'));
-      const date = new Date(raw + 'T12:00:00-04:00');
-      const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Manaus', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
-      if (Number.isNaN(date.getTime()) || raw > today) return announce('Informe a data de uma apresentação já realizada.','warning');
-      state.presented = { dateLabel: new Intl.DateTimeFormat('pt-BR', { timeZone: 'America/Manaus' }).format(date), actor: state.context === 'secretaria' ? 'Secretaria da igreja (teste)' : 'Liderança Pastoral (teste)', registeredAt: new Intl.DateTimeFormat('pt-BR', { timeZone: 'America/Manaus', dateStyle: 'short', timeStyle: 'short' }).format(new Date()) };
-      show('gestao');
-      announce('Apresentação registrada na demonstração. Nenhum membro real foi alterado.','success');
+    if (form.id === 'gift-form') {
+      const amount = Number(String(values.get('amount')).replace(',','.'));
+      if (!(amount >= 1 && amount <= 1000000)) return announce('Informe um valor a partir de R$ 1,00.','warning');
+      state.giftAmount = Math.round(amount*100)/100; state.giftStep = 'confirmar';
+      if (PUBLIC) { state.giftStep = 'pix'; state.giftCode = NibPix.brCode({ amount: state.giftAmount, txid: ({'Dízimo':'DIZ','Oferta':'OFE','Campanha':'OBRA'})[state.gift] + NibDaily.dayKey(new Date()).replace(/-/g,'') + Math.random().toString(36).slice(2,8) }); }
+      show('generosidade', false, false); content.querySelector('#gift-step-title').focus({preventScroll:true}); return;
     }
   });
   function changeContext(event) {
     viewHistory.length = 0;
     state.context = event.target.value;
-    state.prayers = demoPrayers(); // Caderno demonstrativo não é compartilhado entre experiências.
-    document.getElementById('account').textContent = state.context === 'membro' ? 'Ana Exemplo · Membro' : (state.context === 'secretaria' ? 'Secretaria da igreja · Teste' : 'Liderança Pastoral · Teste');
+    document.getElementById('account').textContent = state.context === 'membro' ? state.member.full + ' · Membro' : admin.profiles[state.context].name + ' · Teste';
     show(isManagement() ? 'gestao' : 'inicio');
+    refreshNotices();
     document.querySelector('.test-options').open = false;
     document.getElementById('demo-context').value = state.context;
     document.getElementById('demo-context-mobile').value = state.context;
   }
+  root.addEventListener('change', e => { if (PUBLIC && e.target.matches('[data-pil-escolher]')) pilEscolher(e.target); if (PUBLIC && e.target.matches('[data-pil-programar]')) { const c = e.target.closest('form').querySelector('.pil-programar'); c.hidden = !e.target.checked; if (e.target.checked) c.querySelector('input').focus(); } if (PUBLIC && e.target.matches('[data-pil-capa-foto], [data-pil-capa-video], [data-pil-trocar-video]')) pilArquivo(e.target); if (PUBLIC && e.target.matches('[data-push-caderno]')) pushCaderno(e.target); if (PUBLIC && e.target.matches('[data-push-lembretes]')) pushLembretes(e.target); });
+  root.addEventListener('input', e => { if (e.target.id !== 'acc-cpf') return; const d = e.target.value.replace(/\D/g, '').slice(0, 11); e.target.value = d.replace(/^(\d{3})(\d)/, '$1.$2').replace(/^(\d{3})\.(\d{3})(\d)/, '$1.$2.$3').replace(/\.(\d{3})(\d{1,2})$/, '.$1-$2'); });
+  root.addEventListener('input', e => { if (isManagement() && admin.input && e.target.id === 'mem-q') admin.input(e.target); if (e.target.id === 'team-q') teamFilterList(e.target.value); if (PUBLIC && e.target.id === 'eq-q') eqFilterInput(e.target.value); if (PUBLIC && e.target.id === 'pil-q') pilBuscar(e.target.value); });
+  root.addEventListener('change', e => { if (PUBLIC && e.target.name === 'eq-papel') { eqPapelToggle(e.target); return; } if (PUBLIC && e.target.id === 'eq-cell') { state.memCell = e.target.value; state.memMore = false; show('membros', false, false); return; } if (isManagement() && admin.input && e.target.id === 'mem-cell') { admin.input(e.target); return; } if (e.target.id === 'bday-visible') { state.hideBirthday = !e.target.checked; announce(e.target.checked ? 'Seu aniversário aparece para a igreja (teste).' : 'Seu aniversário não aparece mais para a igreja (teste).', 'success', false); } });
+  document.addEventListener('nib-install-change', () => { if (state.view === 'inicio' && !isManagement()) show('inicio', false, false); });
+  document.addEventListener('change', e => { if (PUBLIC && e.target.matches('[data-ver-como-select]')) setViewAs(e.target.value); });
   document.getElementById('demo-context').addEventListener('change', changeContext);
   document.getElementById('demo-context-mobile').addEventListener('change', changeContext);
   document.getElementById('sidebar-toggle').addEventListener('click', event => {
     const collapsed = root.classList.toggle('nib-sidebar-collapsed');
     event.currentTarget.setAttribute('aria-expanded', String(!collapsed));
     event.currentTarget.setAttribute('aria-label', collapsed ? 'Expandir menu lateral' : 'Recolher menu lateral');
+    try { localStorage.setItem('nib-side', collapsed ? '1' : ''); } catch {}
+    hideTip();
   });
+  try { if (localStorage.getItem('nib-side') === '1') { root.classList.add('nib-sidebar-collapsed'); const t = document.getElementById('sidebar-toggle'); t.setAttribute('aria-expanded','false'); t.setAttribute('aria-label','Expandir menu lateral'); } } catch {}
+  // Menu recolhido no computador: nome do item ao passar o mouse ou focar pelo teclado.
+  const sideTip = document.createElement('div'); sideTip.className = 'nib-side-tip'; sideTip.setAttribute('aria-hidden','true'); root.appendChild(sideTip);
+  function hideTip() { sideTip.classList.remove('is-on'); }
+  function showTip(el) {
+    if (!root.classList.contains('nib-sidebar-collapsed') || !matchMedia('(min-width:821px)').matches) return;
+    const r = el.getBoundingClientRect(); sideTip.textContent = el.getAttribute('aria-label') || el.textContent.trim();
+    sideTip.style.top = Math.round(r.top + r.height / 2) + 'px'; sideTip.style.left = Math.round(r.right + 12) + 'px'; sideTip.classList.add('is-on');
+  }
+  const aside = document.querySelector('.layout>aside');
+  aside.addEventListener('mouseover', e => { const el = e.target.closest('nav a, .logout-btn, #sidebar-toggle'); if (el) showTip(el); else hideTip(); });
+  aside.addEventListener('mouseleave', hideTip);
+  aside.addEventListener('focusin', e => { const el = e.target.closest('nav a, .logout-btn, #sidebar-toggle'); if (el && root.classList.contains('keyboard-navigation')) showTip(el); });
+  aside.addEventListener('focusout', hideTip); aside.addEventListener('scroll', hideTip, { passive: true }); aside.addEventListener('click', hideTip);
   root.addEventListener('keydown', event => {
     if (event.key !== 'Escape') return;
     const openMenu = event.target.closest('details[open]');
     if (openMenu) { openMenu.open = false; openMenu.querySelector('summary').focus(); }
   });
+  // Arrastar para a direita dentro de uma subtela volta para a anterior (celular e tablet).
+  (() => {
+    const back = document.getElementById('mobile-back'), ret = document.getElementById('mobile-return'), main = document.getElementById('main');
+    const hint = document.createElement('div'); hint.className = 'swipe-back-hint'; hint.setAttribute('aria-hidden', 'true');
+    hint.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5 M11 6l-6 6 6 6"/></svg>'; root.appendChild(hint);
+    const LIMIT = 100; let sx = 0, sy = 0, dx = 0, on = false, decided = false, horiz = false;
+    const blocked = el => { for (let n = el; n && n !== root; n = n.parentElement) { if (n.matches('input,textarea,select,.seg,.choice-seg,dialog,[data-no-swipe]')) return true; const ox = getComputedStyle(n).overflowX; if ((ox === 'auto' || ox === 'scroll') && n.scrollWidth > n.clientWidth + 2) return true; } return false; };
+    const settle = () => { main.style.transition = 'transform .24s cubic-bezier(.2,.7,.2,1),opacity .24s'; main.style.transform = ''; main.style.opacity = ''; hint.style.transition = 'opacity .2s,transform .24s'; hint.style.opacity = ''; hint.style.transform = ''; hint.classList.remove('is-ready'); };
+    root.addEventListener('touchstart', e => { on = false; if (e.touches.length !== 1 || ret.hidden || document.querySelector('dialog[open]') || blocked(e.target)) return; sx = e.touches[0].clientX; sy = e.touches[0].clientY; dx = 0; on = true; decided = false; horiz = false; }, { passive: true });
+    root.addEventListener('touchmove', e => {
+      if (!on) return; const x = e.touches[0].clientX - sx, y = e.touches[0].clientY - sy;
+      if (!decided) { if (Math.abs(x) < 10 && Math.abs(y) < 10) return; decided = true; horiz = x > 0 && Math.abs(x) > Math.abs(y) * 1.6; if (!horiz) { on = false; return; } main.style.transition = 'none'; hint.style.transition = 'none'; }
+      dx = Math.max(0, x); const p = Math.min(dx / LIMIT, 1);
+      main.style.transform = `translateX(${Math.round(Math.min(dx * .35, 44))}px)`; main.style.opacity = String(1 - p * .2);
+      hint.style.opacity = String(p); hint.style.transform = `translate(${Math.round(Math.min(dx * .45, 52))}px,-50%) scale(${(.75 + p * .25).toFixed(2)})`; hint.classList.toggle('is-ready', p >= 1);
+    }, { passive: true });
+    root.addEventListener('touchend', () => { if (!on) return; on = false; if (!horiz) return; const go = dx >= LIMIT; settle(); if (go) back.click(); });
+    root.addEventListener('touchcancel', () => { if (on && horiz) settle(); on = false; });
+  })();
   root.addEventListener('pointerdown',()=>root.classList.remove('keyboard-navigation'));
   root.addEventListener('keydown',e=>{if(['Tab','Enter',' ','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)) root.classList.add('keyboard-navigation');});
   const drawer = document.getElementById('mobile-drawer');
   const notices = document.getElementById('notices-dialog');
   notices.addEventListener('close', () => { if (!drawer.open) root.classList.remove('nib-dialog-open'); });
   notices.addEventListener('click', e => { if (e.target !== notices) return; const r = notices.getBoundingClientRect(); if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) notices.close(); });
+  state.notifs = [];
+  function giftConfirmed(e) {
+    let h = state.history.find(x => x.txid === e.doc && x.status !== 'ok');
+    if (h) h.status = 'ok'; else state.history.push({ day: e.day, type: e.type, amount: e.amount, status: 'ok', txid: e.doc });
+    const what = e.type === 'Campanha' ? 'para a obra do templo' : e.type === 'Oferta' ? 'de oferta' : 'de dízimo';
+    notify({ kind: 'ok', title: 'Contribuição confirmada', text: `A tesouraria confirmou ${money(e.amount)} ${what}, de ${e.day.slice(8, 10)}/${e.day.slice(5, 7)}. Obrigado pela sua generosidade!`, at: e.confirmedAt || '', view: 'historico', action: 'Ver minhas contribuições' });
+  }
+  function notify(n) { state.notifs.push({ ...n, id: 'nt' + (state.notifs.length + 1), seen: false }); refreshNotices(); }
+  function unreadNotices() { return Math.max(0, admin.noticesCount() - (state.noticesSeen || 0)); }
+  function unreadAll() { return unreadNotices() + state.notifs.filter(n => !n.seen).length + (birthdayNotifSeen() ? 0 : 1); }
+  const birthdayNotifSeen = () => state.bdayNotifSeen || !admin.birthdays().some(b => b.today && b.name === state.member.full);
+  function notifsHtml() {
+    const items = state.notifs.slice().reverse().map(n => `<li class="notif is-${n.kind}"><strong>${escape(n.title)}</strong><p>${escape(n.text)}</p><small>${escape(n.at)}</small>${n.view ? `<button type="button" class="notif-go" data-view="${n.view}">${escape(n.action || 'Ver')}</button>` : ''}</li>`);
+    if (admin.birthdays().some(b => b.today && b.name === state.member.full)) items.push(`<li class="notif is-bday"><strong>${birthdayFans.length} pessoas te deram parabéns</strong><p>${fansSummary().replace(/<[^>]+>/g, '')}.</p><button type="button" class="notif-go" data-fans-open="1">Ver quem deu parabéns</button></li>`);
+    return items.length ? `<h3 class="notif-title">Para você</h3><ul class="notices-list notif-list">${items.join('')}</ul>` : '';
+  }
+  // Versão oficial: avisos reais, montados a partir do cadastro, da célula, da agenda e dos eventos do site.
+  function publicNotices() {
+    const out = [], today = NibDaily.dayKey(new Date()), p = account();
+    if (p && p.vinculo === 'membro' && p.membro_status === 'pendente') out.push({ id: 'membro-pendente', kind: 'info', title: 'Cadastro em análise', text: 'A Secretaria vai confirmar sua membresia. Você recebe o aviso aqui.', view: 'cadastro', action: 'Ver meu cadastro' });
+    if (p && p.membro_status === 'confirmado') out.push({ id: 'membro-ok-' + p.id, kind: 'ok', title: 'Membresia confirmada', text: 'A Secretaria confirmou que você é membro da Nova Igreja Batista. Seja bem-vindo!', view: 'cadastro', action: 'Ver meu cadastro' });
+    if (p && pushOk() && state.push && !state.push.on) out.push({ id: 'push-oferta', kind: 'info', title: 'Receba os avisos no celular', text: 'Ative as notificações para saber na hora quando houver novidade.', view: 'cadastro', action: 'Ativar notificações' });
+    if (p && !p.celula) out.push({ id: 'sem-celula', kind: 'info', title: 'Participa de uma célula?', text: 'Informe sua célula em Meu cadastro para ver os encontros no calendário.', view: 'celulas', action: 'Ver células' });
+    const hoje = withCell(NibDaily.agenda(today, 1), today, 1).filter(x => x.day === today);
+    hoje.forEach(x => out.push({ id: 'hoje-' + today + '-' + x.name, kind: x.type === 'Minha célula' ? 'cell' : 'agenda', title: x.type === 'Minha célula' ? 'Hoje tem célula' : 'Hoje na igreja', text: x.name + (x.time ? ', às ' + x.time : '') + (x.place ? ' · ' + x.place : ''), view: 'agenda', action: 'Ver na agenda' }));
+    ensureAvisos(); (state.avisos || []).slice(0, 5).forEach(a => out.push({ id: 'aviso-' + a.id, kind: 'aviso', title: a.titulo, text: a.texto, view: 'avisos', action: 'Ver avisos' }));
+    const ev = (window.NibSite && NibSite.eventos()) || [];
+    const limite = NibDaily.dayKey(new Date(Date.now() + 21 * 864e5));
+    ev.filter(e => e.open && e.start.slice(0, 10) >= today && e.start.slice(0, 10) <= limite).slice(0, 3).forEach(e => out.push({ id: 'evento-' + e.name + e.start, kind: 'event', title: 'Inscrições abertas', text: e.name + ' · ' + fmtDay(e.start), view: 'eventos', action: 'Ver evento' }));
+    return out;
+  }
+  const seenNotices = () => { try { return JSON.parse(localStorage.getItem('nib-avisos-vistos') || '[]'); } catch (_) { return []; } };
+  function markNoticesSeen() { if (PUBLIC) { try { localStorage.setItem('nib-avisos-vistos', JSON.stringify(publicNotices().map(n => n.id).slice(0, 50))); } catch (_) {} refreshNotices(); return; } if (isManagement()) return; state.noticesSeen = admin.noticesCount(); state.notifs.forEach(n => { n.seen = true; }); state.bdayNotifSeen = true; refreshNotices(); }
+  function refreshNotices() {
+    const empty = notices.querySelector('.notices-empty');
+    let feed = notices.querySelector('.notices-feed');
+    if (!feed) { feed = document.createElement('div'); feed.className = 'notices-feed'; empty.after(feed); }
+    if (PUBLIC) {
+      const list = publicNotices(), seen = seenNotices();
+      const ico = { ok: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>', cell: navIcon('celulas'), event: navIcon('eventos'), aviso: navIcon('comunicados'), agenda: navIcon('agenda'), info: navIcon('comunicados') };
+      const html = list.length ? `<ul class="notices-list pub-notifs">${list.map(n => `<li class="pub-notif is-${n.kind}${seen.includes(n.id) ? '' : ' is-new'}"><span class="pub-notif-icon" aria-hidden="true">${ico[n.kind] || ico.info}</span><div class="pub-notif-body"><strong>${escape(n.title)}</strong><p>${escape(n.text)}</p><button type="button" class="pub-notif-go" data-view="${n.view}">${escape(n.action)} ${arrow}</button></div></li>`).join('')}</ul>` : '';
+      feed.innerHTML = html; feed.hidden = !html; empty.hidden = !!html;
+      const unread = list.filter(n => !seen.includes(n.id)).length, bell = document.getElementById('header-notices');
+      bell.classList.toggle('has-unread', unread > 0); bell.setAttribute('aria-label', unread ? `Avisos, ${unread} ${unread === 1 ? 'novo' : 'novos'}` : 'Avisos');
+      return;
+    }
+    const avisos = admin.memberNotices(); const html = isManagement() ? avisos : notifsHtml() + (avisos ? `<h3 class="notif-title">Avisos da igreja</h3>${avisos}` : '');
+    feed.innerHTML = html; feed.hidden = !html; empty.hidden = !!html;
+    const unread = isManagement() ? 0 : unreadAll(); const bell = document.getElementById('header-notices'); bell.classList.toggle('has-unread', unread > 0); bell.setAttribute('aria-label', unread ? `Notificações, ${unread} ${unread === 1 ? 'nova' : 'novas'}` : 'Notificações');
+  }
   function closeDrawer() { if (drawer.open) drawer.close(); root.classList.remove('nib-dialog-open'); document.getElementById('header-menu').setAttribute('aria-expanded','false'); }
   drawer.addEventListener('close', () => { root.classList.remove('nib-dialog-open'); document.getElementById('header-menu').setAttribute('aria-expanded','false'); });
   drawer.addEventListener('click', e => { if (e.target === drawer) { const r = drawer.getBoundingClientRect(); if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) closeDrawer(); } });
@@ -265,11 +1269,701 @@
     dateLabel.setAttribute('aria-label',new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Porto_Velho',dateStyle:'full'}).format(now));
     const verse = NibDaily.verseForDay(key);
     const quote = content.querySelector('.daily-verse blockquote');
-    if (quote) { quote.textContent = '“'+verse[0]+'”'; content.querySelector('.daily-verse cite').textContent = verse[1]; }
+    if (quote) { quote.lastChild.textContent = verse[0]; content.querySelector('.daily-verse cite').textContent = verse[1]; }
   }
   refreshDailyDate();
+  loadObra();
+  if (window.NibSite) { NibSite.onChange(() => { refreshNotices(); if (['inicio','eventos','celulas','informacoes'].includes(state.view) && !document.activeElement.closest('#content input')) show(state.view, false, false); }); NibSite.load(); }
   setInterval(refreshDailyDate, 60000);
   document.addEventListener('visibilitychange', () => { if (!document.hidden) refreshDailyDate(); });
   document.getElementById('demo-context').value = 'membro';
   show('inicio', false);
+  if (deskQuery && deskQuery.addEventListener) deskQuery.addEventListener('change', () => show(state.view, false, false));
+  // Fluxo de entrada de teste: abertura → acesso (entrar ou criar cadastro) → orientação → inicial.
+  // Nada é enviado: a CSP bloqueia conexões e os dados ficam só na memória desta aba.
+  const auth = document.getElementById('app-auth');
+  const onboarding = document.getElementById('app-onboarding');
+  const appParts = [root.querySelector(':scope > header'), root.querySelector(':scope > .layout'), document.getElementById('bottom-nav')];
+  const readFlag = key => { try { return sessionStorage.getItem(key) === '1'; } catch (_) { return false; } };
+  const onbHidden = () => { try { return localStorage.getItem('nib-onb-hide') === '1'; } catch (_) { return false; } };
+  const setOnbHidden = on => { try { on ? localStorage.setItem('nib-onb-hide', '1') : localStorage.removeItem('nib-onb-hide'); } catch (_) {} };
+  const writeFlag = (key, on) => { try { on ? sessionStorage.setItem(key,'1') : sessionStorage.removeItem(key); } catch (_) {} };
+  const gate = on => { root.classList.toggle('nib-gated', on); appParts.forEach(el => { if (el) el.inert = on; }); };
+  function openAuth() { gate(true); onboarding.hidden = true; auth.hidden = false; auth.scrollTop = 0; setTab('login', false); requestAnimationFrame(() => document.getElementById('auth-title').focus({preventScroll:true})); }
+  function setTab(which, focus = true) {
+    const login = which === 'login';
+    const tl = document.getElementById('tab-login'), ts = document.getElementById('tab-signup');
+    tl.setAttribute('aria-selected', String(login)); ts.setAttribute('aria-selected', String(!login));
+    tl.tabIndex = login ? 0 : -1; ts.tabIndex = login ? -1 : 0; tl.parentNode.style.setProperty('--i', login ? 0 : 1);
+    document.getElementById('panel-login').hidden = !login; document.getElementById('panel-signup').hidden = login;
+    auth.querySelectorAll('.auth-error').forEach(e => { e.textContent = ''; });
+    if (focus) (login ? tl : ts).focus();
+  }
+  auth.querySelector('.auth-tabs').addEventListener('click', e => { const t = e.target.closest('[role=tab]'); if (t) setTab(t.id === 'tab-login' ? 'login' : 'signup'); });
+  auth.querySelector('.auth-tabs').addEventListener('keydown', e => { if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { e.preventDefault(); setTab(document.getElementById('tab-login').getAttribute('aria-selected') === 'true' ? 'signup' : 'login'); } });
+  auth.addEventListener('click', e => {
+    const eye = e.target.closest('[data-toggle-pass]');
+    if (eye) { const input = document.getElementById(eye.dataset.togglePass); const show = input.type === 'password'; input.type = show ? 'text' : 'password'; eye.setAttribute('aria-pressed', String(show)); eye.setAttribute('aria-label', show ? 'Ocultar senha' : 'Mostrar senha'); return; }
+    if (PUBLIC && e.target.closest('#auth-forgot')) { forgot(); return; }
+    if (e.target.closest('#auth-forgot')) { document.getElementById('login-error').textContent = 'Na versão final, você vai receber um link para criar uma nova senha. Nesta versão de teste, é só entrar com qualquer senha.'; return; }
+    if (e.target.closest('#auth-code')) { document.getElementById('login-error').textContent = 'Na versão final, um código de acesso chega pelo WhatsApp. Nesta versão de teste, use o e-mail ou celular com qualquer senha.'; }
+  });
+  const fail = (form, id, message) => { document.getElementById(id).textContent = message; const field = form.querySelector('[aria-invalid=true]'); if (field) field.focus(); };
+  const mark = (input, bad) => { input.setAttribute('aria-invalid', String(bad)); return bad; };
+  document.getElementById('panel-login').addEventListener('submit', e => {
+    e.preventDefault();
+    const form = e.currentTarget; const id = form.elements.login, pass = form.elements.senha;
+    const badId = mark(id, id.value.trim().length < 5), badPass = mark(pass, pass.value.length < 1);
+    if (badId || badPass) return fail(form, 'login-error', badId ? 'Informe seu e-mail ou celular.' : 'Informe sua senha.');
+    if (PUBLIC) { authCall(form, 'login-error', () => NibConta.entrar(id.value.trim(), pass.value)); return; }
+    state.member = { first: 'Jéssica', full: 'Jéssica Exemplo', email: id.value.includes('@') ? id.value.trim().slice(0,80) : 'jessica@example.com' };
+    offerFace();
+  });
+  const passRules = v => [v.length >= 8, /[A-ZÀ-Ý]/.test(v), /[a-zß-ÿ]/.test(v), /\d/.test(v), /[^A-Za-zÀ-ÿ0-9\s]/.test(v)];
+  const passItems = [...document.querySelectorAll('.pass-rules li')];
+  function refreshPass() {
+    const p1 = document.getElementById('signup-pass').value, p2 = document.getElementById('signup-pass2').value;
+    passRules(p1).forEach((ok,i) => { passItems[i].classList.toggle('is-ok', ok); passItems[i].setAttribute('aria-label', passItems[i].textContent + (ok ? ': atendido' : ': pendente')); });
+    const hint = document.getElementById('signup-pass2-hint');
+    hint.textContent = !p2 ? '' : p1 === p2 ? 'As senhas são iguais.' : 'As senhas ainda não são iguais.';
+    hint.classList.toggle('is-ok', !!p2 && p1 === p2);
+  }
+  ['signup-pass','signup-pass2'].forEach(id => document.getElementById(id).addEventListener('input', refreshPass));
+  const signupCell = document.getElementById('signup-cell'), signupCellWrap = document.getElementById('signup-cell-wrap');
+  const fillSignupCells = () => { const v = signupCell.value; signupCell.innerHTML = '<option value="">Escolha sua célula</option>' + cellOptions(v); };
+  fillSignupCells(); if (window.NibSite) NibSite.onChange(fillSignupCells);
+  document.getElementById('panel-signup').addEventListener('change', e => { if (e.target.name === 'tem_celula') { signupCellWrap.hidden = e.target.value !== 'sim'; if (e.target.value === 'sim') signupCell.focus(); } });
+  { const b = document.getElementById('signup-birth'); if (b && window.NibDaily) b.max = NibDaily.dayKey(new Date()); }
+  document.getElementById('panel-signup').addEventListener('reset', () => { signupCellWrap.hidden = true; });
+  auth.addEventListener('input', e => { const field = e.target.closest('input,select'); if (!field) return; field.removeAttribute('aria-invalid'); const err = field.form && field.form.querySelector('.auth-error'); if (err) err.textContent = ''; });
+  document.getElementById('panel-signup').addEventListener('submit', e => {
+    e.preventDefault();
+    const form = e.currentTarget; const f = form.elements;
+    const name = f.nome.value.trim().replace(/\s+/g,' ');
+    const checks = [
+      [f.nome, name.split(' ').length < 2, 'Escreva seu nome e sobrenome.'],
+      [f.celular, f.celular.value.replace(/\D/g,'').length < 10, 'Informe um celular com DDD.'],
+      [f.nascimento, !/^\d{4}-\d{2}-\d{2}$/.test(f.nascimento.value) || f.nascimento.value < '1900-01-01' || f.nascimento.value > NibDaily.dayKey(new Date()), 'Informe sua data de nascimento.'],
+      [f.email, !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email.value.trim()), 'Informe um e-mail válido.'],
+      [f.senha, !passRules(f.senha.value).every(Boolean), 'A senha ainda não atende a todos os critérios.'],
+      [f.senha2, f.senha2.value !== f.senha.value || !f.senha2.value, 'As senhas não são iguais.'],
+      [f.celula, f.tem_celula.value === 'sim' && !f.celula.value, 'Escolha a célula de que você participa.'],
+      [document.getElementById('signup-consent'), !document.getElementById('signup-consent').checked, 'Para continuar, aceite a política de privacidade.']
+    ];
+    checks.forEach(([el,bad]) => mark(el,bad));
+    const first = checks.find(c => c[1]);
+    if (first) return fail(form, 'signup-error', first[2]);
+    const full = properName(name).slice(0,80);
+    if (PUBLIC) { authCall(form, 'signup-error', () => NibConta.cadastrar({ nome: full, sexo: f.sexo.value, celular: f.celular.value, nascimento: f.nascimento.value, email: f.email.value.trim(), vinculo: f.vinculo.value, celula: f.tem_celula.value === 'sim' ? f.celula.value : '', senha: f.senha.value, consentimento: true })); return; }
+    state.member = { first: full.split(' ')[0], full, email: f.email.value.trim().slice(0,80), gender: f.sexo.value === 'm' ? 'm' : 'f' };
+    if (f.tem_celula.value === 'nao') state.demoCell = null; else { const c = findCell(f.celula.value); const wd = c ? weekdays.findIndex(w => c.dia.toLowerCase().startsWith(w)) : -1; const t = c && c.horario.match(/(\d{1,2})[:h](\d{2})/); state.demoCell = c && wd >= 0 ? { name: c.nome, weekday: wd, time: t ? t[1].padStart(2, '0') + ':' + t[2] : '', place: c.local, leader: c.lider } : undefined; }
+    offerFace();
+  });
+  // Face ID (simulação): na versão final usa chave de acesso (WebAuthn/passkey); o rosto nunca sai do aparelho.
+  const faceOffer = document.getElementById('face-offer'), faceScan = document.getElementById('face-scan');
+  function scanFace() {
+    return new Promise(resolve => {
+      const text = faceScan.querySelector('.face-scan-text');
+      faceScan.classList.remove('is-ok'); text.textContent = 'Face ID'; faceScan.hidden = false;
+      const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      setTimeout(() => { faceScan.classList.add('is-ok'); text.textContent = 'Reconhecido'; setTimeout(() => { faceScan.hidden = true; resolve(); }, still ? 400 : 750); }, still ? 400 : 1300);
+    });
+  }
+  function offerFace() {
+    if (readFlag('nib-faceid')) { finishAuth(); return; }
+    faceOffer.hidden = false;
+    requestAnimationFrame(() => document.getElementById('face-enable').focus({preventScroll:true}));
+  }
+  document.getElementById('face-enable').addEventListener('click', () => { faceOffer.hidden = true; scanFace().then(() => { writeFlag('nib-faceid', true); finishAuth(); }); });
+  document.getElementById('face-later').addEventListener('click', () => { faceOffer.hidden = true; finishAuth(); });
+  faceOffer.addEventListener('keydown', e => { if (e.key === 'Escape') { faceOffer.hidden = true; finishAuth(); } });
+  document.getElementById('auth-face').addEventListener('click', () => {
+    scanFace().then(() => { state.member = { first: 'Jéssica', full: 'Jéssica Exemplo', email: 'jessica@example.com' }; finishAuth(); });
+  });
+  function finishAuth() {
+    writeFlag('nib-auth', true);
+    auth.hidden = true;
+    onboarding.querySelectorAll('[data-member-first]').forEach(el => { el.textContent = state.member.first; });
+    renderNavigation(); show('inicio', false, false);
+    document.getElementById('account').textContent = state.member.full + ' · Membro';
+    onboarding.hidden = false; goSlide(0);
+    // Quem tocou em "Não mostrar novamente" vai direto para a inicial, com a animação do brasão.
+    if (onbHidden()) { closeOnboarding(); return; }
+    requestAnimationFrame(() => document.getElementById('onb-next').focus({preventScroll:true}));
+  }
+  const track = document.getElementById('onb-track');
+  const slides = [...track.children];
+  const onbDots = [...document.querySelectorAll('#onb-dots span')];
+  const next = document.getElementById('onb-next');
+  let slide = 0;
+  function goSlide(i, smooth = true) {
+    slide = Math.max(0, Math.min(slides.length - 1, i));
+    track.scrollTo({ left: slides[slide].offsetLeft - track.offsetLeft, behavior: smooth && !matchMedia('(prefers-reduced-motion: reduce)').matches ? 'smooth' : 'auto' });
+    syncSlide();
+  }
+  function syncSlide() {
+    onbDots.forEach((d,k) => d.classList.toggle('is-active', k === slide));
+    slides.forEach((el,k) => { el.setAttribute('aria-hidden', String(k !== slide)); el.inert = k !== slide; });
+    next.textContent = slide === slides.length - 1 ? 'Começar' : 'Próximo';
+  }
+  let slideFrame = 0;
+  track.addEventListener('scroll', () => { if (slideFrame) return; slideFrame = requestAnimationFrame(() => { slideFrame = 0; const k = Math.round(track.scrollLeft / track.clientWidth); if (k !== slide) { slide = k; syncSlide(); } }); }, {passive:true});
+  const enter = document.getElementById('app-enter');
+  function closeOnboarding() {
+    writeFlag('nib-onboarded', true); if (PUBLIC) setOnbHidden(true);
+    window.scrollTo(0,0);
+    const done = () => { enter.hidden = true; auth.hidden = true; gate(false); document.getElementById('heading').focus({preventScroll:true}); };
+    if (!enter.animate) { onboarding.hidden = true; done(); return; }
+    // O brasão nunca é pulado, com a animação completa mesmo com "reduzir movimento" ligado no celular
+    // (decisão de Hilton, 06/11/2026: sem movimento não faz sentido ter a animação).
+    // Acabamento contido: o brasão assenta com desaceleração longa, um reflexo de luz atravessa
+    // o desenho e a tela se dissolve sobre a inicial, que sobe de leve. Só transform e opacity.
+    const covered = !enter.hidden; // já cobrindo a tela (app aberto com sessão): não esmaece de novo
+    enter.hidden = false;
+    const mark = enter.querySelector('.enter-mark'), shine = enter.querySelector('.enter-shine'), halo = enter.querySelector('.enter-halo');
+    const T = 2600, settle = 'cubic-bezier(.16,1,.3,1)', soft = 'cubic-bezier(.65,0,.35,1)';
+    const parts = appParts.filter(Boolean);
+    enter.animate([{opacity:covered ? 1 : 0},{opacity:1}], {duration:covered ? 0 : 360, easing:'cubic-bezier(.33,1,.68,1)', fill:'forwards'}).finished.then(() => {
+      // Troca de telas enquanto tudo está coberto, para o trabalho de layout não cair no meio da animação.
+      onboarding.hidden = true; auth.hidden = true; gate(false); parts.forEach(el => { el.inert = true; });
+      return new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+    }).then(() => {
+      const at = ms => ms / T;
+      const runs = [
+        halo.animate([{opacity:0,transform:'translate(-50%,-52%) scale(.7)'},{opacity:1,transform:'translate(-50%,-52%) scale(1)',offset:at(1300),easing:soft},{opacity:0,transform:'translate(-50%,-52%) scale(1.15)'}], {duration:T, easing:settle, fill:'forwards'}),
+        mark.animate([
+          {opacity:0,transform:'translateY(10px) scale(.94)',easing:settle},
+          {opacity:1,transform:'translateY(0) scale(1)',offset:at(1000)},
+          {opacity:1,transform:'translateY(0) scale(1)',offset:at(1700),easing:'cubic-bezier(.5,0,.75,0)'},
+          {opacity:0,transform:'translateY(0) scale(1.04)'}
+        ], {duration:T, fill:'forwards'}),
+        shine.animate([
+          {transform:'translateX(-170%) skewX(-12deg)'},
+          {transform:'translateX(-170%) skewX(-12deg)',offset:at(650),easing:soft},
+          {transform:'translateX(260%) skewX(-12deg)',offset:at(1550)},
+          {transform:'translateX(260%) skewX(-12deg)'}
+        ], {duration:T, fill:'forwards'}),
+        enter.animate([{opacity:1},{opacity:1,offset:at(1850),easing:soft},{opacity:0}], {duration:T, fill:'forwards'}),
+        ...parts.map(el => el.animate([{transform:'translateY(14px)'},{transform:'translateY(14px)',offset:at(1850),easing:settle},{transform:'none'}], {duration:T}))
+      ];
+      return Promise.all(runs.map(a => a.finished));
+    }).then(() => { enter.getAnimations({subtree:true}).forEach(a => a.cancel()); done(); });
+  }
+  next.addEventListener('click', () => { if (slide === slides.length - 1) closeOnboarding(); else goSlide(slide + 1); });
+  document.getElementById('onb-skip').addEventListener('click', () => { setOnbHidden(true); closeOnboarding(); });
+  onboarding.addEventListener('keydown', e => { if (e.key === 'ArrowRight') goSlide(slide + 1); if (e.key === 'ArrowLeft') goSlide(slide - 1); if (e.key === 'Escape') closeOnboarding(); });
+  ['simulate-birthday','simulate-birthday-mobile'].forEach(id => document.getElementById(id).addEventListener('change', e => { state.simulateBirthday = e.target.checked; ['simulate-birthday','simulate-birthday-mobile'].forEach(o => { document.getElementById(o).checked = e.target.checked; }); state.birthdayShown = false; document.querySelector('.test-options').open = false; closeDrawer(); refreshNotices(); if (!isManagement()) show('inicio', false, false); }));
+  document.getElementById('simulate-service').addEventListener('change', e => { state.simulateService = e.target.checked; document.querySelector('.test-options').open = false; if (!isManagement()) show('inicio', false, false); });
+  document.addEventListener('click', e => {
+    if (!e.target.closest('[data-logout]')) return;
+    if (PUBLIC) { closeDrawer(); NibConta.sair().finally(() => { applyAccount(); show('inicio', false, false); if (LOGIN_REQUIRED) { ['panel-login','panel-signup'].forEach(id => document.getElementById(id).reset()); requireLogin(); } else announce('Você saiu da sua conta.', 'success', false); }); return; }
+    closeDrawer(); writeFlag('nib-auth', false); writeFlag('nib-faceid', false);
+    if (state.context !== 'membro') { const s = document.getElementById('demo-context'); s.value = 'membro'; changeContext({ target: s }); }
+    ['panel-login','panel-signup'].forEach(id => document.getElementById(id).reset()); openAuth();
+  });
+  document.getElementById('replay-flow').addEventListener('click', () => { document.querySelector('.test-options').open = false; writeFlag('nib-auth', false); writeFlag('nib-faceid', false); setOnbHidden(false); ['panel-login','panel-signup'].forEach(id => document.getElementById(id).reset()); openAuth(); });
+  // Abertura: aparece ao abrir o aplicativo, antes do acesso; some sozinha ou ao toque.
+  const splash = document.getElementById('app-splash');
+  // Versão oficial: é preciso entrar. Sem conta, abre direto a tela de entrar/criar cadastro.
+  const LOGIN_REQUIRED = PUBLIC && !!window.NibConta && NibConta.available();
+  const authReady = LOGIN_REQUIRED ? NibConta.eu() : Promise.resolve(null);
+  function requireLogin() { publicAuthChrome(); openAuth(); }
+  // Com conta: na primeira visita mostra a orientação; depois vai direto para a inicial.
+  function publicStart(fromLogin = false) {
+    if (LOGIN_REQUIRED && !account()) { gate(true); authReady.then(() => { if (account()) publicStart(); else requireLogin(); }); return; }
+    // Depois de entrar, a animação do brasão sempre aparece (a tela de entrar some por baixo dela).
+    if (fromLogin && onbHidden()) { closeOnboarding(); return; }
+    if (!auth.hidden) auth.hidden = true;
+    if (onbHidden()) { gate(false); return; }
+    gate(true); onboarding.querySelectorAll('[data-member-first]').forEach(el => { el.parentNode.textContent = account() ? `Boas-vindas, ${account().primeiro}` : 'Boas-vindas à Nib'; });
+    onboarding.hidden = false; goSlide(0, false); requestAnimationFrame(() => document.getElementById('onb-next').focus({preventScroll:true}));
+  }
+  const afterSplash = () => { if (PUBLIC) publicStart(); else if (!readFlag('nib-auth')) openAuth(); };
+  // Já logado neste aparelho (celular e desktop): ao abrir de novo, em vez da abertura, a tela azul cobre
+  // tudo enquanto a sessão é conferida e o brasão aparece (pedido de Hilton, 06/11/2026).
+  const crestOpen = LOGIN_REQUIRED && NibConta.logado && NibConta.logado();
+  if (crestOpen) {
+    if (splash) splash.hidden = true;
+    try { sessionStorage.setItem('nib-splash','1'); } catch (_) {}
+    gate(true); enter.hidden = false;
+    authReady.then(() => {
+      if (account() && onbHidden()) { auth.hidden = true; closeOnboarding(); return; }
+      enter.hidden = true; publicStart();
+    });
+  } else if (splash) {
+    let seen = false;
+    try { seen = sessionStorage.getItem('nib-splash') === '1'; sessionStorage.setItem('nib-splash','1'); } catch (_) {}
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const finish = () => { if (splash.hidden || splash.classList.contains('is-leaving')) return; if (PUBLIC) publicStart(); else if (!readFlag('nib-auth')) openAuth(); else gate(false); splash.classList.add('is-leaving'); setTimeout(() => { splash.hidden = true; }, reduced ? 0 : 500); };
+    if (seen) { splash.hidden = true; afterSplash(); }
+    else {
+      gate(true);
+      splash.querySelectorAll('[data-letters]').forEach(el => { const chars = [...el.textContent]; el.textContent = ''; chars.forEach((c,i) => { const ch = document.createElement('span'); ch.className = 'ch'; ch.textContent = c; ch.style.setProperty('--i', i); el.append(ch); }); });
+      if (reduced) splash.querySelector('.splash-logo').src = 'assets/splash-logo-final.webp';
+      splash.classList.add('is-playing'); splash.addEventListener('click', finish); setTimeout(finish, reduced ? 1200 : 6100);
+    }
+  } else afterSplash();
+  // Contas reais (versão pública): cadastro, entrada, meu cadastro e painel da equipe.
+  const statusLabel = { confirmado: 'Membro confirmado', pendente: 'Aguardando confirmação da Secretaria', nao: 'Não é membro' };
+  const vinculoLabel = { membro: 'Membro', frequento: 'Frequenta a igreja', visitante: 'Conhecendo a igreja' };
+  function publicAuthChrome() {
+    if (auth.dataset.chrome) return; auth.dataset.chrome = '1';
+    const lead = auth.querySelector('.auth-lead'); if (lead) lead.textContent = LOGIN_REQUIRED ? 'Acesse e acompanhe a agenda, contribuição e caderno de oração.' : 'Entre ou crie seu cadastro para manter seus dados em dia com a igreja.';
+    if (LOGIN_REQUIRED) return;
+    const close = document.createElement('button'); close.type = 'button'; close.className = 'auth-close'; close.textContent = 'Voltar ao app';
+    close.addEventListener('click', closeAccount);
+    auth.querySelector('.auth-sheet').prepend(close);
+    auth.addEventListener('keydown', e => { if (PUBLIC && e.key === 'Escape') closeAccount(); });
+  }
+  function closeAccount() { auth.hidden = true; gate(false); }
+  function openAccount(tab) {
+    if (!window.NibConta || !NibConta.available()) { closeDrawer(); announce('As contas funcionam no endereço oficial do app: novaigrejabatista.com.br/app.', 'info'); return; }
+    closeDrawer(); publicAuthChrome(); openAuth(); if (tab === 'signup') setTab('signup', false);
+  }
+  async function authCall(form, errId, fn) {
+    const btn = form.querySelector('[type=submit]'), err = document.getElementById(errId);
+    btn.disabled = true; err.textContent = '';
+    try {
+      await fn();
+      closeAccount(); ['panel-login','panel-signup'].forEach(id => document.getElementById(id).reset()); refreshPass();
+      applyAccount(); show('inicio', false, false); if (LOGIN_REQUIRED) publicStart(true); pendingQrCheckin();
+      const p = account(); announce(form.id === 'panel-signup' ? `Cadastro criado. Boas-vindas, ${p.primeiro}!` + (p.membro_status === 'pendente' ? ' A Secretaria vai confirmar sua membresia.' : '') : `Que bom ver você, ${p.primeiro}!`, 'success', false);
+    } catch (e) { err.textContent = e.message; }
+    finally { btn.disabled = false; }
+  }
+  async function forgot() {
+    const err = document.getElementById('login-error'), email = document.getElementById('login-id').value.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { err.textContent = 'Escreva seu e-mail no campo acima e toque de novo em "Esqueci minha senha".'; document.getElementById('login-id').focus(); return; }
+    err.textContent = 'Enviando';
+    try { await NibConta.esqueci(email); err.textContent = 'Se houver um cadastro com esse e-mail, enviamos um link para criar uma nova senha. Confira também a caixa de spam e Promoções.'; }
+    catch (e) { err.textContent = e.message; }
+  }
+  function applyAccount() {
+    root.classList.toggle('has-account', !!account());
+    const who = account() ? account().id + '-' + account().papel : '';
+    refreshNotices();
+    if (state.accountKey !== who) { state.accountKey = who; state.push = null; if (who) pushRefresh().then(refreshNotices); state.team = null; state.regs = null; state.prayers = []; state.prayersLoaded = false; if (who) loadPrayers().then(() => { if (state.view === 'inicio') show('inicio', false, false); }); }
+    renderNavigation();
+    show(state.view, false, false);
+  }
+  // Notificações no celular (Web Push): só no app oficial, com conta, e a pessoa autoriza.
+  const pushOk = () => 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
+  const isIOS = () => /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const standalone = () => matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+  const b64uBytes = s => { const b = atob(s.replace(/-/g, '+').replace(/_/g, '/') + '==='.slice((s.length + 3) % 4)); return Uint8Array.from(b, c => c.charCodeAt(0)); };
+  async function pushSub() { if (!pushOk()) return null; const reg = await navigator.serviceWorker.getRegistration(); return reg ? reg.pushManager.getSubscription() : null; }
+  async function pushRefresh() {
+    try { const sub = await pushSub(); if (!sub) { state.push = { on: false }; } else { const e = await NibConta.pushEstado(sub.endpoint); state.push = { on: e.inscrito, caderno: e.caderno, lembretes: e.lembretes !== false }; if (!e.inscrito) await NibConta.push('push-inscrever', sub.toJSON()).then(() => { state.push = { on: true, caderno: false, lembretes: true }; }); } }
+    catch (_) { state.push = { on: false }; }
+    if (state.view === 'cadastro') show('cadastro', false, false);
+  }
+  async function pushOn(btn) {
+    btn.disabled = true;
+    try {
+      const perm = await Notification.requestPermission();
+      if (perm !== 'granted') { announce('As notificações foram bloqueadas. Para ativar, libere nas configurações do celular para este app.', 'warning'); return; }
+      const reg = await navigator.serviceWorker.ready;
+      const sub = (await reg.pushManager.getSubscription()) || await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64uBytes(await NibConta.pushChave()) });
+      await NibConta.push('push-inscrever', sub.toJSON());
+      state.push = { on: true, caderno: false, lembretes: true }; show('cadastro', false, false); announce('Notificações ativadas neste celular.', 'success', false);
+    } catch (e) { announce(e.message || 'Não foi possível ativar as notificações neste aparelho.', 'error'); }
+    finally { btn.disabled = false; }
+  }
+  async function pushOffCall() { try { const sub = await pushSub(); if (sub) { await NibConta.push('push-sair', { endpoint: sub.endpoint }).catch(() => {}); await sub.unsubscribe(); } } catch (_) {} state.push = { on: false }; show('cadastro', false, false); announce('Notificações desligadas neste celular.', 'success', false); }
+  async function pushLembretes(input) { try { const sub = await pushSub(); if (!sub) return; await NibConta.push('push-preferencia', { endpoint: sub.endpoint, lembretes: input.checked }); state.push.lembretes = input.checked; announce(input.checked ? 'Você vai receber o lembrete no dia dos cultos, da sua célula e dos eventos.' : 'Os lembretes do dia foram desligados neste celular.', 'success', false); } catch (e) { input.checked = !input.checked; announce(e.message, 'error'); } }
+  async function pushCaderno(input) { try { const sub = await pushSub(); if (!sub) return; await NibConta.push('push-preferencia', { endpoint: sub.endpoint, caderno: input.checked }); state.push.caderno = input.checked; announce(input.checked ? 'Você vai receber os novos pedidos de oração.' : 'Os pedidos de oração não vão mais gerar notificação.', 'success', false); } catch (e) { input.checked = !input.checked; announce(e.message, 'error'); } }
+  function pushBox() {
+    const head = '<section class="box push-box" aria-labelledby="push-title"><span class="label">NOTIFICAÇÕES</span><h2 id="push-title">Avisos no seu celular</h2>';
+    if (isIOS() && !standalone()) return head + '<p>No iPhone, as notificações funcionam com o app instalado. No Safari, toque em Compartilhar e depois em “Adicionar à Tela de Início”. Abra o app pelo ícone e volte aqui.</p></section>';
+    if (!pushOk()) return head + '<p>Este navegador não recebe notificações. Instale o app na tela inicial do celular para ativar.</p></section>';
+    if (!state.push) { pushRefresh(); return head + '<p>Conferindo</p></section>'; }
+    if (!state.push.on) return head + '<p>Receba no celular os avisos da igreja, como a confirmação da sua membresia.</p><div class="form-actions"><button type="button" class="action" data-push="on">Ativar notificações</button></div></section>';
+    return head + `<p>Ativadas neste celular. Você recebe os avisos da igreja e da sua membresia.</p><label class="check"><input type="checkbox" data-push-lembretes${state.push.lembretes !== false ? ' checked' : ''}><span>Lembrete no dia dos cultos, da minha célula e dos eventos, com o horário</span></label><label class="check"><input type="checkbox" data-push-caderno${state.push.caderno ? ' checked' : ''}><span>Também quero receber cada novo pedido do Caderno de oração</span></label><div class="form-actions"><button type="button" class="button" data-push="off">Desligar neste celular</button></div></section>`;
+  }
+  var papelNome = { admin: 'Administração', pastoral: 'Liderança Pastoral', secretaria: 'Secretaria', tesouraria: 'Tesouraria', membro: 'Membro' };
+  function papeisTexto(l) { return (l || []).filter(k => k !== 'membro').map(k => papelNome[k] || k).join(' + ') || 'Membro'; }
+  // Admin escolhe com qual perfil quer ver o app (só a tela muda; permissões reais ficam no servidor).
+  // Quem tem mais de um perfil (ou é admin) escolhe com qual perfil ver o app. Só a tela muda; o servidor usa os perfis reais.
+  function verOpcoes() { return (PUBLIC && window.NibConta && NibConta.opcoesPerfil) ? NibConta.opcoesPerfil() : []; }
+  function verAtual() { return NibConta.verComo() || verOpcoes()[0]; }
+  function verAdmin() { return verOpcoes()[0] === 'admin'; }
+  function viewAsBox() {
+    const o = verOpcoes(); if (o.length < 2) return '';
+    const atual = verAtual();
+    const curto = { admin: 'Admin', pastoral: 'Pastoral', secretaria: 'Secretaria', membro: 'Membro' };
+    const opts = o.map(k => `<button type="button" class="history-year${atual === k ? ' is-active' : ''}" data-ver-como="${k}" aria-pressed="${atual === k}">${curto[k]}</button>`).join('');
+    return `<section class="box view-as-box"><span class="label">${verAdmin() ? 'SÓ PARA ADMINISTRAÇÃO' : 'SEUS PERFIS'}</span><h2>Ver o app como</h2><p>${verAdmin() ? 'Veja o app como cada perfil vê. Só a tela muda: suas permissões continuam as de administração.' : 'Você tem mais de um perfil na igreja. Escolha com qual quer usar o app agora.'}</p><div class="cell-days view-as-opts" role="group" aria-label="Ver o app como" data-seg="ver-como">${opts}</div></section>`;
+  }
+  function verOptions(atual) { return verOpcoes().map(k => `<option value="${k}"${atual === k ? ' selected' : ''}>${papelNome[k]}</option>`).join(''); }
+  // Seletor fixo no menu (celular e computador), como o "Testar experiência" da versão local.
+  function viewAsSelect(where) {
+    if (verOpcoes().length < 2) return '';
+    const id = 'ver-como-' + where;
+    return `<div class="view-as-menu"><label for="${id}">Ver o app como</label><select id="${id}" data-ver-como-select autocomplete="off">${verOptions(verAtual())}</select></div>`;
+  }
+  function viewAsBar() {
+    if (!PUBLIC || !window.NibConta || !NibConta.verComo()) return '';
+    const volta = verOpcoes()[0], txt = volta === 'admin' ? 'Voltar para administração' : 'Voltar para ' + papelNome[volta];
+    return `<div class="view-as-bar" role="status"><span class="view-as-eye" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></span><label for="ver-como-faixa">Vendo como</label><select id="ver-como-faixa" data-ver-como-select autocomplete="off">${verOptions(NibConta.verComo())}</select><button type="button" class="view-as-back" data-ver-como="${volta}" aria-label="${txt}" title="${txt}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12 M18 6 6 18"/></svg></button></div>`;
+  }
+  function syncViewAsBar() {
+    let bar = document.getElementById('view-as-bar'); const html = viewAsBar();
+    if (!html) { if (bar) bar.remove(); return; }
+    if (!bar) { const eb = document.getElementById('eyebrow'), main = document.getElementById('main'); const anchor = eb && main && [...main.children].find(c => c.contains(eb)); if (!anchor) return; bar = document.createElement('div'); bar.id = 'view-as-bar'; main.insertBefore(bar, anchor); }
+    bar.innerHTML = html;
+  }
+  function setViewAs(v) {
+    NibConta.definirVerComo(v);
+    state.sugList = null; state.cadPainel = null; state.cadTab = 'pedidos'; state.ckPanel = null; state.ck = null; state.ckKey = null; state.avisos = null; state.painel = null; state.mem = null; state.memSel = null; state.memb = null;
+    applyAccount();
+  }
+  function accountPage() {
+    const p = account(); if (!p) return '';
+    const status = p.vinculo === 'membro' || p.membro_status === 'confirmado' ? `<dt>Membresia</dt><dd>${escape(statusLabel[p.membro_status] || '')}</dd>` : '';
+    return `${viewAsBox()}${pushBox()}<div class="profile-layout"><section class="box profile-summary"><div class="profile-head"><h2>${escape(p.nome)}</h2><span class="tag ${p.membro_status === 'confirmado' ? 'status-active' : p.membro_status === 'pendente' ? 'is-wait' : 'is-neutral'}">${escape(p.membro_status === 'confirmado' ? 'Membro' : p.membro_status === 'pendente' ? 'Aguardando' : (vinculoLabel[p.vinculo] || 'Cadastro'))}</span></div><dl class="profile"><dt>E-mail</dt><dd>${escape(p.email)}</dd><dt>Celular</dt><dd>${escape(fmtPhone(p.celular)) || 'Não informado'}</dd><dt>Endereço</dt><dd>${escape(p.endereco || 'Não informado')}</dd><dt>Nascimento</dt><dd>${escape(fmtDay(p.nascimento) || 'Não informado')}</dd><dt>CPF</dt><dd>${escape(fmtCpf(p.cpf) || 'Não informado')}</dd><dt>Célula</dt><dd>${escape(p.celula ? p.celula.split('|').reverse().join(' · ') : 'Não participa')}</dd>${status}<dt>Cadastro desde</dt><dd>${escape(fmtDay(p.criado_em))}</dd></dl><button type="button" class="button account-logout" data-logout="1">Sair da conta</button></section>
+<section class="box profile-edit"><h2>Atualizar meus dados</h2><form id="account-form" novalidate><div class="form-grid"><div><label for="acc-nome">Nome completo</label><input id="acc-nome" name="nome" maxlength="120" value="${escape(p.nome)}" required></div><div><label for="acc-cel">Celular com WhatsApp</label><input id="acc-cel" name="celular" type="tel" inputmode="tel" maxlength="25" value="${escape(fmtPhone(p.celular))}" required></div><div><label for="acc-nasc">Data de nascimento</label><input id="acc-nasc" name="nascimento" type="date" min="1900-01-01" value="${escape(p.nascimento || '')}"></div><div><label for="acc-cpf">CPF</label><input id="acc-cpf" name="cpf" inputmode="numeric" autocomplete="off" maxlength="14" placeholder="000.000.000-00" value="${escape(fmtCpf(p.cpf))}"></div><div><label for="acc-end">Endereço</label><input id="acc-end" name="endereco" maxlength="250" value="${escape(p.endereco || '')}" placeholder="Rua, número, bairro"></div><div><label for="acc-cel-cell">Célula</label><select id="acc-cel-cell" name="celula"><option value="">Não participo de célula</option>${cellOptions(p.celula)}${p.celula && !findCell(p.celula) ? `<option value="${escape(p.celula)}" selected>${escape(p.celula.split('|').reverse().join(' · '))} (fora da lista)</option>` : ''}</select></div></div><fieldset class="auth-choice"><legend>Gênero</legend><div class="choice-seg"><label><input type="radio" name="sexo" value="m"${p.sexo === 'm' ? ' checked' : ''}><span>Masculino</span></label><label><input type="radio" name="sexo" value="f"${p.sexo !== 'm' ? ' checked' : ''}><span>Feminino</span></label></div></fieldset><label class="check"><input type="checkbox" name="mostrar"${p.mostrar_aniversario ? ' checked' : ''}><span>Mostrar meu aniversário (dia e mês) para a igreja</span></label><p class="form-error" role="alert"></p><div class="form-actions"><button class="action" type="submit">Salvar alterações</button></div><p class="note">Para trocar o e-mail, fale com a Secretaria.</p></form></section>
+<section class="box"><h2>Trocar senha</h2><form id="password-form" novalidate><label for="pw-atual">Senha atual</label><input id="pw-atual" name="atual" type="password" autocomplete="current-password" required><label for="pw-nova">Nova senha</label><input id="pw-nova" name="nova" type="password" autocomplete="new-password" required><p class="note">Pelo menos 8 caracteres, com letra maiúscula, minúscula, número e símbolo.</p><p class="form-error" role="alert"></p><div class="form-actions"><button class="action" type="submit">Trocar senha</button></div></form>
+<details class="account-delete"><summary>Excluir minha conta</summary><form id="delete-form" novalidate><p>Seus dados do app serão apagados. Essa ação não pode ser desfeita.</p><label for="del-senha">Confirme com sua senha</label><input id="del-senha" name="senha" type="password" autocomplete="current-password" required><p class="form-error" role="alert"></p><button class="button danger" type="submit">Excluir minha conta</button></form></details></section></div>`;
+  }
+  function accountSubmit(form, fd) {
+    if (!['account-form','password-form','delete-form'].includes(form.id)) return false;
+    const values = Object.fromEntries(fd);
+    const err = form.querySelector('.form-error'), btn = form.querySelector('[type=submit]');
+    const run = async (fn, ok) => { btn.disabled = true; err.textContent = ''; try { await fn(); ok(); } catch (e) { err.textContent = e.message; } finally { btn.disabled = false; } };
+    if (form.id === 'account-form') { const c = (values.cpf || '').replace(/\D/g, ''); if (c && !cpfOk(c)) { err.textContent = 'CPF inválido. Confira os números.'; form.elements.cpf.focus(); return true; } }
+    if (form.id === 'account-form') run(() => NibConta.atualizar({ nome: values.nome, celular: values.celular, nascimento: values.nascimento || '', cpf: (values.cpf || '').replace(/\D/g, ''), endereco: values.endereco || '', celula: values.celula || '', sexo: values.sexo, mostrar_aniversario: form.elements.mostrar.checked }), () => { applyAccount(); announce('Seus dados foram atualizados.', 'success'); });
+    if (form.id === 'password-form') {
+      if (!passRules(values.nova || '').every(Boolean)) { err.textContent = 'A nova senha ainda não atende a todos os critérios.'; return true; }
+      run(() => NibConta.senha(values.atual, values.nova), () => { form.reset(); announce('Senha alterada.', 'success'); });
+    }
+    if (form.id === 'delete-form') run(() => NibConta.excluir(values.senha), () => { applyAccount(); show('inicio', false, false); if (LOGIN_REQUIRED) requireLogin(); announce('Sua conta foi excluída.', 'success', false); });
+    return true;
+  }
+  function teamPage() {
+    if (!state.team) {
+      NibConta.cadastros().then(list => { state.team = list; if (state.view === 'cadastros') show('cadastros', false, false); })
+        .catch(e => { state.team = []; state.teamError = e.message; if (state.view === 'cadastros') show('cadastros', false, false); });
+      return '<p class="event-empty">Carregando cadastros</p>';
+    }
+    const f = state.teamFilter || 'pendente';
+    const list = state.team.filter(p => f === 'todos' || (f === 'pendente' ? p.membro_status === 'pendente' : f === 'confirmado' ? p.membro_status === 'confirmado' : p.membro_status === 'nao'));
+    const count = k => state.team.filter(p => k === 'todos' || p.membro_status === k).length;
+    const chips = [['pendente','Aguardando'],['confirmado','Membros'],['nao','Não membros'],['todos','Todos']].map(([k,l]) => `<button type="button" class="history-year${f === k ? ' is-active' : ''}" data-team-filter="${k}" aria-pressed="${f === k}">${l}<small>${count(k)}</small></button>`).join('');
+    const rows = list.map(p => `<li class="team-row" data-q="${escape((p.nome + ' ' + p.email + ' ' + p.celular).toLowerCase())}"><div><strong>${escape(p.nome)}</strong><small>${escape(p.email)} · ${escape(fmtPhone(p.celular))}${p.cpf && NibConta.lideranca() ? ' · CPF ' + escape(fmtCpf(p.cpf)) : ''}</small>${p.celula ? `<small>Célula: ${escape(p.celula.split('|').reverse().join(' · '))}</small>` : ''}<small>${escape(vinculoLabel[p.vinculo] || '')} · desde ${escape(fmtDay(p.criado_em))}${p.papel !== 'membro' ? ' · equipe: ' + escape(p.papel) : ''}</small></div><div class="team-actions">${p.membro_status !== 'confirmado' ? `<button type="button" class="action" data-team-status="confirmado" data-id="${p.id}">Confirmar membro</button>` : ''}${p.membro_status !== 'nao' ? `<button type="button" class="button" data-team-status="nao" data-id="${p.id}">Não é membro</button>` : ''}${p.membro_status === 'nao' ? `<button type="button" class="button" data-team-status="pendente" data-id="${p.id}">Voltar para análise</button>` : ''}</div></li>`).join('');
+    return `${state.teamError ? `<p class="form-error" role="alert">${escape(state.teamError)}</p>` : ''}<div class="team-tools"><div class="cell-days" role="group" aria-label="Filtrar cadastros" data-seg="cadastros">${chips}</div><label class="sr-only" for="team-q">Buscar</label><input id="team-q" type="search" placeholder="Buscar por nome, e-mail ou celular" autocomplete="off"></div>${rows ? `<ul class="team-list">${rows}</ul>` : '<p class="event-empty">Nenhum cadastro neste filtro.</p>'}`;
+  }
+  async function teamSet(btn) {
+    btn.disabled = true;
+    try { await NibConta.confirmar(Number(btn.dataset.id), btn.dataset.teamStatus); const p = state.team.find(x => String(x.id) === btn.dataset.id); if (p) p.membro_status = btn.dataset.teamStatus; show('cadastros', false, false); announce('Cadastro atualizado.', 'success', false); }
+    catch (e) { btn.disabled = false; announce(e.message, 'error'); }
+  }
+  function teamFilterList(q) { q = q.trim().toLowerCase(); content.querySelectorAll('.team-row').forEach(li => { li.hidden = !!q && !li.dataset.q.includes(q); }); }
+  // ---------- Área da equipe com dados reais (Fase 1): Painel e Membros. Mesmo visual da versão de demonstração. ----------
+  const eqMes = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+  const eqNum = n => Number(n || 0).toLocaleString('pt-BR');
+  const eqIco = d => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${d}"/></svg>`;
+  const eqP = () => NibIcons.paths || {};
+  const eqHead = (label, title, aside = '') => `<div class="dash-head"><div><span class="label">${label}</span><h2>${title}</h2></div>${aside}</div>`;
+  const eqChevron = '<svg class="admin-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>';
+  const eqFold = s => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+  const eqPodeExportar = () => !!(state.mem && state.mem.pode_exportar && account() && NibConta.exporta());
+  // Situação de cada pessoa, a partir do cadastro real.
+  const eqSituacao = p => p.membro_status === 'confirmado' ? 'Membro' : p.membro_status === 'pendente' ? 'Aguardando' : p.vinculo === 'frequento' ? 'Frequenta' : 'Conhecendo';
+  const eqTag = s => s === 'Membro' ? 'status-active' : s === 'Aguardando' ? 'is-wait' : s === 'Frequenta' ? 'mem-tag-reg' : 'is-neutral';
+  const eqCelula = c => c ? String(c).split('|').reverse().join(' · ') : '';
+  function eqLoad(key, fn, view) {
+    if (state[key] || state[key + 'Loading']) return;
+    state[key + 'Loading'] = true;
+    fn().then(d => { state[key] = d; state[key + 'Erro'] = ''; }).catch(e => { state[key] = null; state[key + 'Erro'] = e.message; })
+      .finally(() => { state[key + 'Loading'] = false; if (state.view === view) show(view, false, false); });
+  }
+  function eqChart(cultos) {
+    const narrow = typeof innerWidth === 'number' && innerWidth < 600, W = narrow ? 340 : 560, top = 26, base = 182, left = 34, n = cultos.length;
+    const vals = cultos.map(c => c.pessoas), max = Math.max(10, Math.ceil(Math.max(...vals) * 1.15 / 10) * 10), bw = narrow ? 24 : 38, gap = n > 1 ? (W - left - 8 - n * bw) / (n - 1) : 0;
+    const y = v => base - (v / max) * (base - top);
+    const avg = Math.round(vals.reduce((a, b) => a + b, 0) / n);
+    const grid = [0, Math.round(max / 2), max].map(v => `<line x1="${left}" x2="${W}" y1="${y(v)}" y2="${y(v)}" class="dash-grid${v ? '' : ' is-base'}"/><text x="${left - 8}" y="${y(v) + 4}" class="dash-axis" text-anchor="end">${v}</text>`).join('');
+    const bars = cultos.map((c, i) => {
+      const v = c.pessoas, x = left + i * (bw + gap), yt = y(v), r = Math.min(5, (base - yt) / 2), last = i === n - 1, d = String(c.dia);
+      const path = `M${x},${base} V${yt + r} Q${x},${yt} ${x + r},${yt} H${x + bw - r} Q${x + bw},${yt} ${x + bw},${yt + r} V${base} Z`;
+      return `<g class="dash-bar${last ? ' is-last' : ''}" tabindex="0" role="img" aria-label="${d.slice(8, 10)} de ${eqMes[+d.slice(5, 7) - 1]}, ${escape(c.culto)}: ${v} pessoas"><path d="${path}"/><text x="${x + bw / 2}" y="${yt - 8}" text-anchor="middle" class="dash-value">${v}</text><text x="${x + bw / 2}" y="${base + 20}" text-anchor="middle" class="dash-axis">${d.slice(8, 10)}/${d.slice(5, 7)}</text></g>`;
+    }).join('');
+    return `<svg class="dash-chart" viewBox="0 0 ${W} ${base + 30}" role="group" aria-label="Check-ins nos últimos cultos">${grid}${bars}<line x1="${left}" x2="${W}" y1="${y(avg)}" y2="${y(avg)}" class="dash-avg"/></svg><div class="dash-legend"><span><i class="sw is-last"></i>Último culto</span><span><i class="sw is-avg"></i>Média · ${avg}</span></div>`;
+  }
+  // Início da equipe (Secretaria, Pastoral, admin): resumo do dia no topo, com o caminho para o Painel.
+  // Atalhos do Início por perfil (v153). A barra de baixo já leva ao dia a dia da gestão;
+  // aqui ficam as outras tarefas do perfil e o que a pessoa também usa como membro.
+  function teamShortcuts() {
+    if (!PUBLIC || !account() || !NibConta.equipe()) return null;
+    if (account().papel === 'secretaria') return [
+      ['cadastros', 'Confirmar membros', 'Quem disse no cadastro que é membro e aguarda confirmação.'],
+      ['membresia', 'Membresia', 'Registre formulário, reunião e apresentação no culto.'],
+      ['agenda', 'Agenda da igreja', 'Cultos, escola bíblica e eventos no calendário.'],
+      ['caderno', 'Caderno de oração', 'Acompanhe os pedidos e ore com a comunidade.'],
+      ['eventos', 'Eventos e inscrições', 'Os próximos encontros e as inscrições abertas.'],
+      ['generosidade', 'Dízimos e ofertas', 'Contribua pelo Pix com os dados oficiais da igreja.']
+    ];
+    return [
+      ['cadastros', 'Confirmar membros', 'Quem disse no cadastro que é membro e aguarda confirmação.'],
+      ['checkin', 'Check-in dos cultos', 'QR Code do telão, local da igreja e presença.'],
+      ['avisos', 'Avisos da igreja', 'Publique avisos no sino e no mural da igreja.'],
+      ['sugestoes', 'Sugestões para o app', 'Ideias e problemas enviados pelos membros.'],
+      ['pilulas', 'Pílulas de Sabedoria', 'Envie o vídeo da semana para a igreja.'],
+      ['generosidade', 'Dízimos e ofertas', 'Contribua pelo Pix com os dados oficiais da igreja.']
+    ];
+  }
+  function teamBadge(view) {
+    const d = teamShortcuts() && state.painel; if (!d) return '';
+    const n = { cadastros: d.aguardando, membresia: d.em_integracao, sugestoes: d.sugestoes_novas }[view] || 0;
+    return n ? `<span class="admin-badge" aria-label="${n} pendente${n === 1 ? '' : 's'}">${n > 9 ? '9+' : n}</span>` : '';
+  }
+  function teamHome() {
+    if (!PUBLIC || !account() || !NibConta.equipe()) return '';
+    eqLoad('painel', () => NibConta.equipePainel(), 'inicio');
+    const d = state.painel, P = eqP(), lid = NibConta.lideranca();
+    const stat = (icon, value, text, view, tone) => `<li><button type="button" class="team-home-stat" data-view="${view}"><span class="dash-ico${tone ? ' is-' + tone : ''}">${eqIco(icon || '')}</span><strong>${eqNum(value)}</strong><span>${text}</span></button></li>`;
+    const body = d ? `<ul class="team-home-stats">${stat(P.alerta, d.aguardando, d.aguardando === 1 ? 'aguardando confirmação' : 'aguardando confirmação', 'cadastros', d.aguardando ? 'warn' : '')}${stat(P.membresia || P.membros, d.em_integracao, 'em integração', 'membresia')}${stat(P.cuidado, d.caderno_sem_oracao, d.caderno_sem_oracao === 1 ? 'pedido sem ninguém orando' : 'pedidos sem ninguém orando', 'caderno', d.caderno_sem_oracao ? 'warn' : '')}</ul>` : '<p class="dash-sub">Carregando os números da equipe</p>';
+    return `<section class="box dash-box team-home" aria-labelledby="team-home-title"><div class="dash-head"><div><span class="label">${lid ? 'LIDERANÇA PASTORAL' : 'SECRETARIA DA IGREJA'}</span><h2 id="team-home-title">Equipe da igreja</h2></div></div>${body}<div class="dash-foot team-home-foot">${button('Abrir painel da equipe', 'equipe')}${button('Membros', 'membros')}</div></section>`;
+  }
+  function teamPanel() {
+    eqLoad('painel', () => NibConta.equipePainel(), 'equipe');
+    if (!state.painel) return state.painelErro ? `<p class="form-error" role="alert">${escape(state.painelErro)}</p>` : '<p class="event-empty">Carregando o painel</p>';
+    const d = state.painel, P = eqP(), lid = NibConta.lideranca();
+    const pill = v => v > 0 ? `<span class="dash-pill">${eqIco('M7 14l5-5 5 5')}+${v}</span>` : '';
+    const tile = (icon, label, value, extra, note, view) => `<${view ? `button type="button" class="dash-tile is-link" data-view="${view}"` : 'div class="dash-tile"'}><span class="dash-tile-top"><span class="dash-ico">${eqIco(icon || '')}</span><span class="dash-tile-label">${label}</span></span><strong class="dash-tile-value">${eqNum(value)}</strong><span class="dash-tile-note">${extra}${note ? `<small>${note}</small>` : ''}</span></${view ? 'button' : 'div'}>`;
+    const tiles = [
+      tile(P.membros, 'Membros', d.membros, pill(d.membros_novos), d.membros_novos ? 'confirmados em 30 dias' : 'confirmados pela Secretaria', 'membros'),
+      tile(P.frequentador, 'Frequentam', d.frequentadores, '', 'Participam, ainda sem membresia', 'membros'),
+      tile(P.visitante, 'Conhecendo a igreja', d.visitantes, '', 'Cadastro como visitante', 'membros'),
+      tile(P.celulas, 'Em célula', d.em_celula, `<span class="dash-pill is-neutral">${eqNum(d.celulas)} ${d.celulas === 1 ? 'célula' : 'células'}</span>`, '', 'membros'),
+      tile(P.alerta, 'Aguardando confirmação', d.aguardando, '', 'Disseram que são membros', 'cadastros')
+    ].join('');
+    const texts = {
+      membresia: d.em_integracao ? `${d.em_integracao} ${d.em_integracao === 1 ? 'pessoa' : 'pessoas'} em integração. Registre a próxima etapa.` : 'Ninguém em integração. Inicie pela ficha da pessoa.',
+      membros: (d.aguardando ? `${d.aguardando} ${d.aguardando === 1 ? 'pessoa aguardando' : 'pessoas aguardando'} confirmação. ` : '') + (eqPodeExportar() ? 'Lista completa, ficha de cada pessoa e exportação.' : 'Lista completa e ficha de cada pessoa.'),
+      cadastros: d.aguardando ? `${d.aguardando} ${d.aguardando === 1 ? 'pessoa aguardando' : 'pessoas aguardando'} confirmação de membro.` : 'Ninguém aguardando confirmação.',
+      checkin: 'QR Code do telão, local da igreja e presença.',
+      avisos: 'Publique avisos no sino e no mural da igreja.',
+      caderno: d.caderno_ativos ? `${d.caderno_ativos} ${d.caderno_ativos === 1 ? 'pedido' : 'pedidos'} em andamento.` : 'Nenhum pedido em andamento.',
+      sugestoes: d.sugestoes_novas ? `${d.sugestoes_novas} ${d.sugestoes_novas === 1 ? 'sugestão nova' : 'sugestões novas'} para ler.` : 'Ideias e problemas enviados pelos membros.'
+    };
+    const badges = { membresia: d.em_integracao, membros: d.aguardando, sugestoes: lid ? d.sugestoes_novas : 0 };
+    const titles = { membresia: 'Membresia', membros: 'Membros', cadastros: 'Cadastros', checkin: 'Check-in dos cultos', avisos: 'Avisos', caderno: 'Caderno de oração', sugestoes: 'Sugestões' };
+    const keys = ['membresia', 'membros', 'checkin', 'avisos', 'caderno'].concat(lid ? ['sugestoes'] : []);
+    const shortcuts = keys.map(k => `<button type="button" class="quick-action admin-quick" data-view="${k}"><span class="home-action-icon" aria-hidden="true">${navIcon(k)}</span>${badges[k] ? `<span class="admin-badge" aria-label="${badges[k]} pendente${badges[k] === 1 ? '' : 's'}">${badges[k]}</span>` : ''}<strong>${titles[k]}</strong><span class="home-action-description">${texts[k]}</span></button>`).join('');
+    const quick = `<section aria-labelledby="admin-quick-title"><div class="section-heading"><div><span class="label">${lid ? 'LIDERANÇA PASTORAL' : 'SECRETARIA DA IGREJA'}</span><h2 id="admin-quick-title">Atalhos de gestão</h2></div></div><p class="admin-rule">${lid ? 'A Liderança Pastoral decide. A Secretaria organiza e registra o que foi decidido.' : 'A Secretaria organiza e registra. Decisões pastorais ficam com a Liderança Pastoral.'}</p><div class="quick-actions">${shortcuts}</div></section>`;
+    const c = d.cultos || [], lastC = c[c.length - 1];
+    const presence = `<section class="box dash-box">${eqHead('CHECK-IN DOS CULTOS', 'Presença nos últimos cultos', lastC ? `<div class="dash-head-aside"><strong>${lastC.pessoas}</strong></div>` : '')}${c.length ? eqChart(c) + `<div class="dash-foot dash-minis"><div><small>Maior</small><strong>${Math.max(...c.map(x => x.pessoas))}</strong></div><div><small>Menor</small><strong>${Math.min(...c.map(x => x.pessoas))}</strong></div><div><small>Cultos</small><strong>${c.length}</strong></div></div>` : '<p class="dash-sub">Ainda não há check-ins registrados. Projete o QR Code do telão no próximo culto.</p>'}<div class="dash-foot">${button('Ver check-in', 'checkin')}</div></section>`;
+    const stat = (icon, value, text, tone) => `<li><span class="dash-ico${tone ? ' is-' + tone : ''}">${eqIco(icon || '')}</span><strong>${eqNum(value)}</strong><span>${text}</span></li>`;
+    const care = `<section class="box dash-box">${eqHead('PARA ACOMPANHAR', 'O que precisa de atenção')}<ul class="dash-stats">${stat(P.alerta, d.aguardando, 'cadastros aguardando confirmação de membro', d.aguardando ? 'warn' : '')}${stat(P.celulas, d.membros_sem_celula, 'membros sem célula', d.membros_sem_celula ? 'warn' : '')}${stat(P.cuidado, d.caderno_sem_oracao, 'pedidos do caderno ainda sem ninguém orando', d.caderno_sem_oracao ? 'warn' : '')}${stat(P.membros, d.dados_faltando, 'cadastros sem data de nascimento ou endereço')}${stat(P.visitante, d.cadastros_novos, 'cadastros novos nos últimos 30 dias')}</ul></section>`;
+    const bd = d.aniversariantes || [];
+    const birthdays = `<section class="box dash-box">${eqHead('ESTA SEMANA', 'Aniversariantes')}${bd.length ? `<ul class="dash-people">${bd.map(b => `<li><span class="profile-avatar" aria-hidden="true">${escape(b.nome.charAt(0))}</span><span>${escape(b.nome)}</span><span class="dash-date">${b.em === 0 ? 'Hoje' : b.dia.slice(3) + '/' + b.dia.slice(0, 2)}</span></li>`).join('')}</ul>` : '<p class="dash-sub">Nenhum aniversário nos próximos 7 dias.</p>'}<p class="note dash-foot">Só aparece quem deixou o aniversário visível em Meu cadastro.</p></section>`;
+    return `<section class="dash" aria-labelledby="dash-title"><div class="section-heading"><div><span class="label">RESUMO DA IGREJA</span><h2 id="dash-title">Como a igreja está hoje</h2></div></div><div class="dash-tiles">${tiles}</div></section>${quick}<section class="dash dash-more" aria-label="Indicadores"><div class="admin-grid dash-row">${presence}${care}</div><div class="admin-grid dash-row">${birthdays}<section class="box dash-box">${eqHead('EVENTOS E INSCRIÇÕES', 'Painel de inscrições')}<p class="dash-sub">As inscrições dos eventos continuam no painel do site, com login próprio.</p><div class="dash-foot"><a class="button button-go admin-external" href="https://novaigrejabatista.com.br/inscricoes/" target="_blank" rel="noopener"><span>Abrir painel de inscrições</span>${arrow}</a></div></section></div></section>${adminYoutube()}`;
+  }
+  // Membros: lista, filtros, ficha e exportação (exportar só Secretaria e administração).
+  const EQ_GRUPOS = [
+    ['contato', 'Contato', 'celular e e-mail', p => [fmtPhone(p.celular), p.email], ['celular', 'email']],
+    ['endereco', 'Endereço', 'endereço informado no cadastro', p => [p.endereco || ''], ['endereco']],
+    ['igreja', 'Vida na igreja', 'célula, membro desde e última presença', p => [eqCelula(p.celula) || 'sem célula', fmtDay(p.confirmado_em), fmtDay(p.ultima_presenca)], ['celula', 'membro_desde', 'ultima_presenca']],
+    ['pessoal', 'Dados pessoais', 'nascimento e gênero', p => [fmtDay(p.nascimento), p.sexo === 'm' ? 'Masculino' : 'Feminino'], ['nascimento', 'genero']]
+  ];
+  function eqFiltrados() {
+    const all = state.mem.pessoas, q = eqFold(state.memQ), dig = String(state.memQ || '').replace(/\D/g, ''), st = state.memStatus || 'todos', cel = state.memCell || '', mes = NibDaily.dayKey(new Date()).slice(5, 7);
+    return all.filter(p => (st === 'todos' || eqSituacao(p) === st) && (!cel || (cel === '-' ? !p.celula : p.celula === cel)) && (!state.memBday || String(p.nascimento || '').slice(5, 7) === mes)
+      && (!q || eqFold(p.nome).includes(q) || eqFold(p.email).includes(q) || (dig.length >= 4 && String(p.celular).includes(dig))));
+  }
+  const EQ_PAPEIS = [['membro', 'Membro', 'Usa o app normalmente, sem área da equipe.'], ['secretaria', 'Secretaria', 'Membros, confirmação de membros, membresia, check-in e avisos. Exporta a lista.'], ['pastoral', 'Liderança Pastoral', 'Tudo da equipe, mais CPF, sugestões e local do check-in.'], ['tesouraria', 'Tesouraria', 'Reservado para as telas da Tesouraria (Fase 3). Por enquanto usa o app como membro.'], ['admin', 'Administração', 'Acesso completo, inclusive mudar o perfil das pessoas.']];
+  // Só quem é admin de verdade (e não está em "Ver o app como") vê e muda o perfil.
+  const eqPapeisDe = p => { const l = Array.isArray(p.papeis) && p.papeis.length ? p.papeis : [p.papel || 'membro']; return EQ_PAPEIS.map(x => x[0]).filter(k => l.includes(k)); };
+  function eqPapelBox(p) {
+    if (!window.NibConta || NibConta.papelReal() !== 'admin' || NibConta.verComo()) return '';
+    const eu = account() && String(account().id) === String(p.id), atual = eqPapeisDe(p);
+    return `<section class="box eq-papel"><h3 class="mem-h">Perfis de acesso</h3><p class="note">Marque um ou mais perfis. Quem tem mais de um escolhe no menu com qual usar o app. ${eu ? 'Você não pode tirar o seu próprio acesso de administração.' : 'A mudança vale na próxima vez que a pessoa abrir o app.'}</p><div class="eq-papel-opts" role="group" aria-label="Perfis de acesso">${EQ_PAPEIS.map(([k, l, d]) => `<label class="mem-check"><input type="checkbox" name="eq-papel" value="${k}"${atual.includes(k) ? ' checked' : ''}${eu && k === 'admin' ? ' disabled' : ''}><span><strong>${l}</strong><small>${d}</small></span></label>`).join('')}</div><div class="form-actions"><button type="button" class="action primary" data-eq-papel="${p.id}">Salvar perfis</button></div></section>`;
+  }
+  // Membro é exclusivo: marcar outro perfil desmarca Membro; desmarcar tudo volta para Membro.
+  function eqPapelToggle(input) {
+    const box = input.closest('.eq-papel'); if (!box) return;
+    const all = [...box.querySelectorAll('input[name="eq-papel"]')];
+    if (input.value === 'membro' && input.checked) all.forEach(i => { if (i.value !== 'membro' && !i.disabled) i.checked = false; });
+    else if (input.value !== 'membro' && input.checked) all.forEach(i => { if (i.value === 'membro') i.checked = false; });
+    if (!all.some(i => i.checked)) all.find(i => i.value === 'membro').checked = true;
+  }
+  async function eqSalvarPapel(btn) {
+    const p = state.mem && state.mem.pessoas.find(x => String(x.id) === btn.dataset.eqPapel); if (!p) return;
+    let sel = [...content.querySelectorAll('input[name="eq-papel"]:checked')].map(i => i.value);
+    if (sel.length > 1) sel = sel.filter(k => k !== 'membro');
+    if (!sel.length) sel = ['membro'];
+    const antes = eqPapeisDe(p);
+    if (sel.join() === antes.join()) { announce('Esses já são os perfis da pessoa.', 'success', false); return; }
+    if (sel.includes('admin') && !antes.includes('admin') && !confirm(`Dar acesso de Administração para ${p.nome}? A pessoa poderá mudar o perfil de todos.`)) return;
+    btn.disabled = true;
+    try { const r = await NibConta.mudarPapeis(Number(p.id), sel); p.papeis = r.papeis || sel; p.papel = r.papel || sel[0]; show('membros', false, false); announce(`${p.nome} agora tem: ${papeisTexto(p.papeis)}.`, 'success', false); }
+    catch (e) { btn.disabled = false; announce(e.message, 'error'); }
+  }
+  // Confirmação de membro, que antes ficava na tela Cadastros (v155).
+  async function eqConfirmar(btn) {
+    const p = state.mem && state.mem.pessoas.find(x => String(x.id) === btn.dataset.id); if (!p) return;
+    const st = btn.dataset.eqConfirm;
+    if (st === 'nao' && !confirm(`Marcar ${p.nome} como não membro? A pessoa continua no app e pode iniciar a integração.`)) return;
+    btn.disabled = true;
+    try {
+      await NibConta.confirmar(Number(p.id), st); p.membro_status = st; if (st === 'confirmado') p.confirmado_em = new Date().toISOString().slice(0, 10);
+      state.painel = null; state.team = null; show('membros', false, false);
+      announce(st === 'confirmado' ? `${p.nome} agora é membro confirmado.` : st === 'nao' ? `${p.nome} ficou como não membro.` : `${p.nome} voltou para análise.`, 'success', false);
+    } catch (e) { btn.disabled = false; announce(e.message, 'error'); }
+  }
+  function eqFicha(p) {
+    const lid = NibConta.lideranca(), s = eqSituacao(p), tel = String(p.celular || '').replace(/\D/g, '');
+    const kv = rows => `<dl class="mem-kv">${rows.filter(r => r[1] !== null).map(([k, v]) => `<div><dt>${k}</dt><dd>${v === '' ? '<span class="mem-empty">Não informado</span>' : v}</dd></div>`).join('')}</dl>`;
+    return `<div class="gift-backrow"><button type="button" class="button-back gift-back" data-eq-mem=""><svg class="back-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg><span>Voltar à lista</span></button></div>
+    <section class="box mem-card"><div class="admin-person-head"><span class="profile-avatar" aria-hidden="true">${escape(p.nome.charAt(0))}</span><div><h2>${escape(p.nome)}</h2><small>Cadastro no app em ${fmtDay(p.criado_em)}</small></div><span class="tag ${eqTag(s)}">${s}</span></div>
+    <div class="mem-actions">${tel ? `<a class="mem-act" href="tel:${tel}">${NibIcons.svg('telefone')}<span>Ligar</span></a><a class="mem-act" href="https://wa.me/55${tel}" target="_blank" rel="noopener">${NibIcons.svg('whatsapp')}<span>WhatsApp</span></a>` : ''}${p.email ? `<a class="mem-act" href="mailto:${escape(p.email)}">${NibIcons.svg('email')}<span>E-mail</span></a>` : ''}</div>
+    ${s === 'Aguardando' ? `<div class="eq-confirm"><p><strong>Disse no cadastro que é membro.</strong> Confira e confirme.</p><div class="form-actions"><button type="button" class="action primary" data-eq-confirm="confirmado" data-id="${p.id}">Confirmar membro</button><button type="button" class="action admin-secondary" data-eq-confirm="nao" data-id="${p.id}">Não é membro</button></div></div>` : p.membro_status !== 'confirmado' ? `<div class="form-actions">${p.integracao ? button('Ver em Membresia', 'membresia') : `<button type="button" class="action admin-secondary" data-eq-etapa="inicio" data-id="${p.id}">Iniciar integração</button>`}</div>` : ''}</section>
+    ${eqPapelBox(p)}
+    <section class="box"><h3 class="mem-h">Contato</h3>${kv([['Celular', escape(fmtPhone(p.celular))], ['E-mail', escape(p.email || '')]])}</section>
+    <section class="box"><h3 class="mem-h">Endereço</h3>${kv([['Endereço', escape(p.endereco || '')]])}</section>
+    <section class="box"><h3 class="mem-h">Dados pessoais</h3>${kv([['Nascimento', fmtDay(p.nascimento)], ['Gênero', p.sexo === 'm' ? 'Masculino' : 'Feminino'], ['CPF', lid ? escape(fmtCpf(p.cpf || '')) : null], ['Aniversário na tela inicial', p.mostrar_aniversario ? 'Aparece' : 'Não aparece (escolha da pessoa)']])}</section>
+    <section class="box"><h3 class="mem-h">Vida na igreja</h3>${kv([['Situação', s], ['Perfil no app', escape(papeisTexto(eqPapeisDe(p)))], ['Como se cadastrou', escape(vinculoLabel[p.vinculo] || '')], ['Célula', escape(eqCelula(p.celula) || 'Sem célula')], ['Membro desde', p.membro_status === 'confirmado' ? (fmtDay(p.confirmado_em) || '') : null], ['Última presença no culto', fmtDay(p.ultima_presenca) || 'Ainda sem check-in'], ['Presenças nas últimas 8 semanas', String(p.presencas_8sem || 0)], ['Último acesso ao app', fmtDay(p.ultimo_acesso)]])}</section>
+    <p class="note">${lid ? 'A Liderança Pastoral vê a ficha completa, inclusive o CPF.' : 'A Secretaria vê a ficha. O CPF fica só com a Liderança Pastoral.'} Os dados são atualizados pela própria pessoa em Meu cadastro.</p>`;
+  }
+  // Quem disse no cadastro que é membro e ainda não foi confirmado (antes ficava em Cadastros).
+  function eqAguardando(n, st) {
+    const ico = `<span class="dash-ico is-warn">${eqIco(eqP().alerta || 'M12 9v4 M12 17h.01 M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z')}</span>`;
+    if (st === 'Aguardando') return `<div class="box mem-alert is-on">${ico}<span class="mem-alert-text"><strong>Aguardando confirmação</strong><small>Abra a ficha para confirmar ou marcar como não membro.</small></span><button type="button" class="mem-clear" data-eq-status="todos">Ver todos</button></div>`;
+    if (!n) return '';
+    return `<button type="button" class="box mem-alert" data-eq-status="Aguardando">${ico}<span class="mem-alert-text"><strong>${n} ${n === 1 ? 'pessoa aguardando' : 'pessoas aguardando'} confirmação</strong><small>Disseram no cadastro que são membros.</small></span>${eqChevron}</button>`;
+  }
+  function eqExportBox(list) {
+    if (!eqPodeExportar()) return '<p class="note mem-note">Só a Secretaria exporta a lista. A Liderança Pastoral consulta pelo app.</p>';
+    const groups = state.memGroups || ['contato', 'igreja'], log = state.mem.exportacoes || [];
+    return `<details class="box mem-export"${state.memExportOpen ? ' open' : ''}><summary>${NibIcons.svg('relatorios')}<span><strong>Exportar lista</strong><small>${list.length} pessoa${list.length === 1 ? '' : 's'} do filtro atual · planilha ou PDF</small></span></summary>
+    <form id="mem-export-form" autocomplete="off" novalidate><fieldset><legend>O que vai no arquivo</legend><p class="note">Sempre vão nome e situação.</p>${EQ_GRUPOS.map(([k, l, d]) => `<label class="mem-check"><input type="checkbox" name="g" value="${k}"${groups.includes(k) ? ' checked' : ''}><span><strong>${l}</strong><small>${d}</small></span></label>`).join('')}</fieldset>
+    <fieldset><legend>Formato</legend><div class="mem-formats"><label class="mem-format"><input type="radio" name="format" value="csv" checked><span><strong>Planilha CSV</strong><small>Abre no Excel e no Google Planilhas</small></span></label><label class="mem-format"><input type="radio" name="format" value="pdf"><span><strong>PDF</strong><small>Imprimir ou salvar</small></span></label></div></fieldset>
+    <label class="mem-check mem-consent"><input type="checkbox" name="ok"><span>Uso interno da igreja. Não vou compartilhar o arquivo fora da equipe.</span></label>
+    <p class="form-error" role="alert"></p><button type="submit" class="action primary">Exportar ${list.length} pessoa${list.length === 1 ? '' : 's'}</button></form>
+    ${log.length ? `<div class="mem-log"><h3>Últimas exportações</h3><ul>${log.map(x => { const n = (String(x.detalhes).match(/n=(\d+)/) || [])[1] || '0'; return `<li>${fmtDay(x.em)} ${String(x.em).slice(11, 16)} · ${escape(x.nome || 'Equipe')} · ${n} pessoas · ${/formato=pdf/.test(x.detalhes) ? 'PDF' : 'planilha'}</li>`; }).join('')}</ul></div>` : ''}</details>`;
+  }
+  function membersRealPage() {
+    eqLoad('mem', () => NibConta.membros(), 'membros');
+    if (!state.mem) return state.memErro ? `<p class="form-error" role="alert">${escape(state.memErro)}</p>` : '<p class="event-empty">Carregando os membros</p>';
+    const all = state.mem.pessoas, sel = state.memSel && all.find(p => String(p.id) === String(state.memSel));
+    if (sel) return eqFicha(sel);
+    const list = eqFiltrados(), st = state.memStatus || 'todos', shown = list.slice(0, state.memMore ? list.length : 30);
+    const count = k => k === 'todos' ? all.length : all.filter(p => eqSituacao(p) === k).length;
+    const chips = [['todos', 'Todos'], ['Membro', 'Membros'], ['Frequenta', 'Frequentam'], ['Conhecendo', 'Visitantes']].map(([k, l]) => `<button type="button" class="history-year${st === k ? ' is-active' : ''}" data-eq-status="${k}" aria-pressed="${st === k}">${l}<small>${count(k)}</small></button>`).join('');
+    const cells = [...new Set(all.map(p => p.celula).filter(Boolean))].sort((a, b) => eqCelula(a).localeCompare(eqCelula(b), 'pt-BR'));
+    const row = p => { const s = eqSituacao(p); return `<li><button type="button" class="mem-row" data-eq-mem="${p.id}"><span class="profile-avatar" aria-hidden="true">${escape(p.nome.charAt(0))}</span><span class="mem-row-text"><strong>${escape(p.nome)}</strong><small>${escape(eqCelula(p.celula) || 'Sem célula')}</small></span><span class="tag ${eqTag(s)}">${s}</span>${eqChevron}</button></li>`; };
+    const filtered = state.memQ || state.memCell || state.memBday || st !== 'todos';
+    const pr = state.memPrint ? `<section class="tes-print mem-print" aria-hidden="true"><div class="tes-decl-head"><img src="assets/logo.svg" alt="" width="90" height="38"><div><strong>Nova Igreja Batista</strong><small>Lista de membros · ${escape(state.memPrint.at)} · ${state.memPrint.rows.length} pessoas · uso interno</small></div></div><table class="tes-table is-compact"><thead><tr>${state.memPrint.head.map(h => `<th>${escape(h)}</th>`).join('')}</tr></thead><tbody>${state.memPrint.rows.map(r => `<tr>${r.map(c => `<td>${escape(c)}</td>`).join('')}</tr>`).join('')}</tbody></table></section>` : '';
+    return `<p class="admin-rule">Dados pessoais protegidos pela LGPD. ${eqPodeExportar() ? 'A Secretaria consulta e exporta. Cada exportação fica registrada.' : 'A Liderança Pastoral consulta. A exportação fica com a Secretaria.'}</p>
+    ${eqAguardando(count('Aguardando'), st)}
+    ${st === 'Aguardando' ? '' : `<div class="cell-days mem-seg" role="group" aria-label="Situação" data-seg="eq-membros">${chips}</div>`}
+    <div class="mem-filters"><label class="visually-hidden" for="eq-q">Buscar por nome, e-mail ou celular</label><input id="eq-q" type="search" value="${escape(state.memQ || '')}" placeholder="Buscar nome, e-mail ou celular" autocomplete="off" enterkeyhint="search">
+    <div class="mem-filter-row"><label class="visually-hidden" for="eq-cell">Célula</label><select id="eq-cell"><option value="">Todas as células</option>${cells.map(c => `<option value="${escape(c)}"${state.memCell === c ? ' selected' : ''}>${escape(eqCelula(c))}</option>`).join('')}<option value="-"${state.memCell === '-' ? ' selected' : ''}>Sem célula</option></select><button type="button" class="mem-chip${state.memBday ? ' is-active' : ''}" data-eq-bday="1" aria-pressed="${!!state.memBday}">Aniversário no mês</button></div></div>
+    ${eqExportBox(list)}
+    <div class="mem-count" aria-live="polite">${list.length} pessoa${list.length === 1 ? '' : 's'}${filtered ? ' · <button type="button" class="mem-clear" data-eq-clear="1">Limpar filtros</button>' : ''}</div>
+    <ul class="mem-list">${shown.map(row).join('') || '<li class="box tes-empty">Ninguém encontrado com esses filtros.</li>'}</ul>
+    ${list.length > shown.length ? `<button type="button" class="action admin-secondary mem-more" data-eq-more="1">Mostrar todas as ${list.length}</button>` : ''}${pr}`;
+  }
+  // Membresia real: formulário, reunião de integração e apresentação no culto (ordem obrigatória). Mesmo visual da demonstração.
+  const EQ_ETAPAS = [['formulario', 'Formulário'], ['reuniao', 'Reunião'], ['apresentacao', 'Apresentação']];
+  const eqTick = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg>';
+  function eqPessoaCard(p) {
+    const at = EQ_ETAPAS.findIndex(([k]) => !p[k + '_em']), cur = at < 0 ? 3 : at, prox = at < 0 ? null : EQ_ETAPAS[at][0];
+    const steps = `<ol class="gift-steps admin-steps" aria-label="Etapas de ${escape(p.nome)}">${EQ_ETAPAS.map(([k, l], i) => `<li class="${p[k + '_em'] ? 'is-done' : i === cur ? 'is-current' : ''}"${i === cur ? ' aria-current="step"' : ''}><span class="gift-dot">${p[k + '_em'] ? eqTick : '0' + (i + 1)}</span><span class="gift-step-label">${l}</span></li>`).join('')}</ol>`;
+    const label = { formulario: 'Registrar formulário recebido', reuniao: 'Registrar reunião de integração', apresentacao: 'Registrar apresentação no culto' };
+    const action = prox ? `<button type="button" class="action primary" data-eq-etapa="${prox}" data-id="${p.id}">${label[prox]}</button>` : '';
+    const sair = prox ? `<button type="button" class="action admin-secondary" data-eq-etapa="remover" data-id="${p.id}">Retirar da integração</button>` : '';
+    const log = [['iniciado', 'Início'], ...EQ_ETAPAS].filter(([k]) => p[k + '_em']).map(([k, l]) => `<li><b>${l}</b> ${fmtDay(p[k + '_em'])} · ${escape(p[k + '_nome'] || 'Equipe')}</li>`).join('');
+    return `<article class="box admin-person"><div class="admin-person-head"><span class="profile-avatar" aria-hidden="true">${escape(p.nome.charAt(0))}</span><div><h3>${escape(p.nome)}</h3><small>${escape(vinculoLabel[p.vinculo] || '')}${p.celula ? ' · ' + escape(eqCelula(p.celula)) : ''}</small></div>${p.apresentacao_em ? '<span class="tag status-active">Membro</span>' : '<span class="tag">Em integração</span>'}</div>${steps}${action ? `<div class="form-actions gift-actions">${action}${sair}</div>` : ''}${log ? `<details class="admin-log"><summary>Histórico de registros</summary><ul>${log}</ul></details>` : ''}</article>`;
+  }
+  function membershipRealPage() {
+    eqLoad('memb', () => NibConta.membresia(), 'membresia');
+    if (!state.memb) return state.membErro ? `<p class="form-error" role="alert">${escape(state.membErro)}</p>` : '<p class="event-empty">Carregando a membresia</p>';
+    const all = state.memb.pessoas || [], open = all.filter(p => !p.apresentacao_em), done = all.filter(p => p.apresentacao_em).slice(0, 20);
+    const lid = NibConta.lideranca();
+    // Quem pode entrar no caminho: ainda não é membro e não está na lista.
+    const ids = new Set(all.map(p => String(p.id)));
+    const cand = state.mem ? state.mem.pessoas.filter(p => p.membro_status === 'nao' && !ids.has(String(p.id))) : null;
+    if (!state.mem) eqLoad('mem', () => NibConta.membros(), 'membresia');
+    const add = cand && cand.length ? `<section class="box mem-add"><h2>Iniciar integração</h2><p>Escolha quem quer se tornar membro. A pessoa precisa ter cadastro no app.</p><div class="mem-filter-row"><label class="visually-hidden" for="eq-memb-add">Pessoa</label><select id="eq-memb-add"><option value="">Escolha a pessoa</option>${cand.map(p => `<option value="${p.id}">${escape(p.nome)} · ${escape(eqSituacao(p))}</option>`).join('')}</select><button type="button" class="action primary" data-eq-etapa="inicio" data-id="">Iniciar</button></div></section>` : '';
+    return `<div class="admin-intro"><p>As três etapas seguem uma ordem obrigatória: formulário, reunião de integração e apresentação no culto. Toque no botão para registrar a próxima. ${lid ? 'A Liderança Pastoral e a Secretaria podem registrar.' : 'A Secretaria e a Liderança Pastoral podem registrar.'}</p></div>
+    <div class="mem-link-row">${button('Ver todos os membros', 'membros')}</div>${add}
+    <div class="admin-people">${open.map(eqPessoaCard).join('') || '<section class="box"><p>Ninguém em integração no momento.</p></section>'}</div>
+    ${done.length ? `<h2 class="admin-subtitle">Apresentados</h2><div class="admin-people">${done.map(eqPessoaCard).join('')}</div>` : ''}
+    <p class="note">Ao registrar a apresentação no culto, a pessoa passa a ser membro confirmado e recebe um aviso no celular. Quem já era membro antes do app é confirmado em Cadastros.</p>`;
+  }
+  async function eqEtapa(btn) {
+    let id = btn.dataset.id;
+    if (btn.dataset.eqEtapa === 'inicio' && !id) { const sel = content.querySelector('#eq-memb-add'); id = sel && sel.value; if (!id) { announce('Escolha a pessoa para iniciar a integração.', 'error'); return; } }
+    if (btn.dataset.eqEtapa === 'apresentacao' && !confirm('Registrar a apresentação no culto? A pessoa passa a ser membro confirmado.')) return;
+    if (btn.dataset.eqEtapa === 'remover' && !confirm('Retirar esta pessoa da integração?')) return;
+    btn.disabled = true;
+    try {
+      await NibConta.membresiaEtapa(Number(id), btn.dataset.eqEtapa);
+      state.memb = null; state.mem = null; state.painel = null;
+      if (state.view === 'membros') { show('membros', false, false); } else show('membresia', false, false);
+      announce(btn.dataset.eqEtapa === 'apresentacao' ? 'Apresentação registrada. A pessoa agora é membro.' : btn.dataset.eqEtapa === 'remover' ? 'Pessoa retirada da integração.' : 'Etapa registrada.', 'success', false);
+    } catch (e) { btn.disabled = false; announce(e.message, 'error'); }
+  }
+  async function eqExport(form) {
+    const v = new FormData(form), err = form.querySelector('.form-error'), btn = form.querySelector('[type=submit]');
+    if (!v.get('ok')) { err.textContent = 'Marque que o arquivo é para uso interno da igreja.'; return; }
+    const groups = v.getAll('g'), formato = String(v.get('format')) === 'pdf' ? 'pdf' : 'csv', list = eqFiltrados(), sel = EQ_GRUPOS.filter(([k]) => groups.includes(k));
+    btn.disabled = true; err.textContent = '';
+    try { await NibConta.membrosExportados({ n: list.length, formato, grupos: groups, uso_interno: true }); }
+    catch (e) { btn.disabled = false; err.textContent = e.message; return; }
+    const head = ['nome', 'situacao', ...sel.flatMap(g => g[4])], rows = list.map(p => [p.nome, eqSituacao(p), ...sel.flatMap(g => g[3](p))]);
+    const agora = new Date(), at = agora.toLocaleDateString('pt-BR') + ' ' + agora.toTimeString().slice(0, 5);
+    state.memGroups = groups; state.memExportOpen = true;
+    state.mem.exportacoes = [{ em: NibDaily.dayKey(agora) + ' ' + agora.toTimeString().slice(0, 5), nome: account().nome, detalhes: `n=${rows.length};formato=${formato}` }, ...(state.mem.exportacoes || [])].slice(0, 3);
+    if (formato === 'pdf') {
+      const LBL = { nome: 'Nome', situacao: 'Situação', celular: 'Celular', email: 'E-mail', endereco: 'Endereço', celula: 'Célula', membro_desde: 'Membro desde', ultima_presenca: 'Última presença', nascimento: 'Nascimento', genero: 'Gênero' };
+      state.memPrint = { at, head: head.map(h => LBL[h] || h), rows }; show('membros', false, false);
+      setTimeout(() => { if (typeof print === 'function') print(); }, 60);
+      announce(`PDF com ${rows.length} pessoas pronto. Escolha "Salvar como PDF" na impressão.`, 'success', false); return;
+    }
+    const q = x => /[;"\n]/.test(String(x)) ? '"' + String(x).replace(/"/g, '""') + '"' : String(x);
+    const csv = '﻿' + [head, ...rows].map(r => r.map(q).join(';')).join('\r\n');
+    try { const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' })), a = document.createElement('a'); a.href = url; a.download = `nib-membros-${NibDaily.dayKey(agora)}.csv`; document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 4000); } catch (_) {}
+    show('membros', false, false); announce(`Planilha com ${rows.length} pessoas baixada. A exportação ficou registrada.`, 'success', false);
+  }
+  function eqFilterInput(q) {
+    state.memQ = q; const list = eqFiltrados(), ids = new Set(list.map(p => String(p.id)));
+    content.querySelectorAll('.mem-list [data-eq-mem]').forEach(b => { b.parentElement.hidden = !ids.has(b.dataset.eqMem); });
+    if (!state.memMore && list.length > content.querySelectorAll('.mem-list [data-eq-mem]').length) { state.memMore = true; show('membros', false, false); const i = content.querySelector('#eq-q'); if (i) { i.focus(); i.setSelectionRange(i.value.length, i.value.length); } return; }
+    const c = content.querySelector('.mem-count'); if (c) c.firstChild.textContent = `${list.length} pessoa${list.length === 1 ? '' : 's'}`;
+  }
+  // Link do e-mail "Esqueci minha senha": ?redefinir=TOKEN abre a troca de senha.
+  function resetDialog(token) {
+    const d = document.createElement('dialog'); d.className = 'reset-dialog'; d.setAttribute('aria-labelledby', 'reset-title');
+    d.innerHTML = '<form method="dialog" novalidate><h2 id="reset-title">Criar nova senha</h2><p>Escolha uma senha nova para sua conta.</p><label for="reset-pass">Nova senha</label><input id="reset-pass" type="password" autocomplete="new-password" required><label for="reset-pass2">Repita a senha</label><input id="reset-pass2" type="password" autocomplete="new-password" required><p class="note">Pelo menos 8 caracteres, com letra maiúscula, minúscula, número e símbolo.</p><p class="form-error" role="alert"></p><div class="form-actions"><button class="action" type="submit">Salvar nova senha</button><button class="button" type="button" data-reset-cancel>Cancelar</button></div></form>';
+    document.body.append(d);
+    const clean = () => { const u = new URL(location.href); u.searchParams.delete('redefinir'); history.replaceState(null, '', u.pathname + u.search + u.hash); d.close(); d.remove(); };
+    d.querySelector('[data-reset-cancel]').addEventListener('click', clean);
+    d.querySelector('form').addEventListener('submit', async e => {
+      e.preventDefault();
+      const a = d.querySelector('#reset-pass').value, b = d.querySelector('#reset-pass2').value, err = d.querySelector('.form-error'), btn = d.querySelector('[type=submit]');
+      if (!passRules(a).every(Boolean)) { err.textContent = 'A senha ainda não atende a todos os critérios.'; return; }
+      if (a !== b) { err.textContent = 'As senhas não são iguais.'; return; }
+      btn.disabled = true; err.textContent = '';
+      try { await NibConta.redefinir(token, a); clean(); applyAccount(); if (LOGIN_REQUIRED) publicStart(true); announce('Senha criada. Você já entrou na sua conta.', 'success', false); }
+      catch (e2) { err.textContent = e2.message; btn.disabled = false; }
+    });
+    d.showModal();
+  }
+  if (PUBLIC && window.NibConta && NibConta.available()) {
+    const goHash = () => { const v = location.hash.slice(1); if (v && allowedPublic().includes(v)) show(v, false, false); };
+    authReady.then(() => { if (account()) applyAccount(); goHash(); pendingQrCheckin(); youtubeVolta(); });
+    // Volta da tela do Google ao conectar o canal (api/youtube.php redireciona para /app/?youtube=...#pilulas).
+    function youtubeVolta() {
+      const r = new URLSearchParams(location.search).get('youtube'); if (!r) return;
+      const u = new URL(location.href); u.searchParams.delete('youtube'); history.replaceState(null, '', u.pathname + u.search + u.hash);
+      const msg = { ok: ['Canal do YouTube conectado. Já dá para enviar as pílulas.', 'success'], cancelado: ['A conexão com o YouTube foi cancelada.', 'info'], expirou: ['A conexão demorou demais. Toque em Conectar de novo.', 'warning'], 'sem-projeto': ['Falta colocar no servidor as chaves do projeto do Google.', 'warning'], 'sem-permissao': ['Só a administração conecta o canal do YouTube.', 'warning'] }[r] || ['Não foi possível conectar o canal do YouTube. Tente de novo.', 'warning'];
+      state.pil = null; state.ytEstado = null; const alvo = allowedPublic().includes('equipe') ? 'equipe' : 'pilulas'; if (allowedPublic().includes(alvo)) show(alvo, false, false); announce(msg[0], msg[1], false);
+    }
+    if ('serviceWorker' in navigator) navigator.serviceWorker.addEventListener('message', e => { const v = e.data && e.data.nibView; if (typeof v === 'string' && allowedPublic().includes(v)) { if (v === 'caderno') { state.prayersLoaded = false; } if (v === 'avisos') { state.avisos = null; } if (v === 'pilulas') { state.pil = null; state.pilSel = null; } show(v, false, false); } });
+    const token = new URLSearchParams(location.search).get('redefinir');
+    if (token && /^[a-f0-9]{64}$/.test(token)) resetDialog(token);
+  }
 })();

@@ -1,0 +1,20 @@
+{
+  "id": "./",
+  "name": "Nib · Nova Igreja Batista",
+  "short_name": "Nib",
+  "description": "Agenda, contribuições, células, eventos e caderno de oração da Nova Igreja Batista.",
+  "lang": "pt-BR",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#041e42",
+  "theme_color": "#041e42",
+  "categories": ["lifestyle", "social"],
+  "icons": [
+    {"src": "assets/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
+    {"src": "assets/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"},
+    {"src": "assets/icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+  ]
+}

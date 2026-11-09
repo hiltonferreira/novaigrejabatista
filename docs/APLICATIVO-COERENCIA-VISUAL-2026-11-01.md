@@ -202,6 +202,220 @@ Botões habilitados, cards de eventos, calendário, cabeçalho, itens de menu e 
 
 Codex:51 testes existentes aprovados. Navegador desktop confirmou estadofocus-visible dos atalhos com mesmo seletor visual dehover, fundo gradiente, halo, transform e shine550ms; captura do estado estabilizado conferida. Revisão CSS cobre escopo de ponteiro/desktop e redução de movimento; não houve emulação de preferência ou teste físico. Sem alegar medição automatizada de hover por ponteiro, pois API usada testou o estado equivalente via teclado. Claude solicitado para revisão delimitada; somente Preview, produção preservada.
 
+## Ajustes da revisão de interações — 02/11/2026
+
+Base 7853ad1. Claude aplicou os pontos menores da revisão delimitada do mesmo head, com autorização de Hilton nesta tarefa.
+
+- Popup: removida a animação antiga `nib-popup-in` e seu `@keyframes`. Fica só `nib-surface-open`, que já era a regra vigente.
+- Calendário: o hover genérico de botões (`main button:enabled:not(...)`) agora exclui `.calendar-day`, então o dia usa o próprio retorno de hover. O dia selecionado mantém a sombra do estado e ganha um halo claro ao passar o mouse.
+- Toque: em `hover:none`, os atalhos da inicial recebem pressão (`scale(.98)`, 160 ms). A regra de movimento reduzido também zera `transform` dos atalhos.
+
+Verificado: 51 testes existentes aprovados; Chromium sem erros de console, sem overflow em 390 e 1280 px; dia selecionado sob hover mantém fundo navy e sombra com halo; transição de toque aplicada em 390 px com toque emulado. Sem teste em aparelho físico. Produção preservada.
+
+## Abertura animada e banners das redes — 02/11/2026
+
+Pedido de Hilton, com vídeo de referência de outro aplicativo (padrões genéricos: tela de abertura azul com marca e carregamento; carrossel de banners com foto, chapéu, título forte e caixa azul translúcida com seta).
+
+- **Abertura:** `#app-splash` em `index.html`, fundo azul NIB em degradê radial, logo branca (`assets/logo-branco.svg`, cópia da logo com preenchimento branco) que sobe e cresce levemente, rótulo "Plataforma NIB" e indicador de carregamento. Some sozinha em cerca de 2,3 s ou ao toque, com fade de 450 ms. Aparece uma vez por aba (`sessionStorage`, com try/catch). Com movimento reduzido não há animação e some em 0,7 s. Quando houver login, a abertura fica antes dele.
+- **Banners das redes:** o banner único da hero foi substituído por "A NIB nas redes", com três cards (Instagram, YouTube e Facebook @nibcasadedeus, links oficiais já usados no site). Fotos da galeria do site recortadas em 5:6 e convertidas para WebP 640×768 (`assets/social-*.webp`). No celular, carrossel com snap, próximo card aparecendo e indicadores; no desktop, três cards lado a lado. Links abrem em nova aba e têm `aria-label` completo.
+
+Verificado: 51 testes existentes aprovados, sintaxe do `app.js` válida. Chromium sem erros de console; sem overflow em 390 px; indicadores acompanham a rolagem; abertura some e não reaparece ao recarregar a mesma aba. Sem teste em aparelho físico.
+
+## Abertura com a logo animada do site — 02/11/2026
+
+Hilton pediu a animação da logo usada no site (`video/brasao-nib-alpha.webm`, seção "Somos a"), menor e na proporção da referência, com texto principal "Plataforma Nib" ao lado e "Nova Igreja Batista" abaixo, letras entrando, zoom inicial com zoom out fluido e barra de carregamento melhor.
+
+- O vídeo com transparência foi convertido para WebP animado com alfa (`assets/splash-logo.webp`, 300×113, 48 quadros, cerca de 280 KB, toca uma vez e para no último quadro). WebM com alfa não funciona no Safari do iPhone, e o WebP animado funciona sem depender de autoplay. O último quadro fica em `assets/splash-logo-final.png` para quem usa movimento reduzido.
+- Conjunto logo, divisória e texto começa em escala 1,9 e reduz até 1 em 2,3 s (`cubic-bezier(.16,1,.3,1)`). As letras do título entram uma a uma a partir de 1,5 s, e as do subtítulo a partir de 1,95 s, com subida curta e desfoque saindo. As letras são montadas por DOM com `style.setProperty`, compatível com a CSP `style-src 'self'`.
+- Barra de carregamento: trilho de 132×4 px, preenchimento em degradê azul claro para branco com brilho, progresso em etapas suaves por 3 s e reflexo passando.
+- Duração total de cerca de 3,5 s, com saída em fade de 0,5 s. Toque encerra antes. Uma vez por aba. Removida a `logo-branco.svg` da versão anterior.
+
+Verificado: 51 testes aprovados, sem erros de console, capturas em 390 px a 0,15, 0,7, 1,4, 1,9, 2,6 e 3,3 s conferidas. Sem teste em iPhone físico.
+
+Ajuste seguinte, a pedido de Hilton: a barra de carregamento voltou a ser um círculo. Agora é um arco com degradê do azul claro ao branco, ponta arredondada e brilho leve, girando em 0,85 s. Com movimento reduzido, o círculo não aparece.
+
+## Abertura de 5 s e banners na proporção da referência — 02/11/2026
+
+- **Abertura:** conjunto maior (logo até 200 px, título até 32 px), logo animada mais lenta (62 ms por quadro, cerca de 3 s), zoom out em 3,4 s, texto a partir de 2,3 s e saída em 4,5 s com fade de 0,5 s, total de cerca de 5 s. Em telas até 350 px o conjunto reduz para caber em 320 px.
+- **Banners:** proporções medidas no vídeo de referência: card com cerca de 78% da largura no celular e formato 8:9, chapéu em peso regular de 15 px, título em negrito de 30 px com entrelinha 1,13, caixa azul com texto regular de 14 px, padding de 16 px e cantos de 10 px. Fonte Acumin da NIB em todas as larguras. Novas fotos da galeria do site: celebração com confete (Instagram), louvor com mãos levantadas (YouTube) e crianças da igreja (Facebook).
+
+Verificado: 51 testes aprovados, sem erros de console; abertura cabe em 320 e 390 px e some em cerca de 5 s.
+
+Ajuste seguinte: o carregamento passou a seguir o vídeo de referência. É um arco branco sólido em SVG, com 44 px, traço de 4 px e pontas arredondadas, que cresce e encolhe enquanto gira (1,4 s e 1,6 s). Os textos da caixa azul dos banners deixaram de repetir o @ e agora descrevem o que cada rede oferece.
+
+Ajuste seguinte: o carregamento ficou maior (54 px) e mais lento (giro de 2,4 s e arco de 2 s). A caixa azul agora tem uma frase curta em duas linhas, terminada em ponto, seguida da ação em negrito (Seguir, Assistir, Compartilhar). As fotos ganharam paralaxe no carrossel do celular: a imagem tem 132% da largura do card e se desloca até 12% em sentido contrário ao deslizar, com `requestAnimationFrame`. A paralaxe fica desligada quando não há rolagem (desktop) e com movimento reduzido.
+
+Ajuste seguinte, após teste de Hilton no iPhone:
+- A foto não preenchia o lado direito porque a regra base de imagens limita `max-width` a 100%. O fundo do card agora usa `max-width:none`, e as fotos foram recortadas já na proporção da área de paralaxe (132% da largura do card em 8:9), com os rostos abaixo da área do título.
+- Títulos mais curtos e maiores, como na referência (32 px, até 10 caracteres por linha): "A NIB no dia a dia", "Cultos e mensagens", "Nossa família reunida".
+- Abertura: o conjunto subiu para o centro óptico (cerca de 45% da altura) e ficou um pouco menor, com mais respiro nas laterais. Logo e texto têm o mesmo centro vertical.
+
+Ajuste seguinte, comparando com capturas da referência enviadas por Hilton:
+- Banners mais próximos da referência: card com 84% da largura no celular, foto clara (só um leve escurecimento no topo, sem o véu azul), chapéu de 16 px, título de 32 px em três linhas ("Acompanhe a NIB no dia a dia", "Cultos e mensagens na íntegra", "Uma família que acolhe você"), caixa em azul vivo translúcido com texto de 16 px e chamada em negrito com exclamação ("Siga agora!", "Assista agora!", "Convide alguém!"). Recortes refeitos com os rostos abaixo do título e acima da caixa; o Facebook passou a usar a foto da equipe de recepção.
+- Abertura: conjunto logo e texto menor (logo até 156 px, título até 25 px), com mais distância das bordas.
+
+## Versículo do dia redesenhado — 02/11/2026
+
+A pedido de Hilton, o bloco do versículo saiu do vidro claro e virou um cartão azul NIB, na mesma linguagem dos banners: degradê radial do azul médio ao navy, brasão branco em marca d'água (7%, `assets/brasao-branco.png`, recortado do último quadro da logo animada), ícone de livro, rótulo "Palavra para o seu dia", aspas grandes em laranja NIB e texto branco de 20 px no celular e 24 px no computador. No rodapé, separado por uma linha fina, ficam a referência e o botão "Compartilhar", que usa o compartilhamento nativo do aparelho (Web Share) e, sem ele, copia o versículo com a referência e avisa no status. A atualização diária do texto continua funcionando.
+
+Verificado: 51 testes aprovados, sem erros de console; botão com alvo de 44 px e foco visível em laranja.
+
+Ajuste seguinte: o brasão ao fundo ficou maior (270 px no celular, 320 px no computador), levemente girado (-8°), com desfoque de 3 px e opacidade de 12%.
+
+Ajuste seguinte da abertura: logo maior (até 180 px, 32% da largura) e o bloco de texto alinhado ao centro óptico da palavra Nib da logo, e não ao centro da imagem. A palavra fica cerca de 5% abaixo do centro do arquivo, então o texto desce na mesma proporção do tamanho da logo. Medido em 414 px: centro do Nib em 348 px e do texto em 348,5 px.
+
+Ajuste seguinte: o círculo de carregamento fica centralizado entre a base da logo e a borda inferior da tela, calculado a partir da posição e do tamanho da logo. Medido: 390×844 (logo termina em 407, círculo em 626, ponto médio 626) e 320×560 (417 e 417).
+
+## Acesso e orientação de teste — 03/11/2026
+
+Pedido de Hilton: pensar o login e o cadastro na entrada do aplicativo e, depois do acesso, telas de orientação com o resumo do que há no app.
+
+Fluxo: abertura animada → tela de acesso → orientação em quatro telas → inicial. Tudo é demonstrativo: a CSP bloqueia conexões (`connect-src 'none'`, `form-action 'none'`), os envios são interceptados no JavaScript e os dados ficam só na memória da aba. A tela avisa para usar dados fictícios.
+
+- **Acesso:** foto da igreja no topo com a logo branca e uma folha clara com abas "Entrar" e "Criar cadastro" (tabs acessíveis com setas).
+  - Entrar: e-mail ou celular, senha com botão de mostrar/ocultar, "Esqueci minha senha" e "Receber código pelo WhatsApp". As duas últimas só explicam como funcionarão.
+  - Criar cadastro: nome completo, celular com WhatsApp, e-mail, vínculo com a igreja (Sou membro, Frequento, Estou conhecendo), senha de pelo menos 8 caracteres e aceite da política de privacidade do site.
+  - A validação é própria, com mensagem em `role=alert`, foco no campo e `aria-invalid`. Os campos não usam autocomplete do navegador.
+- **Orientação:** quatro telas com foto, ícone, título e resumo (inicial, agenda e eventos, generosidade, células e oração). Deslizar, botão Próximo/Começar, Pular e setas do teclado. No celular, foto em cima e texto embaixo; no computador, lado a lado. A primeira tela cumprimenta pelo primeiro nome do cadastro.
+- **Depois do acesso:** a inicial, o topo, o menu, o Meu cadastro e o Caderno usam o nome cadastrado. No login sem cadastro, continua a usuária Jéssica Exemplo.
+- A tela de acesso aparece uma vez por aba. Em "Versão de teste" há o botão "Ver login e orientação de novo".
+- Enquanto acesso ou orientação estão abertos, o restante do app fica `inert`.
+
+Contraste conferido: bordas dos campos #7a879a (3,4:1 sobre o fundo), textos secundários #536176 (5,9:1), laranja do rótulo #b64e1a (4,8:1).
+
+Verificado: 51 testes aprovados, sem erros de console. Navegador em 390 px: validação do cadastro, cadastro completo levando à orientação, quatro telas até "Começar", inicial com "Olá, Maria!" e sem overflow. Também em 1280 px.
+
+Decisões em aberto para a versão real: forma de acesso (e-mail e senha, código por WhatsApp ou ambos), quem confirma o vínculo de quem se cadastra (secretaria), se haverá CPF, e se a orientação aparece só no primeiro acesso.
+
+Ajustes seguintes no acesso, após teste de Hilton no iPhone:
+- Vínculo em uma linha só, com três opções de largura igual: Membro, Frequento e Conhecendo.
+- Senha com critérios visíveis e marcados em tempo real (8 caracteres, maiúscula, minúscula, número e símbolo) e campo "Repita a senha", que avisa se as senhas são iguais. O cadastro só avança com todos os critérios atendidos e as senhas iguais. Erros somem ao corrigir o campo.
+- Orientação: a foto ficou reta embaixo e o texto sobe numa folha com cantos arredondados por cima, como na tela de acesso. O ícone fica na emenda.
+- Ao tocar em "Começar" ou "Pular": tela azul com o brasão branco no centro (fade de 0,38 s, entrada de 0,65 s e pausa), depois zoom de 1 para 38 vezes, com origem no centro do brasão, enquanto a tela azul some e revela a inicial (1,3 s, `cubic-bezier(.65,0,.35,1)`). Total de cerca de 3 s, feito com Web Animations. Com movimento reduzido, vai direto para a inicial.
+- Saudações neutras: "Boas-vindas, [nome]" na orientação e "BOAS-VINDAS" na inicial, porque o nome cadastrado pode ser de qualquer pessoa.
+
+Ajuste seguinte: o brasão da entrada ficou menor (76 a 112 px de largura, 22% da tela) e centralizado de forma exata. A imagem `brasao-branco.png` foi recortada rente ao desenho e o brasão é posicionado pelo centro da tela, sem depender do alinhamento da grade. Medido em 390×844: centro em 422 px, igual ao centro da tela.
+
+Teste alternativo pedido por Hilton: no lugar do zoom, a entrada agora clareia. Depois de o brasão aparecer, o fundo passa do azul NIB para o branco em 1,8 s, enquanto o brasão ganha brilho (`drop-shadow` branco crescente e `brightness` até 1,3) e se funde ao branco. Em seguida o branco se desfaz em 0,6 s e revela a inicial. Total de cerca de 3,8 s. A versão com zoom continua no histórico (commit 6902cb3), caso se volte a ela.
+
+Terceira variação da entrada, após Hilton achar a anterior pouco fluida. Causas encontradas na versão de brilho:
+1. A animação era feita de fases encadeadas com pausas (fade, entrada do brasão, espera, brilho, saída). Cada fase parava e recomeçava com outra curva, o que cria "degraus" de velocidade.
+2. `filter: drop-shadow` com desfoque grande e `background-color` não são compostos na GPU. O navegador repinta a tela inteira a cada quadro, o que costuma travar no iPhone.
+3. A troca da orientação para a inicial (layout da página toda) acontecia durante a animação visível.
+
+Nova versão: uma única linha do tempo de 3 s, só com `transform` e `opacity`, em camadas com `will-change`. O brasão surge e cresce devagar sem parar (0,86 → 1,12). Atrás dele, uma luz radial pré-desenhada nasce como um halo e se expande 16 vezes até cobrir a tela. Uma camada branca completa o branco em 60–84% do tempo, e tudo se desfaz na inicial em 84–100%. A troca de telas acontece nos primeiros 320 ms, com a tela coberta, e a linha do tempo só começa dois quadros depois.
+
+## Abertura empilhada (2026-11-03)
+
+- Brasão + nome NIB em cima e "Plataforma Nib" / "NOVA IGREJA BATISTA" embaixo, tudo empilhado e centralizado na tela; divisor vertical removido.
+- Carregamento continua no meio entre o conjunto e a borda inferior (conferido em 390x844, 320x560 e 1280x800).
+
+## Transição pós-orientação mais refinada (2026-11-03)
+
+- Sai o brilho grande e o branco estourado. Fundo azul profundo com leve vinheta, brasão assenta com desaceleração longa (sobe 10px e cresce de 94% a 100%), um reflexo de luz atravessa o desenho (máscara no formato do brasão) e a tela se dissolve sobre a inicial, que sobe 14px ao assentar.
+- Total de cerca de 3s, só transform e opacity; com movimento reduzido, entra direto.
+
+## Abertura só com "Nova Igreja Batista" e reflexo na logo (2026-11-03)
+
+- Removido "Plataforma Nib". "NOVA IGREJA BATISTA" (mesma fonte, caixa alta) agora escala com a logo (7,6% da largura), ocupando a mesma largura do brasão + Nib.
+- O mesmo reflexo de luz da transição passa pela logo (máscara com splash-logo-final.png) aos 3,05s, depois que o vídeo da logo termina. Desligado com movimento reduzido.
+
+## Agenda, botões com seta e calendário a partir do domingo (2026-11-03)
+
+- Bloco de data da agenda: cartão azul em degradê com mês (NOV), dia grande e dia da semana (QUI); tipo do encontro com o mesmo ponto colorido do calendário.
+- "Ver calendário completo" saiu do cabeçalho e virou botão de largura total, centralizado no rodapé do bloco.
+- Todos os botões de navegação secundários (`button()` não primário: Ver calendário completo, Ver caderno, Ver todos, Voltar à gestão) ganham seta à direita e texto centralizado; nos cabeçalhos ficam alinhados ao título.
+- Calendário mensal começa no domingo (D S T Q Q S S); `monthInfo().offset` passou a contar a partir do domingo, com teste atualizado.
+
+## Calendário: Hoje no topo, seleção e bloco do dia (2026-11-03)
+
+- Botão "Hoje" saiu do fim da legenda e foi para baixo do nome do mês; fica destacado quando o dia de hoje está selecionado. Legenda centralizada em uma linha, com o quadradinho de contorno explicando "Hoje".
+- Dias sem fundo cinza; número sempre na mesma altura. Dia selecionado vira um quadrado arredondado azul em degradê com sombra suave e pequena animação de entrada; hoje tem contorno azul.
+- Bloco do dia selecionado: cartão de data (NOV / 22), dia da semana em destaque, data por extenso e contador de encontros. Cada encontro é um cartão com faixa colorida do tipo e horário em uma pílula ("Horário a definir" quando não houver).
+- Ajuste a pedido: dias voltaram a ser círculos cinza (seleção em círculo azul com degradê, hoje com contorno azul) e o botão "Hoje" saiu do bloco: fica acima do calendário, centralizado (azul quando hoje está selecionado).
+
+## Resumo de hoje com botão Hoje à direita e célula do membro no calendário (2026-11-03)
+
+- Acima do calendário, um cartão com "HOJE", a data por extenso e o próximo encontro (com ponto da cor do tipo); botão "Hoje" com ícone no canto direito.
+- Célula do membro (exemplo fictício: Célula Exemplo, quartas 19:30) entra no calendário e na agenda da inicial como tipo "Minha célula" (roxo #6a45b0), com local no bloco do dia. Item "Hoje" da legenda removido (o contorno continua).
+- Em aberto: de onde vem o vínculo membro→célula (plataforma de células ou secretaria), mudanças/cancelamentos de encontro e quem pode ver o endereço.
+
+## Terceiro banner: site da igreja (2026-11-03)
+
+- Banner do Facebook trocado pelo site: "Site da igreja" / "A NIB em um só lugar" / "Cultos, células, eventos e inscrições. **Acesse o site!**", link https://novaigrejabatista.com.br/. Mesma foto, arquivo renomeado para social-site.webp (também usado no 4º slide da orientação).
+
+## Caderno de oração: botão com coração e frase de apoio (2026-11-03)
+
+- Botão "Vou orar" com coração em contorno; ao tocar vira "Orando", coração vermelho preenchido (#e11d48) com pequeno pulso e fundo rosado. O contador saiu do botão.
+- Ao lado, uma frase em vez de "0 pessoas orando": "Seja o primeiro a orar por este pedido", "**3** pessoas estão orando", "**Você** está orando por este pedido" ou "**Você** e mais 2 pessoas estão orando".
+- "Oração atendida" saiu do canto da linha do autor e virou selo com ícone de confirmação, alinhado à esquerda acima do título.
+- Ajuste: selo "Oração atendida" voltou ao canto superior direito, alinhado ao topo do nome, em formato compacto (sem caixa alta). Corrigido o botão ficando azul preenchido ao desmarcar no celular (hover/active "preso" do toque herdava o estilo genérico de botão).
+- Correção geral: os estilos de passar o mouse (botões, atalhos, menu lateral, pontos do calendário) agora só valem em aparelhos com mouse (`@media(hover:hover)`). No celular, depois do toque nenhum botão fica azul "preso"; o retorno do toque é o contorno suave já existente em `@media(hover:none)`.
+
+## Caderno: ações do próprio pedido (2026-11-03)
+
+- Os dois botões grandes ("Marcar em oração"/"Oração atendida" e "Excluir") viraram uma barra discreta no rodapé do card: rótulo "SEU PEDIDO" à esquerda e, à direita, pílulas compactas com ícone: "Marcar atendida" (ou "Reabrir", quando já atendida) em cinza e "Excluir" em vermelho suave.
+
+## Voltar com seta para a esquerda (2026-11-03)
+
+- Todos os botões de voltar usam a mesma seta ← antes do texto "Voltar": barra de retorno das telas internas (antes "VOLTAR" em caixa alta), botão do menu lateral e "Voltar à gestão" (que antes recebia a seta → do padrão "Ver ..."). O helper `button()` detecta textos que começam com "Voltar".
+
+## Entrar com Face ID (simulação, 2026-11-03)
+
+- Login ganhou "Entrar com Face ID" (ícone de rosto) entre "ou" e "Receber código pelo WhatsApp". Toque mostra o cartão de leitura (cantos pulsando → ✓ "Reconhecido") e entra como Jéssica.
+- Depois do primeiro login com senha ou cadastro, aparece uma folha "Entrar com Face ID nas próximas vezes?" com "Ativar Face ID" / "Agora não"; o aceite fica em `nib-faceid` (sessionStorage) e "Rever entrada e cadastro" limpa a marcação.
+- Versão final: chave de acesso (WebAuthn/passkey) no domínio oficial, com servidor guardando só a chave pública; sessão longa (~30 dias) e Face ID ao reabrir depois do prazo ou em ações sensíveis. Nada biométrico sai do aparelho.
+- Bloco "Eventos da igreja" na inicial ganhou o chapéu "PARTICIPE COM A GENTE", no mesmo padrão de "CAMINHE COM A GENTE" e "CUIDADO EM COMUNIDADE" (2026-11-03).
+
+## Versículo do dia: lista anual + escolha da igreja (2026-11-03)
+
+- `verses.js`: 391 versículos (estilo Almeida Revista e Corrigida), um por dia do ano em ordem fixa, sem repetir no ano (antes eram 7 por sorteio da data). **A igreja deve conferir os textos na versão bíblica que adota e a licença de uso dessa versão antes da publicação.**
+- Escolha da igreja (opção aprovada por Hilton): na experiência Secretaria/Liderança, a tela de gestão tem "Versículo escolhido pela igreja" (data, texto, referência). A escolha tem prioridade sobre a lista; na inicial aparece "Escolhido pela igreja" sob a referência. Nesta versão vale só na sessão; na final será gravada no servidor.
+- `NibDaily.setCurated(data, texto, referência)` e teste novo cobrindo 366 dias sem repetição e a prioridade da escolha.
+
+## Contribuição com dados preenchidos automaticamente (2026-11-03)
+
+- Pedido de um membro (via Hilton): no app atual, ao contribuir por Pix já logado, é preciso digitar os dados de novo. Aqui, Dízimo/Oferta viram 3 etapas: **Valor** (R$ 50/100/200/500 ou outro valor) → **Seus dados** (resumo do valor e cartão "Contribuindo como" com nome, CPF mascarado e e-mail vindos do cadastro, selo "Preenchido", opção de enviar comprovante ao e-mail) → **Pix** (espaço do QR Code de teste listrado e "copia e cola" fictício com botão Copiar).
+- Versão final: o servidor gera um Pix dinâmico (cobrança com nome, CPF, valor e finalidade) pelo banco/PSP da igreja, confirma o pagamento por webhook e envia o comprovante. O CPF ainda não é pedido no cadastro (decisão pendente).
+
+## Pix funcionando + campanha da construção (2026-11-03)
+
+- `pix.js` gera o Pix "copia e cola" (BR Code estático EMV do Banco Central) com a chave CNPJ 40518758000130, nome NOVA IGREJA BATISTA e cidade ARIQUEMES, **conferidos lendo o QR Code oficial do site**: sem valor, o código gerado é idêntico ao oficial (teste `pix.test.cjs`). Com valor e identificador (txid DIZ/OFE/OBRA + data + 6 caracteres), o QR é desenhado no app com `assets/vendor/qrcode-generator-2.0.4.js` (MIT, Kazuhiko Arase). QR renderizado conferido por leitura automática (jsQR).
+- O Pix é **real** e paga a conta da igreja; o banco do pagador já envia nome e CPF à igreja. CPF falso removido do cartão. Etapa final "Já fiz o Pix" → agradecimento; a confirmação automática depende da API Pix do Sicoob (Pix dinâmico + webhook), ainda não integrada.
+- Aba Campanhas: "Construção do novo templo" (textos e números do site: 30% concluída, 1.500 lugares, entrega prevista em 2028; foto do pôster da obra) com o mesmo fluxo de contribuição (finalidade "Obra do templo").
+
+## Percentual da obra integrado ao site (2026-11-03)
+
+- Fonte única: `dados/obra.json` no site (`percentual`, `lugares`, `entrega`). `dados/.htaccess` libera a leitura pelo app (CORS `*`, sem cache longo).
+- Site (`index.html`, bloco da construção): lê `/dados/obra.json` e atualiza o contador animado, a barra e os números "concluído", "lugares" e "entrega". Sem resposta, mantém os valores escritos no HTML.
+- App: lê `https://novaigrejabatista.com.br/dados/obra.json` ao abrir; sem conexão, usa 30% / 1.500 / 2028. `vercel.json` passa a permitir `connect-src` só para esse endereço.
+- **Para valer em produção:** enviar `dados/obra.json` e `dados/.htaccess` e aplicar o trecho do `index.html` sobre o arquivo atual de produção (o painel reescreve partes do index; comparar antes). Depois, mudar o percentual = editar só o `obra.json`.
+
+## Contribuição: etapas e tela inicial mais compacta (2026-11-03)
+
+- O botão "Voltar" das etapas 2 e 3 saiu do rodapé e foi para o topo do bloco, ao lado do título.
+- Etapas redesenhadas: círculos ligados por linha, etapa atual em laranja com halo, etapas concluídas em azul com check.
+- Tela inicial mais baixa: sem título duplicado ("Dízimo" já aparece no seletor), espaçamentos menores, dados bancários em linhas compactas e QR Code oficial recolhido em "QR Code oficial" (abre ao tocar).
+
+## Contribuição guiada no padrão dos formulários do site (2026-11-03)
+
+- Seletor Dízimos / Ofertas / Campanhas centralizado, com uma frase curta sobre a finalidade escolhida.
+- Stepper igual ao das inscrições do site (01/02/03, linha fina, atual em laranja claro com borda #ff7f40, concluídas em #e85d16 com check).
+- Cada etapa tem título, uma frase de orientação, o conteúdo e uma única ação principal. "Voltar" discreto no topo do bloco.
+- Pagamento: passo a passo numerado (abrir o banco, ler QR ou colar, conferir o nome) antes de "Já fiz o Pix".
+- Valor sugerido selecionado em laranja claro, no mesmo padrão do passo atual.
+- "Outras formas de contribuir" em bloco secundário, com o QR Code oficial sempre visível.
+
+## Contribuição em 4 telas e Pix copia e cola da igreja (2026-11-03)
+
+- Passo a passo real: 01 Finalidade (Dízimo, Oferta ou Campanha em cartões com descrição; a campanha mostra foto e % da obra) → 02 Valor (título conforme a finalidade) → 03 Seus dados → 04 Pix. Cada tela tem título, orientação e um botão principal.
+- O seletor no topo da página saiu; a escolha agora é a primeira etapa.
+- "Outras formas de contribuir": descrição mais clara e botão laranja "Copiar código Pix" abaixo do QR oficial, igual ao do site (copia o mesmo código do QR oficial).
+- Mensagem de cópia do Pix corrigida (não é mais "de teste").
+
+## Gestão por perfil: Secretaria e Liderança Pastoral (2026-11-03)
+
+Mapa completo e decisões em `docs/APLICATIVO-GESTAO-PERFIS-2026-11-03.md`. Código novo em `aplicativo/admin.js`; agenda aceita itens incluídos pela gestão (`NibDaily.addItem`). Nomes e tipos da agenda agora passam por escape.
 ## Hover do site institucional — substitui efeitos anteriores
 
 Hilton rejeitou a proposta de brilho/halo/elevação do head7853ad1 e pediu padrão já usado no site. Reaproveitado comportamento .btn-ghost/.btn do index.html: preenchimento azul, texto branco e transição250ms. Nos atalhos desktop, mesmo estado parafocus-visible, com contorno de teclado preservado. Removidos bloco de brilho deslizante, halo, transform e toda a expansão de animações adicionada na última rodada. Botões habilitados usam apenas transição curta de cor/contorno; demais componentes voltam ao acabamento anterior. Sem marfim novo ou alteração de layout/rotas.
@@ -209,3 +423,5 @@ Hilton rejeitou a proposta de brilho/halo/elevação do head7853ad1 e pediu padr
 51 testes existentes aprovados. Inspeção visual deste head NÃO executada: abertura do Preview interno no navegador foi rejeitada pela revisão automática por limite de uso; nenhuma tentativa alternativa de navegador foi feita. Publicação segue pelo fluxo autorizado GitHub/Vercel, conferindo estado do deployment. Pedido de reposicionar barra de carregamento foi cancelado por Hilton, pois estava sendo tratado no Claude; nenhum componente de carregamento foi criado ou alterado.
 
 Codex implementa/testa/publica somente staging; Claude recebe revisão delimitada; Hilton valida visualmente no link. Produção preservada.
+
+Integração 06/11/2026 (Claude): ao juntar esta branch com `codex/aplicativo-v1-preview`, vale a decisão acima de Hilton. O brilho, o halo, a elevação, a pressão no toque e a animação de abrir popup saíram, e ficou o hover do site (azul, texto branco, 250 ms) nos atalhos do desktop. O resto do app (v87) foi mantido.
