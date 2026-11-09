@@ -6,19 +6,49 @@
 // Uso, no Terminal do cPanel:
 //   php dump-banco.php /home/novaigre/nib-manutencao/backup-completo-20261109/novaigre_app.sql.gz
 declare(strict_types=1);
+ini_set('display_errors', '1'); error_reporting(E_ALL);
+if (!defined('NIB_APP_RUNTIME')) define('NIB_APP_RUNTIME', true); // o config.php pode exigir isso
 if (isset($_SERVER['REQUEST_METHOD'])) { http_response_code(404); exit; }
 $argv = $argv ?? ($_SERVER['argv'] ?? []);
 $destino = (string)($argv[1] ?? '');
 $config = getenv('NIB_APP_CONFIG') ?: getenv('HOME') . '/nib-app-privado/config.php';
-function falha(string $m): never { echo "ERRO: $m\n"; exit(1); }
-if ($destino === '' || !str_ends_with($destino, '.sql.gz')) falha('informe o arquivo de destino terminado em .sql.gz');
+function falha(string $m) { echo "ERRO: $m\n"; exit(1); }
+if ($destino === '' || substr($destino, -7) !== '.sql.gz') falha('informe o arquivo de destino terminado em .sql.gz');
 if (!is_dir(dirname($destino))) falha('a pasta do destino não existe');
 if (!is_file($config)) falha("não achei $config");
+echo 'PHP ' . PHP_VERSION . "\n";
 $c = require $config;
 foreach (['db_host', 'db_name', 'db_user', 'db_pass'] as $k) if (!is_array($c) || !isset($c[$k]) || $c[$k] === '') falha("config sem $k");
-if (trim((string)shell_exec('command -v mysqldump')) === '') falha('mysqldump não encontrado');
+$podeShell = function_exists('exec') && function_exists('shell_exec') && trim((string)@shell_exec('command -v mysqldump')) !== '';
+if (!$podeShell) {
+  // Servidor sem exec/mysqldump no PHP: dump feito pelo próprio PHP (PDO), tabela por tabela.
+  echo "mysqldump indisponível pelo PHP; usando o dump pelo PDO\n";
+  try {
+    $db = new PDO('mysql:host=' . $c['db_host'] . ';dbname=' . $c['db_name'] . ';charset=utf8mb4', $c['db_user'], $c['db_pass'], [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+    $db->exec('SET NAMES utf8mb4'); $db->exec('START TRANSACTION WITH CONSISTENT SNAPSHOT');
+    $gz = gzopen($destino, 'wb9'); if (!$gz) falha('não abri o destino');
+    gzwrite($gz, "-- Dump NIB pelo PDO, " . date('c') . "\nSET NAMES utf8mb4;\nSET FOREIGN_KEY_CHECKS=0;\n");
+    $tabelas = 0;
+    foreach ($db->query('SHOW FULL TABLES WHERE Table_type = \'BASE TABLE\'')->fetchAll(PDO::FETCH_NUM) as $t) {
+      $t = $t[0]; $tabelas++;
+      $cr = $db->query('SHOW CREATE TABLE `' . str_replace('`', '``', $t) . '`')->fetch(PDO::FETCH_NUM);
+      gzwrite($gz, "\nDROP TABLE IF EXISTS `$t`;\n" . $cr[1] . ";\n");
+      $st = $db->query('SELECT * FROM `' . str_replace('`', '``', $t) . '`', PDO::FETCH_NUM);
+      foreach ($st as $l) {
+        $v = array_map(function ($x) use ($db) { return $x === null ? 'NULL' : $db->quote((string)$x); }, $l);
+        gzwrite($gz, "INSERT INTO `$t` VALUES (" . implode(',', $v) . ");\n");
+      }
+    }
+    gzwrite($gz, "SET FOREIGN_KEY_CHECKS=1;\n-- Dump completed\n"); gzclose($gz); $db->exec('COMMIT');
+  } catch (Throwable $e) { @unlink($destino); falha('dump pelo PDO falhou: ' . $e->getMessage()); }
+  chmod($destino, 0600);
+  $txt = (string)@gzdecode((string)file_get_contents($destino));
+  if (strpos($txt, '-- Dump completed') === false) falha('o dump não terminou');
+  printf("OK: %s (%d KB, %d tabelas, via PDO)\n", $destino, intdiv(filesize($destino), 1024), $tabelas);
+  exit(0);
+}
 
-$q = fn($v) => '"' . addcslashes((string)$v, "\\\"") . '"';
+$q = function ($v) { return '"' . addcslashes((string)$v, "\\\"") . '"'; };
 $cnf = tempnam(getenv('HOME') . '/nib-manutencao', '.dump-');
 if ($cnf === false) falha('não criei o arquivo temporário');
 chmod($cnf, 0600);
@@ -35,6 +65,6 @@ chmod($destino, 0600);
 exec('gzip -t ' . escapeshellarg($destino), $o2, $cod2);
 if ($cod2 !== 0) falha('gzip -t falhou');
 $fim = (string)shell_exec('gzip -dc ' . escapeshellarg($destino) . ' | tail -c 300');
-if (!str_contains($fim, 'Dump completed')) falha('o dump não terminou (sem "Dump completed")');
+if (strpos($fim, 'Dump completed') === false) falha('o dump não terminou (sem "Dump completed")');
 $tabelas = (int)trim((string)shell_exec('gzip -dc ' . escapeshellarg($destino) . ' | grep -c "^CREATE TABLE"'));
 printf("OK: %s (%d KB, %d tabelas)%s\n", $destino, intdiv(filesize($destino), 1024), $tabelas, $msg !== '' ? "\nAviso do mysqldump: $msg" : '');

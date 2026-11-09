@@ -16,7 +16,7 @@ ini_set('display_errors', '1'); error_reporting(E_ALL); ini_set('memory_limit', 
 $argv = $argv ?? ($_SERVER['argv'] ?? []);
 $raiz = rtrim((string)($argv[1] ?? ''), '/'); $apply = in_array('--apply', $argv, true);
 const MAXIMO = 1600; const QUALIDADE = 82;
-function falha(string $m): never { echo "ERRO: $m\n"; exit(1); }
+function falha(string $m) { echo "ERRO: $m\n"; exit(1); }
 if ($raiz === '' || !is_dir($raiz)) falha('informe a pasta nib-inscricoes-privado.');
 if (!function_exists('imagewebp') || !function_exists('imagecreatefromstring')) falha('o PHP deste servidor não tem GD com WebP.');
 $temExif = function_exists('exif_read_data');
@@ -29,11 +29,11 @@ foreach ($it as $f) { if ($f->isFile() && !$f->isLink() && preg_match('/\.(json|
 
 function orientacao(string $arq, bool $temExif): ?int {
   $cab = (string)file_get_contents($arq, false, null, 0, 65536);
-  if (!str_contains($cab, "Exif\0\0")) return 1;
+  if (strpos($cab, "Exif\0\0") === false) return 1;
   if (!$temExif) return null;
   $e = @exif_read_data($arq); return (int)($e['Orientation'] ?? 1) ?: 1;
 }
-function girar(GdImage $im, int $o): GdImage {
+function girar($im, int $o) {
   if ($o === 2) imageflip($im, IMG_FLIP_HORIZONTAL);
   elseif ($o === 3) $im = imagerotate($im, 180, 0);
   elseif ($o === 4) imageflip($im, IMG_FLIP_VERTICAL);
@@ -49,7 +49,7 @@ $bak = $apply ? getenv('HOME') . '/nib-manutencao/comprovantes-originais-' . dat
 if ($apply && !mkdir($bak, 0700, true)) falha('não consegui criar a pasta de backup.');
 
 foreach (array_keys($textos) as $json) {
-  if (!str_ends_with($json, '.json')) continue;
+  if (substr($json, -5) !== '.json') continue;
   $id = basename($json, '.json'); $pasta = dirname($json);
   $r = json_decode((string)file_get_contents($json), true);
   if (!is_array($r) || !is_string($r['receipt'] ?? null)) continue;
@@ -60,7 +60,7 @@ foreach (array_keys($textos) as $json) {
   // O nome não pode aparecer em nenhum outro arquivo (índices, exportações): senão a troca quebraria a referência.
   foreach (array_keys($textos) as $t) {
     if ($t === $json) continue;
-    if (str_contains((string)file_get_contents($t), $nome)) { $pulados[] = "$nome: citado também em " . substr($t, strlen($raiz) + 1); continue 2; }
+    if (strpos((string)file_get_contents($t), $nome) !== false) { $pulados[] = "$nome: citado também em " . substr($t, strlen($raiz) + 1); continue 2; }
   }
   $o = orientacao($img, $temExif);
   if ($o === null) { $pulados[] = "$nome: foto com rotação e PHP sem exif"; continue; }
