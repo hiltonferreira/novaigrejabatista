@@ -1,13 +1,41 @@
 {
   "criado_por_email": "hiltoncrivelon@gmail.com",
   "pilulas": [
-    {"arquivo": "exemplo-04.mp4", "duracao": 90, "titulo": "Pequenos começos", "tema": "Nossa história", "passagem": "Zacarias 4:10",
-     "texto": "Tudo começou com uma palavra e uma visão, na varanda de uma casa. Com fé, obediência e perseverança, a NIB cresceu por meio dos batismos e das células, e segue caminhando para a expansão do Reino."},
-    {"arquivo": "exemplo-03.mp4", "duracao": 15, "titulo": "Certeza da fé", "tema": "Fé", "passagem": "Hebreus 11:1",
-     "texto": "Fé é ter certeza das coisas que se esperam e convicção de fatos que não se veem. Um convite para fortalecer a sua fé."},
-    {"arquivo": "exemplo-02.mp4", "duracao": 27, "titulo": "Ele vive", "tema": "Páscoa", "passagem": "1 Coríntios 15:3-4",
-     "texto": "Jesus deu a vida por todos nós. Foi morto e sepultado, mas ao terceiro dia ressuscitou. Páscoa é tempo de recordar e celebrar que Ele vive."},
-    {"arquivo": "exemplo-01.mp4", "duracao": 30, "titulo": "Igreja é propósito", "tema": "Missão", "passagem": "Mateus 28:19-20",
-     "texto": "Alguém um dia trouxe o Evangelho até você. Agora é a sua vez de levá-lo aos outros. A igreja não é só lugar para frequentar: é lugar para pertencer, servir e cumprir o propósito de Deus."}
+    {
+      "arquivo": "exemplo-04.mp4",
+      "duracao": 90,
+      "titulo": "Pequenos começos",
+      "tema": "Nossa história",
+      "passagem": "Zacarias 4:10",
+      "texto": "Tudo começou com uma palavra e uma visão, na varanda de uma casa. Com fé, obediência e perseverança, a NIB cresceu por meio dos batismos e das células, e segue caminhando para a expansão do Reino.",
+      "capa": "capa-04.jpg"
+    },
+    {
+      "arquivo": "exemplo-03.mp4",
+      "duracao": 15,
+      "titulo": "Certeza da fé",
+      "tema": "Fé",
+      "passagem": "Hebreus 11:1",
+      "texto": "Fé é ter certeza das coisas que se esperam e convicção de fatos que não se veem. Um convite para fortalecer a sua fé.",
+      "capa": "capa-03.jpg"
+    },
+    {
+      "arquivo": "exemplo-02.mp4",
+      "duracao": 27,
+      "titulo": "Ele vive",
+      "tema": "Páscoa",
+      "passagem": "1 Coríntios 15:3-4",
+      "texto": "Jesus deu a vida por todos nós. Foi morto e sepultado, mas ao terceiro dia ressuscitou. Páscoa é tempo de recordar e celebrar que Ele vive.",
+      "capa": "capa-02.jpg"
+    },
+    {
+      "arquivo": "exemplo-01.mp4",
+      "duracao": 30,
+      "titulo": "Igreja é propósito",
+      "tema": "Missão",
+      "passagem": "Mateus 28:19-20",
+      "texto": "Alguém um dia trouxe o Evangelho até você. Agora é a sua vez de levá-lo aos outros. A igreja não é só lugar para frequentar: é lugar para pertencer, servir e cumprir o propósito de Deus.",
+      "capa": "capa-01.jpg"
+    }
   ]
 }

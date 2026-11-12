@@ -4,6 +4,7 @@
 // Terminal do cPanel, dentro da pasta com este script, pilulas.json e os .mp4:
 //   php pilulas-exemplo.php enviar    -> envia o que falta (ids ficam em enviados.json; rodar de novo não duplica)
 //   php pilulas-exemplo.php estado    -> mostra o estado de cada pílula no app
+//   php pilulas-exemplo.php capas     -> grava a capa (quadro escolhido do vídeo, já com o escurecimento) de cada pílula enviada
 //   php pilulas-exemplo.php remover   -> tira do app e apaga do YouTube as pílulas desta pasta
 declare(strict_types=1);
 if (PHP_SAPI !== 'cli') { http_response_code(404); exit; }
@@ -65,15 +66,28 @@ if ($acao === 'enviar') {
     $q = $db->prepare('SELECT id, titulo, estado, youtube_id, aviso, removido_em FROM nib_pilulas WHERE id = ?'); $q->execute([$id]);
     echo json_encode($q->fetch(), JSON_UNESCAPED_UNICODE) . "\n";
   }
+} elseif ($acao === 'capas') {
+  // Mesmo efeito do botão "Trocar capa" do app (api/pilulas.php, acao=capa): guarda a imagem no banco e muda capa_em.
+  foreach ($cfg['pilulas'] as $p) {
+    $id = (int)($ids[$p['arquivo']] ?? 0); $arq = "$pasta/" . ($p['capa'] ?? '');
+    if (!$id || empty($p['capa']) || !is_file($arq)) { echo "pulado: {$p['arquivo']} (sem pílula enviada ou sem capa)\n"; continue; }
+    $img = (string)file_get_contents($arq); $info = @getimagesizefromstring($img);
+    if (!$info || $info[2] !== IMAGETYPE_JPEG || strlen($img) > 1600000) { echo "capa inválida: {$p['capa']}\n"; continue; }
+    $db->prepare('REPLACE INTO nib_pilula_capas (pilula_id, tipo, imagem) VALUES (?, ?, ?)')->execute([$id, 'image/jpeg', $img]);
+    $db->prepare('UPDATE nib_pilulas SET capa_em = ? WHERE id = ? AND removido_em IS NULL')->execute([time(), $id]);
+    nib_registrar(null, 'pilula-capa', $id, 'exemplo');
+    echo "capa OK: pílula $id ({$p['titulo']}) {$info[0]}x{$info[1]}, " . round(strlen($img) / 1024) . " KB\n";
+  }
 } elseif ($acao === 'remover') {
   foreach ($ids as $arq => $id) {
     $q = $db->prepare('SELECT * FROM nib_pilulas WHERE id = ? AND removido_em IS NULL'); $q->execute([$id]); $r = $q->fetch();
     if (!$r) { echo "pílula $id já removida\n"; continue; }
     $db->prepare('UPDATE nib_pilulas SET removido_em = ?, sessao = NULL WHERE id = ?')->execute([nib_agora(), $id]);
+    $db->prepare('DELETE FROM nib_pilula_capas WHERE pilula_id = ?')->execute([$id]);
     $ok = !$r['youtube_id'] || nib_yt_apagar((string)$r['youtube_id']);
     nib_registrar(null, 'pilula-removida', (int)$id, (string)$r['youtube_id'] . ' exemplo');
     echo "removida pílula $id ({$r['titulo']})" . ($ok ? ", apagada do YouTube\n" : ", MAS não apagou no YouTube: apague no YouTube Studio\n");
   }
 } else {
-  echo "Uso: php pilulas-exemplo.php enviar | estado | remover\n";
+  echo "Uso: php pilulas-exemplo.php enviar | estado | capas | remover\n";
 }
