@@ -2691,3 +2691,19 @@ input[type="date"]::-webkit-calendar-picker-indicator{
 .progress li.is-complete:nth-child(2) > span::after{
   background:var(--step-done) !important;
 }
+
+/* Pix do formulário: mesmo botão e retorno visual da seção Generosidade. */
+.pix-payment.pix-payment-home{display:block!important;text-align:center}
+.pix-payment-home .pix-qr{max-width:none;margin:0 auto}
+.pix-payment-home .pix-qr img{margin:0 auto}
+#copy-pix.pix-copy-feedback{
+  width:100%;max-width:220px;margin:18px auto 0;padding:.85em 1.3em;
+  border:1px solid #9d3f1b;border-radius:999px;background:rgba(255,127,64,.1);
+  color:#873511;font-family:inherit;font-weight:600;font-size:.9rem;
+  cursor:pointer;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)
+}
+#copy-pix.pix-copy-feedback:hover{background:#ff7f40;color:#041e42;border-color:#ff7f40}
+.pix-payment-home #copy-status{display:block!important;margin:10px 0 0}
+.pix-payment-home #copy-status:empty{margin:0}
+.pix-payment-home #pix-code{width:100%;margin:10px 0 0;overflow-wrap:anywhere;text-align:left}
+.pix-payment-home #pix-code[hidden]{display:none!important}
