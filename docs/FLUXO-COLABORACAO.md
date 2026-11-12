@@ -40,3 +40,8 @@ Integração ativa e validada. O exemplo histórico permanece em `docs/integraco
 - Resposta verificada de `claude[bot]`: https://github.com/hiltonferreira/novaigrejabatista/pull/5#issuecomment-6488525847 — `NIB-CONEXAO-OK-FINAL`; confirmou main `35eaf82d0b9edeb905590b0c5a0a3f6ef7d63f58` e leitura de AGENTS.md, CLAUDE.md, docs/ESTADO-ATUAL.md e docs/FLUXO-COLABORACAO.md.
 - O primeiro teste não reconheceu o gatilho personalizado. O segundo publicou resposta, mas excedeu 6 turnos (9 contabilizados). Ambos foram corrigidos antes do teste final bem-sucedido.
 - Esta conexão executa Claude no GitHub Actions. Não reutiliza a memória da sessão web e não envia mensagens diretamente ao ChatGPT. Codex consulta a resposta durante a tarefa e a apresenta neste chat. Não há acompanhamento permanente em segundo plano.
+
+
+## Identidade e contraste — decisão de Hilton em 01/11/2026
+
+Os módulos novos seguem a identidade atual do site e da plataforma de eventos: fontes e logo oficiais, azul #041e42, marfim #ebebdf e padrões dos componentes existentes. Analisar contrastes sempre, inclusive hover, seleção, desabilitado e foco. Textos comuns devem atingir 4,5:1; contornos/foco significativos, 3:1. Registrar verificação e limites; não presumir acessibilidade completa a partir de paleta.

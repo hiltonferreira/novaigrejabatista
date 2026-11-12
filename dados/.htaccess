@@ -1,0 +1,11 @@
+# Dados públicos lidos pelo site e pelo aplicativo Plataforma Nib.
+<IfModule mod_headers.c>
+  <FilesMatch "\.json$">
+    Header set Access-Control-Allow-Origin "*"
+    Header set Cache-Control "no-cache, max-age=0"
+    Header set X-Content-Type-Options "nosniff"
+  </FilesMatch>
+</IfModule>
+<IfModule mod_mime.c>
+  AddType application/json .json
+</IfModule>

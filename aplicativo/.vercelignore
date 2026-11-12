@@ -1,0 +1,5 @@
+README.md
+*.test.cjs
+.openai/
+qa-*.html
+sw-version.cjs

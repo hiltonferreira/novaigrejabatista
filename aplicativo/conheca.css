@@ -1,0 +1,63 @@
+/* Página "Conheça o aplicativo" (conheca.html). */
+@font-face{font-family:"NIB Acumin";src:url("assets/acumin-regular.woff2") format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"NIB Acumin";src:url("assets/acumin-semibold.woff2") format("woff2");font-weight:600;font-display:swap}
+@font-face{font-family:"NIB Acumin";src:url("assets/acumin-bold.woff2") format("woff2");font-weight:700;font-display:swap}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:#f5f7fa;color:#041e42;font:400 1rem/1.6 "NIB Acumin",system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+h1,h2,h3{margin:0;letter-spacing:-.015em}
+svg{display:block}
+.cx-hero{position:relative;overflow:hidden;background:#041e42;color:#fff}
+.cx-hero-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 40%}
+.cx-hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,#041e42cc 0%,#041e42a6 45%,#041e42f5 100%)}
+.cx-hero-inner{position:relative;z-index:1;max-width:1040px;margin:0 auto;padding:calc(18px + env(safe-area-inset-top)) 20px 40px}
+.cx-back{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:8px 14px 8px 10px;border-radius:999px;background:#ffffff1f;color:#fff;font-size:.875rem;font-weight:600;text-decoration:none}
+.cx-back svg{width:20px;height:20px}
+.cx-logo{display:block;width:120px;height:auto;margin:56px 0 18px}
+.cx-kicker{display:block;font-size:.75rem;font-weight:600;letter-spacing:.18em;color:#ffb48a}
+.cx-hero h1{max-width:16ch;margin:8px 0 12px;font-size:clamp(2rem,7vw,3.25rem);line-height:1.1;font-weight:700}
+.cx-hero p{max-width:52ch;margin:0;font-size:1.0625rem;color:#dbe5f1}
+.cx-cta{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.cx-btn{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:12px 24px;border-radius:999px;border:1px solid transparent;font:inherit;font-weight:600;text-decoration:none;cursor:pointer}
+.cx-btn-light{background:#fff;color:#041e42}
+.cx-btn-ghost{border-color:#ffffff66;color:#fff}
+.cx-btn-dark{background:#041e42;color:#fff}
+.cx-btn:focus-visible,.cx-back:focus-visible,.cx-link:focus-visible,.cx-foot a:focus-visible{outline:3px solid #ff7f40;outline-offset:3px}
+main{max-width:1040px;margin:0 auto;padding:8px 20px 40px}
+.cx-section{margin-top:44px}
+.cx-label{display:block;font-size:.75rem;font-weight:600;letter-spacing:.18em;color:#a8401c}
+.cx-section h2{margin:6px 0 8px;font-size:clamp(1.5rem,4.5vw,2rem);line-height:1.2;font-weight:700}
+.cx-lead{max-width:60ch;margin:0 0 4px;color:#536176}
+.cx-grid{list-style:none;margin:20px 0 0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,280px),1fr));gap:12px}
+.cx-grid li{padding:20px;border:1px solid #e1e7ee;border-radius:20px;background:#fff}
+.cx-grid h3{margin:14px 0 4px;font-size:1.0625rem;font-weight:600}
+.cx-grid p,.cx-teams p,.cx-privacy p,.cx-step li{margin:0;font-size:.9375rem;line-height:1.55;color:#536176}
+.cx-ico{display:grid;place-items:center;width:44px;height:44px;border-radius:13px;background:#eef3f9;color:#041e42}
+.cx-ico svg{width:24px;height:24px}
+.cx-teams{list-style:none;margin:20px 0 0;padding:0;display:grid;gap:12px}
+.cx-teams li{display:flex;gap:16px;align-items:flex-start;padding:20px;border-radius:20px;background:#041e42;color:#fff}
+.cx-teams .cx-ico{flex:0 0 44px;background:#ffffff1a;color:#fff}
+.cx-teams h3{margin:0 0 4px;font-size:1.0625rem;font-weight:600}
+.cx-teams p{color:#c9d6e6}
+.cx-privacy{display:flex;gap:16px;align-items:flex-start;padding:22px;border:1px solid #cfe5d8;border-radius:20px;background:#f1f8f4}
+.cx-privacy .cx-ico{flex:0 0 48px;width:48px;height:48px;background:#24674e;color:#fff}
+.cx-privacy h2{margin-top:0;font-size:1.25rem}
+.cx-link{display:inline-flex;align-items:center;min-height:44px;margin-top:6px;font-weight:600;color:#24674e;text-underline-offset:4px}
+.cx-now{margin-top:18px}
+.cx-now[hidden]{display:none}
+.cx-steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:12px;margin-top:18px}
+.cx-step{padding:20px;border:1px solid #e1e7ee;border-radius:20px;background:#fff}
+.cx-step h3{font-size:1.0625rem;font-weight:600}
+.cx-step ol{margin:10px 0 0;padding-left:20px;display:grid;gap:6px}
+.cx-step b{color:#041e42}
+.cx-final{margin-top:48px;padding:32px 20px;border-radius:24px;background:#fff;border:1px solid #e1e7ee;text-align:center}
+.cx-final img{display:block;margin:0 auto 14px;border-radius:16px;box-shadow:0 6px 16px #041e4229}
+.cx-final h2{font-size:1.5rem;font-weight:700}
+.cx-final p{margin:6px auto 18px;max-width:40ch;color:#536176}
+.cx-foot{padding:24px 20px calc(24px + env(safe-area-inset-bottom));text-align:center;font-size:.875rem;color:#536176;border-top:1px solid #e1e7ee;background:#fff}
+.cx-foot p{margin:4px 0}
+.cx-foot a{display:inline-block;padding:10px 4px;font-weight:600;color:#041e42}
+@media(min-width:900px){.cx-hero-inner{padding-bottom:64px}.cx-logo{margin-top:72px}.cx-teams{grid-template-columns:repeat(3,1fr)}.cx-teams li{flex-direction:column}}
+@media(max-width:480px){.cx-cta .cx-btn{flex:1 1 100%}.cx-privacy{flex-direction:column}}
+@media(max-width:600px){.cx-grid{gap:10px}.cx-grid li{display:grid;grid-template-columns:44px minmax(0,1fr);column-gap:14px;padding:16px}.cx-grid .cx-ico{grid-row:span 2}.cx-grid h3{margin:0 0 2px}.cx-hero-inner{padding-bottom:32px}.cx-logo{margin-top:40px}}

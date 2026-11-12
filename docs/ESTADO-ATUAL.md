@@ -1,3 +1,7 @@
+# Atualização — 01/11/2026: novo aplicativo em teste
+
+O projeto anterior de Células foi descontinuado por Hilton para uso de plataforma pronta de outra igreja. Não usar suas regras/Preview como base do módulo novo. O novo aplicativo começa por Membresia e experiência unificada; primeira interface estática isolada em `aplicativo/`, branch de teste. Não há autenticação, dados reais, persistência ou pagamentos nesta versão. Detalhes e limites em `APLICATIVO-V1-2026-11-01.md`; coordenação na issue #11. Produção e inscrições não alteradas. O registro de 29/10 abaixo permanece como histórico, incluindo referências antigas ao Portal.
+
 # Estado verificado — 29/10/2026
 
 ## Sistemas
