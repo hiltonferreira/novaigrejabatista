@@ -1,7 +1,15 @@
-# Pix do formulário NXT CAMP
+# Pix e pagamento do NXT CAMP — 12/11/2026
 
-O QR Code e o botão de cópia ficam centralizados, como na seção Generosidade. O código deixa de ocupar um campo visível. O botão fica verde por 2,2 segundos após copiar; se as duas formas de cópia falharem, o campo é mostrado e selecionado.
+O ajuste visual do Pix deste PR foi publicado no cPanel. O formulário oficial manteve o QR Code, o código Pix, o link Sipag e o envio de comprovante. Em teste no navegador, o conteúdo da área de transferência coincidiu com o código e o campo ficou oculto. A confirmação de cópia dura 2,2 segundos; se a cópia automática falhar, o campo fica disponível para cópia manual.
 
-Foram preservados o código Pix, o QR Code e a etapa de comprovante. O HTML e o CSS de produção diferem da main: aplique apenas as mudanças do Pix aos arquivos em produção, preservando a integração do cartão e os ajustes já publicados. Não substitua a página inteira pela versão da main. Faça backup privado dos três arquivos antes de atualizar.
+Backup privado da publicação visual: `/home/novaigre/nib-manutencao/nib-pix-formulario-20261112-0uraj96z`. Os três arquivos publicados foram verificados por HTTPS e comparados com a versão preparada.
 
-Validação local: sintaxe JS, cópia moderna, cópia alternativa, retorno falso e exceção; checksum Pix, QR, link Sipag e etapa de comprovante conferidos na cópia de produção. Publicação pendente de acesso ao cPanel.
+## Correção de texto pendente de publicação
+
+No resumo do checkout oficial da Sipag para R$ 80,00, a modalidade exibida é cartão de crédito. O checkout não exibiu débito; parcelamento em 2x não foi verificado. O formulário deve informar **Pix ou cartão de crédito**, sem anunciar débito ou parcelamento.
+
+O script `scripts/ajustar-nxt-cartao-credito.py` altera apenas quatro trechos de texto no HTML em produção. Não altera valor, QR Code, código Pix ou URL da Sipag. Foi testado com a cópia do HTML oficial e a comparação mostrou apenas as quatro alterações esperadas.
+
+A correção do texto **não foi publicada**: o terminal do cPanel falhou na conexão e o Gerenciador de Arquivos retornou erro. O HTML público foi conferido após as tentativas e permaneceu idêntico ao original.
+
+Para aplicar no servidor com o usuário da hospedagem: `python3 ajustar-nxt-cartao-credito.py`. O script verifica os trechos originais, cria backup privado e substitui o HTML. Depois, confira o texto no site oficial. A versão da main não contém o mesmo HTML de produção; não use o HTML inteiro da main para substituir o arquivo em produção.
