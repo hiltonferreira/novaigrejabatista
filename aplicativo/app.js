@@ -332,7 +332,7 @@
   }
   function bindSocialBanners() { content.querySelectorAll('.social-track').forEach(bindSocialTrack); pilResumos(); }
   // Mensagem curta no banner da pílula, no padrão dos banners de "Acompanhe a igreja": frases inteiras terminadas em ponto
-  // e a passagem em negrito no fim, tudo em 2 linhas. Se nem a primeira frase couber, corta em palavra inteira e fecha com ponto
+  // e a passagem em negrito no fim, em até 3 linhas (Hilton, 12/11/2026). Se nem a primeira frase couber, corta em palavra inteira e fecha com ponto
   // (sem reticências, regra do Hilton).
   function pilResumos() {
     content.querySelectorAll('.pil-resumo[data-resumo]').forEach(el => {
@@ -634,7 +634,7 @@
     const l = (state.pilHome || []).slice(0, 3); if (!l.length) return '';
     const play = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 5.5v13l10.5-6.5z"/></svg>';
     const seta = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>';
-    // Título de 2 palavras quebra em 2 linhas; no quadro laranja, a mensagem curta em até 2 linhas (cortada em palavra inteira, sem reticências).
+    // Título de 2 palavras quebra em 2 linhas; no quadro laranja, a mensagem curta em até 3 linhas (cortada em palavra inteira, sem reticências).
     const titulo = t => { const w = String(t).trim().split(/\s+/); return w.length === 2 ? escape(w[0]) + '<br>' + escape(w[1]) : escape(t); };
     // Como nos banners de "Acompanhe a igreja": frase inteira terminada em ponto e, depois, a passagem bíblica em negrito (pedido de Hilton, 12/11/2026).
     const acao = p => p.passagem || ('Assistir' + (p.duracao ? ' ' + pilTempo(p.duracao) : ''));
