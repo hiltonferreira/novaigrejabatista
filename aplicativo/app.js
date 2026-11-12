@@ -330,7 +330,24 @@
   function socialBanners() {
     return `<section class="social-banners" aria-labelledby="social-title"><div class="section-heading"><h2 id="social-title">Acompanhe a igreja na internet</h2></div><div class="social-track">${socialLinks.map(([network,title,text,action,url,image]) => `<a class="social-card" href="${url}" target="_blank" rel="noopener noreferrer" aria-label="${network}: ${title}. ${text} ${action}. Abre em nova aba."><img src="${image}" alt="" width="900" height="682" loading="lazy"><span class="social-kicker">${network}</span><strong class="social-title">${title}</strong><span class="social-box"><span>${text} <b>${action}</b></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></span></a>`).join('')}</div><div class="social-dots" aria-hidden="true">${socialLinks.map((_,i)=>`<span${i?'':' class="is-active"'}></span>`).join('')}</div></section>`;
   }
-  function bindSocialBanners() { content.querySelectorAll('.social-track').forEach(bindSocialTrack); pilResumos(); }
+  function bindSocialBanners() { content.querySelectorAll('.social-track').forEach(bindSocialTrack); pilResumos(); pilTextos(); }
+  // Descrição na lista de pílulas (pedido de Hilton, 12/11/2026): até 4 linhas, cortada em palavra inteira (sem reticências)
+  // e, quando cortada, "Ler mais" logo abaixo. O card inteiro abre a pílula, onde a descrição aparece completa.
+  function pilTextos() {
+    const liga = /^(e|ou|mas|que|para|com|sem|na|no|nas|nos|em|de|da|do|das|dos|a|o|as|os|um|uma|por|pela|pelo|se|ao|à|sua|seu|suas|seus|nossa|nosso|minha|meu)$/i;
+    content.querySelectorAll('.pil-card-texto[data-texto]').forEach(el => {
+      const mais = el.nextElementSibling && el.nextElementSibling.classList.contains('pil-ler-mais') ? el.nextElementSibling : null;
+      el.textContent = el.dataset.texto;
+      const cabe = () => el.scrollHeight <= el.clientHeight + 1;
+      if (cabe()) { if (mais) mais.remove(); return; }
+      if (!mais) el.insertAdjacentHTML('afterend', '<span class="pil-ler-mais">Ler mais</span>');
+      const w = el.dataset.texto.split(/\s+/);
+      while (w.length > 1) {
+        w.pop(); while (w.length > 1 && liga.test(w[w.length - 1].replace(/[,;:–—-]+$/, ''))) w.pop();
+        el.textContent = w.join(' ').replace(/[\s,;:–—-]+$/, ''); if (cabe()) return;
+      }
+    });
+  }
   // Mensagem curta no banner da pílula, no padrão dos banners de "Acompanhe a igreja": frases inteiras terminadas em ponto
   // e a passagem em negrito no fim, em até 3 linhas (Hilton, 12/11/2026). Se nem a primeira frase couber, corta em palavra inteira e fecha com ponto
   // (sem reticências, regra do Hilton).
@@ -356,7 +373,7 @@
     });
   }
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => pilResumos());
-  addEventListener('resize', () => pilResumos());
+  addEventListener('resize', () => { pilResumos(); pilTextos(); });
   function bindSocialTrack(track) {
     const dots = [...track.parentElement.querySelectorAll('.social-dots span')];
     const cards = [...track.children];
@@ -644,12 +661,12 @@
   function pilLista() {
     const d = state.pil, l = d.pilulas;
     if (!l.length) return `<p class="event-empty">${state.pilErro ? escape(state.pilErro) : state.pilQ ? `Nenhuma pílula encontrada para “${escape(state.pilQ)}”. Tente outra palavra ou a passagem bíblica.` : state.pilTema ? 'Nenhuma pílula com este tema ainda.' : 'Ainda não há pílulas publicadas. Quando o pastor enviar, ela aparece aqui e no início do app.'}</p>`;
-    return `<ul class="pil-list">${l.map(p => `<li class="pil-item"><button type="button" class="pil-card" data-pil-abrir="${p.id}">${pilThumb(p)}<span class="pil-card-body">${p.estado && p.estado !== 'publicado' ? `<span class="pil-estado is-${escape(p.estado)}">${escape(p.troca ? 'Trocando o vídeo' : pilEstados[p.estado] || p.estado)}${p.estado === 'enviando' ? ` · ${p.progresso}%` : ''}</span>` : p.oculto ? '<span class="pil-estado is-oculta">Oculta</span>' : p.agendado ? `<span class="pil-estado is-programada">Programada · ${escape(pilQuando(p.publicar_em))}</span>` : p.tema ? `<span class="pil-tema">${escape(p.tema)}</span>` : ''}<strong>${escape(p.titulo)}</strong><small>${escape([p.passagem, pilData(p.data)].filter(Boolean).join(' · '))}</small>${p.texto ? `<span class="pil-card-texto">${escape(p.texto)}</span>` : ''}</span></button>${p.estado && p.youtube_id ? `<button type="button" class="pil-card-editar" data-pil-editar-id="${p.id}" aria-label="Editar ${escape(p.titulo)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L18.5 9.5a2.1 2.1 0 0 0-3-3L5 17v3z M13.5 8.5l3 3"/></svg></button>` : ''}${(p.trechos || []).length ? `<div class="pil-trechos"><span>Falado no vídeo</span>${p.trechos.map(([t, txt]) => `<button type="button" data-pil-abrir="${p.id}" data-t="${t}"><b>${pilTempo(t)}</b>${escape(txt)}</button>`).join('')}</div>` : ''}</li>`).join('')}</ul>`;
+    return `<ul class="pil-list">${l.map(p => `<li class="pil-item"><button type="button" class="pil-card" data-pil-abrir="${p.id}">${pilThumb(p)}<span class="pil-card-body">${p.estado && p.estado !== 'publicado' ? `<span class="pil-estado is-${escape(p.estado)}">${escape(p.troca ? 'Trocando o vídeo' : pilEstados[p.estado] || p.estado)}${p.estado === 'enviando' ? ` · ${p.progresso}%` : ''}</span>` : p.oculto ? '<span class="pil-estado is-oculta">Oculta</span>' : p.agendado ? `<span class="pil-estado is-programada">Programada · ${escape(pilQuando(p.publicar_em))}</span>` : p.tema ? `<span class="pil-tema">${escape(p.tema)}</span>` : ''}<strong>${escape(p.titulo)}</strong><small>${escape([p.passagem, pilData(p.data)].filter(Boolean).join(' · '))}</small>${p.texto ? `<span class="pil-card-texto" data-texto="${escape(p.texto)}">${escape(p.texto)}</span>` : ''}</span><span class="pil-card-seta" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></span></button>${p.estado && p.youtube_id ? `<button type="button" class="pil-card-editar" data-pil-editar-id="${p.id}" aria-label="Editar ${escape(p.titulo)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L18.5 9.5a2.1 2.1 0 0 0-3-3L5 17v3z M13.5 8.5l3 3"/></svg></button>` : ''}${(p.trechos || []).length ? `<div class="pil-trechos"><span>Falado no vídeo</span>${p.trechos.map(([t, txt]) => `<button type="button" data-pil-abrir="${p.id}" data-t="${t}"><b>${pilTempo(t)}</b>${escape(txt)}</button>`).join('')}</div>` : ''}</li>`).join('')}</ul>`;
   }
   let pilTimer = 0;
   function pilBuscar(v) {
     clearTimeout(pilTimer);
-    pilTimer = setTimeout(() => { state.pilQ = v.trim(); loadPilulas().then(() => { const box = content.querySelector('#pil-results'); if (box && state.view === 'pilulas' && !state.pilSel) box.innerHTML = pilLista(); }); }, 350);
+    pilTimer = setTimeout(() => { state.pilQ = v.trim(); loadPilulas().then(() => { const box = content.querySelector('#pil-results'); if (box && state.view === 'pilulas' && !state.pilSel) { box.innerHTML = pilLista(); pilTextos(); } }); }, 350);
   }
   const pilAdmin = () => !!(account() && NibConta.pessoa().papel === 'admin');
   // Canal do YouTube no Painel da administração (pedido de Hilton, 08/11/2026): conectar e desconectar ficam só aqui.
