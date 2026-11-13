@@ -2813,3 +2813,8 @@ dialog.ck-telao::backdrop{background:#041e42}
 #nib-proposta .seg-auto.seg-rolar::-webkit-scrollbar{display:none}
 #nib-proposta .seg-auto.seg-rolar>button,#nib-proposta .pil-temas.seg-rolar .history-year{flex:0 0 auto;min-height:40px;padding:6px 16px;border:0;background:transparent!important}
 #nib-proposta .seg.seg-rolar>.seg-pill{left:0;width:var(--w,0);transform:translateX(var(--x,0));transition:transform .32s cubic-bezier(.22,1,.36,1),width .32s cubic-bezier(.22,1,.36,1)}
+/* v185: padrão de espaçamento título → subtítulo em todo o app (Hilton, 13/11/2026): o subtítulo fica colado ao título (6 px), e o bloco respira depois dele. */
+#nib-proposta .section-heading:has(+p){margin-bottom:6px}
+#nib-proposta .section-heading+p{margin:0 0 18px;color:#536176;line-height:1.5}
+#nib-proposta .box h2:has(+p),#nib-proposta .box h2:has(+.note){margin-bottom:8px}
+#nib-proposta .box h2+p,#nib-proposta .box h2+.note{margin-top:0}
