@@ -2773,3 +2773,14 @@ dialog.ck-telao::backdrop{background:#041e42}
 #nib-proposta .social-banners:not(.pil-banners) .social-card::before{background:linear-gradient(180deg,#000000a6 0%,#00000047 34%,#00000033 52%,#000000b3 78%,#000000d9 100%)}
 #nib-proposta .social-banners:not(.pil-banners) .social-box,#nib-proposta .home-desk .social-banners:not(.pil-banners) .social-box{padding:0;background:none;border-radius:0;backdrop-filter:none;-webkit-backdrop-filter:none;text-shadow:0 1px 3px #00000099}
 #nib-proposta .social-banners:not(.pil-banners) .social-box svg{filter:drop-shadow(0 1px 2px #00000099)}
+/* v180: seletor de quadro da capa no estilo do Instagram (prévia no formato do banner + faixa de miniaturas + quadradinho arrastável). */
+#nib-proposta .pil-quadros{align-items:stretch;gap:14px}
+#nib-proposta .pil-quadros-prev{position:relative;width:min(100%,240px);aspect-ratio:8/9;margin:0 auto;border-radius:16px;overflow:hidden;background:#041e42;box-shadow:0 8px 24px #041e4226}
+#nib-proposta .pil-quadros-prev:not(.is-vertical){width:min(100%,320px)}
+#nib-proposta .pil-capa-video .pil-quadros-prev video{position:absolute;inset:0;width:100%;height:100%;max-height:none;object-fit:cover;border-radius:0;background:#041e42}
+#nib-proposta .pil-quadros-faixa{position:relative;height:60px;margin:6px 0 12px;border-radius:10px;background:#041e42}
+#nib-proposta .pil-quadros-faixa>canvas{display:block;width:100%;height:100%;border-radius:10px;opacity:.6}
+#nib-proposta .pil-quadros-sel{position:absolute;top:-6px;bottom:-6px;width:46px;transform:translateX(-50%);border:3px solid #fff;border-radius:9px;overflow:hidden;background:#041e42;box-shadow:0 3px 10px #041e4266;pointer-events:none}
+#nib-proposta .pil-quadros-sel canvas{display:block;width:100%;height:100%}
+#nib-proposta .pil-quadros-faixa input[type=range]{position:absolute;inset:-6px 0;width:100%;height:calc(100% + 12px);margin:0;opacity:0;cursor:grab;touch-action:none}
+#nib-proposta .pil-quadros-faixa:has(input:focus-visible) .pil-quadros-sel{outline:3px solid #1f4fc2;outline-offset:2px}

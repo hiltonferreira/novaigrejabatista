@@ -605,9 +605,11 @@
     const foto = `<label class="button">Foto do celular<input type="file" accept="image/*" data-pil-capa-foto class="visually-hidden"></label>`;
     const auto = (nova || (p && p.capa)) ? '<button type="button" class="link-button" data-pil-capa-auto>Usar a automática do YouTube</button>' : '';
     const acoes = p ? `<label class="button">Quadro de um vídeo<input type="file" accept="video/*" data-pil-capa-video class="visually-hidden"></label>${foto}${auto}` : `<button type="button" class="button" data-pil-capa-quadros>Um quadro do vídeo</button>${foto}${auto}`;
-    const dica = p ? (state.pilCapaVid ? 'Pause o vídeo no ponto que quiser e toque em "Usar este quadro".' : src ? 'Capa escolhida por você.' : 'Hoje a capa é a automática do YouTube.') : src ? 'Capa escolhida por você.' : state.pilCapaQuadros ? 'Pause o vídeo no ponto que quiser e toque em "Usar este quadro".' : 'Automática do YouTube. Você pode escolher um momento do vídeo ou uma foto do celular.';
+    const dica = p ? (state.pilCapaVid ? 'Arraste o quadradinho na faixa até o momento que quiser e toque em "Usar este quadro".' : src ? 'Capa escolhida por você.' : 'Hoje a capa é a automática do YouTube.') : src ? 'Capa escolhida por você.' : state.pilCapaQuadros ? 'Arraste o quadradinho na faixa até o momento que quiser e toque em "Usar este quadro".' : 'Automática do YouTube. Você pode escolher um momento do vídeo ou uma foto do celular.';
     const vsrc = p ? state.pilCapaVid : state.pilCapaQuadros ? state.pilFileUrl : null;
-    const vid = vsrc ? `<div class="pil-capa-video"><video src="${vsrc}" muted playsinline controls preload="metadata"></video><div class="form-actions"><button type="button" class="action primary" data-pil-quadro>Usar este quadro</button><button type="button" class="button" data-pil-capa-fechar>Cancelar</button></div></div>` : '';
+    // Seletor de quadro no estilo do Instagram (Hilton, 13/11/2026): prévia grande no formato do banner, faixa de miniaturas e um quadradinho que se arrasta.
+    const vid = vsrc ? `<div class="pil-capa-video pil-quadros"><div class="pil-quadros-prev${(p ? p.vertical : !state.pilMeta || state.pilMeta.vertical) ? ' is-vertical' : ''}"><video src="${vsrc}" muted playsinline preload="auto"></video></div><div class="pil-quadros-faixa"><canvas aria-hidden="true"></canvas><span class="pil-quadros-sel" aria-hidden="true"><canvas></canvas></span><input type="range" min="0" max="1000" value="0" step="1" aria-label="Momento do vídeo usado como capa" data-pil-quadro-pos></div><div class="form-actions"><button type="button" class="action primary" data-pil-quadro>Usar este quadro</button><button type="button" class="button" data-pil-capa-fechar>Cancelar</button></div></div>` : '';
+    if (vsrc) requestAnimationFrame(pilQuadrosIniciar);
     return `<div class="pil-capa" id="pil-capa"><span class="pil-capa-img${(p ? p.vertical : !state.pilMeta || state.pilMeta.vertical) ? ' is-vertical' : ''}">${src ? `<img src="${escape(src)}" alt="Capa da pílula">` : p && p.youtube_id ? pilCapaImg(p) : '<small>Automática</small>'}</span><div><strong>Capa</strong><small>${escape(dica)}</small><div class="pil-capa-acoes">${acoes}</div></div>${vid}</div>`;
   }
   // Reduz a imagem (foto ou quadro do vídeo) para no máximo 1280 px. Usa WebP (bem menor, mesma qualidade);
@@ -627,8 +629,37 @@
       return await pilCapaJpeg(img, img.naturalWidth, img.naturalHeight);
     } finally { URL.revokeObjectURL(url); }
   }
+  // Liga a faixa de quadros: miniaturas tiradas de uma cópia do vídeo e o quadradinho que mostra o quadro escolhido.
+  function pilQuadrosIniciar() {
+    const box = content.querySelector('.pil-quadros'); if (!box || box.dataset.ok) return; box.dataset.ok = '1';
+    const video = box.querySelector('video'), faixa = box.querySelector('.pil-quadros-faixa'), tira = faixa.querySelector(':scope > canvas');
+    const sel = faixa.querySelector('.pil-quadros-sel'), mini = sel.querySelector('canvas'), pos = faixa.querySelector('input');
+    const cobre = (ctx, fonte, x, y, w, h) => { const fw = fonte.videoWidth, fh = fonte.videoHeight; if (!fw || !fh) return; const k = Math.max(w / fw, h / fh), sw = w / k, sh = h / k; ctx.drawImage(fonte, (fw - sw) / 2, (fh - sh) / 2, sw, sh, x, y, w, h); };
+    const lugar = () => { sel.style.left = (sel.offsetWidth / 2 + (faixa.clientWidth - sel.offsetWidth) * pos.value / 1000) + 'px'; };
+    const desenhaMini = () => { const r = devicePixelRatio || 1; mini.width = sel.clientWidth * r; mini.height = sel.clientHeight * r; cobre(mini.getContext('2d'), video, 0, 0, mini.width, mini.height); };
+    const ir = () => { const d = video.duration; if (d && isFinite(d)) video.currentTime = Math.min(d - 0.05, Math.max(0.05, d * pos.value / 1000)); lugar(); };
+    pos.addEventListener('input', ir);
+    video.addEventListener('seeked', desenhaMini);
+    video.addEventListener('loadeddata', () => { ir(); desenhaMini(); });
+    addEventListener('resize', lugar);
+    lugar();
+    // Miniaturas da faixa: uma segunda cópia do vídeo vai pulando pelos pontos; se o aparelho não deixar, a faixa fica só com o fundo.
+    const copia = document.createElement('video'); copia.muted = true; copia.playsInline = true; copia.preload = 'auto'; copia.src = video.src;
+    copia.addEventListener('loadedmetadata', async () => {
+      const d = copia.duration; if (!d || !isFinite(d)) return;
+      const r = devicePixelRatio || 1, n = Math.max(5, Math.min(10, Math.round(faixa.clientWidth / 40)));
+      tira.width = faixa.clientWidth * r; tira.height = faixa.clientHeight * r;
+      const ctx = tira.getContext('2d'), w = tira.width / n;
+      for (let i = 0; i < n; i++) {
+        if (!box.isConnected) return;
+        await new Promise(res => { const t = setTimeout(res, 1500); copia.addEventListener('seeked', () => { clearTimeout(t); res(); }, { once: true }); copia.currentTime = d * (i + 0.5) / n; });
+        cobre(ctx, copia, Math.round(i * w), 0, Math.ceil(w), tira.height);
+      }
+      copia.removeAttribute('src'); copia.load();
+    }, { once: true });
+  }
   function pilCapaQuadro(video) {
-    if (!video || video.readyState < 2 || !video.videoWidth) return Promise.reject(new Error('Toque no play e pause o vídeo no ponto que quiser usar como capa.'));
+    if (!video || video.readyState < 2 || !video.videoWidth) return Promise.reject(new Error('Espere o vídeo carregar e arraste o quadradinho até o momento que quiser usar como capa.'));
     return pilCapaJpeg(video, video.videoWidth, video.videoHeight);
   }
   // Capa nova: no formulário fica guardada até publicar; numa pílula publicada, salva na hora.
