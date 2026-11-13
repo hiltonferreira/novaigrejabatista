@@ -29,6 +29,14 @@
       const key = g.dataset.seg, from = segPrev.has(key) ? segPrev.get(key) : i; segPrev.set(key, i);
       g.classList.add('seg', 'seg-auto'); g.style.setProperty('--n', btns.length); g.style.setProperty('--i', i); g.style.setProperty('--from', from);
       if (!g.querySelector(':scope > .seg-pill')) { const pill = document.createElement('span'); pill.className = 'seg-pill' + (from !== i ? ' is-moving' : ''); pill.setAttribute('aria-hidden', 'true'); g.prepend(pill); }
+      // Variante com rolagem (muitas opções, larguras diferentes, ex.: temas das Pílulas): a pílula branca segue o botão ativo.
+      if (g.classList.contains('seg-rolar')) {
+        const pill = g.querySelector(':scope > .seg-pill'), b = btns[i], antes = segPrev.get(key + ':px');
+        const vai = () => { pill.style.setProperty('--x', b.offsetLeft + 'px'); pill.style.setProperty('--w', b.offsetWidth + 'px'); segPrev.set(key + ':px', [b.offsetLeft, b.offsetWidth, g.scrollLeft]); };
+        pill.classList.remove('is-moving');
+        if (antes) { g.scrollLeft = antes[2]; pill.style.transition = 'none'; pill.style.setProperty('--x', antes[0] + 'px'); pill.style.setProperty('--w', antes[1] + 'px'); void pill.offsetWidth; pill.style.transition = ''; }
+        requestAnimationFrame(() => { vai(); const alvo = b.offsetLeft - (g.clientWidth - b.offsetWidth) / 2; g.scrollTo({ left: Math.max(0, alvo), behavior: antes ? 'smooth' : 'auto' }); });
+      }
     });
   }
   const viewHistory = [];
@@ -791,7 +799,7 @@
     if (!state.pil) { if (!state.pilLoading) loadPilulas().then(() => { if (state.view === 'pilulas' && !state.pilSel) show('pilulas', false, false); }); return '<p class="event-empty">Carregando as pílulas</p>'; }
     const d = state.pil, lider = d.equipe && NibConta.lideranca();
     const temas = d.temas || [];
-    const chips = temas.length > 1 || state.pilTema ? `<div class="pil-temas" role="group" aria-label="Filtrar por tema"><button type="button" class="history-year${state.pilTema ? '' : ' is-active'}" data-pil-tema="" aria-pressed="${!state.pilTema}">Todos</button>${temas.map(t => `<button type="button" class="history-year${state.pilTema === t ? ' is-active' : ''}" data-pil-tema="${escape(t)}" aria-pressed="${state.pilTema === t}">${escape(t)}</button>`).join('')}</div>` : '';
+    const chips = temas.length > 1 || state.pilTema ? `<div class="pil-temas seg-rolar" role="group" aria-label="Filtrar por tema" data-seg="pil-temas"><button type="button" class="history-year${state.pilTema ? '' : ' is-active'}" data-pil-tema="" aria-pressed="${!state.pilTema}">Todos</button>${temas.map(t => `<button type="button" class="history-year${state.pilTema === t ? ' is-active' : ''}" data-pil-tema="${escape(t)}" aria-pressed="${state.pilTema === t}">${escape(t)}</button>`).join('')}</div>` : '';
     return `${lider ? pilEquipe(d) : ''}<div class="pil-search"><label class="visually-hidden" for="pil-q">Buscar nas pílulas</label><input id="pil-q" type="search" value="${escape(state.pilQ || '')}" placeholder="Buscar por tema, passagem ou palavra" autocomplete="off" enterkeyhint="search"></div>${chips}<div id="pil-results">${pilLista()}</div>`;
   }
   const pilIframe = (p, t, auto) => `<iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(p.youtube_id)}?rel=0&amp;playsinline=1&amp;modestbranding=1${t ? '&amp;start=' + t : ''}${auto ? '&amp;autoplay=1' : ''}" title="${escape(p.titulo)}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>`;
@@ -1159,7 +1167,7 @@
     if (PUBLIC && action.dataset.pilAbrir) { state.pilSel = { id: Number(action.dataset.pilAbrir), t: Number(action.dataset.t) || 0 }; state.pilEdit = false; state.pilCapaEd = false; pilCapaVidFechar(); if (!state.pilVer || state.pilVer.id !== state.pilSel.id) state.pilVer = null; show('pilulas', true, false); return; }
     if (PUBLIC && action.dataset.pilVoltar !== undefined) { state.pilSel = null; state.pilEdit = false; state.pilCapaEd = false; pilCapaVidFechar(); show('pilulas', true, false); return; }
     if (PUBLIC && action.dataset.pilT !== undefined) { const box = content.querySelector('#pil-player'), p = state.pilVer; if (box && p) { box.innerHTML = pilIframe(p, Number(action.dataset.pilT), true); box.scrollIntoView({ block: 'start', behavior: 'smooth' }); } return; }
-    if (PUBLIC && action.dataset.pilTema !== undefined) { state.pilTema = action.dataset.pilTema; loadPilulas().then(() => { if (state.view === 'pilulas') show('pilulas', false, false); }); return; }
+    if (PUBLIC && action.dataset.pilTema !== undefined) { state.pilTema = action.dataset.pilTema; const grupo = action.parentElement; grupo.querySelectorAll(':scope > button').forEach(b => { const on = b === action; b.classList.toggle('is-active', on); b.setAttribute('aria-pressed', on); }); segify(grupo.parentElement); loadPilulas().then(() => { if (state.view === 'pilulas') show('pilulas', false, false); }); return; }
     if (PUBLIC && action.dataset.pilNova !== undefined) { state.pilUp = null; state.pilForm = !!state.pilFile; show('pilulas', false, false); return; }
     if (PUBLIC && action.dataset.pilCancelar !== undefined) { state.pilForm = false; state.pilFile = null; pilCapaLimpar(); state.pilRasc = null; state.pilTemaNovo = ''; if (state.pilFileUrl) { URL.revokeObjectURL(state.pilFileUrl); state.pilFileUrl = null; } show('pilulas', false, false); return; }
     if (PUBLIC && action.dataset.pilTemaEscolha !== undefined) { const fs = action.closest('fieldset'); const on = !action.classList.contains('is-on'); fs.querySelectorAll('.pil-chip').forEach(b => { b.classList.remove('is-on'); b.setAttribute('aria-pressed', 'false'); }); if (on) { action.classList.add('is-on'); action.setAttribute('aria-pressed', 'true'); } fs.querySelector('[name=tema]').value = on ? action.dataset.pilTemaEscolha : ''; const o = fs.querySelector('.pil-tema-outro'); o.hidden = true; o.value = ''; state.pilTemaNovo = on ? action.dataset.pilTemaEscolha : ''; return; }

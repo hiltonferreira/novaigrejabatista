@@ -2808,3 +2808,8 @@ dialog.ck-telao::backdrop{background:#041e42}
 #nib-proposta main .pil-curtir.is-detalhe{padding:9px 14px;border:1px solid #d5deea;background:#fff;font-size:14px}
 #nib-proposta main .pil-compartilhar{display:inline-flex;align-items:center;gap:7px;min-height:0;height:auto;margin:0;padding:9px 16px;border:0;border-radius:999px;background:#041e42;color:#fff;font:600 14px/1 "NIB Acumin Mobile",Arial,sans-serif;cursor:pointer}
 #nib-proposta .pil-compartilhar svg{width:18px;height:18px}
+/* v184: temas das Pílulas na barra padrão (trilho cinza + pílula branca deslizante), com rolagem porque os temas variam (Hilton, 13/11/2026). */
+#nib-proposta .seg-auto.seg-rolar{display:flex!important;justify-content:flex-start;overflow-x:auto;scrollbar-width:none;max-width:100%;width:auto}
+#nib-proposta .seg-auto.seg-rolar::-webkit-scrollbar{display:none}
+#nib-proposta .seg-auto.seg-rolar>button,#nib-proposta .pil-temas.seg-rolar .history-year{flex:0 0 auto;min-height:40px;padding:6px 16px;border:0;background:transparent!important}
+#nib-proposta .seg.seg-rolar>.seg-pill{left:0;width:var(--w,0);transform:translateX(var(--x,0));transition:transform .32s cubic-bezier(.22,1,.36,1),width .32s cubic-bezier(.22,1,.36,1)}
