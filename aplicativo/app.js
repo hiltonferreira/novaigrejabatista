@@ -396,6 +396,22 @@
     track.addEventListener('scroll', () => { if (!frame) frame = requestAnimationFrame(update); }, {passive:true});
     addEventListener('resize', () => { if (!frame) frame = requestAnimationFrame(update); });
     update();
+    // Carrossel automático (Hilton, 13/11/2026): só nos banners das redes, 5 s por card, em loop; pausa enquanto a pessoa toca/arrasta.
+    if (!track.closest('.pil-banners')) {
+      let parado = 0;
+      const pausa = () => { parado = Date.now(); };
+      ['pointerdown', 'touchstart', 'wheel'].forEach(ev => track.addEventListener(ev, pausa, {passive:true}));
+      const timer = setInterval(() => {
+        if (!track.isConnected) { clearInterval(timer); return; }
+        if (document.hidden || Date.now() - parado < 8000 || track.scrollWidth <= track.clientWidth + 1) return;
+        const left = track.scrollLeft;
+        let atual = 0;
+        cards.forEach((card,i) => { if (Math.abs(card.offsetLeft - track.offsetLeft - left) < Math.abs(cards[atual].offsetLeft - track.offsetLeft - left)) atual = i; });
+        const fim = left + track.clientWidth >= track.scrollWidth - 2;
+        const prox = fim ? 0 : atual + 1;
+        track.scrollTo({ left: cards[prox].offsetLeft - track.offsetLeft, behavior: still.matches ? 'auto' : 'smooth' });
+      }, 5000);
+    }
   }
   // Aniversariantes da semana: visível para todos os membros (só nome, dia e mês).
   // Mensagem só para o aniversariante: popup com fundo de vidro, uma vez por sessão,
