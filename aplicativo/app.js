@@ -699,8 +699,11 @@
     NibConta.pilulas('curtir', { id, curtir: quer }).then(d => pinta(d.curti, d.curtidas)).catch(e => { pinta(antes.curti, antes.curtidas); announce(e.message, 'warning'); });
   }
   async function pilCompartilhar(p) {
-    const url = location.origin + location.pathname.replace(/[^/]*$/, '') + '?pilula=' + p.id;
-    const texto = `${p.titulo}${p.passagem ? ' (' + p.passagem + ')' : ''}: uma Pílula de Sabedoria da Nova Igreja Batista.`;
+    // O link passa pela página de compartilhamento: WhatsApp e Instagram mostram a capa, o título e o resumo.
+    const url = location.origin + location.pathname.replace(/[^/]*$/, '') + 'api/compartilhar.php?pilula=' + p.id;
+    const frases = (p.texto || '').replace(/\s+/g, ' ').trim().split(/(?<=[.!?])\s+/);
+    let resumo = ''; for (const f of frases) { if (resumo && (resumo + ' ' + f).length > 220) break; resumo = resumo ? resumo + ' ' + f : f; }
+    const texto = `*${p.titulo}*${p.passagem ? ' · ' + p.passagem : ''}\n\n${resumo ? resumo + '\n\n' : ''}▶️ Assista agora no app da Nib:`;
     if (navigator.share) { try { await navigator.share({ title: p.titulo, text: texto, url }); } catch (_) {} return; }
     try { await navigator.clipboard.writeText(texto + ' ' + url); announce('Link copiado. Cole no Instagram, WhatsApp ou onde quiser.', 'success', false); }
     catch (_) { prompt('Copie o link da pílula:', url); }
