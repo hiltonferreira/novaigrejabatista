@@ -396,8 +396,8 @@
     track.addEventListener('scroll', () => { if (!frame) frame = requestAnimationFrame(update); }, {passive:true});
     addEventListener('resize', () => { if (!frame) frame = requestAnimationFrame(update); });
     update();
-    // Carrossel automático (Hilton, 13/11/2026): só nos banners das redes, 5 s por card, em loop; pausa enquanto a pessoa toca/arrasta.
-    if (!track.closest('.pil-banners')) {
+    // Carrossel automático (Hilton, 13/11/2026): banners das redes e das Pílulas, 5 s por card, em loop; pausa enquanto a pessoa toca/arrasta.
+    {
       let parado = 0;
       const pausa = () => { parado = Date.now(); };
       ['pointerdown', 'touchstart', 'wheel'].forEach(ev => track.addEventListener(ev, pausa, {passive:true}));
