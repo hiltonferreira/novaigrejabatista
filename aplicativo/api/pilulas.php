@@ -99,6 +99,7 @@ function nib_pil_salvar_busca(PDO $db, int $id): void {
 }
 
 // Confere no YouTube se o vídeo terminou de processar. Ao ficar pronto, aparece para a igreja (e avisa no celular, se pedido).
+const NIB_PIL_BLOQUEADO = 'O YouTube bloqueou este vídeo no Brasil por direitos autorais (geralmente a música de fundo). A igreja não vê esta pílula. No YouTube Studio, abra o vídeo, vá em Direitos autorais e silencie ou substitua a música; o app libera sozinho depois.';
 function nib_pil_conferir(PDO $db, array $r): void {
   $db->prepare('UPDATE nib_pilulas SET conferido_em = ? WHERE id = ?')->execute([nib_agora(), $r['id']]);
   $it = nib_yt_get('/youtube/v3/videos', ['part' => 'status,contentDetails', 'id' => $r['youtube_id']])['items'][0] ?? null;
@@ -112,10 +113,18 @@ function nib_pil_conferir(PDO $db, array $r): void {
   }
   if ($up !== 'processed') return;
   if ($priv === 'private') { $db->prepare("UPDATE nib_pilulas SET estado = 'privado', aviso = ?, duracao = ? WHERE id = ?")->execute([NIB_PIL_PRIVADO, $dur, $r['id']]); return; }
+  // Bloqueio por direitos autorais (ex.: música de fundo): o YouTube não deixa assistir no Brasil. A igreja não vê; a liderança vê o aviso.
+  // Volta sozinho quando o bloqueio sai (a manutenção confere de novo).
+  $reg = $it['contentDetails']['regionRestriction'] ?? [];
+  if (in_array('BR', (array)($reg['blocked'] ?? []), true) || (isset($reg['allowed']) && !in_array('BR', (array)$reg['allowed'], true))) {
+    $db->prepare("UPDATE nib_pilulas SET estado = 'bloqueado', aviso = ?, duracao = ? WHERE id = ?")->execute([NIB_PIL_BLOQUEADO, $dur, $r['id']]);
+    return;
+  }
   $db->prepare("UPDATE nib_pilulas SET estado = 'publicado', aviso = '', duracao = ?, publicado_em = COALESCE(publicado_em, ?), legenda_proxima = COALESCE(legenda_proxima, ?) WHERE id = ?")
     ->execute([$dur, nib_agora(), nib_em('+5 minutes'), $r['id']]);
   // Avisa no celular agora, ou na hora programada (nib_pil_avisar_programadas). Oculta não avisa.
-  if ((int)$r['notificar'] && !(int)$r['oculto'] && (!$r['publicar_em'] || $r['publicar_em'] <= nib_agora())) nib_pil_avisar($db, $r);
+  // Só na primeira publicação (a conferência periódica de pílulas já publicadas não avisa de novo).
+  if (!$r['publicado_em'] && (int)$r['notificar'] && !(int)$r['oculto'] && (!$r['publicar_em'] || $r['publicar_em'] <= nib_agora())) nib_pil_avisar($db, $r);
 }
 
 // Busca a legenda automática do YouTube (texto falado com o tempo de cada trecho). Tenta de novo com intervalos cada vez maiores.
@@ -149,8 +158,9 @@ function nib_pil_manutencao(): void {
       if (!nib_yt_conectado()) return;
       $db = nib_db();
       $q = $db->prepare("SELECT * FROM nib_pilulas WHERE removido_em IS NULL AND youtube_id IS NOT NULL AND (
-          (estado = 'processando' AND (conferido_em IS NULL OR conferido_em < ?)) OR (estado = 'privado' AND conferido_em < ?)) ORDER BY id DESC LIMIT 3");
-      $q->execute([nib_em('-20 seconds'), nib_em('-30 minutes')]);
+          (estado = 'processando' AND (conferido_em IS NULL OR conferido_em < ?)) OR (estado IN ('privado', 'bloqueado') AND conferido_em < ?)
+          OR (estado = 'publicado' AND (conferido_em IS NULL OR conferido_em < ?))) ORDER BY id DESC LIMIT 3");
+      $q->execute([nib_em('-20 seconds'), nib_em('-30 minutes'), nib_em('-6 hours')]);
       foreach ($q->fetchAll() as $r) nib_pil_conferir($db, $r);
       $q = $db->prepare("SELECT * FROM nib_pilulas WHERE removido_em IS NULL AND estado = 'publicado' AND legendas IS NULL AND legenda_proxima IS NOT NULL AND legenda_proxima <= ? ORDER BY id DESC LIMIT 1");
       $q->execute([nib_agora()]);
@@ -321,7 +331,7 @@ try {
     // O app pergunta, logo depois do envio, se o YouTube já terminou de processar.
     case 'post:conferir': {
       $r = nib_pil_linha($db, $id); if (!$r) nib_erro('Pílula não encontrada.', 404);
-      if ($r['youtube_id'] && in_array($r['estado'], ['processando', 'privado'], true) && (!$r['conferido_em'] || $r['conferido_em'] < nib_em('-8 seconds'))) nib_pil_conferir($db, $r);
+      if ($r['youtube_id'] && in_array($r['estado'], ['processando', 'privado', 'bloqueado'], true) && (!$r['conferido_em'] || $r['conferido_em'] < nib_em('-8 seconds'))) nib_pil_conferir($db, $r);
       nib_json(200, ['ok' => true, 'pilula' => nib_pil_dados(nib_pil_linha($db, $id), true)]);
     }
 

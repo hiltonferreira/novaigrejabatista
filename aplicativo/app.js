@@ -595,7 +595,7 @@
   const pilLocal = s => s ? s.replace(' ', 'T').slice(0, 16) : '';
   const pilAgoraLocal = () => { const d = new Date(Date.now() + 5 * 60000); return new Date(d - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16); };
   const pilData = d => d ? new Intl.DateTimeFormat('pt-BR', { day: 'numeric', month: 'short', timeZone: 'UTC' }).format(new Date(d.slice(0, 10) + 'T12:00:00Z')).replace('.', '') : '';
-  const pilEstados = { enviando: 'Envio incompleto', processando: 'Processando no YouTube', privado: 'Travado como privado', falhou: 'Não publicado' };
+  const pilEstados = { enviando: 'Envio incompleto', processando: 'Processando no YouTube', privado: 'Travado como privado', bloqueado: 'Bloqueado no YouTube', falhou: 'Não publicado' };
   // Capa escolhida pelo pastor (guardada no app) ou, sem ela, a miniatura automática do YouTube.
   const pilCapaImg = p => p.capa ? `<img class="is-capa" src="${escape(p.capa)}" alt="" loading="lazy">`
     : p.youtube_id ? `<img src="https://i.ytimg.com/vi/${encodeURIComponent(p.youtube_id)}/hqdefault.jpg" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">` : '';
