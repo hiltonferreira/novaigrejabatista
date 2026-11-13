@@ -2740,3 +2740,18 @@ dialog.ck-telao::backdrop{background:#041e42}
 #nib-proposta .pil-acoes{flex-wrap:nowrap;gap:6px}
 #nib-proposta .pil-acoes .button{flex:1 1 auto;min-width:0;padding:10px 6px;font-size:13px;white-space:nowrap}
 @media(max-width:370px){#nib-proposta .pil-acoes{gap:4px}#nib-proposta .pil-acoes .button{padding:10px 4px;font-size:12px}}
+/* Palavra para o seu dia mais compacta no celular (pedido de Hilton, 13/11/2026): aspas menores ao lado do texto, menos espaço e botão de compartilhar mais baixo. */
+@media(max-width:820px){
+  #nib-proposta .daily-verse{padding:16px 18px 14px;margin-bottom:22px;border-radius:20px}
+  #nib-proposta .daily-verse::after{width:200px;height:220px;right:-70px;bottom:-50px}
+  #nib-proposta .verse-top{gap:8px;margin-bottom:10px}
+  #nib-proposta .verse-icon{width:26px;height:26px;border-radius:8px}
+  #nib-proposta .verse-icon svg{width:15px;height:15px}
+  #nib-proposta .daily-verse .label{font-size:10px}
+  #nib-proposta .daily-verse blockquote{padding:0 0 0 26px;font-size:18px;line-height:1.4}
+  #nib-proposta .verse-mark{top:-6px;left:0;font-size:40px}
+  #nib-proposta .verse-foot{margin-top:12px;padding-top:10px}
+  #nib-proposta .daily-verse cite{font-size:14px}
+  #nib-proposta main .verse-share{min-height:36px;padding:7px 13px;font-size:12.5px;gap:6px}
+  #nib-proposta main .verse-share svg{width:15px;height:15px}
+}
