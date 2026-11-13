@@ -2741,14 +2741,26 @@ header.event-header.nib-public-header>a.back-site:focus-visible{
 .pix-payment-home #pix-code{width:100%;margin:10px 0 0;overflow-wrap:anywhere;text-align:left}
 .pix-payment-home #pix-code[hidden]{display:none!important}
 
-/* Staff: escolha do tipo de inscrição (2026-11-13) */
-.nib-tipo{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 0 22px}
-.nib-tipo-titulo{grid-column:1/-1;margin:0;color:#071a31;font-size:.78rem;font-weight:800}
-label.nib-tipo-opcao{display:grid;grid-template-columns:20px 1fr;gap:10px;align-items:start;margin:0;padding:14px;border:1px solid var(--line);border-radius:14px;background:#fff;cursor:pointer;font-weight:500}
-.nib-tipo-opcao input{width:18px;height:18px;margin:2px 0 0;accent-color:var(--navy)}
-.nib-tipo-opcao span{color:#536176;font-size:.85rem;line-height:1.4;font-weight:500}
-.nib-tipo-opcao strong{display:block;color:#041e42;font-size:.98rem;font-weight:800;margin-bottom:2px}
-.nib-tipo-opcao:has(input:checked){border-color:var(--navy);box-shadow:0 0 0 1px var(--navy)}
-.nib-tipo-opcao:has(input:focus-visible){outline:2px solid var(--orange);outline-offset:2px}
-@media (max-width:420px){.nib-tipo{grid-template-columns:1fr}}
+/* Staff: escolha do tipo de inscrição (2026-11-13, ajuste iPhone) */
 #event-form [hidden]{display:none!important}
+.nib-tipo{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:0 0 24px}
+.nib-tipo-titulo{grid-column:1/-1;margin:0;color:#071a31;font-size:.78rem;font-weight:800}
+label.nib-tipo-opcao{display:flex!important;align-items:center;gap:14px;margin:0!important;padding:16px 18px;border:1px solid var(--line);border-radius:14px;background:#fff;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.nib-tipo-opcao span{display:block;min-width:0;color:#536176;font-size:.9rem;line-height:1.4;font-weight:500}
+.nib-tipo-opcao strong{display:block;color:#041e42;font-size:1rem;font-weight:800;margin-bottom:3px}
+.nib-tipo-opcao:has(input:checked){border-color:#041e42;box-shadow:0 0 0 1px #041e42}
+/* Rádio e caixa de seleção desenhados aqui: o Safari do iPhone amplia os nativos. */
+#event-form .nib-tipo-opcao input[type="radio"],
+#event-form label.consent input[type="checkbox"]{
+  -webkit-appearance:none!important;appearance:none!important;flex:0 0 22px;
+  width:22px!important;height:22px!important;min-width:22px!important;min-height:22px!important;max-width:22px!important;
+  margin:0!important;padding:0!important;border:2px solid #8a95a5!important;background:#fff!important;
+  box-shadow:none!important;opacity:1!important;filter:none!important;cursor:pointer;display:block;transition:border-color .15s ease,background-color .15s ease
+}
+#event-form .nib-tipo-opcao input[type="radio"]{border-radius:50%!important}
+#event-form .nib-tipo-opcao input[type="radio"]:checked{border-color:#041e42!important;background:radial-gradient(circle,#041e42 0 5px,#fff 5.5px)!important}
+#event-form label.consent{display:grid!important;grid-template-columns:22px minmax(0,1fr)!important;gap:14px!important;align-items:start!important}
+#event-form label.consent input[type="checkbox"]{border-radius:6px!important;margin-top:1px!important}
+#event-form label.consent input[type="checkbox"]:checked{border-color:#041e42!important;background:#041e42 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5' fill='none' stroke='%23fff' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/16px no-repeat!important}
+#event-form .nib-tipo-opcao input:focus-visible,#event-form label.consent input:focus-visible{outline:2px solid var(--orange)!important;outline-offset:2px}
+@media (max-width:560px){.nib-tipo{grid-template-columns:1fr}}
