@@ -25,11 +25,11 @@ function nib_db(): PDO {
   return $db;
 }
 // Cria as tabelas na primeira vez (e só acrescenta o que faltar nas próximas versões).
-const NIB_MIGRACAO = 13;
+const NIB_MIGRACAO = 14;
 function nib_migrar(PDO $db): void {
   $db->exec("CREATE TABLE IF NOT EXISTS nib_versao (v INT NOT NULL) ENGINE=InnoDB");
   $v = (int)($db->query('SELECT MAX(v) FROM nib_versao')->fetchColumn() ?: 0);
-  if ($v >= NIB_MIGRACAO) return; // ao criar a v14, subir NIB_MIGRACAO
+  if ($v >= NIB_MIGRACAO) return; // ao criar a v15, subir NIB_MIGRACAO
   // Uma migração por vez: pedidos simultâneos esperam a primeira terminar (evita versões repetidas).
   if ((int)$db->query("SELECT GET_LOCK('nib_migrar', 15)")->fetchColumn() !== 1) throw new RuntimeException('migração em andamento por outro pedido');
   try { nib_migrar_passos($db, (int)($db->query('SELECT MAX(v) FROM nib_versao')->fetchColumn() ?: 0)); }
@@ -149,6 +149,11 @@ function nib_migrar_passos(PDO $db, int $v): void {
     if (!$db->query("SHOW COLUMNS FROM nib_pilulas LIKE 'oculto'")->fetch()) $db->exec("ALTER TABLE nib_pilulas ADD COLUMN oculto TINYINT(1) NOT NULL DEFAULT 0 AFTER capa_em");
     if (!$db->query("SHOW COLUMNS FROM nib_pilulas LIKE 'publicar_em'")->fetch()) $db->exec("ALTER TABLE nib_pilulas ADD COLUMN publicar_em DATETIME NULL AFTER oculto");
     $db->exec('INSERT INTO nib_versao (v) VALUES (13)');
+  }
+  if ($v < 14) {
+    // v14: curtidas das pílulas (pedido de Hilton, 13/11/2026). Uma por pessoa; o app mostra só o total.
+    $db->exec("CREATE TABLE IF NOT EXISTS nib_pilula_curtidas (pilula_id INT UNSIGNED NOT NULL, pessoa_id INT UNSIGNED NOT NULL, criado_em DATETIME NOT NULL, PRIMARY KEY (pilula_id, pessoa_id), KEY pessoa (pessoa_id)) ENGINE=InnoDB");
+    $db->exec('INSERT INTO nib_versao (v) VALUES (14)');
   }
 }
 

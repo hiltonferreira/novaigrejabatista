@@ -2791,3 +2791,20 @@ dialog.ck-telao::backdrop{background:#041e42}
 #nib-proposta .pil-capa-acoes .button svg{flex:none;width:24px;height:24px;color:#1f4fc2}
 #nib-proposta .pil-capa-acoes .button:hover{border-color:#1f4fc2}
 #nib-proposta .pil-capa-acoes .link-button{grid-column:1/-1;justify-self:center;margin:0;font-size:13px}
+/* v182: capa ocupa a altura do card na lista; curtir discreto; compartilhar na pílula (Hilton, 13/11/2026). */
+#nib-proposta .pil-list .pil-card{align-items:stretch;padding:10px;gap:14px}
+#nib-proposta .pil-list .pil-thumb.is-vertical{width:104px;aspect-ratio:auto;min-height:150px;align-self:stretch;border-radius:14px}
+#nib-proposta .pil-list .pil-thumb:not(.is-vertical){align-self:center}
+#nib-proposta .pil-list .pil-card-body{justify-content:center;padding:6px 0}
+#nib-proposta .pil-list .pil-card:has(.pil-card-seta){padding-right:52px}
+#nib-proposta main .pil-curtir{display:inline-flex;align-items:center;gap:5px;min-height:0;height:auto;margin:0;padding:6px 8px;border:0;border-radius:999px;background:none;color:#5b6b80;font:600 13px/1 "NIB Acumin Mobile",Arial,sans-serif;cursor:pointer}
+#nib-proposta .pil-curtir svg{width:20px;height:20px;transition:transform .2s}
+#nib-proposta .pil-curtir.is-on{color:#e0245e}
+#nib-proposta .pil-curtir.is-on svg{fill:currentColor}
+#nib-proposta .pil-curtir:active svg{transform:scale(1.25)}
+#nib-proposta .pil-curtir span:empty{display:none}
+#nib-proposta .pil-item>.pil-curtir{position:absolute;right:8px;bottom:8px}
+#nib-proposta .pil-social{display:flex;align-items:center;gap:10px;margin:2px 0 6px}
+#nib-proposta main .pil-curtir.is-detalhe{padding:9px 14px;border:1px solid #d5deea;background:#fff;font-size:14px}
+#nib-proposta main .pil-compartilhar{display:inline-flex;align-items:center;gap:7px;min-height:0;height:auto;margin:0;padding:9px 16px;border:0;border-radius:999px;background:#041e42;color:#fff;font:600 14px/1 "NIB Acumin Mobile",Arial,sans-serif;cursor:pointer}
+#nib-proposta .pil-compartilhar svg{width:18px;height:18px}

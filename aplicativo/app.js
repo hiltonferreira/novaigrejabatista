@@ -679,6 +679,24 @@
   }
   function pilCapaVidFechar() { if (state.pilCapaVid) URL.revokeObjectURL(state.pilCapaVid); state.pilCapaVid = null; }
   function pilCapaLimpar() { if (state.pilCapa) URL.revokeObjectURL(state.pilCapa.url); state.pilCapa = null; state.pilCapaQuadros = false; pilCapaVidFechar(); }
+  // Curtir (discreto) e compartilhar a pílula (pedido de Hilton, 13/11/2026).
+  const pilCoracao = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20s-7.5-4.6-9.3-9.2C1.5 7.6 3.6 4.5 6.9 4.5c2 0 3.5 1.1 5.1 3 1.6-1.9 3.1-3 5.1-3 3.3 0 5.4 3.1 4.2 6.3C19.5 15.4 12 20 12 20z"/></svg>';
+  const pilCurtirBtn = (p, cls) => `<button type="button" class="pil-curtir${cls ? ' ' + cls : ''}${p.curti ? ' is-on' : ''}" data-pil-curtir="${p.id}" aria-pressed="${!!p.curti}" aria-label="${p.curti ? 'Descurtir' : 'Curtir'} ${escape(p.titulo)}${p.curtidas ? `, ${p.curtidas} ${p.curtidas === 1 ? 'curtida' : 'curtidas'}` : ''}">${pilCoracao}<span>${p.curtidas || ''}</span></button>`;
+  function pilCurtir(btn) {
+    const id = Number(btn.dataset.pilCurtir), achar = () => [...((state.pil && state.pil.pilulas) || []), state.pilVer].filter(x => x && x.id === id);
+    const alvo = achar(); if (!alvo.length || btn.disabled) return;
+    const quer = !alvo[0].curti, antes = { curti: alvo[0].curti, curtidas: alvo[0].curtidas || 0 };
+    const pinta = (curti, n) => { achar().forEach(x => { x.curti = curti; x.curtidas = n; }); content.querySelectorAll(`[data-pil-curtir="${id}"]`).forEach(b => { const x = achar()[0]; b.outerHTML = pilCurtirBtn(x, b.classList.contains('is-detalhe') ? 'is-detalhe' : ''); }); };
+    pinta(quer, Math.max(0, antes.curtidas + (quer ? 1 : -1)));
+    NibConta.pilulas('curtir', { id, curtir: quer }).then(d => pinta(d.curti, d.curtidas)).catch(e => { pinta(antes.curti, antes.curtidas); announce(e.message, 'warning'); });
+  }
+  async function pilCompartilhar(p) {
+    const url = location.origin + location.pathname.replace(/[^/]*$/, '') + '?pilula=' + p.id;
+    const texto = `${p.titulo}${p.passagem ? ' (' + p.passagem + ')' : ''}: uma Pílula de Sabedoria da Nova Igreja Batista.`;
+    if (navigator.share) { try { await navigator.share({ title: p.titulo, text: texto, url }); } catch (_) {} return; }
+    try { await navigator.clipboard.writeText(texto + ' ' + url); announce('Link copiado. Cole no Instagram, WhatsApp ou onde quiser.', 'success', false); }
+    catch (_) { prompt('Copie o link da pílula:', url); }
+  }
   function pilThumb(p) {
     const play = `<span class="pil-play" aria-hidden="true"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M8 5.5v13l10.5-6.5z"/></svg></span>`;
     return `<span class="pil-thumb${p.vertical ? ' is-vertical' : ''}">${pilCapaImg(p)}${play}${p.duracao ? `<small>${pilTempo(p.duracao)}</small>` : ''}</span>`;
@@ -715,7 +733,7 @@
     // Lápis e selos de estado só para a liderança, respeitando o "Ver o app como" (pedido de Hilton, 12/11/2026).
     const d = state.pil, l = d.pilulas, lider = !!d.equipe && NibConta.lideranca();
     if (!l.length) return `<p class="event-empty">${state.pilErro ? escape(state.pilErro) : state.pilQ ? `Nenhuma pílula encontrada para “${escape(state.pilQ)}”. Tente outra palavra ou a passagem bíblica.` : state.pilTema ? 'Nenhuma pílula com este tema ainda.' : 'Ainda não há pílulas publicadas. Quando o pastor enviar, ela aparece aqui e no início do app.'}</p>`;
-    return `<ul class="pil-list">${l.map(p => `<li class="pil-item"><button type="button" class="pil-card" data-pil-abrir="${p.id}">${pilThumb(p)}<span class="pil-card-body">${lider && p.estado && p.estado !== 'publicado' ? `<span class="pil-estado is-${escape(p.estado)}">${escape(p.troca ? 'Trocando o vídeo' : pilEstados[p.estado] || p.estado)}${p.estado === 'enviando' ? ` · ${p.progresso}%` : ''}</span>` : lider && p.oculto ? '<span class="pil-estado is-oculta">Oculta</span>' : lider && p.agendado ? `<span class="pil-estado is-programada">Programada · ${escape(pilQuando(p.publicar_em))}</span>` : p.tema ? `<span class="pil-tema">${escape(p.tema)}</span>` : ''}<strong>${escape(p.titulo)}</strong><small>${escape([p.passagem, pilData(p.data)].filter(Boolean).join(' · '))}</small>${p.texto ? `<span class="pil-card-texto" data-texto="${escape(p.texto)}">${escape(p.texto)}</span>` : ''}</span><span class="pil-card-seta" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></span></button>${lider && p.estado && p.youtube_id ? `<button type="button" class="pil-card-editar" data-pil-editar-id="${p.id}" aria-label="Editar ${escape(p.titulo)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L18.5 9.5a2.1 2.1 0 0 0-3-3L5 17v3z M13.5 8.5l3 3"/></svg></button>` : ''}${(p.trechos || []).length ? `<div class="pil-trechos"><span>Falado no vídeo</span>${p.trechos.map(([t, txt]) => `<button type="button" data-pil-abrir="${p.id}" data-t="${t}"><b>${pilTempo(t)}</b>${escape(txt)}</button>`).join('')}</div>` : ''}</li>`).join('')}</ul>`;
+    return `<ul class="pil-list">${l.map(p => `<li class="pil-item"><button type="button" class="pil-card" data-pil-abrir="${p.id}">${pilThumb(p)}<span class="pil-card-body">${lider && p.estado && p.estado !== 'publicado' ? `<span class="pil-estado is-${escape(p.estado)}">${escape(p.troca ? 'Trocando o vídeo' : pilEstados[p.estado] || p.estado)}${p.estado === 'enviando' ? ` · ${p.progresso}%` : ''}</span>` : lider && p.oculto ? '<span class="pil-estado is-oculta">Oculta</span>' : lider && p.agendado ? `<span class="pil-estado is-programada">Programada · ${escape(pilQuando(p.publicar_em))}</span>` : p.tema ? `<span class="pil-tema">${escape(p.tema)}</span>` : ''}<strong>${escape(p.titulo)}</strong><small>${escape([p.passagem, pilData(p.data)].filter(Boolean).join(' · '))}</small>${p.texto ? `<span class="pil-card-texto" data-texto="${escape(p.texto)}">${escape(p.texto)}</span>` : ''}</span><span class="pil-card-seta" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></span></button>${p.youtube_id && (!p.estado || p.estado === 'publicado') ? pilCurtirBtn(p) : ''}${lider && p.estado && p.youtube_id ? `<button type="button" class="pil-card-editar" data-pil-editar-id="${p.id}" aria-label="Editar ${escape(p.titulo)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L18.5 9.5a2.1 2.1 0 0 0-3-3L5 17v3z M13.5 8.5l3 3"/></svg></button>` : ''}${(p.trechos || []).length ? `<div class="pil-trechos"><span>Falado no vídeo</span>${p.trechos.map(([t, txt]) => `<button type="button" data-pil-abrir="${p.id}" data-t="${t}"><b>${pilTempo(t)}</b>${escape(txt)}</button>`).join('')}</div>` : ''}</li>`).join('')}</ul>`;
   }
   let pilTimer = 0;
   function pilBuscar(v) {
@@ -792,7 +810,7 @@
     const edit = lider && state.pilEdit ? `<section class="box pil-team"><span class="label">EDITAR</span><form id="pil-edit-form" class="pil-form"><label>Título<input name="titulo" maxlength="120" required value="${escape(p.titulo)}"></label><label>Tema central<input name="tema" maxlength="60" value="${escape(p.tema)}"></label><label>Passagem bíblica<input name="passagem" maxlength="80" value="${escape(p.passagem)}"></label><label>Mensagem curta<textarea name="texto" rows="3" maxlength="1000">${escape(p.texto)}</textarea></label>${p.transcricao || leg.length ? `<label>Transcrição (corrija palavras que o YouTube errou)<textarea name="transcricao" rows="6">${escape(p.transcricao || '')}</textarea></label>` : ''}<label>Publicação programada (vazio: aparece já)<input type="datetime-local" name="publicar_em" value="${escape(p.agendado ? pilLocal(p.publicar_em) : '')}" min="${pilAgoraLocal()}"></label><p class="note">Título, passagem e mensagem também mudam no YouTube. Tema e transcrição ficam só no app.</p><div class="form-actions"><button type="submit" class="action primary">Salvar</button><button type="button" class="button" data-pil-editar="0">Cancelar</button></div></form></section>` : '';
     const enviando = state.pilUp && state.pilUp.fase === 'enviando';
     const acoes = lider && !state.pilEdit ? `${p.oculto ? '<p class="pil-aviso">Oculta: a igreja não vê esta pílula. Toque em Mostrar para voltar.</p>' : ''}${p.agendado && !p.oculto ? `<p class="pil-aviso is-info">Programada: aparece para a igreja ${escape(pilQuando(p.publicar_em))}.</p>` : ''}${p.troca ? `<p class="pil-aviso">Trocando o vídeo: ${p.progresso}% enviado. Até terminar, a igreja continua vendo o vídeo anterior.</p>` : p.aviso && pronto ? `<p class="pil-aviso">${escape(p.aviso)}</p>` : ''}<div class="pil-acoes">${p.youtube_id ? '<button type="button" class="button" data-pil-editar="1">Editar</button>' : ''}${p.youtube_id ? `<button type="button" class="button" data-pil-capa-ed="${state.pilCapaEd ? 0 : 1}" aria-expanded="${!!state.pilCapaEd}">Trocar capa</button>` : ''}${p.youtube_id && !enviando ? '<label class="button">Trocar vídeo<input type="file" accept="video/*" data-pil-trocar-video class="visually-hidden"></label>' : ''}${p.oculto ? '<button type="button" class="button" data-pil-ocultar="0">Mostrar</button>' : ''}<button type="button" class="button pil-remove" data-pil-remover>Excluir</button></div>${state.pilCapaEd && p.youtube_id ? pilCapaBox(p) : ''}` : '';
-    return `<button type="button" class="pil-back" data-pil-voltar><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>Todas as pílulas</button>${player}<section class="pil-info">${p.tema ? `<span class="pil-tema">${escape(p.tema)}</span>` : ''}<h2>${escape(p.titulo)}</h2><p class="pil-meta">${escape([p.passagem, pilData(p.data), p.duracao ? pilTempo(p.duracao) : ''].filter(Boolean).join(' · '))}</p>${p.texto ? `<p class="pil-texto">${escape(p.texto)}</p>` : ''}${transc}${acoes}</section>${edit}`;
+    return `<button type="button" class="pil-back" data-pil-voltar><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>Todas as pílulas</button>${player}<section class="pil-info">${p.tema ? `<span class="pil-tema">${escape(p.tema)}</span>` : ''}<h2>${escape(p.titulo)}</h2><p class="pil-meta">${escape([p.passagem, pilData(p.data), p.duracao ? pilTempo(p.duracao) : ''].filter(Boolean).join(' · '))}</p>${pronto ? `<div class="pil-social">${pilCurtirBtn(p, 'is-detalhe')}<button type="button" class="pil-compartilhar" data-pil-compartilhar><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3M7.5 7.5 12 3l4.5 4.5"/><path d="M5 12v6.5A2.5 2.5 0 0 0 7.5 21h9a2.5 2.5 0 0 0 2.5-2.5V12"/></svg>Compartilhar</button></div>` : ''}${p.texto ? `<p class="pil-texto">${escape(p.texto)}</p>` : ''}${transc}${acoes}</section>${edit}`;
   }
   function pilProgresso(pct, msg) {
     const u = state.pilUp; if (!u) return; u.pct = pct; if (msg) u.msg = msg;
@@ -919,6 +937,13 @@
   }
   // QR Code do telão: /app/?checkin=CODIGO. Guarda o código até a pessoa entrar na conta.
   try { const qc = new URLSearchParams(location.search).get('checkin'); if (qc && /^[a-f0-9]{24}$/.test(qc)) { sessionStorage.setItem('nib-checkin-qr', qc); const u = new URL(location.href); u.searchParams.delete('checkin'); history.replaceState(null, '', u.pathname + u.search + u.hash); } } catch (_) {}
+  // Link compartilhado de uma pílula: /app/?pilula=ID. Guarda até a pessoa entrar na conta e abre direto a pílula.
+  try { const pl = new URLSearchParams(location.search).get('pilula'); if (pl && /^\d{1,9}$/.test(pl)) { sessionStorage.setItem('nib-pilula', pl); const u = new URL(location.href); u.searchParams.delete('pilula'); history.replaceState(null, '', u.pathname + u.search + u.hash); } } catch (_) {}
+  function pendingPilula() {
+    if (!PUBLIC || !account()) return; let pl = null;
+    try { pl = sessionStorage.getItem('nib-pilula'); sessionStorage.removeItem('nib-pilula'); } catch (_) {}
+    if (pl) { state.pilSel = { id: Number(pl), t: 0 }; state.pilEdit = false; state.pilCapaEd = false; state.pilVer = null; show('pilulas', true, false); }
+  }
   function pendingQrCheckin() {
     if (!PUBLIC || !account()) return; let qc = null;
     try { qc = sessionStorage.getItem('nib-checkin-qr'); sessionStorage.removeItem('nib-checkin-qr'); } catch (_) {}
@@ -1148,6 +1173,8 @@
     if (PUBLIC && action.dataset.pilCapaEd !== undefined) { state.pilCapaEd = action.dataset.pilCapaEd === '1'; if (!state.pilCapaEd) pilCapaVidFechar(); show('pilulas', false, false); return; }
     if (PUBLIC && action.dataset.pilCapaFechar !== undefined) { if (state.pilSel) { pilCapaVidFechar(); show('pilulas', false, false); } else { state.pilCapaQuadros = false; const b = content.querySelector('#pil-capa'); if (b) b.outerHTML = pilCapaBox(null); } return; }
     if (PUBLIC && action.dataset.pilCapaQuadros !== undefined) { state.pilCapaQuadros = true; const b = content.querySelector('#pil-capa'); if (b) { b.outerHTML = pilCapaBox(null); const v = content.querySelector('.pil-capa-video video'); if (v) v.scrollIntoView({ block: 'center', behavior: 'smooth' }); } return; }
+    if (PUBLIC && action.dataset.pilCurtir) { pilCurtir(action); return; }
+    if (PUBLIC && action.dataset.pilCompartilhar !== undefined) { if (state.pilVer) pilCompartilhar(state.pilVer); return; }
     if (PUBLIC && action.dataset.pilQuadro !== undefined) { const vid = content.querySelector('.pil-capa-video video'); action.disabled = true; pilCapaQuadro(vid).then(pilCapaUsar).catch(e => announce(e.message, 'warning')).finally(() => { action.disabled = false; }); return; }
     if (PUBLIC && action.dataset.pilCapaAuto !== undefined) { action.disabled = true; pilCapaUsar(null).catch(e => { action.disabled = false; announce(e.message, 'warning'); }); return; }
     if (PUBLIC && action.dataset.pilRemover !== undefined) { if (!confirm('Excluir esta pílula? Ela sai do app e o vídeo é apagado do canal do YouTube. Não dá para desfazer.')) return; action.disabled = true; NibConta.pilulas('remover', { id: state.pilSel.id }).then(r => { state.pilSel = null; state.pilVer = null; state.pilCapaEd = false; pilCapaVidFechar(); state.pil = null; state.pilHomeKey = null; show('pilulas', false, false); announce(r.youtube_apagado ? 'Pílula excluída do app e do YouTube.' : 'Pílula excluída do app. O vídeo não foi apagado do YouTube; apague no YouTube Studio.', r.youtube_apagado ? 'success' : 'warning', !r.youtube_apagado); }).catch(e => { action.disabled = false; announce(e.message, 'warning'); }); return; }
@@ -1616,7 +1643,7 @@
     try {
       await fn();
       closeAccount(); ['panel-login','panel-signup'].forEach(id => document.getElementById(id).reset()); refreshPass();
-      applyAccount(); show('inicio', false, false); if (LOGIN_REQUIRED) publicStart(true); pendingQrCheckin();
+      applyAccount(); show('inicio', false, false); if (LOGIN_REQUIRED) publicStart(true); pendingQrCheckin(); pendingPilula();
       const p = account(); announce(form.id === 'panel-signup' ? `Cadastro criado. Boas-vindas, ${p.primeiro}!` + (p.membro_status === 'pendente' ? ' A Secretaria vai confirmar sua membresia.' : '') : `Que bom ver você, ${p.primeiro}!`, 'success', false);
     } catch (e) { err.textContent = e.message; }
     finally { btn.disabled = false; }
@@ -2044,7 +2071,7 @@
   }
   if (PUBLIC && window.NibConta && NibConta.available()) {
     const goHash = () => { const v = location.hash.slice(1); if (v && allowedPublic().includes(v)) show(v, false, false); };
-    authReady.then(() => { if (account()) applyAccount(); goHash(); pendingQrCheckin(); youtubeVolta(); });
+    authReady.then(() => { if (account()) applyAccount(); goHash(); pendingQrCheckin(); pendingPilula(); youtubeVolta(); });
     // Volta da tela do Google ao conectar o canal (api/youtube.php redireciona para /app/?youtube=...#pilulas).
     function youtubeVolta() {
       const r = new URLSearchParams(location.search).get('youtube'); if (!r) return;

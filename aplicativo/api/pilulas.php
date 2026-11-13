@@ -82,6 +82,15 @@ function nib_pil_dados(array $r, bool $equipe, bool $completo = false, array $pa
   }
   return $o;
 }
+// Total de curtidas e se quem está vendo curtiu, para uma lista de pílulas.
+function nib_pil_curtidas(PDO $db, array $lista, int $eu): array {
+  $ids = array_values(array_filter(array_map(fn($p) => (int)$p['id'], $lista))); if (!$ids) return $lista;
+  $q = $db->prepare('SELECT pilula_id, COUNT(*) n, MAX(pessoa_id = ?) eu FROM nib_pilula_curtidas WHERE pilula_id IN (' . implode(',', array_fill(0, count($ids), '?')) . ') GROUP BY pilula_id');
+  $q->execute(array_merge([$eu], $ids)); $c = [];
+  foreach ($q->fetchAll() as $r) $c[(int)$r['pilula_id']] = [(int)$r['n'], (bool)(int)$r['eu']];
+  foreach ($lista as &$p) { [$p['curtidas'], $p['curti']] = $c[(int)$p['id']] ?? [0, false]; }
+  return $lista;
+}
 function nib_pil_linha(PDO $db, int $id): ?array {
   $q = $db->prepare('SELECT * FROM nib_pilulas WHERE id = ? AND removido_em IS NULL'); $q->execute([$id]); return $q->fetch() ?: null;
 }
@@ -181,7 +190,7 @@ try {
   $lider = nib_tem_papel($eu, ['pastoral', 'admin']);
   $d = $post && $acao !== 'parte' && $acao !== 'capa' ? nib_corpo() : [];
   $id = (int)($d['id'] ?? $_GET['id'] ?? 0);
-  if ($post && !$lider) nib_erro('Só a Liderança Pastoral publica as Pílulas de Sabedoria.', 403);
+  if ($post && !$lider && $acao !== 'curtir') nib_erro('Só a Liderança Pastoral publica as Pílulas de Sabedoria.', 403);
 
   switch ($post ? "post:$acao" : "get:$acao") {
     case 'get:lista': {
@@ -193,7 +202,7 @@ try {
       foreach ($palavras as $p) { $w[] = "CONCAT(' ', busca, ' ') LIKE ?"; $args[] = ctype_digit($p) ? "% $p %" : '%' . $p . '%'; }
       $s = $db->prepare('SELECT * FROM nib_pilulas WHERE ' . implode(' AND ', $w) . ' ORDER BY COALESCE(publicar_em, publicado_em, criado_em) DESC, id DESC LIMIT ' . ($palavras ? 40 : 60));
       $s->execute($args);
-      $lista = array_map(fn($r) => nib_pil_dados($r, $lider, false, $palavras), $s->fetchAll());
+      $lista = nib_pil_curtidas($db, array_map(fn($r) => nib_pil_dados($r, $lider, false, $palavras), $s->fetchAll()), (int)$eu['id']);
       $temas = $db->query("SELECT tema, COUNT(*) n FROM nib_pilulas WHERE removido_em IS NULL AND " . nib_pil_visivel_sql($db) . " AND tema <> '' GROUP BY tema ORDER BY n DESC, tema LIMIT 20")->fetchAll(PDO::FETCH_COLUMN);
       nib_pil_manutencao();
       $extra = $lider ? ['youtube' => ['configurado' => nib_yt_cliente() !== null, 'conectado' => nib_yt_conectado(), 'canal' => (string)nib_ajuste('yt_canal'), 'pode_conectar' => nib_tem_papel($eu, ['admin'])]] : [];
@@ -203,7 +212,17 @@ try {
     case 'get:ver': {
       $r = nib_pil_linha($db, $id);
       if (!$r || (!$lider && !nib_pil_visivel($r))) nib_erro('Pílula não encontrada.', 404);
-      nib_json(200, ['ok' => true, 'pilula' => nib_pil_dados($r, $lider, true)]);
+      nib_json(200, ['ok' => true, 'pilula' => nib_pil_curtidas($db, [nib_pil_dados($r, $lider, true)], (int)$eu['id'])[0]]);
+    }
+
+    // Curtir ou descurtir (qualquer pessoa logada que vê a pílula). Devolve o total atualizado.
+    case 'post:curtir': {
+      $r = nib_pil_linha($db, $id);
+      if (!$r || (!$lider && !nib_pil_visivel($r))) nib_erro('Pílula não encontrada.', 404);
+      if (!empty($d['curtir'])) $db->prepare('INSERT IGNORE INTO nib_pilula_curtidas (pilula_id, pessoa_id, criado_em) VALUES (?, ?, ?)')->execute([$id, (int)$eu['id'], nib_agora()]);
+      else $db->prepare('DELETE FROM nib_pilula_curtidas WHERE pilula_id = ? AND pessoa_id = ?')->execute([$id, (int)$eu['id']]);
+      $o = nib_pil_curtidas($db, [['id' => $id]], (int)$eu['id'])[0];
+      nib_json(200, ['ok' => true, 'curtidas' => $o['curtidas'], 'curti' => $o['curti']]);
     }
 
     // Imagem da capa. O endereço muda a cada troca (v=), então pode ficar no cache do aparelho.
