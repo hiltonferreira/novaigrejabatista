@@ -2834,3 +2834,11 @@ dialog.ck-telao::backdrop{background:#041e42}
 #nib-proposta .community-prayer .prayer-post-author{align-items:center;gap:12px}
 #nib-proposta .community-prayer .prayer-post-author .profile-avatar{width:40px;height:40px;flex-basis:40px;font-size:17px}
 #nib-proposta .community-prayer .prayer-post-author small{margin-top:3px}
+/* v193: pílula em tela cheia (camada do app; no Android também usa a tela cheia do sistema). */
+#nib-proposta .pil-tela-fechar{display:none}
+#nib-proposta .pil-player.is-tela-cheia{position:fixed;inset:0;z-index:2000;width:100vw;height:100vh;height:100dvh;max-height:none;aspect-ratio:auto;margin:0;border-radius:0;background:#000;display:grid;place-items:center}
+#nib-proposta .pil-player.is-tela-cheia iframe{position:static;width:min(100vw,calc(100dvh * 16 / 9));height:auto;aspect-ratio:16/9}
+#nib-proposta .pil-player.is-vertical.is-tela-cheia iframe{width:min(100vw,calc(100dvh * 9 / 16));aspect-ratio:9/16}
+#nib-proposta .pil-player.is-tela-cheia .pil-tela-fechar{display:grid;place-items:center;position:absolute;top:calc(env(safe-area-inset-top,0px) + 12px);right:calc(env(safe-area-inset-right,0px) + 12px);z-index:2;width:44px;height:44px;padding:0;border:0;border-radius:50%;background:#000000a6;color:#fff;cursor:pointer;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+#nib-proposta .pil-tela-fechar svg{width:22px;height:22px}
+html.pil-tela-aberta,html.pil-tela-aberta body{overflow:hidden}
