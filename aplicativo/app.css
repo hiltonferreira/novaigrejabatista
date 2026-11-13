@@ -2830,3 +2830,9 @@ dialog.ck-telao::backdrop{background:#041e42}
 #nib-proposta .foto-perfil small{color:#5b6b80;font-size:12.5px;line-height:1.4}
 #nib-proposta .foto-perfil.is-enviando .profile-avatar{opacity:.5}
 #nib-proposta .foto-perfil.is-enviando .foto-perfil-btn{pointer-events:none;opacity:.6}
+/* v189: caixa da foto no padrão do app (azul em degradê, como agenda e dízimo). */
+#nib-proposta .profile-avatar.is-grande{background:linear-gradient(165deg,#0d3a72 0%,#062a58 45%,#041e42 100%);color:#fff;border:3px solid #fff;box-shadow:0 0 0 1px #dce3eb,0 10px 22px -10px #041e42b3,inset 0 1px 0 #ffffff26}
+#nib-proposta .profile-avatar.is-grande.has-foto{background:#dfe6ef}
+#nib-proposta .foto-perfil .foto-perfil-btn{border-color:transparent;background:linear-gradient(165deg,#0d3a72 0%,#041e42 100%);color:#fff;box-shadow:0 8px 18px -10px #041e42b3,inset 0 1px 0 #ffffff26}
+#nib-proposta .foto-perfil .foto-perfil-btn svg{color:#ff9a62}
+#nib-proposta .foto-perfil .link-button{color:#536176}
