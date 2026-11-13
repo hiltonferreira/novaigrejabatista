@@ -2830,3 +2830,7 @@ dialog.ck-telao::backdrop{background:#041e42}
 #nib-proposta .foto-perfil small{color:#5b6b80;font-size:12.5px;line-height:1.4}
 #nib-proposta .foto-perfil.is-enviando .profile-avatar{opacity:.5}
 #nib-proposta .foto-perfil.is-enviando .foto-perfil-btn{pointer-events:none;opacity:.6}
+/* v192: no bloco do caderno na home, avatar do mesmo tamanho do caderno (40 px) e centralizado com nome e data. */
+#nib-proposta .community-prayer .prayer-post-author{align-items:center;gap:12px}
+#nib-proposta .community-prayer .prayer-post-author .profile-avatar{width:40px;height:40px;flex-basis:40px;font-size:17px}
+#nib-proposta .community-prayer .prayer-post-author small{margin-top:3px}
