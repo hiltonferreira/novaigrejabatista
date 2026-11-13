@@ -36,13 +36,15 @@
   const typeInputs=[...form.querySelectorAll('input[name="registration_type"]')];
   const q=sel=>document.querySelector(sel);
   const guardianEls=[q(".section-divider"),q('label[for="guardian"]'),document.getElementById("guardian"),document.getElementById("guardian-phone")?.closest(".field-row")].filter(Boolean);
-  const guardianInputs=["guardian","guardian-phone","relationship"].map(id=>document.getElementById(id)).filter(Boolean);
+  // Staff informa só nome e WhatsApp: some responsável, nascimento e saúde.
+  guardianEls.push(...[birth?.closest(".field-row"),q('label[for="health"]'),document.getElementById("health")].filter(Boolean));
+  const guardianInputs=["guardian","guardian-phone","relationship","birth","age","health"].map(id=>document.getElementById(id)).filter(Boolean);
   const phone=document.getElementById("phone");
   const consentText=q("label.consent:not(.payer-toggle) span");
   const texts=[
     [q('label[for="name"]'),"Nome completo"],
-    [q('label[for="phone"]'),"Seu WhatsApp com DDD"],
-    [q('fieldset[data-step="0"] .step-intro'),"Informe seus dados para a equipe Staff do NXT CAMP."],
+    [q('label[for="phone"]'),"WhatsApp com DDD"],
+    [q('fieldset[data-step="0"] .step-intro'),"Informe o nome e o WhatsApp de quem vai servir na equipe Staff do NXT CAMP."],
     [q(".nib-pay-note strong"),"Inscrição Staff: R$ 30,00"],
     [q('fieldset[data-step="1"] .step-intro'),STAFF_CARD_URL?"Escolha pagar com cartão ou com Pix. Depois, volte aqui para enviar o comprovante.":"Pague com Pix. Depois, volte aqui para enviar o comprovante."],
     [q(".payment-summary strong"),"R$ 30,00"],
@@ -111,7 +113,6 @@
       if(!el.checkValidity()){el.reportValidity();return;}
     }
     const n=Number(age.value);
-    if(isStaff()&&!(n>=0&&n<120)){setError("Confira a data de nascimento.");birth.focus();return;}
     if(!isStaff()&&(n<12||n>17)){setError("A inscrição é destinada a adolescentes de 12 a 17 anos.");age.focus();return;}
     go(1);
   });
