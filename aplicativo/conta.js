@@ -85,6 +85,15 @@
       if (!r.ok || !d || !d.ok) throw new Error((d && d.erro) || 'Não foi possível salvar a capa.');
       return d;
     },
+    // Foto de perfil (imagem em binário, já reduzida no aparelho). Sem imagem, tira a foto.
+    foto: async imagem => {
+      let r, d;
+      try { r = await fetch('api/conta.php?acao=foto' + (imagem ? '' : '&remover=1'), { method: 'POST', credentials: 'same-origin', cache: 'no-store', headers: { 'X-Nib': '1', 'Content-Type': imagem ? (imagem.type || 'image/jpeg') : 'application/octet-stream' }, body: imagem || '' }); }
+      catch (_) { throw new Error('Sem conexão. Confira a internet.'); }
+      try { d = await r.json(); } catch (_) { d = null; }
+      if (!r.ok || !d || !d.ok) throw new Error((d && d.erro) || 'Não foi possível salvar a foto.');
+      return set(d);
+    },
     pushChave: async () => (await api('push-chave')).chave,
     push: async (acao, body) => api(acao, body),
     pushEstado: async endpoint => api('push-estado&endpoint=' + encodeURIComponent(endpoint))

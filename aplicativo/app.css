@@ -2818,3 +2818,15 @@ dialog.ck-telao::backdrop{background:#041e42}
 #nib-proposta .section-heading+p{margin:0 0 18px;color:#536176;line-height:1.5}
 #nib-proposta .box h2:has(+p),#nib-proposta .box h2:has(+.note){margin-bottom:8px}
 #nib-proposta .box h2+p,#nib-proposta .box h2+.note{margin-top:0}
+/* v188: foto de perfil (Hilton, 13/11/2026). */
+#nib-proposta .profile-avatar.has-foto{overflow:hidden;background:#dfe6ef;padding:0}
+#nib-proposta .profile-avatar.has-foto img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:block}
+#nib-proposta .foto-perfil{display:flex;align-items:center;gap:16px;margin:0 0 18px;padding:0 0 18px;border-bottom:1px solid #e3e9f0}
+#nib-proposta .profile-avatar.is-grande{flex:0 0 84px;width:84px;height:84px;font-size:34px}
+#nib-proposta .foto-perfil>div{display:flex;flex-direction:column;align-items:flex-start;gap:6px;min-width:0}
+#nib-proposta .foto-perfil .foto-perfil-btn{display:inline-flex;align-items:center;gap:8px;height:40px;min-height:40px;width:auto;margin:0;padding:0 16px;border:1px solid #d5deea;border-radius:999px;background:#fff;color:#041e42;font:600 14px/1.2 "NIB Acumin Mobile",Arial,sans-serif;cursor:pointer}
+#nib-proposta .foto-perfil-btn svg{width:18px;height:18px;color:#1f4fc2}
+#nib-proposta .foto-perfil .link-button{margin:0;padding:0;font-size:13px;min-height:0}
+#nib-proposta .foto-perfil small{color:#5b6b80;font-size:12.5px;line-height:1.4}
+#nib-proposta .foto-perfil.is-enviando .profile-avatar{opacity:.5}
+#nib-proposta .foto-perfil.is-enviando .foto-perfil-btn{pointer-events:none;opacity:.6}

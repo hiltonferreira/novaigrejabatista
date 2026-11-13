@@ -25,11 +25,11 @@ function nib_db(): PDO {
   return $db;
 }
 // Cria as tabelas na primeira vez (e só acrescenta o que faltar nas próximas versões).
-const NIB_MIGRACAO = 14;
+const NIB_MIGRACAO = 15;
 function nib_migrar(PDO $db): void {
   $db->exec("CREATE TABLE IF NOT EXISTS nib_versao (v INT NOT NULL) ENGINE=InnoDB");
   $v = (int)($db->query('SELECT MAX(v) FROM nib_versao')->fetchColumn() ?: 0);
-  if ($v >= NIB_MIGRACAO) return; // ao criar a v15, subir NIB_MIGRACAO
+  if ($v >= NIB_MIGRACAO) return; // ao criar a v16, subir NIB_MIGRACAO
   // Uma migração por vez: pedidos simultâneos esperam a primeira terminar (evita versões repetidas).
   if ((int)$db->query("SELECT GET_LOCK('nib_migrar', 15)")->fetchColumn() !== 1) throw new RuntimeException('migração em andamento por outro pedido');
   try { nib_migrar_passos($db, (int)($db->query('SELECT MAX(v) FROM nib_versao')->fetchColumn() ?: 0)); }
@@ -155,7 +155,15 @@ function nib_migrar_passos(PDO $db, int $v): void {
     $db->exec("CREATE TABLE IF NOT EXISTS nib_pilula_curtidas (pilula_id INT UNSIGNED NOT NULL, pessoa_id INT UNSIGNED NOT NULL, criado_em DATETIME NOT NULL, PRIMARY KEY (pilula_id, pessoa_id), KEY pessoa (pessoa_id)) ENGINE=InnoDB");
     $db->exec('INSERT INTO nib_versao (v) VALUES (14)');
   }
+  if ($v < 15) {
+    // v15: foto de perfil (pedido de Hilton, 13/11/2026). Imagem pequena (WebP 512 px) em tabela à parte; foto_em muda o endereço a cada troca.
+    if (!$db->query("SHOW COLUMNS FROM nib_pessoas LIKE 'foto_em'")->fetch()) $db->exec("ALTER TABLE nib_pessoas ADD COLUMN foto_em INT UNSIGNED NOT NULL DEFAULT 0");
+    $db->exec("CREATE TABLE IF NOT EXISTS nib_pessoa_fotos (pessoa_id INT UNSIGNED PRIMARY KEY, tipo VARCHAR(20) NOT NULL, imagem MEDIUMBLOB NOT NULL) ENGINE=InnoDB");
+    $db->exec('INSERT INTO nib_versao (v) VALUES (15)');
+  }
 }
+// Endereço da foto de perfil (vazio sem foto). Só quem entrou na conta consegue abrir.
+function nib_foto_url(array $p): string { return (int)($p['foto_em'] ?? 0) ? 'api/conta.php?acao=foto&id=' . (int)$p['id'] . '&v=' . (int)$p['foto_em'] : ''; }
 
 // Perfis da pessoa, do mais alto para o mais baixo. Sem a coluna papeis preenchida, vale o papel principal.
 const NIB_PAPEIS = ['admin', 'pastoral', 'secretaria', 'tesouraria', 'membro'];
@@ -304,7 +312,7 @@ function nib_publico(array $p): array {
   $nome = nib_nome_proprio((string)$p['nome']);
   return ['id' => (int)$p['id'], 'nome' => $nome, 'primeiro' => explode(' ', $nome)[0], 'email' => $p['email'], 'celular' => $p['celular'],
     'sexo' => $p['sexo'], 'vinculo' => $p['vinculo'], 'celula' => $p['celula'] ?? '', 'membro_status' => $p['membro_status'], 'papel' => nib_papeis($p)[0], 'papeis' => nib_papeis($p),
-    'nascimento' => $p['nascimento'], 'cpf' => $p['cpf'] ?? '', 'endereco' => $p['endereco'] ?? '', 'mostrar_aniversario' => (bool)$p['mostrar_aniversario'], 'criado_em' => $p['criado_em']];
+    'nascimento' => $p['nascimento'], 'cpf' => $p['cpf'] ?? '', 'endereco' => $p['endereco'] ?? '', 'mostrar_aniversario' => (bool)$p['mostrar_aniversario'], 'foto' => nib_foto_url($p), 'criado_em' => $p['criado_em']];
 }
 // Nome próprio: "maria DA silva" -> "Maria da Silva" (partículas em minúsculas, exceto no começo).
 function nib_nome_proprio(string $n): string {

@@ -57,7 +57,7 @@ try {
 
   switch ($post ? "post:$acao" : "get:$acao") {
     case 'get:lista': {
-      $q = $db->prepare('SELECT p.id, p.pessoa_id, p.titulo, p.motivo, p.atendido, p.criado_em, s.nome,
+      $q = $db->prepare('SELECT p.id, p.pessoa_id, p.titulo, p.motivo, p.atendido, p.criado_em, s.nome, s.foto_em,
           (SELECT COUNT(*) FROM nib_orando o WHERE o.pedido_id = p.id) AS orando,
           EXISTS(SELECT 1 FROM nib_orando o WHERE o.pedido_id = p.id AND o.pessoa_id = ?) AS eu_orando
         FROM nib_pedidos p JOIN nib_pessoas s ON s.id = p.pessoa_id
@@ -65,7 +65,7 @@ try {
       // Orações atendidas saem do mural: cada pessoa vê só o próprio histórico (Hilton, 07/11/2026).
       $q->execute([$eu['id'], $eu['id']]);
       $lista = array_map(fn($r) => [
-        'id' => (int)$r['id'], 'autor' => nib_nome_proprio((string)$r['nome']), 'titulo' => $r['titulo'], 'motivo' => $r['motivo'],
+        'id' => (int)$r['id'], 'autor' => nib_nome_proprio((string)$r['nome']), 'autor_foto' => nib_foto_url(['id' => $r['pessoa_id'], 'foto_em' => $r['foto_em']]), 'titulo' => $r['titulo'], 'motivo' => $r['motivo'],
         'atendido' => (bool)$r['atendido'], 'orando' => (int)$r['orando'], 'eu_orando' => (bool)$r['eu_orando'],
         'meu' => (int)$r['pessoa_id'] === (int)$eu['id'], 'criado_em' => $r['criado_em'],
       ], $q->fetchAll());

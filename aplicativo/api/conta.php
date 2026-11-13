@@ -18,7 +18,7 @@ try {
   if ($post) nib_conferir_origem();
   $db = nib_db();
   $eu = nib_pessoa_logada();
-  $d = $post ? nib_corpo() : [];
+  $d = $post && $acao !== 'foto' ? nib_corpo() : [];
 
   switch ($post ? "post:$acao" : "get:$acao") {
 
@@ -135,11 +135,39 @@ try {
       nib_json(200, ['ok' => true, 'pessoa' => nib_publico($q->fetch())]);
     }
 
+    // Foto de perfil: GET devolve a imagem (só para quem entrou na conta); POST com o corpo binário troca; ?remover=1 tira.
+    case 'get:foto': {
+      if (!$eu) { http_response_code(401); exit; }
+      $q = $db->prepare('SELECT tipo, imagem FROM nib_pessoa_fotos WHERE pessoa_id = ?'); $q->execute([(int)($_GET['id'] ?? 0)]); $f = $q->fetch();
+      if (!$f) { http_response_code(404); exit; }
+      header('Content-Type: ' . $f['tipo']); header('Cache-Control: private, max-age=31536000, immutable');
+      echo $f['imagem']; exit;
+    }
+    case 'post:foto': {
+      if (!$eu) nib_erro('Entre na sua conta.', 401);
+      if (!empty($_GET['remover'])) {
+        $db->prepare('DELETE FROM nib_pessoa_fotos WHERE pessoa_id = ?')->execute([$eu['id']]);
+        $db->prepare('UPDATE nib_pessoas SET foto_em = 0 WHERE id = ?')->execute([$eu['id']]);
+      } else {
+        nib_limite('foto', (string)$eu['id'], 30, 3600);
+        $img = (string)file_get_contents('php://input', false, null, 0, 700001);
+        if ($img === '' || strlen($img) > 700000) nib_erro('A foto precisa ter até 700 KB.');
+        $info = @getimagesizefromstring($img);
+        $tipos = [IMAGETYPE_JPEG => 'image/jpeg', IMAGETYPE_PNG => 'image/png', IMAGETYPE_WEBP => 'image/webp'];
+        if (!$info || !isset($tipos[$info[2]]) || $info[0] < 64 || $info[1] < 64 || $info[0] > 2000 || $info[1] > 2000) nib_erro('Escolha uma foto em JPEG, PNG ou WebP.');
+        $db->prepare('REPLACE INTO nib_pessoa_fotos (pessoa_id, tipo, imagem) VALUES (?, ?, ?)')->execute([$eu['id'], $tipos[$info[2]], $img]);
+        $db->prepare('UPDATE nib_pessoas SET foto_em = ? WHERE id = ?')->execute([time(), $eu['id']]);
+      }
+      $q = $db->prepare('SELECT * FROM nib_pessoas WHERE id = ?'); $q->execute([$eu['id']]);
+      nib_json(200, ['ok' => true, 'pessoa' => nib_publico($q->fetch())]);
+    }
+
     case 'post:excluir': {
       if (!$eu) nib_erro('Entre na sua conta.', 401);
       $senha = is_string($d['senha'] ?? null) ? $d['senha'] : '';
       if (!password_verify($senha, $eu['senha_hash'])) nib_erro('A senha não confere.', 401);
       nib_registrar(null, 'excluir-conta', null, 'pessoa ' . $eu['id']);
+      $db->prepare('DELETE FROM nib_pessoa_fotos WHERE pessoa_id = ?')->execute([$eu['id']]);
       $db->prepare('DELETE FROM nib_pessoas WHERE id = ?')->execute([$eu['id']]);
       nib_cookie('', time() - 3600);
       nib_json(200, ['ok' => true]);
@@ -180,7 +208,7 @@ try {
       if (!$eu || !nib_equipe($eu)) nib_erro('Acesso só para a equipe da igreja.', 403);
       $rows = $db->query('SELECT id, nome, email, celular, cpf, vinculo, celula, membro_status, papel, papeis, criado_em, ultimo_acesso, confirmado_em FROM nib_pessoas ORDER BY criado_em DESC LIMIT 2000')->fetchAll();
       $veCpf = nib_ve_cpf($eu);
-      foreach ($rows as &$r) { $r['nome'] = nib_nome_proprio((string)$r['nome']); $r['papeis'] = nib_papeis($r); $r['papel'] = $r['papeis'][0]; if (!$veCpf) unset($r['cpf']); } unset($r);
+      foreach ($rows as &$r) { $r['foto'] = nib_foto_url($r); unset($r['foto_em']); $r['nome'] = nib_nome_proprio((string)$r['nome']); $r['papeis'] = nib_papeis($r); $r['papel'] = $r['papeis'][0]; if (!$veCpf) unset($r['cpf']); } unset($r);
       nib_json(200, ['ok' => true, 'pessoas' => $rows]);
     }
     // Área da equipe (Fase 1): painel com números reais e lista de membros. O servidor confere o papel real.
@@ -220,7 +248,7 @@ try {
     case 'get:membros': {
       if (!$eu || !nib_equipe($eu)) nib_erro('Acesso só para a equipe da igreja.', 403);
       $tz = new DateTimeZone('America/Porto_Velho'); $d56 = (new DateTimeImmutable('today', $tz))->modify('-56 days')->format('Y-m-d');
-      $q = $db->prepare("SELECT p.id, p.nome, p.email, p.celular, p.cpf, p.papel, p.papeis, p.sexo, p.vinculo, p.celula, p.membro_status, p.nascimento, p.endereco, p.mostrar_aniversario, p.criado_em, p.ultimo_acesso, p.confirmado_em,
+      $q = $db->prepare("SELECT p.id, p.nome, p.email, p.celular, p.cpf, p.papel, p.papeis, p.sexo, p.vinculo, p.celula, p.membro_status, p.nascimento, p.endereco, p.mostrar_aniversario, p.criado_em, p.ultimo_acesso, p.confirmado_em, p.foto_em,
         (SELECT MAX(c.culto_dia) FROM nib_checkins c WHERE c.pessoa_id = p.id) ultima_presenca,
         (SELECT COUNT(*) FROM nib_checkins c WHERE c.pessoa_id = p.id AND c.culto_dia >= ?) presencas_8sem,
         (SELECT COUNT(*) FROM nib_membresia m WHERE m.pessoa_id = p.id AND m.apresentacao_em IS NULL) integracao
