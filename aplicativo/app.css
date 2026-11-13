@@ -1113,9 +1113,9 @@ html{scrollbar-gutter:stable}
 #nib-proposta .admin-notice:last-of-type{border-bottom:0}
 /* Campos: sem ultrapassar a borda do bloco (iOS Safari dá largura própria a data/hora) */
 #nib-proposta input,#nib-proposta textarea,#nib-proposta select{box-sizing:border-box;min-width:0;max-width:100%}
-#nib-proposta input[type=date],#nib-proposta input[type=time]{-webkit-appearance:none;appearance:none;display:block;width:100%;min-width:0;min-height:46px;line-height:1.5;text-align:left;background-color:var(--nib-field-surface)}
-#nib-proposta input[type=date]::-webkit-date-and-time-value,#nib-proposta input[type=time]::-webkit-date-and-time-value{text-align:left;margin:0}
-#nib-proposta input[type=date]::-webkit-calendar-picker-indicator,#nib-proposta input[type=time]::-webkit-calendar-picker-indicator{margin-left:auto}
+#nib-proposta input[type=date],#nib-proposta input[type=time],#nib-proposta input[type=datetime-local],#nib-proposta input[type=month]{-webkit-appearance:none;appearance:none;display:block;width:100%;min-width:0;min-height:46px;line-height:1.5;text-align:left;background-color:var(--nib-field-surface)}
+#nib-proposta input[type=date]::-webkit-date-and-time-value,#nib-proposta input[type=time]::-webkit-date-and-time-value,#nib-proposta input[type=datetime-local]::-webkit-date-and-time-value,#nib-proposta input[type=month]::-webkit-date-and-time-value{text-align:left;margin:0}
+#nib-proposta input[type=date]::-webkit-calendar-picker-indicator,#nib-proposta input[type=time]::-webkit-calendar-picker-indicator,#nib-proposta input[type=datetime-local]::-webkit-calendar-picker-indicator,#nib-proposta input[type=month]::-webkit-calendar-picker-indicator{margin-left:auto}
 #nib-proposta .form-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
 #nib-proposta .form-grid>div{min-width:0}
 #nib-proposta .box,#nib-proposta .admin-grid>*{min-width:0}
