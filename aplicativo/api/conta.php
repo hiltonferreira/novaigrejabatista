@@ -155,7 +155,16 @@ try {
         $info = @getimagesizefromstring($img);
         $tipos = [IMAGETYPE_JPEG => 'image/jpeg', IMAGETYPE_PNG => 'image/png', IMAGETYPE_WEBP => 'image/webp'];
         if (!$info || !isset($tipos[$info[2]]) || $info[0] < 64 || $info[1] < 64 || $info[0] > 2000 || $info[1] > 2000) nib_erro('Escolha uma foto em JPEG, PNG ou WebP.');
-        $db->prepare('REPLACE INTO nib_pessoa_fotos (pessoa_id, tipo, imagem) VALUES (?, ?, ?)')->execute([$eu['id'], $tipos[$info[2]], $img]);
+        $tipo = $tipos[$info[2]];
+        // iPhone (Safari) não gera WebP no aparelho e manda JPEG: aqui vira WebP 512 px, se o servidor tiver suporte.
+        if ($tipo !== 'image/webp' && function_exists('imagewebp') && ($src = @imagecreatefromstring($img))) {
+          $lado = min(imagesx($src), imagesy($src)); $t = min(512, $lado);
+          $dst = imagecreatetruecolor($t, $t);
+          imagecopyresampled($dst, $src, 0, 0, intdiv(imagesx($src) - $lado, 2), intdiv(imagesy($src) - $lado, 2), $t, $t, $lado, $lado);
+          ob_start(); $ok = imagewebp($dst, null, 82); $webp = (string)ob_get_clean();
+          if ($ok && $webp !== '') { $img = $webp; $tipo = 'image/webp'; }
+        }
+        $db->prepare('REPLACE INTO nib_pessoa_fotos (pessoa_id, tipo, imagem) VALUES (?, ?, ?)')->execute([$eu['id'], $tipo, $img]);
         $db->prepare('UPDATE nib_pessoas SET foto_em = ? WHERE id = ?')->execute([time(), $eu['id']]);
       }
       $q = $db->prepare('SELECT * FROM nib_pessoas WHERE id = ?'); $q->execute([$eu['id']]);
