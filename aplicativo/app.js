@@ -1751,8 +1751,7 @@
   // Foto de perfil em Meu cadastro: escolher (galeria ou câmera), trocar ou remover. Reduzida no aparelho para 512 px em WebP.
   function fotoPerfilBox(p) {
     const cam = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8.5A2.5 2.5 0 0 1 6.5 6h1.6l1.4-2h5l1.4 2h1.6A2.5 2.5 0 0 1 20 8.5v9a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 17.5z"/><circle cx="12" cy="12.5" r="3.5"/></svg>';
-    const boneco = '<span class="profile-avatar is-grande is-boneco" aria-hidden="true"><svg viewBox="0 0 64 64"><circle cx="32" cy="25" r="11" fill="#fff"/><path d="M10 66V60c0-12 10-21 22-21s22 9 22 21v6z" fill="#fff"/></svg></span>';
-    return `<div class="foto-perfil">${p.foto ? avatarHtml(p.primeiro, p.foto, 'is-grande') : boneco}<div><label class="button foto-perfil-btn">${cam}<span>${p.foto ? 'Trocar foto' : 'Adicionar foto'}</span><input type="file" accept="image/*" data-foto-perfil class="visually-hidden"></label>${p.foto ? '<button type="button" class="link-button" data-foto-remover>Remover foto</button>' : ''}<small>Aparece no seu perfil e nos seus pedidos do caderno de oração.</small></div></div>`;
+    return `<div class="foto-perfil">${avatarHtml(p.primeiro, p.foto, 'is-grande')}<div><label class="button foto-perfil-btn">${cam}<span>${p.foto ? 'Trocar foto' : 'Adicionar foto'}</span><input type="file" accept="image/*" data-foto-perfil class="visually-hidden"></label>${p.foto ? '<button type="button" class="link-button" data-foto-remover>Remover foto</button>' : ''}<small>Aparece no seu perfil e nos seus pedidos do caderno de oração.</small></div></div>`;
   }
   async function fotoPerfilEnviar(input) {
     const f = input.files && input.files[0]; if (!f) return;
