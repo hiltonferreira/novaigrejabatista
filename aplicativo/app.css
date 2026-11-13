@@ -2766,3 +2766,10 @@ dialog.ck-telao::backdrop{background:#041e42}
   #nib-proposta .social-banners:not(.pil-banners) .social-box{gap:8px;padding:9px 11px;border-radius:9px;font-size:13px;line-height:1.3}
   #nib-proposta .social-banners:not(.pil-banners) .social-box svg{width:18px;height:18px}
 }
+/* v176 (Hilton, 13/11/2026): caixa da pílula no azul degradê da referência, no lugar do laranja; cards das redes sem a caixa azul, com o texto direto sobre a foto escurecida. */
+#nib-proposta .pil-banner-box{background:linear-gradient(120deg,#1c4389f2 0%,#15286bf2 100%)}
+@supports ((backdrop-filter:blur(10px)) or (-webkit-backdrop-filter:blur(10px))){#nib-proposta .pil-banner-box{background:linear-gradient(120deg,#1c4389e0 0%,#15286be6 100%)}}
+@media(prefers-reduced-transparency:reduce){#nib-proposta .pil-banner-box{background:linear-gradient(120deg,#1c4389 0%,#15286b 100%)}}
+#nib-proposta .social-banners:not(.pil-banners) .social-card::before{background:linear-gradient(180deg,#000000a6 0%,#00000047 34%,#00000033 52%,#000000b3 78%,#000000d9 100%)}
+#nib-proposta .social-banners:not(.pil-banners) .social-box,#nib-proposta .home-desk .social-banners:not(.pil-banners) .social-box{padding:0;background:none;border-radius:0;backdrop-filter:none;-webkit-backdrop-filter:none;text-shadow:0 1px 3px #00000099}
+#nib-proposta .social-banners:not(.pil-banners) .social-box svg{filter:drop-shadow(0 1px 2px #00000099)}
