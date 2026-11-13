@@ -10,10 +10,21 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Montserrat:wght@600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/inscricao.css?v=20261112.1">
-  <script defer src="assets/inscricao.js?v=20261112.1"></script>
+  <link rel="stylesheet" href="assets/inscricao.css?v=20261113.1">
+  <script defer src="assets/inscricao.js?v=20261113.1"></script>
 <link rel="stylesheet" href="/consulta-inscricao/atalho.css?v=2.6">
-<link rel="stylesheet" href="/consulta-inscricao/cabecalho.css?v=2.8"></head>
+<link rel="stylesheet" href="/consulta-inscricao/cabecalho.css?v=2.9">
+<style id="nib-cartao">
+.nib-pay-note{margin:18px 0 12px;padding:14px 16px;border-radius:14px;background:#eef3f9;border:1px solid #d5e0ee;color:#041e42;font-size:.95rem;line-height:1.45}
+.nib-pay-note strong{display:block;margin-bottom:2px}
+.nib-card-pay{margin:18px 0;padding:16px;border-radius:16px;border:1px solid #d5e0ee;background:#fff;color:#041e42}
+.nib-card-pay h3{margin:0 0 4px;font-size:1.05rem}
+.nib-card-pay p{margin:0 0 12px;color:#536176;font-size:.95rem;line-height:1.45}
+.nib-card-pay .button{display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;text-decoration:none}
+.nib-pay-or{display:flex;align-items:center;gap:12px;margin:18px 0 6px;color:#536176;font-size:.85rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em}
+.nib-pay-or::before,.nib-pay-or::after{content:"";flex:1;height:1px;background:#d5e0ee}
+</style>
+</head>
 <body>
 <header class="event-header nib-public-header">
   <a href="/" aria-label="Nova Igreja Batista — início">
@@ -33,7 +44,7 @@
     <p>Um encontro de fé, palavra, worship, comunhão e experiências para adolescentes de 12 a 17 anos.</p>
     <dl class="event-facts">
       <div><dt>Data</dt><dd>21 e 22 de novembro de 2026</dd></div>
-      <div><dt>Inscrição</dt><dd>R$ 80 por participante</dd></div>
+      <div><dt>Inscrição</dt><dd>R$ 80 por participante<br>R$ 30 para a equipe Staff</dd></div>
       <div><dt>Local</dt><dd>Chácara Colina Verde</dd></div>
       <div><dt>Faixa etária</dt><dd>12 a 17 anos</dd></div>
     </dl>
@@ -52,6 +63,11 @@
     <form id="event-form" novalidate>
       <fieldset data-step="0">
         <legend>Faça sua inscrição</legend>
+        <div class="nib-tipo" role="radiogroup" aria-labelledby="tipo-titulo">
+          <p class="nib-tipo-titulo" id="tipo-titulo">Tipo de inscrição</p>
+          <label class="nib-tipo-opcao"><input type="radio" name="registration_type" value="participante" checked><span><strong>Participante</strong>Adolescente de 12 a 17 anos · R$ 80,00</span></label>
+          <label class="nib-tipo-opcao"><input type="radio" name="registration_type" value="staff"><span><strong>Staff</strong>Voluntário da equipe · R$ 30,00</span></label>
+        </div>
         <p class="step-intro">Informe os dados de quem participará do encontro e do responsável legal.</p>
 
         <label for="name">Nome completo do adolescente</label>
@@ -108,13 +124,20 @@
           <input id="website" name="website" tabindex="-1" autocomplete="off">
         </div>
 
-        <button class="button primary" id="next-data" type="button">Continuar para o Pix</button>
+        <p class="nib-pay-note"><strong>Inscrição: R$ 80,00</strong>Pague com Pix ou cartão de crédito.</p>
+        <button class="button primary" id="next-data" type="button">Continuar para o pagamento</button>
         <p class="small-note">Você pode abrir o banco e voltar sem perder o preenchimento.</p>
       </fieldset>
 
       <fieldset data-step="1" hidden>
-        <legend>Pagamento via Pix</legend>
-        <p class="step-intro">Use o Pix Copia e Cola ou leia o QR Code no aplicativo do seu banco. Depois, volte para enviar o comprovante.</p>
+        <legend>Pagamento</legend>
+        <p class="step-intro">Escolha pagar com cartão ou com Pix. Depois, volte aqui para enviar o comprovante.</p>
+        <div class="nib-card-pay">
+          <h3>Cartão de crédito</h3>
+          <p>Pague com cartão de crédito na página da Sipag (Sicoob). Ao terminar, salve ou tire um print do comprovante.</p>
+          <a class="button primary" href="https://web.sipag.com.br/pagamento/link/bb7f44da-2976-471b-b129-a421b0285aa0" target="_blank" rel="noopener noreferrer">Pagar com cartão de crédito</a>
+        </div>
+        <p class="nib-pay-or">ou pague com Pix</p>
 
         <div class="payment-summary">
           <div>
@@ -129,7 +152,7 @@
 
         <div class="pix-payment pix-payment-home">
           <div class="pix-qr">
-            <img src="img/pix-nxt-camp-80.png" alt="QR Code Pix de R$ 80 para Nova Igreja Batista" width="441" height="441">
+            <img src="img/pix-nxt-camp-80-v2.png" alt="QR Code Pix de R$ 80 para Nova Igreja Batista" width="441" height="441">
             <p class="small-note">No banco, escolha pagar com QR Code.</p>
           </div>
 
@@ -137,7 +160,7 @@
             <span class="pix-copy-label">Copiar código PIX</span>
           </button>
           <p id="copy-status" class="small-note pix-copy-status" role="status" aria-live="polite"></p>
-          <textarea id="pix-code" aria-label="Código Pix para copiar manualmente" readonly hidden rows="4" spellcheck="false">00020126360014br.gov.bcb.pix011440518758000130520400005303986540580.005802BR5919NOVA IGREJA BATISTA6009ARIQUEMES62070503***63047D99</textarea>
+          <textarea id="pix-code" aria-label="Código Pix para copiar manualmente" readonly hidden rows="4" spellcheck="false">00020126580014br.gov.bcb.pix0114405187580001300218Inscricao NXT Camp520400005303986540580.005802BR5919NOVA IGREJA BATISTA6009ARIQUEMES62110507NXTCAMP63043300</textarea>
         </div>
 
         <div class="pix-details">
@@ -156,7 +179,7 @@
 
       <fieldset data-step="2" hidden>
         <legend>Envie seu comprovante.</legend>
-        <p class="step-intro">Anexe a imagem ou o PDF do pagamento de R$ 80.</p>
+        <p class="step-intro">Anexe a imagem ou o PDF do pagamento de R$ 80 (Pix ou cartão).</p>
 
         <label class="upload" id="receipt-picker" for="receipt">
           <strong>Escolher comprovante</strong>
@@ -174,11 +197,11 @@
 
         <label class="consent payer-toggle">
           <input type="checkbox" id="other-payer" aria-controls="payer-field" aria-expanded="false">
-          <span>O Pix foi feito por outra pessoa?</span>
+          <span>O pagamento foi feito por outra pessoa?</span>
         </label>
 
         <div id="payer-field" hidden>
-          <label for="payer">Nome de quem fez o Pix</label>
+          <label for="payer">Nome de quem pagou</label>
           <input id="payer" name="payer" autocomplete="off" maxlength="120" disabled>
         </div>
 
@@ -209,5 +232,6 @@
   <span>© 2026 Nova Igreja Batista · Um lar de fé e acolhimento.</span>
   <a class="admin-link" href="/inscricoes/" target="_blank" rel="noopener noreferrer">Gerenciar inscrições</a>
 </footer>
+<script defer src="/assets/comprovante-leve.js?v=1"></script>
 </body>
 </html>
