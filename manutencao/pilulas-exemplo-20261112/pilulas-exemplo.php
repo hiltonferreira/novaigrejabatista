@@ -5,6 +5,7 @@
 //   php pilulas-exemplo.php enviar    -> envia o que falta (ids ficam em enviados.json; rodar de novo não duplica)
 //   php pilulas-exemplo.php estado    -> mostra o estado de cada pílula no app
 //   php pilulas-exemplo.php capas     -> grava a capa (quadro escolhido do vídeo, já com o escurecimento) de cada pílula enviada
+//   php pilulas-exemplo.php diagnostico -> mostra no YouTube por que um vídeo aparece como indisponível
 //   php pilulas-exemplo.php remover   -> tira do app e apaga do YouTube as pílulas desta pasta
 declare(strict_types=1);
 if (PHP_SAPI !== 'cli') { http_response_code(404); exit; }
@@ -66,6 +67,23 @@ if ($acao === 'enviar') {
     $q = $db->prepare('SELECT id, titulo, estado, youtube_id, aviso, removido_em FROM nib_pilulas WHERE id = ?'); $q->execute([$id]);
     echo json_encode($q->fetch(), JSON_UNESCAPED_UNICODE) . "\n";
   }
+} elseif ($acao === 'diagnostico') {
+  // Por que um vídeo aparece como "indisponível" no app: estado no YouTube (processamento, privacidade, incorporação, bloqueios).
+  foreach ($ids as $arq => $id) {
+    $q = $db->prepare('SELECT id, titulo, estado, youtube_id FROM nib_pilulas WHERE id = ?'); $q->execute([$id]); $r = $q->fetch();
+    if (!$r || !$r['youtube_id']) { echo "pílula $id: sem vídeo\n"; continue; }
+    try {
+      $it = nib_yt_get('/youtube/v3/videos', ['part' => 'status,contentDetails,processingDetails', 'id' => $r['youtube_id']])['items'][0] ?? null;
+    } catch (Throwable $e) { echo "pílula $id ({$r['titulo']}): erro na API: {$e->getMessage()}\n"; continue; }
+    if (!$it) { echo "pílula $id ({$r['titulo']}) {$r['youtube_id']}: NÃO EXISTE MAIS no canal (apagado ou removido pelo YouTube)\n"; continue; }
+    $st = $it['status'] ?? []; $cd = $it['contentDetails'] ?? [];
+    echo "pílula $id ({$r['titulo']}) {$r['youtube_id']}: " . json_encode([
+      'app' => $r['estado'], 'upload' => $st['uploadStatus'] ?? null, 'privacidade' => $st['privacyStatus'] ?? null,
+      'incorporavel' => $st['embeddable'] ?? null, 'rejeicao' => $st['rejectionReason'] ?? null, 'falha' => $st['failureReason'] ?? null,
+      'regiao' => $cd['regionRestriction'] ?? null, 'licenciado' => $cd['licensedContent'] ?? null,
+      'classificacao' => $cd['contentRating']['ytRating'] ?? null, 'processamento' => $it['processingDetails']['processingStatus'] ?? null,
+    ], JSON_UNESCAPED_UNICODE) . "\n";
+  }
 } elseif ($acao === 'capas') {
   // Mesmo efeito do botão "Trocar capa" do app (api/pilulas.php, acao=capa): guarda a imagem no banco e muda capa_em.
   foreach ($cfg['pilulas'] as $p) {
@@ -90,5 +108,5 @@ if ($acao === 'enviar') {
     echo "removida pílula $id ({$r['titulo']})" . ($ok ? ", apagada do YouTube\n" : ", MAS não apagou no YouTube: apague no YouTube Studio\n");
   }
 } else {
-  echo "Uso: php pilulas-exemplo.php enviar | estado | capas | remover\n";
+  echo "Uso: php pilulas-exemplo.php enviar | estado | diagnostico | capas | remover\n";
 }
