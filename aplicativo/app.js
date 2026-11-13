@@ -811,7 +811,9 @@
   function pilTelaCheia(on) {
     const box = document.getElementById('pil-player'); if (!box) return;
     const fs = document.fullscreenElement || document.webkitFullscreenElement;
-    if (!on) { box.classList.remove('is-tela-cheia'); document.documentElement.classList.remove('pil-tela-aberta'); if (fs) (document.exitFullscreen || document.webkitExitFullscreen).call(document).catch?.(() => {}); return; }
+    if (!on) { document.querySelectorAll('.pil-tela-solto').forEach(e => e.classList.remove('pil-tela-solto')); box.classList.remove('is-tela-cheia'); document.documentElement.classList.remove('pil-tela-aberta'); if (fs) (document.exitFullscreen || document.webkitExitFullscreen).call(document).catch?.(() => {}); return; }
+    // Animação de entrada da tela (transform/animation com fill) prende o position:fixed dentro do conteúdo: solta os ancestrais enquanto a tela cheia estiver aberta.
+    for (let e = box.parentElement; e && e !== document.body; e = e.parentElement) { const cs = getComputedStyle(e); if (cs.transform !== 'none' || cs.animationName !== 'none' || cs.filter !== 'none' || cs.contain !== 'none' || cs.willChange !== 'auto' || (cs.backdropFilter && cs.backdropFilter !== 'none') || (cs.zIndex !== 'auto' && cs.position !== 'static')) { e.classList.add('pil-tela-solto'); } }
     box.classList.add('is-tela-cheia'); document.documentElement.classList.add('pil-tela-aberta');
     const req = box.requestFullscreen || box.webkitRequestFullscreen;
     if (req) { try { const r = req.call(box); if (r && r.catch) r.catch(() => {}); } catch (_) {} }
@@ -1063,7 +1065,7 @@
   }
   function show(view, focus = true, record = true) {
     if(view==='oracao') view='caderno'; // Compatibilidade com o destino anterior.
-    document.documentElement.classList.remove('pil-tela-aberta');
+    document.documentElement.classList.remove('pil-tela-aberta'); document.querySelectorAll('.pil-tela-solto').forEach(e => e.classList.remove('pil-tela-solto'));
     if (PUBLIC && view === 'cadastros') { state.memStatus = 'Aguardando'; state.memSel = null; state.memMore = false; view = 'membros'; } // v155: Cadastros virou um filtro de Membros.
     if (isManagement() && !admin.allowed(view)) view = 'gestao';
     if (adminOnly.includes(view) && !isManagement() && !(PUBLIC && allowedPublic().includes(view))) view = 'inicio';

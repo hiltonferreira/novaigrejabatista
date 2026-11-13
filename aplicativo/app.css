@@ -2847,3 +2847,6 @@ html.pil-tela-aberta,html.pil-tela-aberta body{overflow:hidden}
 #nib-proposta .pil-tela-btn svg{width:18px;height:18px}
 #nib-proposta .pil-tela-btn:active{background:#ff7f40;color:#041e42}
 #nib-proposta .pil-player.is-tela-cheia .pil-tela-btn{display:none}
+/* v195: com a pílula em tela cheia, os ancestrais do player perdem transform/animação (senão o fixed fica preso no conteúdo, como no iPhone do Hilton). */
+#nib-proposta .pil-tela-solto{animation:none!important;transform:none!important;filter:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;contain:none!important;will-change:auto!important;z-index:auto!important}
+html.pil-tela-aberta #nib-proposta .bottom-bar,html.pil-tela-aberta #nib-proposta>header{visibility:hidden}
