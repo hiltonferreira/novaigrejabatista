@@ -807,21 +807,6 @@
     const chips = temas.length > 1 || state.pilTema ? `<div class="pil-temas seg-rolar" role="group" aria-label="Filtrar por tema" data-seg="pil-temas"><button type="button" class="history-year${state.pilTema ? '' : ' is-active'}" data-pil-tema="" aria-pressed="${!state.pilTema}">Todos</button>${temas.map(t => `<button type="button" class="history-year${state.pilTema === t ? ' is-active' : ''}" data-pil-tema="${escape(t)}" aria-pressed="${state.pilTema === t}">${escape(t)}</button>`).join('')}</div>` : '';
     return `${lider ? pilEquipe(d) : ''}<div class="pil-search"><label class="visually-hidden" for="pil-q">Buscar nas pílulas</label><input id="pil-q" type="search" value="${escape(state.pilQ || '')}" placeholder="Buscar por tema, passagem ou palavra" autocomplete="off" enterkeyhint="search"></div>${chips}<div id="pil-results">${pilLista()}</div>`;
   }
-  // Tela cheia da pílula (Hilton, 13/11/2026): o player cobre a tela inteira, com X para sair. Onde o navegador deixa (Android), também entra no modo tela cheia de verdade; no iPhone fica a camada do próprio app.
-  function pilTelaCheia(on) {
-    const box = document.getElementById('pil-player'); if (!box) return;
-    const fs = document.fullscreenElement || document.webkitFullscreenElement;
-    if (!on) { document.querySelectorAll('.pil-tela-solto').forEach(e => e.classList.remove('pil-tela-solto')); box.classList.remove('is-tela-cheia'); document.documentElement.classList.remove('pil-tela-aberta'); if (fs) (document.exitFullscreen || document.webkitExitFullscreen).call(document).catch?.(() => {}); return; }
-    // Animação de entrada da tela (transform/animation com fill) prende o position:fixed dentro do conteúdo: solta os ancestrais enquanto a tela cheia estiver aberta.
-    for (let e = box.parentElement; e && e !== document.body; e = e.parentElement) { const cs = getComputedStyle(e); if (cs.transform !== 'none' || cs.animationName !== 'none' || cs.filter !== 'none' || cs.contain !== 'none' || cs.willChange !== 'auto' || (cs.backdropFilter && cs.backdropFilter !== 'none') || (cs.zIndex !== 'auto' && cs.position !== 'static')) { e.classList.add('pil-tela-solto'); } }
-    box.classList.add('is-tela-cheia'); document.documentElement.classList.add('pil-tela-aberta');
-    const req = box.requestFullscreen || box.webkitRequestFullscreen;
-    if (req) { try { const r = req.call(box); if (r && r.catch) r.catch(() => {}); } catch (_) {} }
-    try { screen.orientation && screen.orientation.unlock && screen.orientation.unlock(); } catch (_) {}
-    box.querySelector('.pil-tela-fechar')?.focus({ preventScroll: true });
-  }
-  ['fullscreenchange', 'webkitfullscreenchange'].forEach(ev => document.addEventListener(ev, () => { if (!(document.fullscreenElement || document.webkitFullscreenElement)) { const box = document.getElementById('pil-player'); if (box && box.classList.contains('is-tela-cheia')) pilTelaCheia(false); } }));
-  document.addEventListener('keydown', e => { if (e.key === 'Escape' && document.querySelector('.pil-player.is-tela-cheia')) pilTelaCheia(false); });
   const pilIframe = (p, t, auto) => `<iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(p.youtube_id)}?rel=0&amp;playsinline=1&amp;modestbranding=1${t ? '&amp;start=' + t : ''}${auto ? '&amp;autoplay=1' : ''}" title="${escape(p.titulo)}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>`;
   function pilDetalhe() {
     const sel = state.pilSel, p = state.pilVer && state.pilVer.id === sel.id ? state.pilVer : null;
@@ -829,7 +814,7 @@
     const lider = !!p.estado && NibConta.lideranca(), pronto = p.youtube_id && (!p.estado || p.estado === 'publicado' || p.troca);
     const palavras = eqFold(state.pilQ || '').split(/\s+/).filter(w => w.length >= 3 || /^\d+$/.test(w));
     const hit = txt => { const f = ' ' + eqFold(txt).replace(/[^a-z0-9]+/g, ' ') + ' '; return palavras.some(w => /^\d+$/.test(w) ? f.includes(' ' + w + ' ') : f.includes(w)); };
-    const player = pronto ? `<div class="pil-player${p.vertical ? ' is-vertical' : ''}" id="pil-player">${pilIframe(p, sel.t, !!sel.t)}<button type="button" class="pil-tela-btn" data-pil-tela aria-label="Ver em tela cheia"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button><button type="button" class="pil-tela-fechar" data-pil-tela-sair aria-label="Sair da tela cheia"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>`
+    const player = pronto ? `<div class="pil-player${p.vertical ? ' is-vertical' : ''}" id="pil-player">${pilIframe(p, sel.t, !!sel.t)}</div>`
       : `<section class="box pil-wait"><p>${escape(p.aviso || (p.estado === 'enviando' ? `O envio parou em ${p.progresso}%. Remova e envie o vídeo de novo.` : 'O YouTube ainda está preparando o vídeo. Ele aparece aqui assim que ficar pronto.'))}</p></section>`;
     const leg = p.legendas || [];
     const transc = leg.length ? `<details class="pil-transc"${palavras.length && leg.some(([, x]) => hit(x)) ? ' open' : ''}><summary>Ler o que foi falado</summary><ol>${leg.map(([t, x]) => `<li${palavras.length && hit(x) ? ' class="is-hit"' : ''}><button type="button" data-pil-t="${t}">${pilTempo(t)}</button><span>${escape(x)}</span></li>`).join('')}</ol>${p.transcricao && p.transcricao !== leg.map(c => c[1]).join(' ') ? `<p class="pil-transc-ed"><b>Texto revisado:</b> ${escape(p.transcricao)}</p>` : ''}</details>`
@@ -1065,7 +1050,6 @@
   }
   function show(view, focus = true, record = true) {
     if(view==='oracao') view='caderno'; // Compatibilidade com o destino anterior.
-    document.documentElement.classList.remove('pil-tela-aberta'); document.querySelectorAll('.pil-tela-solto').forEach(e => e.classList.remove('pil-tela-solto'));
     if (PUBLIC && view === 'cadastros') { state.memStatus = 'Aguardando'; state.memSel = null; state.memMore = false; view = 'membros'; } // v155: Cadastros virou um filtro de Membros.
     if (isManagement() && !admin.allowed(view)) view = 'gestao';
     if (adminOnly.includes(view) && !isManagement() && !(PUBLIC && allowedPublic().includes(view))) view = 'inicio';
@@ -1187,8 +1171,6 @@
     if (action.dataset.sugLida && PUBLIC) { const id = Number(action.dataset.sugLida), lida = action.dataset.lida === '1'; action.disabled = true; NibConta.sugestaoLida(id, lida).then(() => { const s = state.sugList.find(x => Number(x.id) === id); if (s) s.lida = lida; show('sugestoes', false, false); }).catch(e => { action.disabled = false; announce(e.message, 'error'); }); return; }
     if (PUBLIC && action.dataset.pilAbrir) { state.pilSel = { id: Number(action.dataset.pilAbrir), t: Number(action.dataset.t) || 0 }; state.pilEdit = false; state.pilCapaEd = false; pilCapaVidFechar(); if (!state.pilVer || state.pilVer.id !== state.pilSel.id) state.pilVer = null; show('pilulas', true, false); return; }
     if (PUBLIC && action.dataset.pilVoltar !== undefined) { state.pilSel = null; state.pilEdit = false; state.pilCapaEd = false; pilCapaVidFechar(); show('pilulas', true, false); return; }
-    if (action.dataset.pilTela !== undefined) { pilTelaCheia(true); return; }
-    if (action.dataset.pilTelaSair !== undefined) { pilTelaCheia(false); return; }
     if (PUBLIC && action.dataset.pilT !== undefined) { const box = content.querySelector('#pil-player'), p = state.pilVer; if (box && p) { box.innerHTML = pilIframe(p, Number(action.dataset.pilT), true); box.scrollIntoView({ block: 'start', behavior: 'smooth' }); } return; }
     if (PUBLIC && action.dataset.pilTema !== undefined) { state.pilTema = action.dataset.pilTema; const grupo = action.parentElement; grupo.querySelectorAll(':scope > button').forEach(b => { const on = b === action; b.classList.toggle('is-active', on); b.setAttribute('aria-pressed', on); }); segify(grupo.parentElement); loadPilulas().then(() => { if (state.view === 'pilulas') show('pilulas', false, false); }); return; }
     if (PUBLIC && action.dataset.pilNova !== undefined) { state.pilUp = null; state.pilForm = !!state.pilFile; show('pilulas', false, false); return; }
