@@ -29,6 +29,68 @@
     window.scrollTo({top:0,behavior:"smooth"});
   }
 
+
+  // Staff: inscrição da equipe de voluntários, R$ 30 (2026-11-13).
+  const STAFF_CARD_URL="";
+  const STAFF_PIX="00020126580014br.gov.bcb.pix0114405187580001300218Inscricao NXT Camp520400005303986540530.005802BR5919NOVA IGREJA BATISTA6009ARIQUEMES62120508NXTSTAFF6304DFA6";
+  const typeInputs=[...form.querySelectorAll('input[name="registration_type"]')];
+  const q=sel=>document.querySelector(sel);
+  const guardianEls=[q(".section-divider"),q('label[for="guardian"]'),document.getElementById("guardian"),document.getElementById("guardian-phone")?.closest(".field-row")].filter(Boolean);
+  // Staff informa só nome e WhatsApp: some responsável, nascimento e saúde.
+  guardianEls.push(...[birth?.closest(".field-row"),q('label[for="health"]'),document.getElementById("health")].filter(Boolean));
+  const guardianInputs=["guardian","guardian-phone","relationship","birth","age","health"].map(id=>document.getElementById(id)).filter(Boolean);
+  const phone=document.getElementById("phone");
+  const consentText=q("label.consent:not(.payer-toggle) span");
+  const texts=[
+    [q('label[for="name"]'),"Nome completo"],
+    [q('label[for="phone"]'),"WhatsApp com DDD"],
+    [q('fieldset[data-step="0"] .step-intro'),"Informe o nome e o WhatsApp de quem vai servir na equipe Staff do NXT CAMP."],
+    [q(".nib-pay-note strong"),"Inscrição Staff: R$ 30,00"],
+    [q('fieldset[data-step="1"] .step-intro'),STAFF_CARD_URL?"Escolha pagar com cartão ou com Pix. Depois, volte aqui para enviar o comprovante.":"Pague com Pix. Depois, volte aqui para enviar o comprovante."],
+    [q(".payment-summary strong"),"R$ 30,00"],
+    [q('fieldset[data-step="2"] .step-intro'),STAFF_CARD_URL?"Anexe a imagem ou o PDF do pagamento de R$ 30 (Pix ou cartão).":"Anexe a imagem ou o PDF do Pix de R$ 30."]
+  ].filter(([el])=>el).map(([el,staff])=>({el,staff,original:el.innerHTML}));
+  const payNoteText=q(".nib-pay-note strong")?.nextSibling;
+  const payNoteOriginal=payNoteText?.textContent;
+  const consentOriginal=consentText?.innerHTML;
+  const health=document.getElementById("health");
+  const healthOriginal=health?.placeholder;
+  const card=q(".nib-card-pay");
+  const cardLink=card?.querySelector("a");
+  const cardHref=cardLink?.getAttribute("href");
+  const payOr=q(".nib-pay-or");
+  const qr=q(".pix-qr img");
+  const qrOriginal=qr?{src:qr.getAttribute("src"),alt:qr.alt}:null;
+  const pixField=document.getElementById("pix-code");
+  const pixOriginal=pixField?.value;
+  const isStaff=()=>typeInputs.some(i=>i.checked&&i.value==="staff");
+
+  function applyType(){
+    const staff=isStaff();
+    texts.forEach(t=>{t.el.innerHTML=staff?t.staff:t.original;});
+    if(payNoteText)payNoteText.textContent=staff?(STAFF_CARD_URL?"Pague com Pix ou cartão de crédito.":"Pague com Pix."):payNoteOriginal;
+    if(consentText)consentText.innerHTML=staff?'Confirmo que faço parte da equipe Staff do NXT CAMP e autorizo o uso dos meus dados e do comprovante para organizar esta inscrição. <a href="/privacidade.html" target="_blank" rel="noopener">Política de privacidade</a>.':consentOriginal;
+    if(health)health.placeholder=staff?"Informe somente o que a equipe precisa saber para cuidar bem de você.":healthOriginal;
+    guardianEls.forEach(el=>{el.hidden=staff;});
+    guardianInputs.forEach(el=>{el.disabled=staff;});
+    if(phone)phone.required=staff;
+    if(age){if(staff){age.removeAttribute("min");age.removeAttribute("max");}else{age.min="12";age.max="17";}}
+    if(card){card.hidden=staff&&!STAFF_CARD_URL;if(cardLink)cardLink.setAttribute("href",staff&&STAFF_CARD_URL?STAFF_CARD_URL:cardHref);}
+    if(payOr)payOr.hidden=staff&&!STAFF_CARD_URL;
+    if(qr&&qrOriginal){qr.setAttribute("src",staff?"img/pix-nxt-camp-staff-30.webp":qrOriginal.src);qr.alt=staff?"QR Code Pix de R$ 30 para Nova Igreja Batista":qrOriginal.alt;}
+    if(pixField)pixField.value=staff?STAFF_PIX:pixOriginal;
+    setError("");
+  }
+  typeInputs.forEach(i=>i.addEventListener("change",applyType));
+  if(new URLSearchParams(location.search).get("tipo")==="staff"){
+    const staffInput=typeInputs.find(i=>i.value==="staff");
+    if(staffInput)staffInput.checked=true;
+    // A escolha só aparece para quem chega pelo link do Staff.
+    const typeBox=form.querySelector(".nib-tipo");
+    if(typeBox)typeBox.hidden=false;
+  }
+  applyType();
+
   progress.forEach((li,i)=>{
     li.classList.toggle("is-complete", false);
     if(i===0) li.setAttribute("aria-current","step");
@@ -51,7 +113,7 @@
       if(!el.checkValidity()){el.reportValidity();return;}
     }
     const n=Number(age.value);
-    if(n<12||n>17){setError("A inscrição é destinada a adolescentes de 12 a 17 anos.");age.focus();return;}
+    if(!isStaff()&&(n<12||n>17)){setError("A inscrição é destinada a adolescentes de 12 a 17 anos.");age.focus();return;}
     go(1);
   });
 
@@ -160,6 +222,7 @@
       success.hidden=false;
       success.focus();
       form.reset();
+      applyType();
     }catch(err){
       setError(err&&err.message?err.message:"Não foi possível concluir a inscrição.");
       btn.disabled=false;
