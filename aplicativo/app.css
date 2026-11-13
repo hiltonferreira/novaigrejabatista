@@ -2755,3 +2755,5 @@ dialog.ck-telao::backdrop{background:#041e42}
   #nib-proposta main .verse-share{min-height:36px;padding:7px 13px;font-size:12.5px;gap:6px}
   #nib-proposta main .verse-share svg{width:15px;height:15px}
 }
+/* Referência do versículo sem negrito (pedido de Hilton, 13/11/2026). */
+#nib-proposta .daily-verse cite{font-weight:500;letter-spacing:0}
