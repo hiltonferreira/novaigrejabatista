@@ -2,7 +2,7 @@
    Guarda os arquivos do app no celular para abrir rápido e funcionar com internet fraca.
    Ao mudar qualquer arquivo do app, aumente VERSION: o celular baixa a versão nova
    e mostra "Nova versão do app disponível". Dados de fora (obra.json, site) não ficam guardados. */
-const VERSION = 'nib-app-238d0489cc';
+const VERSION = 'nib-app-0fa25e64c9';
 const FILES = [
   './', 'index.html', 'conheca.html', 'manifest.webmanifest',
   'app.css', 'install.css', 'conheca.css', 'app.js', 'admin.js', 'icons.js', 'install.js', 'site-data.js', 'conta.js', 'moderation.js', 'daily-content.js', 'verses.js', 'pix.js',

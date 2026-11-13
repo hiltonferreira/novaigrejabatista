@@ -229,7 +229,7 @@ try {
       if ($img === '' || strlen($img) > 1600000) nib_erro('A imagem da capa precisa ter até 1,5 MB.');
       $info = @getimagesizefromstring($img);
       $tipos = [IMAGETYPE_JPEG => 'image/jpeg', IMAGETYPE_PNG => 'image/png', IMAGETYPE_WEBP => 'image/webp'];
-      if (!$info || !isset($tipos[$info[2]]) || $info[0] < 120 || $info[1] < 120 || $info[0] > 4000 || $info[1] > 4000) nib_erro('Escolha uma imagem JPEG ou PNG para a capa.');
+      if (!$info || !isset($tipos[$info[2]]) || $info[0] < 120 || $info[1] < 120 || $info[0] > 4000 || $info[1] > 4000) nib_erro('Escolha uma imagem WebP, JPEG ou PNG para a capa.');
       $db->prepare('REPLACE INTO nib_pilula_capas (pilula_id, tipo, imagem) VALUES (?, ?, ?)')->execute([$id, $tipos[$info[2]], $img]);
       $db->prepare('UPDATE nib_pilulas SET capa_em = ? WHERE id = ?')->execute([time(), $id]);
       nib_registrar((int)$eu['id'], 'pilula-capa', $id);

@@ -610,12 +610,15 @@
     const vid = vsrc ? `<div class="pil-capa-video"><video src="${vsrc}" muted playsinline controls preload="metadata"></video><div class="form-actions"><button type="button" class="action primary" data-pil-quadro>Usar este quadro</button><button type="button" class="button" data-pil-capa-fechar>Cancelar</button></div></div>` : '';
     return `<div class="pil-capa" id="pil-capa"><span class="pil-capa-img${(p ? p.vertical : !state.pilMeta || state.pilMeta.vertical) ? ' is-vertical' : ''}">${src ? `<img src="${escape(src)}" alt="Capa da pílula">` : p && p.youtube_id ? pilCapaImg(p) : '<small>Automática</small>'}</span><div><strong>Capa</strong><small>${escape(dica)}</small><div class="pil-capa-acoes">${acoes}</div></div>${vid}</div>`;
   }
-  // Reduz a imagem (foto ou quadro do vídeo) para no máximo 1280 px e devolve um JPEG.
+  // Reduz a imagem (foto ou quadro do vídeo) para no máximo 1280 px. Usa WebP (bem menor, mesma qualidade);
+  // onde o navegador não gera WebP (Safari devolve PNG), cai para JPEG.
   function pilCapaJpeg(fonte, w, h) {
     const k = Math.min(1, 1280 / Math.max(w, h)), c = document.createElement('canvas');
     c.width = Math.round(w * k); c.height = Math.round(h * k);
     c.getContext('2d').drawImage(fonte, 0, 0, c.width, c.height);
-    return new Promise((res, rej) => c.toBlob(b => b ? res(b) : rej(new Error('Não foi possível preparar a imagem.')), 'image/jpeg', 0.86));
+    const gera = (tipo, q) => new Promise(res => c.toBlob(b => res(b), tipo, q));
+    return gera('image/webp', 0.82).then(b => b && b.type === 'image/webp' ? b : gera('image/jpeg', 0.86))
+      .then(b => { if (!b) throw new Error('Não foi possível preparar a imagem.'); return b; });
   }
   async function pilCapaFoto(file) {
     const url = URL.createObjectURL(file);

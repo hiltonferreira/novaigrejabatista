@@ -72,8 +72,9 @@ if ($acao === 'enviar') {
     $id = (int)($ids[$p['arquivo']] ?? 0); $arq = "$pasta/" . ($p['capa'] ?? '');
     if (!$id || empty($p['capa']) || !is_file($arq)) { echo "pulado: {$p['arquivo']} (sem pílula enviada ou sem capa)\n"; continue; }
     $img = (string)file_get_contents($arq); $info = @getimagesizefromstring($img);
-    if (!$info || $info[2] !== IMAGETYPE_JPEG || strlen($img) > 1600000) { echo "capa inválida: {$p['capa']}\n"; continue; }
-    $db->prepare('REPLACE INTO nib_pilula_capas (pilula_id, tipo, imagem) VALUES (?, ?, ?)')->execute([$id, 'image/jpeg', $img]);
+    $tipos = [IMAGETYPE_JPEG => 'image/jpeg', IMAGETYPE_WEBP => 'image/webp'];
+    if (!$info || !isset($tipos[$info[2]]) || strlen($img) > 1600000) { echo "capa inválida: {$p['capa']}\n"; continue; }
+    $db->prepare('REPLACE INTO nib_pilula_capas (pilula_id, tipo, imagem) VALUES (?, ?, ?)')->execute([$id, $tipos[$info[2]], $img]);
     $db->prepare('UPDATE nib_pilulas SET capa_em = ? WHERE id = ? AND removido_em IS NULL')->execute([time(), $id]);
     nib_registrar(null, 'pilula-capa', $id, 'exemplo');
     echo "capa OK: pílula $id ({$p['titulo']}) {$info[0]}x{$info[1]}, " . round(strlen($img) / 1024) . " KB\n";
