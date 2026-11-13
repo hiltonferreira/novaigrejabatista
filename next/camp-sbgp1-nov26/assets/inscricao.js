@@ -83,6 +83,9 @@
   if(new URLSearchParams(location.search).get("tipo")==="staff"){
     const staffInput=typeInputs.find(i=>i.value==="staff");
     if(staffInput)staffInput.checked=true;
+    // A escolha só aparece para quem chega pelo link do Staff.
+    const typeBox=form.querySelector(".nib-tipo");
+    if(typeBox)typeBox.hidden=false;
   }
   applyType();
 
