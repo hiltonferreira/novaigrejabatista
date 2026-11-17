@@ -10,8 +10,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Montserrat:wght@600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/inscricao.css?v=11.6">
-  <script defer src="assets/inscricao.js?v=11.0"></script>
+  <link rel="stylesheet" href="assets/inscricao.css?v=20261112.1">
+  <script defer src="assets/inscricao.js?v=20261112.1"></script>
 <link rel="stylesheet" href="/consulta-inscricao/atalho.css?v=2.6">
 <link rel="stylesheet" href="/consulta-inscricao/cabecalho.css?v=2.8"></head>
 <body>
@@ -127,21 +127,17 @@
           </div>
         </div>
 
-        <div class="pix-payment">
+        <div class="pix-payment pix-payment-home">
           <div class="pix-qr">
             <img src="img/pix-nxt-camp-80.png" alt="QR Code Pix de R$ 80 para Nova Igreja Batista" width="441" height="441">
             <p class="small-note">No banco, escolha pagar com QR Code.</p>
           </div>
 
-          <div class="pix-code-block">
-            <label for="pix-code">Pix Copia e Cola</label>
-            <textarea id="pix-code" readonly rows="5" spellcheck="false" autocomplete="off">00020126360014br.gov.bcb.pix011440518758000130520400005303986540580.005802BR5919NOVA IGREJA BATISTA6009ARIQUEMES62070503***63047D99</textarea>
-            <button class="button primary pix-copy-feedback" type="button" id="copy-pix">
-              <svg class="pix-copy-icon" viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="M16 1H4a2 2 0 00-2 2v12h2V3h12V1zm3 4H8a2 2 0 00-2 2v14a2 2 0 002 2h11a2 2 0 002-2V7a2 2 0 00-2-2zm0 16H8V7h11v14z"/></svg>
-              <span class="pix-copy-label">Copiar código PIX</span>
-            </button>
-            <p class="small-note">No celular, copie o código e cole na opção Pix Copia e Cola do seu banco.</p>
-          </div>
+          <button class="pix-copy-feedback" type="button" id="copy-pix">
+            <span class="pix-copy-label">Copiar código PIX</span>
+          </button>
+          <p id="copy-status" class="small-note pix-copy-status" role="status" aria-live="polite"></p>
+          <textarea id="pix-code" aria-label="Código Pix para copiar manualmente" readonly hidden rows="4" spellcheck="false">00020126360014br.gov.bcb.pix011440518758000130520400005303986540580.005802BR5919NOVA IGREJA BATISTA6009ARIQUEMES62070503***63047D99</textarea>
         </div>
 
         <div class="pix-details">
@@ -149,7 +145,6 @@
             <span>Chave Pix</span>
             <strong>CNPJ 40.518.758/0001-30</strong>
           </div>
-          <p id="copy-status" class="small-note" role="status" aria-live="polite"></p>
           <p class="small-note">Confira no aplicativo do banco se o destinatário é <strong>Nova Igreja Batista</strong> antes de concluir o pagamento. Guarde o comprovante.</p>
         </div>
 

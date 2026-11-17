@@ -59,25 +59,39 @@
 
   {
     const btn=document.getElementById("copy-pix");
+    const field=document.getElementById("pix-code");
+    const status=document.getElementById("copy-status");
     const label=btn.querySelector(".pix-copy-label");
     const original=label.textContent;
     let copyTimer=0;
 
     btn.addEventListener("click",async()=>{
-      const code=document.getElementById("pix-code").value;
-      try{
-        await navigator.clipboard.writeText(code);
-      }catch{
-        const field=document.getElementById("pix-code");
-        field.select();
-        document.execCommand("copy");
-      }
-
       clearTimeout(copyTimer);
+      btn.classList.remove("copied");
+      label.textContent=original;
+      btn.disabled=true;
+      field.hidden=true;
+      let copied=false;
+      try{
+        await navigator.clipboard.writeText(field.value);
+        copied=true;
+      }catch{
+        field.hidden=false;
+        field.focus();
+        field.select();
+        try{copied=document.execCommand("copy")===true;}catch{}
+      }finally{
+        btn.disabled=false;
+      }
+      if(!copied){
+        status.textContent="Não foi possível copiar automaticamente. Copie o código selecionado ou use o QR Code.";
+        return;
+      }
+      field.hidden=true;
+      if(document.activeElement===field)btn.focus();
       btn.classList.add("copied");
       label.textContent="Código copiado!";
-      document.getElementById("copy-status").textContent="Código PIX copiado.";
-
+      status.textContent="Cole o código na opção Pix Copia e Cola do seu banco.";
       copyTimer=setTimeout(()=>{
         btn.classList.remove("copied");
         label.textContent=original;
