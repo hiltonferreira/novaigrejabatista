@@ -10,9 +10,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Montserrat:wght@600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/inscricao.css?v=20261117.2">
-  <script defer src="assets/vendor/qrcode-generator-2.0.4.js"></script>
-  <script defer src="assets/inscricao.js?v=20261117.2"></script>
+  <link rel="stylesheet" href="assets/inscricao.css?v=20261117.3">
+  <script defer src="assets/inscricao.js?v=20261117.3"></script>
 <link rel="stylesheet" href="/consulta-inscricao/atalho.css?v=2.6">
 <link rel="stylesheet" href="/consulta-inscricao/cabecalho.css?v=2.9">
 <style id="nib-cartao">
@@ -89,10 +88,6 @@
         <label for="phone">WhatsApp do adolescente <span class="optional">(opcional)</span></label>
         <input id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="(69) 99999-9999" maxlength="20">
 
-        <div id="mais-adolescentes" class="nib-mais"></div>
-        <button type="button" class="nib-add" id="add-teen">+ Adicionar outro adolescente</button>
-        <p class="small-note nib-add-note">Para inscrever irmãos ou mais de um adolescente com o mesmo responsável e um pagamento só.</p>
-
         <div class="section-divider"><span>Responsável legal</span></div>
 
         <label for="guardian">Nome completo do responsável</label>
@@ -149,7 +144,6 @@
         <div class="nib-card-pay">
           <h3>Cartão de crédito</h3>
           <p>Pague com cartão de crédito na página da Sipag (Sicoob). Ao terminar, salve ou tire um print do comprovante.</p>
-          <p class="nib-card-varios" hidden></p>
           <a class="button primary" href="https://web.sipag.com.br/pagamento/link/bb7f44da-2976-471b-b129-a421b0285aa0" target="_blank" rel="noopener noreferrer">Pagar com cartão de crédito</a>
         </div>
         <p class="nib-pay-or">ou pague com Pix</p>
@@ -195,7 +189,6 @@
           <span>JPG, PNG, WebP ou PDF · até 6 MB</span>
           <input id="receipt" name="receipt" type="file" accept="image/jpeg,image/png,image/webp,application/pdf" required>
         </label>
-        <div id="receipts-extra" class="nib-receipts-extra" hidden></div>
 
         <div id="receipt-selected" class="receipt-selected" hidden>
           <img id="receipt-preview" alt="Prévia do comprovante selecionado" hidden>
