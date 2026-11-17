@@ -10,8 +10,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Montserrat:wght@600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/inscricao.css?v=20261113.2">
-  <script defer src="assets/inscricao.js?v=20261113.1"></script>
+  <link rel="stylesheet" href="assets/inscricao.css?v=20261117.3">
+  <script defer src="assets/inscricao.js?v=20261117.3"></script>
 <link rel="stylesheet" href="/consulta-inscricao/atalho.css?v=2.6">
 <link rel="stylesheet" href="/consulta-inscricao/cabecalho.css?v=2.9">
 <style id="nib-cartao">
@@ -51,6 +51,7 @@
   </aside>
 
   <section class="form-area" aria-label="Inscrição no NXT CAMP">
+<p class="nib-evento-curto"><strong>NXT CAMP</strong> · 21 e 22 de novembro · Chácara Colina Verde · 12 a 17 anos</p>
 <div class="nib-consulta-topo"><span>Já fez sua inscrição?</span><a href="/consulta-inscricao/?evento=nxt-camp">Consultar minha inscrição</a></div>
     <ol class="progress" aria-label="Etapas da inscrição">
       <li aria-current="step"><span>01</span> Seus dados</li>
@@ -126,12 +127,20 @@
 
         <p class="nib-pay-note"><strong>Inscrição: R$ 80,00</strong>Pague com Pix ou cartão de crédito.</p>
         <button class="button primary" id="next-data" type="button">Continuar para o pagamento</button>
-        <p class="small-note">Você pode abrir o banco e voltar sem perder o preenchimento.</p>
+        <p class="small-note">Pode abrir o banco e voltar: o que você preencheu fica guardado neste aparelho.</p>
       </fieldset>
 
       <fieldset data-step="1" hidden>
         <legend>Pagamento</legend>
-        <p class="step-intro">Escolha pagar com cartão ou com Pix. Depois, volte aqui para enviar o comprovante.</p>
+        <p class="step-intro">Pague com Pix ou cartão e, logo abaixo, anexe o comprovante para concluir.</p>
+        <div class="nib-aviso-banco" role="note">
+          <strong>Sua inscrição ainda não terminou</strong>
+          <ol>
+            <li>Pague no app do seu banco, com o código Pix ou o QR Code abaixo (ou pelo cartão).</li>
+            <li>Volte para esta página. O que você preencheu fica guardado.</li>
+            <li>Anexe o comprovante e toque em <b>Concluir inscrição</b>. Só assim a inscrição é finalizada.</li>
+          </ol>
+        </div>
         <div class="nib-card-pay">
           <h3>Cartão de crédito</h3>
           <p>Pague com cartão de crédito na página da Sipag (Sicoob). Ao terminar, salve ou tire um print do comprovante.</p>
@@ -171,14 +180,8 @@
           <p class="small-note">Confira no aplicativo do banco se o destinatário é <strong>Nova Igreja Batista</strong> antes de concluir o pagamento. Guarde o comprovante.</p>
         </div>
 
-        <div class="actions">
-          <button class="button secondary" type="button" data-back="0">Voltar</button>
-          <button class="button primary" id="next-pix" type="button">Já paguei. Enviar comprovante</button>
-        </div>
-      </fieldset>
-
-      <fieldset data-step="2" hidden>
-        <legend>Envie seu comprovante.</legend>
+        <div class="nib-comprovante" id="comprovante">
+        <h3 class="nib-comprovante-titulo"><span>Depois de pagar</span>Anexe o comprovante</h3>
         <p class="step-intro">Anexe a imagem ou o PDF do pagamento de R$ 80 (Pix ou cartão).</p>
 
         <label class="upload" id="receipt-picker" for="receipt">
@@ -208,8 +211,9 @@
         <p class="small-note">Receberemos seus dados e o comprovante. O envio não faz uma validação bancária automática.</p>
 
         <div class="actions">
-          <button class="button secondary" type="button" data-back="1">Voltar</button>
+          <button class="button secondary" type="button" data-back="0">Voltar</button>
           <button class="button primary" id="submit-registration" type="button">Concluir inscrição</button>
+        </div>
         </div>
       </fieldset>
     </form>
@@ -219,7 +223,7 @@
       <h2 id="success-title">Inscrição feita!</h2>
       <p>Recebemos os dados e o comprovante. Sua inscrição será conferida pela equipe do NXT.</p>
       <dl class="confirmation">
-        <div><dt>Protocolo</dt><dd id="protocol"></dd></div>
+        <div><dt id="protocol-label">Protocolo</dt><dd id="protocol"></dd></div>
         <div><dt>NXT CAMP</dt><dd>21 e 22 de novembro de 2026</dd></div>
       </dl>
       <p class="small-note">Guarde o protocolo caso precise falar com a organização.</p>
@@ -232,6 +236,7 @@
   <span>© 2026 Nova Igreja Batista · Um lar de fé e acolhimento.</span>
   <a class="admin-link" href="/inscricoes/" target="_blank" rel="noopener noreferrer">Gerenciar inscrições</a>
 </footer>
+<a href="#comprovante" class="nib-ir-comprovante" id="ir-comprovante" hidden>Já pagou? Anexar comprovante</a>
 <script defer src="/assets/comprovante-leve.js?v=1"></script>
 </body>
 </html>
