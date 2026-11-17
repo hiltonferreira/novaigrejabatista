@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """NXT CAMP: inscrição mais curta no celular, Pix e comprovante na mesma tela, preenchimento guardado
-na volta do banco e vários adolescentes com um pagamento só (17/11/2026). Só arquivos da página:
+na volta do banco, progresso em 3 passos com aviso de voltar para o comprovante e vários adolescentes com um pagamento só (17/11/2026). Só arquivos da página:
 não mexe em api-inscricao.php nem no painel. Uso no servidor:
   python3 nxt-inscricao-celular.py --verificar   # só confere, não grava nada
   python3 nxt-inscricao-celular.py               # publica, com backup"""

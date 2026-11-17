@@ -18,13 +18,19 @@
     errorBox.hidden = !msg;
   }
 
-  function go(step) {
-    fieldsets.forEach((fs,i)=>fs.hidden=i!==step);
+  // Progresso em 3 passos (Seus dados, Pagamento, Comprovante); pagamento e comprovante ficam na mesma tela,
+  // e o passo 3 acende quando o comprovante é escolhido.
+  function setProgress(k){
     progress.forEach((li,i)=>{
-      li.classList.toggle("is-complete", i < step);
-      if(i===step) li.setAttribute("aria-current","step");
+      li.classList.toggle("is-complete", i < k);
+      if(i===k) li.setAttribute("aria-current","step");
       else li.removeAttribute("aria-current");
     });
+  }
+  function go(step) {
+    fieldsets.forEach((fs,i)=>fs.hidden=i!==step);
+    setProgress(step===0?0:(receipt.files[0]?2:1));
+    updateJump();
     setError("");
     // Celular: rola até o formulário (não até o topo da página), para a etapa aparecer na hora.
     const area=document.querySelector(".form-area");
@@ -34,6 +40,26 @@
     saveDraft();
   }
   let currentStep=0;
+  // Celular: botão fixo "Já pagou? Anexar comprovante" na tela de pagamento, até o comprovante aparecer na tela.
+  const jump=document.getElementById("ir-comprovante");
+  let receiptBoxVisible=false;
+  function updateJump(){
+    if(!jump) return;
+    const pay=fieldsets[1]&&!fieldsets[1].hidden;
+    jump.hidden=!(pay&&!receiptBoxVisible&&!receipt.files[0]&&window.innerWidth<=900);
+  }
+  if(jump){
+    jump.addEventListener("click",e=>{
+      e.preventDefault();
+      const box=document.getElementById("comprovante");
+      if(box)window.scrollTo({top:Math.max(0,box.getBoundingClientRect().top+window.scrollY-12),behavior:"smooth"});
+    });
+    const box=document.getElementById("comprovante");
+    if(box&&"IntersectionObserver" in window){
+      new IntersectionObserver(en=>{receiptBoxVisible=en[0].isIntersecting;updateJump();},{rootMargin:"0px 0px -35% 0px"}).observe(box);
+    }
+    window.addEventListener("resize",updateJump);
+  }
   let saveDraft=()=>{};
 
 
@@ -280,7 +306,7 @@
       if(document.activeElement===field)btn.focus();
       btn.classList.add("copied");
       label.textContent="Código copiado!";
-      status.textContent="Cole o código na opção Pix Copia e Cola do seu banco.";
+      status.textContent="Cole o código na opção Pix Copia e Cola do seu banco. Depois de pagar, volte aqui e anexe o comprovante.";
       copyTimer=setTimeout(()=>{
         btn.classList.remove("copied");
         label.textContent=original;
@@ -291,9 +317,10 @@
 
   receipt.addEventListener("change",()=>{
     const file=receipt.files[0];
-    if(!file){selected.hidden=true;return;}
+    if(!file){selected.hidden=true;setProgress(1);updateJump();return;}
     if(file.size>6*1024*1024){receipt.value="";setError("O comprovante deve ter no máximo 6 MB.");selected.hidden=true;return;}
     fileStatus.textContent=file.name;
+    setProgress(2); updateJump();
     selected.hidden=false;
     if(file.type.startsWith("image/")){
       preview.src=URL.createObjectURL(file);
@@ -367,6 +394,7 @@
 
       fieldsets.forEach(fs=>fs.hidden=true);
       document.querySelector(".progress").hidden=true;
+      if(jump)jump.hidden=true;
       const protocol=document.getElementById("protocol");
       const label=document.getElementById("protocol-label");
       if(done.length>1){
@@ -430,7 +458,7 @@
     const ok=[...fieldsets[0].querySelectorAll("[required]")].every(el=>el.disabled||el.checkValidity());
     if(d.step===1&&ok){
       fieldsets.forEach((fs,i)=>fs.hidden=i!==1);
-      progress.forEach((li,i)=>{li.classList.toggle("is-complete",i<1);if(i===1)li.setAttribute("aria-current","step");else li.removeAttribute("aria-current");});
+      setProgress(1); updateJump();
       currentStep=1;
       const area=document.querySelector(".form-area");
       if(window.innerWidth<=900&&area)requestAnimationFrame(()=>window.scrollTo({top:Math.max(0,area.getBoundingClientRect().top+window.scrollY-8)}));

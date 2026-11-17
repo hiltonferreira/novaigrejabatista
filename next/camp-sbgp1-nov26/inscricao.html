@@ -10,9 +10,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Montserrat:wght@600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/inscricao.css?v=20261117.1">
+  <link rel="stylesheet" href="assets/inscricao.css?v=20261117.2">
   <script defer src="assets/vendor/qrcode-generator-2.0.4.js"></script>
-  <script defer src="assets/inscricao.js?v=20261117.1"></script>
+  <script defer src="assets/inscricao.js?v=20261117.2"></script>
 <link rel="stylesheet" href="/consulta-inscricao/atalho.css?v=2.6">
 <link rel="stylesheet" href="/consulta-inscricao/cabecalho.css?v=2.9">
 <style id="nib-cartao">
@@ -56,7 +56,8 @@
 <div class="nib-consulta-topo"><span>Já fez sua inscrição?</span><a href="/consulta-inscricao/?evento=nxt-camp">Consultar minha inscrição</a></div>
     <ol class="progress" aria-label="Etapas da inscrição">
       <li aria-current="step"><span>01</span> Seus dados</li>
-      <li><span>02</span> Pagamento e comprovante</li>
+      <li><span>02</span> Pagamento</li>
+      <li><span>03</span> Comprovante</li>
     </ol>
 
     <p id="form-error" class="message error" role="alert" hidden></p>
@@ -137,6 +138,14 @@
       <fieldset data-step="1" hidden>
         <legend>Pagamento</legend>
         <p class="step-intro">Pague com Pix ou cartão e, logo abaixo, anexe o comprovante para concluir.</p>
+        <div class="nib-aviso-banco" role="note">
+          <strong>Sua inscrição ainda não terminou</strong>
+          <ol>
+            <li>Pague no app do seu banco, com o código Pix ou o QR Code abaixo (ou pelo cartão).</li>
+            <li>Volte para esta página. O que você preencheu fica guardado.</li>
+            <li>Anexe o comprovante e toque em <b>Concluir inscrição</b>. Só assim a inscrição é finalizada.</li>
+          </ol>
+        </div>
         <div class="nib-card-pay">
           <h3>Cartão de crédito</h3>
           <p>Pague com cartão de crédito na página da Sipag (Sicoob). Ao terminar, salve ou tire um print do comprovante.</p>
@@ -234,6 +243,7 @@
   <span>© 2026 Nova Igreja Batista · Um lar de fé e acolhimento.</span>
   <a class="admin-link" href="/inscricoes/" target="_blank" rel="noopener noreferrer">Gerenciar inscrições</a>
 </footer>
+<a href="#comprovante" class="nib-ir-comprovante" id="ir-comprovante" hidden>Já pagou? Anexar comprovante</a>
 <script defer src="/assets/comprovante-leve.js?v=1"></script>
 </body>
 </html>
