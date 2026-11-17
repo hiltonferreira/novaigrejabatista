@@ -10,8 +10,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Montserrat:wght@600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/inscricao.css?v=20261113.2">
-  <script defer src="assets/inscricao.js?v=20261113.1"></script>
+  <link rel="stylesheet" href="assets/inscricao.css?v=20261117.1">
+  <script defer src="assets/vendor/qrcode-generator-2.0.4.js"></script>
+  <script defer src="assets/inscricao.js?v=20261117.1"></script>
 <link rel="stylesheet" href="/consulta-inscricao/atalho.css?v=2.6">
 <link rel="stylesheet" href="/consulta-inscricao/cabecalho.css?v=2.9">
 <style id="nib-cartao">
@@ -51,11 +52,11 @@
   </aside>
 
   <section class="form-area" aria-label="Inscrição no NXT CAMP">
+<p class="nib-evento-curto"><strong>NXT CAMP</strong> · 21 e 22 de novembro · Chácara Colina Verde · 12 a 17 anos</p>
 <div class="nib-consulta-topo"><span>Já fez sua inscrição?</span><a href="/consulta-inscricao/?evento=nxt-camp">Consultar minha inscrição</a></div>
     <ol class="progress" aria-label="Etapas da inscrição">
       <li aria-current="step"><span>01</span> Seus dados</li>
-      <li><span>02</span> Pagamento</li>
-      <li><span>03</span> Comprovante</li>
+      <li><span>02</span> Pagamento e comprovante</li>
     </ol>
 
     <p id="form-error" class="message error" role="alert" hidden></p>
@@ -86,6 +87,10 @@
 
         <label for="phone">WhatsApp do adolescente <span class="optional">(opcional)</span></label>
         <input id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="(69) 99999-9999" maxlength="20">
+
+        <div id="mais-adolescentes" class="nib-mais"></div>
+        <button type="button" class="nib-add" id="add-teen">+ Adicionar outro adolescente</button>
+        <p class="small-note nib-add-note">Para inscrever irmãos ou mais de um adolescente com o mesmo responsável e um pagamento só.</p>
 
         <div class="section-divider"><span>Responsável legal</span></div>
 
@@ -126,15 +131,16 @@
 
         <p class="nib-pay-note"><strong>Inscrição: R$ 80,00</strong>Pague com Pix ou cartão de crédito.</p>
         <button class="button primary" id="next-data" type="button">Continuar para o pagamento</button>
-        <p class="small-note">Você pode abrir o banco e voltar sem perder o preenchimento.</p>
+        <p class="small-note">Pode abrir o banco e voltar: o que você preencheu fica guardado neste aparelho.</p>
       </fieldset>
 
       <fieldset data-step="1" hidden>
         <legend>Pagamento</legend>
-        <p class="step-intro">Escolha pagar com cartão ou com Pix. Depois, volte aqui para enviar o comprovante.</p>
+        <p class="step-intro">Pague com Pix ou cartão e, logo abaixo, anexe o comprovante para concluir.</p>
         <div class="nib-card-pay">
           <h3>Cartão de crédito</h3>
           <p>Pague com cartão de crédito na página da Sipag (Sicoob). Ao terminar, salve ou tire um print do comprovante.</p>
+          <p class="nib-card-varios" hidden></p>
           <a class="button primary" href="https://web.sipag.com.br/pagamento/link/bb7f44da-2976-471b-b129-a421b0285aa0" target="_blank" rel="noopener noreferrer">Pagar com cartão de crédito</a>
         </div>
         <p class="nib-pay-or">ou pague com Pix</p>
@@ -171,14 +177,8 @@
           <p class="small-note">Confira no aplicativo do banco se o destinatário é <strong>Nova Igreja Batista</strong> antes de concluir o pagamento. Guarde o comprovante.</p>
         </div>
 
-        <div class="actions">
-          <button class="button secondary" type="button" data-back="0">Voltar</button>
-          <button class="button primary" id="next-pix" type="button">Já paguei. Enviar comprovante</button>
-        </div>
-      </fieldset>
-
-      <fieldset data-step="2" hidden>
-        <legend>Envie seu comprovante.</legend>
+        <div class="nib-comprovante" id="comprovante">
+        <h3 class="nib-comprovante-titulo"><span>Depois de pagar</span>Anexe o comprovante</h3>
         <p class="step-intro">Anexe a imagem ou o PDF do pagamento de R$ 80 (Pix ou cartão).</p>
 
         <label class="upload" id="receipt-picker" for="receipt">
@@ -186,6 +186,7 @@
           <span>JPG, PNG, WebP ou PDF · até 6 MB</span>
           <input id="receipt" name="receipt" type="file" accept="image/jpeg,image/png,image/webp,application/pdf" required>
         </label>
+        <div id="receipts-extra" class="nib-receipts-extra" hidden></div>
 
         <div id="receipt-selected" class="receipt-selected" hidden>
           <img id="receipt-preview" alt="Prévia do comprovante selecionado" hidden>
@@ -208,8 +209,9 @@
         <p class="small-note">Receberemos seus dados e o comprovante. O envio não faz uma validação bancária automática.</p>
 
         <div class="actions">
-          <button class="button secondary" type="button" data-back="1">Voltar</button>
+          <button class="button secondary" type="button" data-back="0">Voltar</button>
           <button class="button primary" id="submit-registration" type="button">Concluir inscrição</button>
+        </div>
         </div>
       </fieldset>
     </form>
@@ -219,7 +221,7 @@
       <h2 id="success-title">Inscrição feita!</h2>
       <p>Recebemos os dados e o comprovante. Sua inscrição será conferida pela equipe do NXT.</p>
       <dl class="confirmation">
-        <div><dt>Protocolo</dt><dd id="protocol"></dd></div>
+        <div><dt id="protocol-label">Protocolo</dt><dd id="protocol"></dd></div>
         <div><dt>NXT CAMP</dt><dd>21 e 22 de novembro de 2026</dd></div>
       </dl>
       <p class="small-note">Guarde o protocolo caso precise falar com a organização.</p>
