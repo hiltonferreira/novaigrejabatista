@@ -25,11 +25,11 @@ function nib_db(): PDO {
   return $db;
 }
 // Cria as tabelas na primeira vez (e só acrescenta o que faltar nas próximas versões).
-const NIB_MIGRACAO = 15;
+const NIB_MIGRACAO = 16;
 function nib_migrar(PDO $db): void {
   $db->exec("CREATE TABLE IF NOT EXISTS nib_versao (v INT NOT NULL) ENGINE=InnoDB");
   $v = (int)($db->query('SELECT MAX(v) FROM nib_versao')->fetchColumn() ?: 0);
-  if ($v >= NIB_MIGRACAO) return; // ao criar a v16, subir NIB_MIGRACAO
+  if ($v >= NIB_MIGRACAO) return; // ao criar a v17, subir NIB_MIGRACAO
   // Uma migração por vez: pedidos simultâneos esperam a primeira terminar (evita versões repetidas).
   if ((int)$db->query("SELECT GET_LOCK('nib_migrar', 15)")->fetchColumn() !== 1) throw new RuntimeException('migração em andamento por outro pedido');
   try { nib_migrar_passos($db, (int)($db->query('SELECT MAX(v) FROM nib_versao')->fetchColumn() ?: 0)); }
@@ -160,6 +160,16 @@ function nib_migrar_passos(PDO $db, int $v): void {
     if (!$db->query("SHOW COLUMNS FROM nib_pessoas LIKE 'foto_em'")->fetch()) $db->exec("ALTER TABLE nib_pessoas ADD COLUMN foto_em INT UNSIGNED NOT NULL DEFAULT 0");
     $db->exec("CREATE TABLE IF NOT EXISTS nib_pessoa_fotos (pessoa_id INT UNSIGNED PRIMARY KEY, tipo VARCHAR(20) NOT NULL, imagem MEDIUMBLOB NOT NULL) ENGINE=InnoDB");
     $db->exec('INSERT INTO nib_versao (v) VALUES (15)');
+  }
+  if ($v < 16) {
+    // v16: eventos cadastrados direto no app pela administração (pedido de Hilton, 26/11/2026). Aparecem junto com os do painel do site.
+    $db->exec("CREATE TABLE IF NOT EXISTS nib_eventos_app (
+      id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY, nome VARCHAR(100) NOT NULL, categoria VARCHAR(60) NOT NULL DEFAULT '', resumo VARCHAR(400) NOT NULL DEFAULT '',
+      inicio VARCHAR(16) NOT NULL, fim VARCHAR(16) NOT NULL DEFAULT '', sem_horario TINYINT(1) NOT NULL DEFAULT 0, local VARCHAR(160) NOT NULL DEFAULT '', link VARCHAR(300) NOT NULL DEFAULT '',
+      criado_por INT UNSIGNED NULL, criado_em DATETIME NOT NULL, removido_por INT UNSIGNED NULL, removido_em DATETIME NULL,
+      KEY ix_inicio (inicio)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+    $db->exec('INSERT INTO nib_versao (v) VALUES (16)');
   }
 }
 // Endereço da foto de perfil (vazio sem foto). Só quem entrou na conta consegue abrir.

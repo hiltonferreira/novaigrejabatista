@@ -65,6 +65,8 @@
     caderno: async (acao, body) => api(acao, body, 'caderno'),
     inscricoes: async () => api('inscricoes'),
     avisos: async (acao, body) => api(acao, body, 'avisos'),
+    eventoApp: async (acao, body) => api(acao, body, 'eventos-app'),
+    admin: () => !verComo() && papeisReais().includes('admin'),
     pilulas: async (acao, body) => api(acao, body, 'pilulas'),
     youtube: async (acao, body) => api(acao, body, 'youtube'),
     // Uma parte do vídeo da pílula (corpo binário). O erro leva o código HTTP e, se houver, quanto já chegou.

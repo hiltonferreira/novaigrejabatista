@@ -44,6 +44,15 @@ try {
     $geral[] = ['evento', $item((string)$e['name'], $h), (string)($e['location'] ?? '')];
   }
 } catch (Throwable $e) { fwrite(STDERR, "Aviso: eventos do site indisponíveis ({$e->getMessage()}).\n"); }
+// v16: eventos cadastrados direto no app pela administração que começam hoje.
+try {
+  $q = nib_db()->prepare("SELECT nome, inicio, sem_horario, local FROM nib_eventos_app WHERE removido_em IS NULL AND LEFT(inicio, 10) = ?");
+  $q->execute([$dia]);
+  foreach ($q->fetchAll() as $r) {
+    $h = !$r['sem_horario'] && preg_match('/T(\d{2}:\d{2})/', (string)$r['inicio'], $m) ? $m[1] : '';
+    $geral[] = ['evento', $item((string)$r['nome'], $h), (string)$r['local']];
+  }
+} catch (Throwable $e) { fwrite(STDERR, "Aviso: eventos do app indisponíveis ({$e->getMessage()}).\n"); }
 
 // 2. Células do dia (horário e local vêm da lista do site guardada no app: site-data.js).
 $celulas = [];
