@@ -1022,6 +1022,15 @@
     return `<section class="box prayer-box"><h2>Compartilhe um pedido com a comunidade</h2><p>No mural, cada pessoa poderá conhecer os pedidos e sinalizar “Estou orando”. A indicação de oração atendida é feita por quem publicou.</p><p class="note">Preview com dados fictícios: nenhuma publicação é enviada à igreja ou compartilhada entre usuários. Os testes ficam só nesta aba e reiniciam ao recarregar ou trocar o perfil.</p><form id="notebook-form" autocomplete="off"><label for="notebook-name">Título do pedido</label><input id="notebook-name" name="name" maxlength="120" required placeholder="Ex.: Pela Família Exemplo" autocomplete="off"><label for="notebook-reason">O que você deseja compartilhar?</label><textarea id="notebook-reason" name="reason" maxlength="1000" required autocomplete="off" placeholder="Escreva um pedido fictício para o mural."></textarea><p class="note">Na versão compartilhada, o pedido será visível à comunidade. Evite expor dados pessoais de outras pessoas.</p><div class="form-actions"><button type="submit" class="action">Publicar pedido de teste</button><button type="reset">Limpar</button></div></form></section><section class="community-prayer" aria-labelledby="prayer-feed-title"><div class="section-heading"><h2 id="prayer-feed-title" tabindex="-1">Orando em comunidade</h2><span class="note">${state.prayers.length} pedidos de exemplo</span></div><div class="prayer-feed">${prayerCards()||'<p>Nenhum pedido neste mural de teste.</p>'}</div></section>`;
   }
   function announce(message, tone = 'info', reveal = true) { feedback.dataset.tone=tone; feedback.textContent = message; if(reveal) feedback.scrollIntoView({block:"nearest",behavior:"instant"}); }
+  // v198: o seletor do topo termina na mesma margem direita dos blocos da página (muda com a largura e com o menu recolhido).
+  function alinharTopo() {
+    const hr = document.querySelector('#nib-proposta>header .header-right'), main = document.querySelector('#nib-proposta .layout>main');
+    if (!hr || !main) return;
+    if (!alinharTopo.obs && window.ResizeObserver) { alinharTopo.obs = new ResizeObserver(() => alinharTopo()); alinharTopo.obs.observe(main); }
+    const h = hr.parentElement, hs = getComputedStyle(h), ms = getComputedStyle(main);
+    const d = (h.getBoundingClientRect().right - parseFloat(hs.paddingRight)) - (main.getBoundingClientRect().right - parseFloat(ms.paddingRight));
+    hr.style.setProperty('--nib-topo-dir', Math.round(d) + 'px');
+  }
   function renderNavigation() {
     const items = isManagement() ? admin.views() : PUBLIC ? publicNav() : navigation;
     const context = isManagement() ? state.context : PUBLIC ? 'pub-' + (account() ? account().id + '-' + account().papel : 'anon') : 'membro';
@@ -1045,7 +1054,7 @@
       });
     }
     // v197: no computador, o "Ver o app como" fica no topo, à direita (pedido de Hilton, 26/11/2026). No celular continua no menu.
-    const hv = document.getElementById('header-view-as'); if (hv) { const h = PUBLIC && !isManagement() ? viewAsSelect('topo') : ''; if (hv.innerHTML !== h) hv.innerHTML = h; hv.hidden = !h; }
+    const hv = document.getElementById('header-view-as'); if (hv) { const h = PUBLIC && !isManagement() ? viewAsSelect('topo') : ''; if (hv.innerHTML !== h) hv.innerHTML = h; hv.hidden = !h; alinharTopo(); }
     const ms = document.getElementById('member-shortcuts'); if (ms) ms.hidden = isManagement();
     document.getElementById('menu-profile').innerHTML = PUBLIC ? (account() ? '<a class="menu-profile-card" href="#cadastro" data-view="cadastro">' + avatarHtml(account().primeiro, account().foto) + '<span><strong>' + escape(account().nome) + '</strong><small>' + escape(account().email) + '</small>' + (NibConta.papeisReais().some(k => k !== 'membro') ? '<small>' + papeisTexto(NibConta.papeisReais()) + '</small>' : '') + '</span></a>' + viewAsSelect('menu') : '') : isManagement() ? '<div class="menu-profile-card"><strong>' + admin.profiles[state.context].name + '</strong><span>Experiência de teste</span></div>' : '<a class="menu-profile-card" href="#cadastro" data-view="cadastro"><span class="profile-avatar" aria-hidden="true">' + escape(state.member.first.charAt(0).toUpperCase()) + '</span><span><strong>' + escape(state.member.full) + '</strong><small>' + escape(state.member.email) + '</small></span><span class="profile-demo">Teste</span></a>';
     renderBar();
