@@ -2898,3 +2898,6 @@ dialog.ck-telao::backdrop{background:#041e42}
 #nib-proposta .agenda-app-list li small{display:block;color:#536176;font-size:13px}
 #nib-proposta .agenda-app-list .aviso-remove{flex:0 0 auto;margin:0}
 @media(max-width:820px){#nib-proposta .agenda-admin-form{grid-template-columns:1fr}}
+/* v200: no computador, o conteúdo começa junto do menu (sem sobra à esquerda) e a largura acompanha a tela:
+   cerca de 80% da largura da janela, entre 1100 e 1480 px. O que sobra fica à direita, proporcional. */
+@media(min-width:821px){#nib-proposta .layout>main{max-width:clamp(1100px,80vw,1480px);margin-left:0;margin-right:auto}}
