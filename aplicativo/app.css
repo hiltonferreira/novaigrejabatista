@@ -2834,3 +2834,29 @@ dialog.ck-telao::backdrop{background:#041e42}
 #nib-proposta .community-prayer .prayer-post-author{align-items:center;gap:12px}
 #nib-proposta .community-prayer .prayer-post-author .profile-avatar{width:40px;height:40px;flex-basis:40px;font-size:17px}
 #nib-proposta .community-prayer .prayer-post-author small{margin-top:3px}
+/* v197 (computador): passagem do mouse e seleção sem a pílula azul-escura que vazava do card e apagava o texto (pedido de Hilton, 26/11/2026). */
+/* Botões com conteúdo de card (título, texto, imagem) não herdam o fundo azul dos botões comuns: ficam claros e com o texto legível. */
+@media(hover:hover){#nib-proposta main button:where(:has(strong,small,img,div,p):not(.social-card,.quick-action)):is(:hover,:active){background:#f6f8fb;color:#041e42;border-color:#9fb3cc}}
+/* Lista de Pílulas: o card inteiro (borda arredondada de 20 px) reage, sem forma de pílula por dentro. */
+#nib-proposta main .pil-item{transition:border-color .2s ease,box-shadow .2s ease}
+#nib-proposta main button.pil-card,#nib-proposta main button.pil-card:is(:hover,:active,:focus){border-radius:0;background:transparent;color:#041e42;border:0;box-shadow:none}
+#nib-proposta main button.pil-card:focus-visible{outline:3px solid #041e42;outline-offset:-3px;border-radius:20px}
+@media(hover:hover){#nib-proposta main .pil-item:has(>.pil-card:hover){border-color:#9fb3cc;box-shadow:0 8px 22px #041e4214}#nib-proposta main .pil-item:has(>.pil-card:hover) .pil-card-seta{transform:translate(3px,-50%)}}
+#nib-proposta main .pil-item:has(>.pil-card:active){background:#f6f8fb}
+#nib-proposta main .pil-card-seta{transition:transform .2s ease}
+#nib-proposta main .pil-trechos button:is(:hover,:active,:focus){background:#f6f8fb;color:#041e42;border-color:#9fb3cc}
+@media(prefers-reduced-motion:reduce){#nib-proposta main .pil-item,#nib-proposta main .pil-card-seta{transition:none}}
+/* Menu lateral: passagem do mouse discreta (sem contorno de caixa) e item atual em destaque claro, sem borda. */
+@media(min-width:821px){
+ #nib-proposta .layout>aside nav a{border-color:transparent}
+ #nib-proposta .layout>aside nav a:not(:focus-visible){outline:0}
+ #nib-proposta .layout>aside nav a:not([aria-current=page]):hover{background:#ffffff14;color:#fff;border-color:transparent}
+ #nib-proposta .layout>aside nav a[aria-current=page],#nib-proposta .layout>aside nav a[aria-current=page]:hover{background:#eaf2fb;color:#041e42;border-color:transparent;box-shadow:none}
+}
+/* "Ver o app como" no topo, à direita (só computador; no celular fica no menu). */
+#nib-proposta .header-view-as[hidden]{display:none}
+/* Com o seletor no topo, a faixa "Vendo como" dentro da página sai no computador (ficaria repetida). */
+@media(min-width:821px){#nib-proposta:has(#header-view-as:not([hidden])) #view-as-bar{display:none}}
+#nib-proposta .header-view-as .view-as-menu{display:flex;align-items:center;gap:10px;margin:0;padding:5px 5px 5px 14px;border:1px solid #f0d78c;border-radius:999px;background:#fff6db}
+#nib-proposta .header-view-as .view-as-menu label{margin:0;color:#6b5200;font-size:11px;letter-spacing:.1em;white-space:nowrap}
+#nib-proposta .header-view-as .view-as-menu select{width:auto;min-width:176px;min-height:38px;padding:0 38px 0 14px;background-position:right 12px center;background-size:16px;font-size:14px}
