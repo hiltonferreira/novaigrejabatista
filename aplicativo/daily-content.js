@@ -17,6 +17,9 @@
   let extraSeq = 0;
   const addItem = item => { const x = {id:'x'+(++extraSeq), day:item.day, end:item.end||item.day, time:item.time||'', timeEnd:item.timeEnd||'', name:item.name, type:item.type||'Evento', notice:!!item.notice, added:true}; extras.push(x); return x; };
   const removeItem = id => { const i = extras.findIndex(x=>x.id===id); if(i>=0) extras.splice(i,1); };
+  // v199: eventos do painel do site e os cadastrados no app (vêm de api/eventos.php pelo NibSite).
+  let externos = [];
+  const setExternos = l => { externos = Array.isArray(l) ? l : []; };
   const addedItems = () => extras.slice().sort((a,b)=>(a.day+' '+a.time).localeCompare(b.day+' '+b.time));
   const dayOfYear = key => { const [y,m,d] = key.split('-').map(Number); return Math.round((Date.UTC(y,m-1,d)-Date.UTC(y,0,1))/864e5); };
   const verseForDay = key => { if (curated[key]) return curated[key]; const list = scope.NibVerses && scope.NibVerses.length ? scope.NibVerses : verses; return list[dayOfYear(key) % list.length]; };
@@ -33,14 +36,16 @@
     for(const [day,place] of [['2026-11-21','Início do acampamento'],['2026-11-22','Encerramento do acampamento']]) if(day>=key) items.push({day,time:'14:00',name:'NXT CAMP',type:'Evento',place,view:'eventos'});
     const last = dayKey(new Date(base.getTime()+(days-1)*864e5));
     // Itens de vários dias aparecem em cada dia do período.
-    for(const x of extras){
+    for(const x of extras.concat(externos)){
       const start = new Date(x.day+'T12:00:00-04:00'), stop = x.end||x.day;
       for(let d = new Date(start); dayKey(d) <= stop; d.setUTCDate(d.getUTCDate()+1)){
         const day = dayKey(d);
         if(day>=key && day<=last) items.push({...x, day, time: x.time ? x.time+(x.timeEnd?' às '+x.timeEnd:'') : ''});
       }
     }
-    return items.sort((a,b)=>(a.day+' '+a.time).localeCompare(b.day+' '+b.time));
+    // Sem repetir o mesmo evento no mesmo dia (ex.: NXT CAMP fixo e o mesmo vindo do site).
+    const vistos = new Set();
+    return items.filter(x=>{ const k = x.day+'|'+x.name.toLowerCase(); if(vistos.has(k)) return false; vistos.add(k); return true; }).sort((a,b)=>(a.day+' '+a.time).localeCompare(b.day+' '+b.time));
   };
   const monthInfo = key => {
     const [year,month] = key.split('-').map(Number);
@@ -53,5 +58,5 @@
     return dayKey(new Date(Date.UTC(year,month-1+step,1,16))).slice(0,7);
   };
   const monthAgenda = month => agenda(month+'-01',monthInfo(month).count).filter(x=>x.day.startsWith(month));
-  scope.NibDaily={dayKey,verseForDay,setCurated,dayOfYear,agenda,monthInfo,moveMonth,monthAgenda,addItem,removeItem,addedItems};
+  scope.NibDaily={setExternos,dayKey,verseForDay,setCurated,dayOfYear,agenda,monthInfo,moveMonth,monthAgenda,addItem,removeItem,addedItems};
 })(typeof window==='undefined'?globalThis:window);

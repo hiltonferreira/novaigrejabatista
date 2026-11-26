@@ -40,7 +40,7 @@
     if (!e || typeof e !== 'object' || !e.name || !e.start) return null;
     const url = typeof e.url === 'string' && (/^\/[^/]/.test(e.url) || /^https:\/\//.test(e.url)) ? e.url : '';
     const banner = typeof e.banner === 'string' && /^\/img\/eventos\/[A-Za-z0-9_./-]+\.(png|jpe?g|webp)$/.test(e.banner) ? e.banner : '';
-    return { name: clean(e.name, 100), category: clean(e.category, 60), summary: clean(e.summary, 400), start: clean(e.start, 16), end: clean(e.end, 16), tbd: !!e.time_unconfirmed, location: clean(e.location, 160), price: clean(e.price, 40), cta: clean(e.cta, 40) || 'Saiba mais', open: !!e.open, url, banner };
+    return { name: clean(e.name, 100), category: clean(e.category, 60), summary: clean(e.summary, 400), start: clean(e.start, 16), end: clean(e.end, 16), tbd: !!e.time_unconfirmed, location: clean(e.location, 160), price: clean(e.price, 40), cta: clean(e.cta, 40) || 'Saiba mais', open: !!e.open, url, banner, app: !!e.app, id: e.app ? Number(e.id) || 0 : 0 };
   }
   function load() {
     if (!window.fetch) return;
