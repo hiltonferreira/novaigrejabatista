@@ -30,10 +30,11 @@ Estrutura final:
 
 Regra de retenção (combinada em 09/11/2026 e ajustada em 28/11/2026):
   - backups/app: ficam as 5 publicações mais recentes (backups/app-teste: 3).
-  - publicacoes e publicacoes/antigas: ficam as 3 mais recentes (os pacotes estão no GitHub e nos arquivos do projeto).
+  - publicacoes e publicacoes/antigas: das publicações do APP (app-vNNN, nib-vNNN, vNNN) ficam as 3 mais recentes;
+    publicações de outras áreas (NXT, comprovantes, células...) nunca saem sozinhas.
   - backups/site e backups/outros: apaga o que tiver mais de 60 dias, MENOS backups de dados (nome com comprovante,
     inscric, dados, privado, banco, sql, dump, completo, lista, cadastro), que só saem à mão com ok do Hilton.
-  - backups/banco: ficam os 10 mais recentes (antes de migração). backups/banco/diario e inscricoes/diario se
+  - backups/banco: nunca apaga sozinho (dumps antes de migração). backups/banco/diario e inscricoes/diario se
     limpam sozinhos (backup-diario.php: 14 dias + o primeiro de cada mês por 6 meses).
   - backups/completo: nunca apaga sozinho.
 """
@@ -122,12 +123,15 @@ def escrever_leia_me():
 
 if RETENCAO:
     apagar = []
-    def mais_novos(pasta, fica):
+    # Só pastas do APP entram na contagem (cópias da pasta /app e pastas de publicação do app). Publicações de outras
+    # áreas (NXT, comprovantes, células...) e dumps do banco nunca saem sozinhos (pedido de Hilton, 28/11/2026).
+    SO_APP = re.compile(r'^(app-v\d+|nib-v\d+|v\d+)([.-]|$)')
+    def mais_novos(pasta, fica, filtro=None):
         p = MAN / pasta
         if not p.is_dir(): return
-        itens = sorted([x for x in p.iterdir() if x.name not in ('antigas', 'diario')], key=lambda x: x.stat().st_mtime, reverse=True)
-        apagar.extend(itens[fica:])
-    mais_novos('backups/app', 5); mais_novos('backups/app-teste', 3); mais_novos('backups/banco', 10); mais_novos('publicacoes', 3); mais_novos('publicacoes/antigas', 3)
+        itens = sorted([x for x in p.iterdir() if x.name not in ('antigas', 'diario') and (filtro is None or filtro.match(x.name))], key=lambda x: x.stat().st_mtime, reverse=True)
+        apagar.extend(x for x in itens[fica:] if not DADOS.search(x.name))
+    mais_novos('backups/app', 5); mais_novos('backups/app-teste', 3); mais_novos('publicacoes', 3, SO_APP); mais_novos('publicacoes/antigas', 3, SO_APP)
     limite = time.time() - 60 * 86400
     for pasta in ('backups/site', 'backups/outros'):
         p = MAN / pasta

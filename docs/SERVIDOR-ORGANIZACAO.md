@@ -47,9 +47,9 @@ nib-manutencao/
 | Pasta | Fica |
 |---|---|
 | `backups/app` | as 5 publicações mais recentes |
-| `backups/banco` | os 10 dumps mais recentes antes de migração |
+| `backups/banco` | tudo (dumps antes de migração nunca saem sozinhos) |
 | `backups/banco/diario`, `backups/inscricoes/diario` | 14 dias + o dia 1º de cada mês por 6 meses (o próprio backup-diario.php limpa) |
-| `publicacoes`, `publicacoes/antigas` | as 3 mais recentes (pacotes também estão no GitHub e nos arquivos do projeto) |
+| `publicacoes`, `publicacoes/antigas` | das publicações do app, as 3 mais recentes; publicações de outras áreas (NXT, comprovantes...) ficam |
 | `backups/site`, `backups/outros` | o que tiver até 60 dias |
 | `backups/completo` | tudo (nunca apaga sozinho) |
 
