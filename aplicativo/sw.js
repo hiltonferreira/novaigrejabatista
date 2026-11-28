@@ -2,10 +2,10 @@
    Guarda os arquivos do app no celular para abrir rápido e funcionar com internet fraca.
    Ao mudar qualquer arquivo do app, aumente VERSION: o celular baixa a versão nova
    e mostra "Nova versão do app disponível". Dados de fora (obra.json, site) não ficam guardados. */
-const VERSION = 'nib-app-86eaeb386c';
+const VERSION = 'nib-app-a7926e6c87';
 const FILES = [
   './', 'index.html', 'conheca.html', 'manifest.webmanifest',
-  'app.css', 'install.css', 'conheca.css', 'app.js', 'admin.js', 'icons.js', 'install.js', 'site-data.js', 'conta.js', 'moderation.js', 'daily-content.js', 'verses.js', 'pix.js',
+  'app.css', 'install.css', 'conheca.css', 'ambiente.js', 'app.js', 'admin.js', 'icons.js', 'install.js', 'site-data.js', 'conta.js', 'moderation.js', 'daily-content.js', 'verses.js', 'pix.js',
   'assets/vendor/qrcode-generator-2.0.4.js',
   'assets/painel-base.css', 'assets/resumo-base.css', 'assets/refino-mobile-base.css', 'assets/layout-mobile-base.css', 'assets/navegacao-base.css',
   'assets/acumin-regular.woff2', 'assets/acumin-medium.woff2', 'assets/acumin-semibold.woff2', 'assets/acumin-bold.woff2', 'assets/acumin-black.woff2',
@@ -16,13 +16,18 @@ const FILES = [
   'assets/lideranca/alex.webp', 'assets/lideranca/sheila.webp', 'assets/lideranca/sidiel.webp'
 ];
 
+// O app oficial (/app/) e o de teste (/app-teste/) ficam no mesmo endereço do navegador e dividem o mesmo
+// armazenamento de cache: cada um usa nomes próprios, para um nunca apagar os arquivos do outro.
+const FAMILIA = /\/app-teste\//.test(self.registration.scope) ? 'nib-teste-' : 'nib-app-';
+const CACHE = FAMILIA + VERSION.replace(/^nib-app-/, '');
+
 self.addEventListener('install', e => {
-  e.waitUntil(caches.open(VERSION).then(c => c.addAll(FILES.map(f => new Request(f, { cache: 'reload' })))));
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES.map(f => new Request(f, { cache: 'reload' })))));
 });
 
 self.addEventListener('activate', e => {
   e.waitUntil(caches.keys()
-    .then(keys => Promise.all(keys.filter(k => k.startsWith('nib-app-') && k !== VERSION).map(k => caches.delete(k))))
+    .then(keys => Promise.all(keys.filter(k => k.startsWith(FAMILIA) && k !== CACHE).map(k => caches.delete(k))))
     .then(() => self.clients.claim()));
 });
 
@@ -52,7 +57,7 @@ self.addEventListener('fetch', e => {
 
   // Arquivos do app: usa a cópia guardada; o que não estiver guardado vem da internet.
   e.respondWith(caches.match(req, { ignoreSearch: true }).then(hit => hit || fetch(req).then(res => {
-    if (res.ok && res.type === 'basic') { const copy = res.clone(); caches.open(VERSION).then(c => c.put(req, copy)); }
+    if (res.ok && res.type === 'basic') { const copy = res.clone(); caches.open(CACHE).then(c => c.put(req, copy)); }
     return res;
   })));
 });

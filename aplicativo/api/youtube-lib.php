@@ -24,7 +24,7 @@ function nib_yt_cliente(): ?array {
 function nib_yt_retorno(): string {
   $c = nib_config(); if (!empty($c['youtube_redirect'])) return (string)$c['youtube_redirect'];
   $https = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || (($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https');
-  return ($https ? 'https' : 'http') . '://' . ($_SERVER['HTTP_HOST'] ?? 'novaigrejabatista.com.br') . '/app/api/youtube.php?retorno=1';
+  return ($https ? 'https' : 'http') . '://' . ($_SERVER['HTTP_HOST'] ?? 'novaigrejabatista.com.br') . nib_base() . 'api/youtube.php?retorno=1';
 }
 
 function nib_ajuste(string $chave): ?string {

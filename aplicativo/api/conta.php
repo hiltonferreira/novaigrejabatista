@@ -110,7 +110,7 @@ try {
           $tok = bin2hex(random_bytes(32));
           $db->prepare('DELETE FROM nib_redefinicoes WHERE pessoa_id = ?')->execute([$p['id']]);
           $db->prepare('INSERT INTO nib_redefinicoes (token_hash, pessoa_id, expira_em) VALUES (?, ?, ?)')->execute([hash('sha256', $tok), $p['id'], nib_em('+1 hour')]);
-          $link = 'https://' . ($_SERVER['HTTP_HOST'] ?? 'novaigrejabatista.com.br') . '/app/?redefinir=' . $tok;
+          $link = 'https://' . ($_SERVER['HTTP_HOST'] ?? 'novaigrejabatista.com.br') . rtrim(nib_base(), '/') . '/?redefinir=' . $tok;
           $primeiro = explode(' ', $p['nome'])[0];
           nib_enviar_email($email, 'Criar nova senha · App da Nib', "Olá, $primeiro!\n\nRecebemos um pedido para criar uma nova senha no app da Nova Igreja Batista.\n\nToque no link abaixo para criar a nova senha. Ele vale por 1 hora:\n$link\n\nSe não foi você, ignore este e-mail. Sua senha atual continua valendo.\n\nNova Igreja Batista · Ariquemes, RO");
           nib_registrar((int)$p['id'], 'esqueci');

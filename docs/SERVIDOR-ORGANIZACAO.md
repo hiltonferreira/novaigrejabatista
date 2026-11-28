@@ -12,11 +12,11 @@ Só ficam estas pastas, além das do cPanel (`mail`, `etc`, `ssl`, `logs`, `tmp`
 
 | Pasta | O que é | Pode apagar? |
 |---|---|---|
-| `public_html/` | Site e app (`public_html/app`). | Não. |
+| `public_html/` | Site, app (`public_html/app`) e app de teste (`public_html/app-teste`). | Não. |
 | `nib-app-privado/` | Configuração do app (`config.php`: banco, chaves do Google) e do teste (`config-teste.php`). | Não. |
 | `nib-inscricoes-privado/` | Dados das inscrições (JSON) e configuração do painel. | Não. |
 | `nib-manutencao/` | Backups, publicações e ferramentas. Estrutura abaixo. | Segue a retenção. |
-| `teste.novaigrejabatista.com.br/` | Ambiente de teste (quando criado). | Não apague sem combinar. |
+| `teste.novaigrejabatista.com.br/` | Reservado para uma futura versão de teste do **site** (Hilton, 28/11/2026). O app de teste não fica aqui. | Não apague sem combinar. |
 
 **Nenhuma outra pasta solta.** Quem publica trabalha dentro de `nib-manutencao/publicacoes/`.
 
@@ -79,23 +79,14 @@ Estimativa com 1.500 pessoas (28/11/2026): banco ~100 MB após um ano (fotos ~60
 4. `python3 publicar-app.py` (confere) e `python3 publicar-app.py --apply` (publica; backup em `backups/app/`).
 5. Depois de confirmar, apaga o zip da pasta da publicação.
 
-## Ambiente de teste (`teste.novaigrejabatista.com.br/app`)
+## App de teste (`novaigrejabatista.com.br/app-teste`)
 
-Serve para conferir uma versão nova (e principalmente uma migração do banco) antes de ir para o app real.
+Serve para conferir uma versão nova (e principalmente uma migração do banco) antes de ir para o app real. Fica em `public_html/app-teste` (Hilton, 28/11/2026: o subdomínio `teste.` fica para uma futura versão de teste do site).
 
-- **Banco próprio** (`novaigre_appteste`), configurado em `~/nib-app-privado/config-teste.php`. O app reconhece o endereço `teste.` e usa só esse arquivo; se ele não existir, o app de teste para com erro em vez de usar o banco real (`aplicativo/api/conta-lib.php`, `nib_config`).
-- **Dados inventados (recomendado)**: `php ~/nib-manutencao/ferramentas/preparar-teste.php --ficticio --apply` cria as tabelas, traz só as contas da administração (nome, e-mail e senha, para entrar no teste) e inventa pessoas, pedidos, avisos e check-ins. Nenhum dado de membro sai do banco real.
-- **Cópia protegida do banco real** (só se Hilton pedir): `php ~/nib-manutencao/ferramentas/preparar-teste.php --apply` copia as tabelas e, no teste, apaga notificações, sessões e as chaves do YouTube e troca e-mail, celular, CPF e endereço de quem não é da administração por dados fictícios. A administração entra com o mesmo e-mail e senha do app real. Nenhuma notificação ou e-mail chega aos membros a partir do teste.
-- **Publicar no teste**: `python3 publicar-app.py --teste --apply` (mesmo pacote; grava em `teste.novaigrejabatista.com.br/app`, backup em `backups/app-teste/`).
-- O teste tem `noindex` (não aparece no Google) e precisa de login.
+- **Banco próprio** (`novaigre_appteste`), configurado em `~/nib-app-privado/config-teste.php`. O servidor reconhece o caminho `/app-teste/` (e também o endereço `teste.`) e usa só esse arquivo; se ele não existir, o teste para com erro em vez de usar o banco real (`aplicativo/api/conta-lib.php`, `nib_ambiente_teste`).
+- **Separado do app oficial no mesmo navegador**: o cookie de sessão do teste vale só para `/app-teste/`; os dados guardados no aparelho ganham o prefixo `teste:` (`aplicativo/ambiente.js`); o cache do service worker do teste se chama `nib-teste-…` e o do oficial `nib-app-…`, e um nunca apaga o do outro.
+- **Dados inventados (decisão do Hilton, 28/11/2026)**: `php ~/nib-manutencao/ferramentas/preparar-teste.php --ficticio --apply` cria as tabelas, traz só as contas da administração (nome, e-mail e senha) e inventa pessoas, pedidos, avisos e check-ins. Nenhum dado de membro sai do banco real. (Existe também a cópia protegida, sem `--ficticio`, só com novo pedido do Hilton.)
+- **Publicar no teste**: `python3 publicar-app.py --teste --apply` (mesmo pacote; grava em `public_html/app-teste`, backup em `backups/app-teste/`).
+- O teste tem `noindex` (não aparece no Google), precisa de login e não envia notificações (o banco de teste não tem inscrições de notificação).
 
-Criação (uma vez, pelo GPT, no Terminal do cPanel):
-
-```
-uapi SubDomain addsubdomain domain=teste rootdomain=novaigrejabatista.com.br dir=teste.novaigrejabatista.com.br
-uapi Mysql create_database name=novaigre_appteste
-uapi Mysql create_user name=novaigre_appteste password='<senha forte gerada na hora>'
-uapi Mysql set_privileges_on_database user=novaigre_appteste database=novaigre_appteste privileges=ALL%20PRIVILEGES
-```
-
-Depois: criar `~/nib-app-privado/config-teste.php` copiando o `config.php` e trocando só `db_name`, `db_user` e `db_pass` (permissão 600; nunca no Git nem em comentário do GitHub), rodar `preparar-teste.php --apply`, publicar com `--teste` e ativar o SSL do subdomínio (AutoSSL do cPanel).
+Banco de teste (já criado em 28/11/2026): `novaigre_appteste`, com usuário próprio. A senha fica só no `config-teste.php` (permissão 600; nunca no Git nem em comentário do GitHub).

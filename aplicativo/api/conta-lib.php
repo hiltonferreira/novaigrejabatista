@@ -8,12 +8,17 @@ const NIB_POLITICA = '2026-11-06';
 const NIB_SESSAO_DIAS = 30;
 const NIB_COOKIE = 'nib_sessao';
 
+// Onde o app está: /app/ (oficial) ou /app-teste/ (teste, pedido de Hilton em 28/11/2026). Vale para cookie e links.
+function nib_base(): string { return str_starts_with((string)($_SERVER['SCRIPT_NAME'] ?? ''), '/app-teste/') ? '/app-teste/' : '/app/'; }
+function nib_ambiente_teste(): bool {
+  return nib_base() === '/app-teste/' || (bool)preg_match('/^teste\./i', (string)($_SERVER['HTTP_HOST'] ?? '')) || str_contains((string)($_SERVER['DOCUMENT_ROOT'] ?? ''), 'teste.novaigrejabatista');
+}
 function nib_config(): array {
   static $c = null; if ($c !== null) return $c;
   $priv = dirname((string)realpath($_SERVER['DOCUMENT_ROOT'] ?? '')) . '/nib-app-privado/';
-  // Ambiente de teste (teste.novaigrejabatista.com.br): usa só o config-teste.php (outro banco). Nunca cai no banco real.
-  $teste = (bool)preg_match('/^teste\./i', (string)($_SERVER['HTTP_HOST'] ?? '')) || str_contains((string)($_SERVER['DOCUMENT_ROOT'] ?? ''), 'teste.novaigrejabatista');
-  $path = getenv('NIB_APP_CONFIG') ?: $priv . ($teste ? 'config-teste.php' : 'config.php');
+  // Ambiente de teste (novaigrejabatista.com.br/app-teste, ou o site de teste teste.novaigrejabatista.com.br):
+  // usa só o config-teste.php (outro banco). Se ele não existir, para com erro; nunca cai no banco real.
+  $path = getenv('NIB_APP_CONFIG') ?: $priv . (nib_ambiente_teste() ? 'config-teste.php' : 'config.php');
   if (!is_file($path)) throw new RuntimeException('Configuração indisponível.');
   $c = require $path; if (!is_array($c)) throw new RuntimeException('Configuração inválida.');
   return $c;
@@ -310,7 +315,7 @@ function nib_registrar(?int $pessoa, string $acao, ?int $alvo = null, string $de
 // Sessão: cookie aleatório; o banco guarda só o hash.
 function nib_cookie(string $valor, int $expira): void {
   $https = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || (($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https');
-  setcookie(NIB_COOKIE, $valor, ['expires' => $expira, 'path' => '/app/', 'secure' => $https, 'httponly' => true, 'samesite' => 'Lax']);
+  setcookie(NIB_COOKIE, $valor, ['expires' => $expira, 'path' => nib_base(), 'secure' => $https, 'httponly' => true, 'samesite' => 'Lax']);
 }
 function nib_abrir_sessao(int $pessoa): void {
   $tok = bin2hex(random_bytes(32));

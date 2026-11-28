@@ -6,7 +6,7 @@ Atualizado em 28/11/2026. O histórico das versões de teste de 01/11/2026 está
 
 ## Dois modos no mesmo código
 
-- **Oficial** (endereço novaigrejabatista.com.br ou teste.novaigrejabatista.com.br): só dados reais. Entrar/criar cadastro, caderno de oração, check-in, avisos, pílulas, agenda, células, contribuição por Pix e a área da equipe (Secretaria, Liderança Pastoral, administração), com o perfil conferido no servidor.
+- **Oficial** (endereço novaigrejabatista.com.br, em `/app/`, e o app de teste em `/app-teste/`, com banco próprio): só dados reais. Entrar/criar cadastro, caderno de oração, check-in, avisos, pílulas, agenda, células, contribuição por Pix e a área da equipe (Secretaria, Liderança Pastoral, administração), com o perfil conferido no servidor.
 - **Demonstração** (`/app/?demo` ou qualquer outro endereço): dados fictícios em memória, usada para apresentar ideias. `admin.js` guarda a demonstração da gestão.
 
 ## Onde está cada coisa
@@ -19,6 +19,7 @@ Atualizado em 28/11/2026. O histórico das versões de teste de 01/11/2026 está
 | `conta.js` | Conversa com o servidor (contas, caderno, check-in, pílulas...). |
 | `site-data.js` | Células, eventos e liderança vindos do site. |
 | `daily-content.js`, `verses.js` | Versículo do dia. |
+| `ambiente.js` | Carregado primeiro: em `/app-teste/` separa os dados guardados no aparelho dos do app oficial. |
 | `pix.js`, `moderation.js`, `icons.js`, `install.js` | Pix, filtro de palavras do caderno, ícones e instalação no celular. |
 | `sw.js` | Guarda o app no celular. Ao mudar qualquer arquivo, rode `node sw-version.cjs --write` (o teste falha sem isso e o celular não recebe a versão nova). |
 | `api/` | Servidor em PHP: `conta.php` (contas, membros, perfis), `caderno.php`, `checkin.php`, `avisos.php`, `eventos*.php`, `pilulas*.php`, `youtube*.php`, `lembretes.php` (cron). Biblioteca comum e migrações do banco em `conta-lib.php` (`NIB_MIGRACAO`). |
@@ -43,7 +44,7 @@ O GitHub roda tudo isso a cada PR (`.github/workflows/testes-app.yml`).
 
 1. `python3 scripts/empacotar-app.py vNNN` gera o pacote e atualiza `scripts/publicar-app.py` com o SHA de cada arquivo.
 2. PR + comentário com o pedido de publicação; o GPT publica seguindo `docs/SERVIDOR-ORGANIZACAO.md` (pasta da publicação, dump antes de migração, backup em `nib-manutencao/backups/app`).
-3. Para testar antes: `python3 publicar-app.py --teste --apply` publica em teste.novaigrejabatista.com.br/app.
+3. Para testar antes: `python3 publicar-app.py --teste --apply` publica em novaigrejabatista.com.br/app-teste (banco de teste com dados inventados).
 
 ## Regras de design (Hilton)
 

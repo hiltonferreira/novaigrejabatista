@@ -11,7 +11,7 @@ header('Referrer-Policy: same-origin');
 require __DIR__ . '/conta-lib.php';
 
 $id = (int)($_GET['pilula'] ?? 0);
-$base = 'https://novaigrejabatista.com.br/app/';
+$base = 'https://novaigrejabatista.com.br' . nib_base();
 $r = null;
 try {
   if ($id > 0) {
