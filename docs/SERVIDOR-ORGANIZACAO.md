@@ -80,7 +80,8 @@ Restaurar o banco (só com combinação prévia com Hilton): `gzip -dc backups/b
 Serve para conferir uma versão nova (e principalmente uma migração do banco) antes de ir para o app real.
 
 - **Banco próprio** (`novaigre_appteste`), configurado em `~/nib-app-privado/config-teste.php`. O app reconhece o endereço `teste.` e usa só esse arquivo; se ele não existir, o app de teste para com erro em vez de usar o banco real (`aplicativo/api/conta-lib.php`, `nib_config`).
-- **Cópia protegida do banco real**: `php ~/nib-manutencao/ferramentas/preparar-teste.php --apply` copia as tabelas e, no teste, apaga notificações, sessões e as chaves do YouTube e troca e-mail, celular, CPF e endereço de quem não é da administração por dados fictícios. A administração entra com o mesmo e-mail e senha do app real. Nenhuma notificação ou e-mail chega aos membros a partir do teste.
+- **Dados inventados (recomendado)**: `php ~/nib-manutencao/ferramentas/preparar-teste.php --ficticio --apply` cria as tabelas, traz só as contas da administração (nome, e-mail e senha, para entrar no teste) e inventa pessoas, pedidos, avisos e check-ins. Nenhum dado de membro sai do banco real.
+- **Cópia protegida do banco real** (só se Hilton pedir): `php ~/nib-manutencao/ferramentas/preparar-teste.php --apply` copia as tabelas e, no teste, apaga notificações, sessões e as chaves do YouTube e troca e-mail, celular, CPF e endereço de quem não é da administração por dados fictícios. A administração entra com o mesmo e-mail e senha do app real. Nenhuma notificação ou e-mail chega aos membros a partir do teste.
 - **Publicar no teste**: `python3 publicar-app.py --teste --apply` (mesmo pacote; grava em `teste.novaigrejabatista.com.br/app`, backup em `backups/app-teste/`).
 - O teste tem `noindex` (não aparece no Google) e precisa de login.
 
