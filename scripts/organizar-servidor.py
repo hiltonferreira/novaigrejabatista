@@ -31,7 +31,8 @@ Estrutura final:
 Regra de retenção (combinada em 09/11/2026 e ajustada em 28/11/2026):
   - backups/app: ficam as 5 publicações mais recentes (backups/app-teste: 3).
   - publicacoes e publicacoes/antigas: ficam as 3 mais recentes (os pacotes estão no GitHub e nos arquivos do projeto).
-  - backups/site e backups/outros: apaga o que tiver mais de 60 dias.
+  - backups/site e backups/outros: apaga o que tiver mais de 60 dias, MENOS backups de dados (nome com comprovante,
+    inscric, dados, privado, banco, sql, dump, completo, lista, cadastro), que só saem à mão com ok do Hilton.
   - backups/banco: ficam os 10 mais recentes (antes de migração). backups/banco/diario e inscricoes/diario se
     limpam sozinhos (backup-diario.php: 14 dias + o primeiro de cada mês por 6 meses).
   - backups/completo: nunca apaga sozinho.
@@ -45,6 +46,7 @@ APPLY = '--apply' in sys.argv
 RETENCAO = '--retencao' in sys.argv
 PROTEGIDAS = {'public_html', 'public_ftp', 'nib-app-privado', 'nib-inscricoes-privado', 'nib-manutencao', 'mail', 'etc', 'ssl', 'logs', 'tmp', 'lscache', 'access-logs', 'www'}
 ESTRUTURA = ['ferramentas', 'backups/app', 'backups/app-teste', 'backups/banco/diario', 'backups/inscricoes/diario', 'backups/site', 'backups/completo', 'backups/outros', 'publicacoes/antigas', 'historico']
+DADOS = re.compile(r'comprovante|inscric|dados|privado|banco|sql|dump|completo|lista|cadastro', re.I)
 FIXAS = {'LEIA-ME.md', 'ferramentas', 'backups', 'publicacoes', 'historico'}
 
 def stop(m): print('INTERROMPIDO:', m); sys.exit(1)
@@ -129,7 +131,8 @@ if RETENCAO:
     limite = time.time() - 60 * 86400
     for pasta in ('backups/site', 'backups/outros'):
         p = MAN / pasta
-        if p.is_dir(): apagar.extend(x for x in p.iterdir() if x.stat().st_mtime < limite)
+        # Backups de DADOS (comprovantes, inscrições, banco) nunca saem pela idade: só backups de código/arquivos do site.
+        if p.is_dir(): apagar.extend(x for x in p.iterdir() if x.stat().st_mtime < limite and not DADOS.search(x.name))
     total = sum(tamanho(x) for x in apagar)
     print(f'RETENCAO: {len(apagar)} itens, {mb(total)}')
     for x in apagar: print('   APAGAR', x.relative_to(MAN), mb(tamanho(x)), time.strftime('%d/%m/%Y', time.localtime(x.stat().st_mtime)))
