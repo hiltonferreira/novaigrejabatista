@@ -290,6 +290,16 @@ function nib_limite(string $tipo, string $quem, int $max, int $janela): void {
   $db->commit();
 }
 
+// Limpeza de vencidos: sessões expiradas, links de nova senha velhos e contadores de tentativa antigos.
+// Roda sozinha de vez em quando ao entrar na conta e todo dia no backup automático (scripts/backup-diario.php).
+function nib_limpar_vencidos(PDO $db): array {
+  $agora = nib_agora();
+  $s = $db->prepare('DELETE FROM nib_sessoes WHERE expira_em < ?'); $s->execute([$agora]);
+  $r = $db->prepare('DELETE FROM nib_redefinicoes WHERE expira_em < ?'); $r->execute([nib_em('-7 days')]);
+  $t = $db->prepare('DELETE FROM nib_tentativas WHERE desde < ?'); $t->execute([time() - 2 * 86400]);
+  return ['sessoes' => $s->rowCount(), 'redefinicoes' => $r->rowCount(), 'tentativas' => $t->rowCount()];
+}
+
 function nib_registrar(?int $pessoa, string $acao, ?int $alvo = null, string $detalhes = ''): void {
   nib_db()->prepare('INSERT INTO nib_registro (pessoa_id, acao, alvo_id, detalhes, criado_em) VALUES (?, ?, ?, ?, ?)')->execute([$pessoa, $acao, $alvo, mb_substr($detalhes, 0, 250), nib_agora()]);
 }

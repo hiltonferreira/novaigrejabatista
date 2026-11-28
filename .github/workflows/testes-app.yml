@@ -1,0 +1,45 @@
+name: Testes do app
+
+# Roda a cada PR e a cada envio para a main. Não publica nada: só confere o código.
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  testes:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: raiz
+          MYSQL_DATABASE: nib_teste
+          MYSQL_USER: nib
+          MYSQL_PASSWORD: nib
+        ports: ['3306:3306']
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -praiz"
+          --health-interval=5s --health-timeout=5s --health-retries=20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: pdo_mysql, curl, mbstring, gd
+      - name: Sintaxe do PHP
+        run: find aplicativo/api scripts -name '*.php' -print0 | xargs -0 -n1 php -l
+      - name: Sintaxe do JavaScript
+        run: for f in aplicativo/*.js; do node --check "$f"; done
+      - name: Código montado igual às partes (aplicativo/fonte)
+        run: python3 scripts/montar-app.py --conferir
+      - name: Testes do app (navegador)
+        run: node --test aplicativo/*.test.cjs
+      - name: Testes do servidor (PHP + MySQL)
+        run: bash testes/app-api/rodar.sh

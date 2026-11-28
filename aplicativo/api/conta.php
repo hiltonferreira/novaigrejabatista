@@ -54,6 +54,7 @@ try {
       $login = nib_texto($d['login'] ?? '', 160); $senha = is_string($d['senha'] ?? null) ? $d['senha'] : '';
       nib_limite('entrar-ip', nib_ip(), 30, 900);
       nib_limite('entrar', mb_strtolower($login), 8, 900);
+      if (random_int(1, 20) === 1) { try { nib_limpar_vencidos($db); } catch (Throwable $e) { error_log('limpeza: ' . $e->getMessage()); } }
       $p = null;
       if (str_contains($login, '@')) { $q = $db->prepare('SELECT * FROM nib_pessoas WHERE email = ?'); $q->execute([nib_email($login)]); $p = $q->fetch() ?: null; }
       else { $cel = nib_digitos($login); if (strlen($cel) >= 10) { $q = $db->prepare('SELECT * FROM nib_pessoas WHERE celular = ? LIMIT 2'); $q->execute([$cel]); $rows = $q->fetchAll(); $p = count($rows) === 1 ? $rows[0] : null; } }
