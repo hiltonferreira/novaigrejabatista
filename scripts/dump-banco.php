@@ -4,7 +4,7 @@
 // por um arquivo temporário com permissão 600, que é apagado no fim. A senha não aparece na tela nem no comando.
 // Confere o resultado: código de saída, gzip -t e fim do dump ("Dump completed").
 // Uso, no Terminal do cPanel:
-//   php dump-banco.php /home/novaigre/nib-manutencao/backup-completo-20261109/novaigre_app.sql.gz
+//   php ~/nib-manutencao/ferramentas/dump-banco.php ~/nib-manutencao/backups/banco/antes-v202-AAAAMMDD.sql.gz
 declare(strict_types=1);
 ini_set('display_errors', '1'); error_reporting(E_ALL);
 if (!defined('NIB_APP_RUNTIME')) define('NIB_APP_RUNTIME', true); // o config.php pode exigir isso
@@ -33,9 +33,11 @@ if (!$podeShell) {
       $t = $t[0]; $tabelas++;
       $cr = $db->query('SHOW CREATE TABLE `' . str_replace('`', '``', $t) . '`')->fetch(PDO::FETCH_NUM);
       gzwrite($gz, "\nDROP TABLE IF EXISTS `$t`;\n" . $cr[1] . ";\n");
+      // Colunas binárias (fotos, capas) em hexadecimal, para voltarem iguais na restauração (28/11/2026).
+      $bin = array_map(function ($col) { return (bool)preg_match('/blob|binary/i', (string)$col['Type']); }, $db->query('SHOW COLUMNS FROM `' . str_replace('`', '``', $t) . '`')->fetchAll(PDO::FETCH_ASSOC));
       $st = $db->query('SELECT * FROM `' . str_replace('`', '``', $t) . '`', PDO::FETCH_NUM);
       foreach ($st as $l) {
-        $v = array_map(function ($x) use ($db) { return $x === null ? 'NULL' : $db->quote((string)$x); }, $l);
+        $v = []; foreach ($l as $k => $x) $v[] = $x === null ? 'NULL' : (!empty($bin[$k]) ? ($x === '' ? "''" : '0x' . bin2hex((string)$x)) : $db->quote((string)$x));
         gzwrite($gz, "INSERT INTO `$t` VALUES (" . implode(',', $v) . ");\n");
       }
     }

@@ -26,6 +26,6 @@ pkg = {'zip_sha256': hashlib.sha256(out.read_bytes()).hexdigest(), 'files': man}
 pub = HERE / 'publicar-app.py'
 s = pub.read_text()
 s = re.sub(r"^PKG = json\.loads\(.*\)$", lambda m: 'PKG = json.loads(' + repr(json.dumps(pkg)) + ')', s, count=1, flags=re.M)
-s = re.sub(r"(nib-app-|app-|versão de teste )v\d+", lambda m: m.group(1) + ver, s)
+s = re.sub(r"(nib-app-|app-|versão de teste |versão |publicacoes/)v\d+", lambda m: m.group(1) + ver, s)
 pub.write_text(s)
 print('OK', out.name, len(man), 'arquivos', pkg['zip_sha256'])

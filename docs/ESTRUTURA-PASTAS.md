@@ -42,7 +42,8 @@ As versões antigas da imagem de compartilhamento do painel (`-v411`, `-v412` e 
 
 | Pasta | O que é |
 |---|---|
-| `scripts/` | Ferramentas de publicação e manutenção, que rodam no Terminal do cPanel e não vão para o site. Os `.zip` gerados ficam fora do Git. |
+| `scripts/` | Ferramentas de publicação e manutenção, que rodam no Terminal do cPanel e não vão para o site. Os `.zip` gerados ficam fora do Git. `montar-app.py` monta o app a partir de `aplicativo/fonte/`. |
+| `testes/` | Testes do servidor do app (`testes/app-api/rodar.sh`, PHP + MySQL local). |
 | `docs/` | Decisões, estado atual e fluxo de trabalho entre Claude e Codex. |
 | `.github/` | Integração do Claude com o GitHub. |
 
@@ -54,9 +55,11 @@ As versões antigas da imagem de compartilhamento do painel (`-v411`, `-v412` e 
 | `nib-inscricoes-privado/` | Não. Dados das inscrições e configuração do painel. |
 | `nib-app-privado/` | Não. Configuração do app, com as chaves do Google e do banco. |
 | `mail/`, `etc/`, `ssl/`, `logs/`, `.` (arquivos ocultos) | Não. São do cPanel. |
-| `nib-manutencao/` | Backups e cópias de publicação. Seguem a regra abaixo. |
+| `nib-manutencao/` | Backups, publicações e ferramentas, em estrutura fixa (`docs/SERVIDOR-ORGANIZACAO.md`). |
 
-### Regra para publicações (combinada em 09/11/2026)
+> **Atualizado em 28/11/2026:** a organização do servidor, a retenção dos backups, o backup diário e o ambiente de teste estão em `docs/SERVIDOR-ORGANIZACAO.md`, que substitui a regra abaixo.
+
+### Regra para publicações (combinada em 09/11/2026) (substituída)
 
 1. Cada publicação nova trabalha dentro de `~/nib-manutencao/publicacoes/`, nunca solta na pasta inicial.
 2. Ao terminar, apague o `source.tgz` (cópia inteira do repositório, cerca de 56 MB) e qualquer arquivo extraído para montar o pacote.

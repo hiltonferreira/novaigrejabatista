@@ -1,48 +1,53 @@
-# Minha igreja — versão 0.1 de teste
+# App da Nova Igreja Batista (Nib)
 
-Primeira implementação de interface do novo módulo; não usa o projeto descontinuado de células. Fonte: issue #11. Base: main d4889c4955cc991d93ec82a0b5378bbb9975d5da.
+Aplicativo dos membros, em produção em https://novaigrejabatista.com.br/app/ (no servidor: `public_html/app`). Instalável no celular (PWA), com contas reais em banco MySQL no cPanel.
 
-## O que funciona nesta versão
+Atualizado em 28/11/2026. O histórico das versões de teste de 01/11/2026 está em `docs/APLICATIVO-V1-2026-11-01.md` e `docs/APLICATIVO-COERENCIA-VISUAL-2026-11-01.md`.
 
-- Navegação do membro, com identidade derivada do painel atual: Acumin, logo oficial, azul #041e42 e marfim #ebebdf.
-- Solicitação fictícia de atualização de cadastro, visível na gestão durante a mesma sessão.
-- Experiências demonstrativas de Secretaria e Liderança Pastoral.
-- Registro de apresentação passada com confirmação explícita, autoria e horário demonstrativos.
-- Áreas de eventos, células externas, informações e Generosidade com estados sem integração.
-- Validação de campos e simulação de contribuição, sem cobrança.
+## Dois modos no mesmo código
 
-## Limites
+- **Oficial** (endereço novaigrejabatista.com.br ou teste.novaigrejabatista.com.br): só dados reais. Entrar/criar cadastro, caderno de oração, check-in, avisos, pílulas, agenda, células, contribuição por Pix e a área da equipe (Secretaria, Liderança Pastoral, administração), com o perfil conferido no servidor.
+- **Demonstração** (`/app/?demo` ou qualquer outro endereço): dados fictícios em memória, usada para apresentar ideias. `admin.js` guarda a demonstração da gestão.
 
-O seletor de experiência NÃO é autenticação/autorização. Não inserir dados reais. Tudo fica em memória e desaparece ao recarregar. Não há conta real, banco, auditoria persistente, inscrição, integração de células, Pix ou pagamentos. Formulário e reunião são pré-registrados no exemplo; cadastro completo, histórico de membros antigos e matriz final serão próximos recortes. Não usar como sistema operacional da Secretaria.
+## Onde está cada coisa
 
-## Teste e Preview
+| Arquivo/pasta | O que é |
+|---|---|
+| `index.html`, `conheca.html` | Página do app e página "Conheça o aplicativo". |
+| `fonte/js/`, `fonte/css/` | O código do app em partes, por assunto. **Edite aqui** e rode `python3 scripts/montar-app.py` (gera `app.js` e `app.css`). Ver `fonte/LEIA-ME.md`. |
+| `app.js`, `app.css` | Arquivos montados que vão ao ar. Não edite direto. |
+| `conta.js` | Conversa com o servidor (contas, caderno, check-in, pílulas...). |
+| `site-data.js` | Células, eventos e liderança vindos do site. |
+| `daily-content.js`, `verses.js` | Versículo do dia. |
+| `pix.js`, `moderation.js`, `icons.js`, `install.js` | Pix, filtro de palavras do caderno, ícones e instalação no celular. |
+| `sw.js` | Guarda o app no celular. Ao mudar qualquer arquivo, rode `node sw-version.cjs --write` (o teste falha sem isso e o celular não recebe a versão nova). |
+| `api/` | Servidor em PHP: `conta.php` (contas, membros, perfis), `caderno.php`, `checkin.php`, `avisos.php`, `eventos*.php`, `pilulas*.php`, `youtube*.php`, `lembretes.php` (cron). Biblioteca comum e migrações do banco em `conta-lib.php` (`NIB_MIGRACAO`). |
+| `.htaccess` | Cabeçalhos de segurança (CSP, moldura), compressão e cache. Serviço externo novo (vídeo, imagens) precisa entrar na CSP. |
+| `assets/` | Fontes Acumin (5 espessuras, todas usadas), imagens em WebP, ícones. |
 
-Servir apenas esta pasta, que contém todos os recursos necessários. Exemplo local: `python3 -m http.server 8080 --directory aplicativo` a partir da raiz do repo. Abrir http://localhost:8080/.
+A configuração com senhas fica fora do site: `~/nib-app-privado/config.php` (e `config-teste.php` no ambiente de teste). Nunca no Git.
 
-Na Vercel: projeto separado de teste com Root Directory `aplicativo`, framework Other, sem build; criar deployment com target Preview. Não usar o antigo projeto de Células, promover a produção ou copiar o site PHP inteiro para Vercel. O vercel.json desta pasta declara cabeçalhos noindex e CSP sem conexões/formulários externos. Preview remoto depende da autorização da equipe Vercel.
+## Testes
 
-Não subir esta pasta ao cPanel nesta etapa. Nenhum arquivo de home, APIs ou inscrições foi alterado. Os PRs #9 e #10 descrevem mudanças de produção não integradas na main; não substituir esses arquivos por esta branch.
+Na raiz do repositório:
 
-## Contraste e validação
+```
+python3 scripts/montar-app.py --conferir     # app.js/app.css iguais às partes
+node --test aplicativo/*.test.cjs            # contraste, Pix, versículo, moderação, service worker
+bash testes/app-api/rodar.sh                 # servidor: cadastro, entrada, perfis, caderno, senha, exclusão (precisa de MySQL/MariaDB local)
+```
 
-`node --check aplicativo/app.js` e `node --test aplicativo/contrast.test.cjs`.
+O GitHub roda tudo isso a cada PR (`.github/workflows/testes-app.yml`).
 
-A verificação calcula luminância relativa para 23 pares de cores (texto >=4,5:1, contornos/foco >=3:1). Não equivale a auditoria completa de acessibilidade. Textos secundários foram escurecidos; laranja claro é destaque sobre azul, não texto pequeno sobre branco. Foco azul em superfície clara e marfim na navegação azul.
+## Publicar
 
-Roteiro: navegar pelas áreas; enviar contato/observação fictícios e consultar na gestão; rejeitar apresentação futura; registrar apresentação passada como Secretaria e como Pastoral em sessões separadas; confirmar ausência de pagamento e integrações reais. Conferir teclado, foco, largura estreita e desktop.
+1. `python3 scripts/empacotar-app.py vNNN` gera o pacote e atualiza `scripts/publicar-app.py` com o SHA de cada arquivo.
+2. PR + comentário com o pedido de publicação; o GPT publica seguindo `docs/SERVIDOR-ORGANIZACAO.md` (pasta da publicação, dump antes de migração, backup em `nib-manutencao/backups/app`).
+3. Para testar antes: `python3 publicar-app.py --teste --apply` publica em teste.novaigrejabatista.com.br/app.
 
+## Regras de design (Hilton)
 
-## Revisão Claude e correções
-
-Revisão no PR #12: comentário 6563071101. O Claude leu o checkout, mas não confirmou SHAs completos via API nem executou testes; workflow terminou com erro após publicar análise, portanto revisão parcial. Codex verificou e corrigiu foco de navegação, contornos reais de inputs/atalhos, placeholder, seletor restaurado, estado vivo de mensagens, semântica do menu e tamanho de campos mobile. Testes finais: 24 verificações passaram, incluindo 23 pares de cores e ligação dos controles aos tokens CSS. Navegador confirmou foco no título e cores computadas de borda/placeholder. Sem auditoria completa de leitores de tela. Fuso dos registros demonstrativos: America/Manaus; política temporal definitiva do produto ainda não aprovada.
-
-
-## Revisão visual posterior
-
-O primeiro Preview foi rejeitado por Hilton. A revisão atual reaproveita os CSS originais do painel, estrutura de header/sidebar/main, dimensões e pesos reais; campos seguem referência marfim do NXT. Detalhes em docs/APLICATIVO-COERENCIA-VISUAL-2026-11-01.md. O seletor está no botão Versão de teste. Navegação principal e catálogo são demonstrativos.
-
-Mobile segue o módulo de Eventos/Inscrições (menu superior/drawer e retorno no cabeçalho); a barra inferior experimental foi retirada. Voltar é histórico interno da demonstração e não intercepta o botão de voltar do navegador.
-
-Atualização mais recente: a pedido de Hilton, aplicada a proposta de Claude para barra flutuante mobile de5acessos (Início/Eventos/Contribuir/Cadastro/Mais), preservando drawer e controlador do módulo de Eventos. Esta decisão supera o registro anterior de barra retirada. Gestão usa só o menu; campos focados ocultam a barra.
-
-Refinamento atual: mobile tem cabeçalho único com avisos/menu, sem breadcrumb nem faixa Navegação; menu em tela inteira com cards agrupados em duas colunas e seletor de teste. Dialog nativo substitui o details e seu controlador; o arquivo do controlador anterior é apenas snapshot preservado. Barra inferior: Início/Eventos/Contribuir/Cadastro/Células. Mais foi removido para não duplicar o menu superior.
+- Nunca cortar texto com reticências ("…").
+- Imagens sempre em WebP, cada vez mais leves sem perder qualidade.
+- Capas de vídeo com bom enquadramento (sem cortar a cabeça) e a pessoa olhando para a câmera.
+- Letra mínima de 12 px em textos de leitura; etiquetas em maiúsculas, selos e a barra inferior seguem o desenho atual.

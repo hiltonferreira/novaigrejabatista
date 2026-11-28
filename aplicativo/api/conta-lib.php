@@ -10,7 +10,10 @@ const NIB_COOKIE = 'nib_sessao';
 
 function nib_config(): array {
   static $c = null; if ($c !== null) return $c;
-  $path = getenv('NIB_APP_CONFIG') ?: dirname((string)realpath($_SERVER['DOCUMENT_ROOT'] ?? '')) . '/nib-app-privado/config.php';
+  $priv = dirname((string)realpath($_SERVER['DOCUMENT_ROOT'] ?? '')) . '/nib-app-privado/';
+  // Ambiente de teste (teste.novaigrejabatista.com.br): usa só o config-teste.php (outro banco). Nunca cai no banco real.
+  $teste = (bool)preg_match('/^teste\./i', (string)($_SERVER['HTTP_HOST'] ?? '')) || str_contains((string)($_SERVER['DOCUMENT_ROOT'] ?? ''), 'teste.novaigrejabatista');
+  $path = getenv('NIB_APP_CONFIG') ?: $priv . ($teste ? 'config-teste.php' : 'config.php');
   if (!is_file($path)) throw new RuntimeException('Configuração indisponível.');
   $c = require $path; if (!is_array($c)) throw new RuntimeException('Configuração inválida.');
   return $c;
