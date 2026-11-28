@@ -34,6 +34,7 @@ nib-manutencao/
   backups/site/              backups de mudanças no site, formulários e painel (NXT, células, comprovantes...)
   backups/completo/          backups completos de referência (backup-completo-DATA)
   backups/outros/            o que não deu para classificar pelo nome
+  backups/resgatados/        dumps e dados achados dentro de cópias antigas antes da retenção apagá-las (nunca sai sozinho)
   backups/backup-diario.log  uma linha por dia com o resultado do backup automático
   publicacoes/vNNN-DATA/     área de trabalho de cada publicação (zip + script). Apague o zip depois de confirmar.
   publicacoes/antigas/       pastas de publicação antigas que estavam soltas
@@ -51,7 +52,9 @@ nib-manutencao/
 | `backups/banco/diario`, `backups/inscricoes/diario` | 14 dias + o dia 1º de cada mês por 6 meses (o próprio backup-diario.php limpa) |
 | `publicacoes`, `publicacoes/antigas` | das publicações do app, as 3 mais recentes; publicações de outras áreas (NXT, comprovantes...) ficam |
 | `backups/site`, `backups/outros` | o que tiver até 60 dias |
-| `backups/completo` | tudo (nunca apaga sozinho) |
+| `backups/completo`, `backups/resgatados` | tudo (nunca apaga sozinho) |
+
+O nome da pasta não basta: antes de apagar uma cópia, a retenção procura dentro dela arquivos de dados (`.sql`, `.sql.gz`, `.csv`, `.xlsx`, `.tar.gz` ou caminho com `dados`, `inscric`, `comprovante`, `banco`...) e os **move** para `backups/resgatados/`, com o mesmo caminho. A conferência mostra cada um como `GUARDA`. Só o código sai.
 
 ## Backup automático diário
 

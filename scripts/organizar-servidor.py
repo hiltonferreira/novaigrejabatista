@@ -24,6 +24,7 @@ Estrutura final:
     backups/site/              backups de mudanças no site, formulários e painel (NXT, células, comprovantes...)
     backups/completo/          backups completos de referência (backup-completo-DATA)
     backups/outros/            o que não deu para classificar pelo nome (conferir à mão)
+    backups/resgatados/        dumps e dados achados dentro de cópias antigas antes de a retenção apagá-las
     publicacoes/               área de trabalho de cada publicação (pacote + script), uma pasta por versão
     publicacoes/antigas/       pastas de publicação que estavam soltas na pasta inicial (nib-vNNN.xxxx)
     historico/                 registro de cada organização (o que saiu de onde e foi para onde)
@@ -37,6 +38,8 @@ Regra de retenção (combinada em 09/11/2026 e ajustada em 28/11/2026):
   - backups/banco: nunca apaga sozinho (dumps antes de migração). backups/banco/diario e inscricoes/diario se
     limpam sozinhos (backup-diario.php: 14 dias + o primeiro de cada mês por 6 meses).
   - backups/completo: nunca apaga sozinho.
+  - Antes de apagar qualquer cópia, arquivos de dados dentro dela (.sql, .sql.gz, .csv, .tar.gz ou caminho com
+    dados/inscric/comprovante...) são movidos para backups/resgatados/ com o mesmo caminho. backups/resgatados nunca sai sozinho.
 """
 import os, sys, re, shutil, time, json
 from pathlib import Path
@@ -46,8 +49,9 @@ MAN = HOME / 'nib-manutencao'
 APPLY = '--apply' in sys.argv
 RETENCAO = '--retencao' in sys.argv
 PROTEGIDAS = {'public_html', 'public_ftp', 'nib-app-privado', 'nib-inscricoes-privado', 'nib-manutencao', 'mail', 'etc', 'ssl', 'logs', 'tmp', 'lscache', 'access-logs', 'www'}
-ESTRUTURA = ['ferramentas', 'backups/app', 'backups/app-teste', 'backups/banco/diario', 'backups/inscricoes/diario', 'backups/site', 'backups/completo', 'backups/outros', 'publicacoes/antigas', 'historico']
+ESTRUTURA = ['ferramentas', 'backups/app', 'backups/app-teste', 'backups/resgatados', 'backups/banco/diario', 'backups/inscricoes/diario', 'backups/site', 'backups/completo', 'backups/outros', 'publicacoes/antigas', 'historico']
 DADOS = re.compile(r'comprovante|inscric|dados|privado|banco|sql|dump|completo|lista|cadastro', re.I)
+DADO_ARQ = re.compile(r'\.(sql|sql\.gz|csv|xlsx|tar\.gz|tgz)$', re.I)
 FIXAS = {'LEIA-ME.md', 'ferramentas', 'backups', 'publicacoes', 'historico'}
 
 def stop(m): print('INTERROMPIDO:', m); sys.exit(1)
@@ -137,12 +141,32 @@ if RETENCAO:
         p = MAN / pasta
         # Backups de DADOS (comprovantes, inscrições, banco) nunca saem pela idade: só backups de código/arquivos do site.
         if p.is_dir(): apagar.extend(x for x in p.iterdir() if x.stat().st_mtime < limite and not DADOS.search(x.name))
-    total = sum(tamanho(x) for x in apagar)
-    print(f'RETENCAO: {len(apagar)} itens, {mb(total)}')
-    for x in apagar: print('   APAGAR', x.relative_to(MAN), mb(tamanho(x)), time.strftime('%d/%m/%Y', time.localtime(x.stat().st_mtime)))
+    # O nome da pasta não basta: uma cópia antiga pode ter dumps do banco ou dados das inscrições dentro
+    # (achado do GPT em 28/11/2026). Antes de apagar, esses arquivos são MOVIDOS para backups/resgatados/,
+    # com o mesmo caminho, e só o resto (código) sai.
+    def dados_dentro(x: Path):
+        if not x.is_dir() or x.is_symlink(): return [x] if DADO_ARQ.search(x.name) or DADOS.search(x.name) else []
+        achados = []
+        for r, ds, fs in os.walk(x):
+            for f in fs:
+                c = Path(r) / f
+                if DADOS.search(str(c.relative_to(x))) or DADO_ARQ.search(f): achados.append(c)
+        return achados
+    resgatar = {x: dados_dentro(x) for x in apagar}
+    total = sum(tamanho(x) for x in apagar); total_r = sum(tamanho(f) for fs in resgatar.values() for f in fs)
+    print(f'RETENCAO: {len(apagar)} itens, {mb(total)}; {sum(map(len, resgatar.values()))} arquivos de dados ({mb(total_r)}) ficam em backups/resgatados/')
+    for x in apagar:
+        print('   APAGAR', x.relative_to(MAN), mb(tamanho(x)), time.strftime('%d/%m/%Y', time.localtime(x.stat().st_mtime)))
+        for f in resgatar[x]: print('      GUARDA', f.relative_to(MAN), mb(tamanho(f)))
     if not APPLY: print('MODO_CONFERENCIA: nada foi apagado. Para apagar: python3 organizar-servidor.py --retencao --apply'); sys.exit(0)
     reg = MAN / 'historico' / f'retencao-{time.strftime("%Y%m%d-%H%M%S")}.txt'; reg.parent.mkdir(parents=True, exist_ok=True)
-    reg.write_text('\n'.join(f'{x} {tamanho(x)}' for x in apagar) + '\n')
+    linhas_reg = []
+    for x in apagar:
+        for f in resgatar[x]:
+            d = MAN / 'backups' / 'resgatados' / f.relative_to(MAN); d.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
+            os.rename(f, d); linhas_reg.append(f'GUARDADO {f} -> {d}')
+    linhas_reg += [f'APAGADO {x} {tamanho(x)}' for x in apagar]
+    reg.write_text('\n'.join(linhas_reg) + '\n')
     for x in apagar:
         if x.is_dir() and not x.is_symlink(): shutil.rmtree(x)
         else: x.unlink()
