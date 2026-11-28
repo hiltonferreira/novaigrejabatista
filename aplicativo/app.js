@@ -1,6 +1,8 @@
 'use strict';
 (() => {
   const root = document.getElementById('nib-proposta');
+  // Miniatura que não carregou some (sem onerror no HTML, que a política de segurança bloqueia).
+  document.addEventListener('error', e => { const t = e.target; if (t && t.tagName === 'IMG' && t.hasAttribute('data-some-sem-imagem')) t.remove(); }, true);
   const content = document.getElementById('content');
   const feedback = document.getElementById('feedback');
   const srStatus = document.getElementById('sr-status') || feedback;
@@ -637,7 +639,7 @@
   const pilEstados = { enviando: 'Envio incompleto', processando: 'Processando no YouTube', privado: 'Travado como privado', bloqueado: 'Bloqueado no YouTube', falhou: 'Não publicado' };
   // Capa escolhida pelo pastor (guardada no app) ou, sem ela, a miniatura automática do YouTube.
   const pilCapaImg = p => p.capa ? `<img class="is-capa" src="${escape(p.capa)}" alt="" loading="lazy">`
-    : p.youtube_id ? `<img src="https://i.ytimg.com/vi/${encodeURIComponent(p.youtube_id)}/hqdefault.jpg" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">` : '';
+    : p.youtube_id ? `<img src="https://i.ytimg.com/vi/${encodeURIComponent(p.youtube_id)}/hqdefault.jpg" alt="" loading="lazy" referrerpolicy="no-referrer" data-some-sem-imagem>` : '';
   // Quadro da capa: no formulário (p = null) usa o vídeo escolhido; numa pílula publicada, uma foto ou um quadro de um vídeo do celular.
   function pilCapaBox(p) {
     const nova = p ? null : state.pilCapa, src = nova ? nova.url : p && p.capa ? p.capa : '';
