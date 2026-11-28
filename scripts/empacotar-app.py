@@ -9,6 +9,8 @@ REPO = Path(__file__).resolve().parent.parent
 APP = REPO / 'aplicativo'
 HERE = Path(__file__).resolve().parent
 ver = sys.argv[1] if len(sys.argv) > 1 else ''
+import subprocess
+if subprocess.run([sys.executable, str(HERE / 'montar-app.py'), '--conferir']).returncode != 0: sys.exit('Pare: app.js/app.css diferentes das partes em aplicativo/fonte/. Rode scripts/montar-app.py antes de empacotar.')
 if not re.fullmatch(r'v\d+', ver): sys.exit('Informe a versão, por exemplo: python3 scripts/empacotar-app.py v88')
 sw = (APP / 'sw.js').read_text()
 files = [f for f in re.findall(r"'([^']+)'", re.search(r"const FILES = \[([\s\S]*?)\];", sw).group(1)) if f != './']
