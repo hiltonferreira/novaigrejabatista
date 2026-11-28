@@ -31,8 +31,9 @@ Estrutura final:
 
 Regra de retenção (combinada em 09/11/2026 e ajustada em 28/11/2026):
   - backups/app: ficam as 5 publicações mais recentes (backups/app-teste: 3).
-  - publicacoes e publicacoes/antigas: das publicações do APP (app-vNNN, nib-vNNN, vNNN) ficam as 3 mais recentes;
+  - publicacoes: das publicações do APP (app-vNNN, nib-vNNN, vNNN) ficam as 3 mais recentes;
     publicações de outras áreas (NXT, comprovantes, células...) nunca saem sozinhas.
+  - publicacoes/antigas: cópias inteiras do site (com NXT e dados); nunca saem sozinhas, só à mão com ok do Hilton.
   - backups/site e backups/outros: apaga o que tiver mais de 60 dias, MENOS backups de dados (nome com comprovante,
     inscric, dados, privado, banco, sql, dump, completo, lista, cadastro), que só saem à mão com ok do Hilton.
   - backups/banco: nunca apaga sozinho (dumps antes de migração). backups/banco/diario e inscricoes/diario se
@@ -135,7 +136,9 @@ if RETENCAO:
         if not p.is_dir(): return
         itens = sorted([x for x in p.iterdir() if x.name not in ('antigas', 'diario') and (filtro is None or filtro.match(x.name))], key=lambda x: x.stat().st_mtime, reverse=True)
         apagar.extend(x for x in itens[fica:] if not DADOS.search(x.name))
-    mais_novos('backups/app', 5); mais_novos('backups/app-teste', 3); mais_novos('publicacoes', 3, SO_APP); mais_novos('publicacoes/antigas', 3, SO_APP)
+    mais_novos('backups/app', 5); mais_novos('backups/app-teste', 3); mais_novos('publicacoes', 3, SO_APP)
+    # publicacoes/antigas (nib-v197, nib-v198...) são cópias inteiras do site, com NXT, inscrições e dados misturados:
+    # nunca saem sozinhas, só à mão com ok do Hilton (achado do GPT em 28/11/2026).
     limite = time.time() - 60 * 86400
     for pasta in ('backups/site', 'backups/outros'):
         p = MAN / pasta

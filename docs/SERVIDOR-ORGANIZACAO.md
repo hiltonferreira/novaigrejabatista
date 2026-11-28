@@ -50,7 +50,8 @@ nib-manutencao/
 | `backups/app` | as 5 publicações mais recentes |
 | `backups/banco` | tudo (dumps antes de migração nunca saem sozinhos) |
 | `backups/banco/diario`, `backups/inscricoes/diario` | 14 dias + o dia 1º de cada mês por 6 meses (o próprio backup-diario.php limpa) |
-| `publicacoes`, `publicacoes/antigas` | das publicações do app, as 3 mais recentes; publicações de outras áreas (NXT, comprovantes...) ficam |
+| `publicacoes` | das publicações do app, as 3 mais recentes; publicações de outras áreas (NXT, comprovantes...) ficam |
+| `publicacoes/antigas` | tudo: são cópias inteiras do site, com NXT e dados misturados (só saem à mão, com ok do Hilton) |
 | `backups/site`, `backups/outros` | o que tiver até 60 dias |
 | `backups/completo`, `backups/resgatados` | tudo (nunca apaga sozinho) |
 
