@@ -1,0 +1,4 @@
+const {test}=require('node:test');const assert=require('node:assert/strict');const vm=require('node:vm');const fs=require('node:fs');
+const ctx={};vm.createContext(ctx);vm.runInContext(fs.readFileSync(__dirname+'/moderation.js','utf8'),ctx);const {offensive}=ctx.NibModeration;
+test('Barra palavrões e ofensas, com acento, maiúsculas e disfarces',()=>{for(const t of ['Que PORRA é essa','vai tomar no cu','p0rra','Desgraçado','filho da puta','merdaaa']) assert.equal(offensive(t),true,t);});
+test('Não barra pedidos normais nem palavras que só contêm trechos',()=>{for(const t of ['Pela saúde da minha mãe','Oração pela computação do meu filho','Peço oração pelo meu emprego no escritório','Disputa na família, orem por paz','Culto de domingo','Agradeço pela cura']) assert.equal(offensive(t),false,t);});

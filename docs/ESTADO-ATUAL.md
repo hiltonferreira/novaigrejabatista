@@ -1,3 +1,11 @@
+# Atualização — 28/11/2026: app em produção, organização do servidor
+
+O app da igreja está em produção em https://novaigrejabatista.com.br/app/ (contas reais, banco MySQL). Até 28/11/2026 o código publicado vivia só na branch `claude/project-thread-st9dqx`; o PR de 28/11/2026 traz tudo para a `main`, que passa a ser a base de toda publicação. Organização do servidor, backup automático diário e ambiente de teste: `docs/SERVIDOR-ORGANIZACAO.md`. Código do app em partes: `aplicativo/fonte/LEIA-ME.md`. O registro de 01/11 abaixo é histórico (a versão estática e sem dados foi superada).
+
+# Atualização — 01/11/2026: novo aplicativo em teste
+
+O projeto anterior de Células foi descontinuado por Hilton para uso de plataforma pronta de outra igreja. Não usar suas regras/Preview como base do módulo novo. O novo aplicativo começa por Membresia e experiência unificada; primeira interface estática isolada em `aplicativo/`, branch de teste. Não há autenticação, dados reais, persistência ou pagamentos nesta versão. Detalhes e limites em `APLICATIVO-V1-2026-11-01.md`; coordenação na issue #11. Produção e inscrições não alteradas. O registro de 29/10 abaixo permanece como histórico, incluindo referências antigas ao Portal.
+
 # Estado verificado — 29/10/2026
 
 ## Sistemas

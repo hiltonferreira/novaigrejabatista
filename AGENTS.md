@@ -9,6 +9,8 @@ Leia `docs/ESTADO-ATUAL.md` e `docs/FLUXO-COLABORACAO.md` antes de alterar o pro
 - Dados de participantes, comprovantes, senhas, tokens, CSVs reais e arquivos de `nib-inscricoes-privado` ficam fora do repositório público. Use exemplos fictícios nos testes.
 - Mantenha autenticação geral e proteção das exportações. A importação do Google Forms não implica pagamento nem conferência manual concluída.
 - Datas de encerramento, valores e critérios de participação são decisões da organização; não invente regras de negócio.
+- Servidor organizado (28/11/2026): nenhuma pasta solta em `/home/novaigre`. Publicações trabalham em `~/nib-manutencao/publicacoes/vNNN-DATA/`, backups vão para `~/nib-manutencao/backups/<área>/`. Regras, retenção, backup diário e ambiente de teste em `docs/SERVIDOR-ORGANIZACAO.md`.
+- App (`aplicativo/`): edite `aplicativo/fonte/` e rode `python3 scripts/montar-app.py`; não edite `app.js`/`app.css` direto. Testes: `node --test aplicativo/*.test.cjs` e `bash testes/app-api/rodar.sh` (PHP + MySQL de teste); o GitHub roda os dois a cada PR.
 - Faça backup privado antes de publicar no servidor. Preserve registros existentes e possibilidade de restauração. Publicar depende do escopo autorizado por Hilton na tarefa; uma revisão de PR não autoriza deploy.
 - Teste comportamento, além de sintaxe. Para formulários, confira navegação entre etapas, reenvio, mensagens de erro e conclusão com dados fictícios.
 - Na entrega, informe arquivos alterados, testes executados e limitações. Não declare contato com outro agente, publicação ou validação que não ocorreu.

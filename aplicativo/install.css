@@ -1,0 +1,57 @@
+/* App instalável: cartão "Instale o app", botão do menu, passo a passo do iPhone e aviso de versão nova.
+   Usado pelo app (index.html) e pela página Conheça o aplicativo (conheca.html). */
+:is(#nib-proposta,#nib-conheca) .install-card{display:flex;gap:16px;align-items:flex-start;margin:24px 0 0;padding:20px 22px;border:1px solid #cfdbe8;border-radius:20px;background:linear-gradient(135deg,#f3f7fc,#fff)}
+:is(#nib-proposta,#nib-conheca) .install-icon{flex:0 0 48px;width:48px;height:48px;border-radius:13px;overflow:hidden;box-shadow:0 4px 12px #041e4226}
+:is(#nib-proposta,#nib-conheca) .install-icon img{display:block;width:48px;height:48px}
+:is(#nib-proposta,#nib-conheca) .install-text{flex:1;min-width:0}
+:is(#nib-proposta,#nib-conheca) .install-text h2{margin:0 0 4px;font-size:1.0625rem;line-height:1.35;color:#041e42}
+:is(#nib-proposta,#nib-conheca) .install-text p{margin:0;font-size:.9375rem;line-height:1.55;color:#536176}
+:is(#nib-proposta,#nib-conheca) .install-actions{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;margin-top:14px}
+:is(#nib-proposta,#nib-conheca) .install-actions .action{min-height:44px;padding:10px 20px;border-radius:999px;font-weight:600}
+:is(#nib-proposta,#nib-conheca) .install-later{min-height:44px;padding:10px 4px;border:0;background:none;color:#536176;font:inherit;font-size:.875rem;font-weight:600;text-decoration:underline;text-underline-offset:4px;cursor:pointer}
+@media(max-width:600px){:is(#nib-proposta,#nib-conheca) .install-card{padding:18px}:is(#nib-proposta,#nib-conheca) .install-actions .action{flex:1 1 100%}:is(#nib-proposta,#nib-conheca) .install-later{flex:1 1 100%;text-align:center}}
+
+#nib-proposta .drawer-install{display:flex;align-items:center;gap:12px;width:100%;margin:-14px 0 22px;padding:14px 18px;border:1px dashed #9fb3c9;border-radius:18px;background:#f3f7fc;color:#041e42;font:inherit;text-align:left;cursor:pointer}
+#nib-proposta .drawer-install svg{flex:0 0 24px;width:24px;height:24px}
+#nib-proposta .drawer-install strong{display:block;font-size:.9375rem;line-height:1.35}
+#nib-proposta .drawer-install small{display:block;font-size:.75rem;color:#536176}
+#nib-proposta .drawer-install:focus-visible{outline:3px solid #041e42;outline-offset:3px}
+
+.install-dialog{width:min(440px,calc(100vw - 32px));max-height:calc(100dvh - 32px);overflow:auto;padding:24px;border:0;border-radius:24px;background:#fff;color:#041e42;box-shadow:0 24px 60px #041e4240}
+.install-dialog::backdrop{background:#041e4280}
+.install-dialog-head{display:flex;gap:14px;align-items:center}
+.install-dialog-head img{flex:0 0 56px;border-radius:14px}
+.install-dialog-head h2{margin:0;font-size:1.25rem;line-height:1.3}
+.install-dialog-head p{margin:2px 0 0;font-size:.875rem;color:#536176}
+.install-steps{list-style:none;margin:20px 0 0;padding:0;display:grid;gap:12px;counter-reset:s}
+.install-steps li{display:flex;gap:12px;align-items:center;padding:12px 14px;border:1px solid #e1e7ee;border-radius:14px;font-size:.9375rem;line-height:1.5;counter-increment:s}
+.install-step-ico{flex:0 0 36px;display:grid;place-items:center;width:36px;height:36px;border-radius:10px;background:#eef3f9;color:#0a5cc2}
+.install-step-ico svg{width:22px;height:22px}
+.install-step-ico img{border-radius:6px}
+.install-note{margin:14px 0 0;font-size:.8125rem;line-height:1.55;color:#536176}
+.install-note b{color:#041e42}
+.install-dialog-actions{margin-top:18px}
+.install-dialog-actions button{width:100%;min-height:48px;border:0;border-radius:999px;background:#041e42;color:#fff;font:inherit;font-weight:600;cursor:pointer}
+
+
+
+@media(min-width:821px){.sw-update{bottom:24px}}
+
+#nib-proposta .auth-links{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 18px;margin:18px 0 0}
+#nib-proposta .auth-links a,#nib-proposta .auth-links button{display:inline-flex;align-items:center;min-height:44px;padding:8px 2px;border:0;background:none;color:#041e42;font:inherit;font-size:.875rem;font-weight:600;text-decoration:underline;text-decoration-color:#041e4255;text-underline-offset:5px;cursor:pointer}
+#nib-proposta .auth-links [hidden]{display:none}
+#nib-proposta .auth-links a:focus-visible,#nib-proposta .auth-links button:focus-visible{outline:3px solid #041e42;outline-offset:3px;border-radius:6px}
+
+.sw-update{position:fixed;left:16px;right:16px;bottom:calc(96px + env(safe-area-inset-bottom));z-index:200;display:flex;align-items:center;gap:12px;max-width:480px;margin:0 auto;padding:12px 12px 12px 14px;border:1px solid #dce3eb;border-radius:20px;background:#fff;color:#041e42;box-shadow:0 14px 36px #041e4229;animation:sw-up .35s cubic-bezier(.2,.8,.2,1)}
+.sw-update-icon{flex:none;display:grid;place-items:center;width:40px;height:40px;border-radius:12px;background:#eef2f7;color:#041e42}
+.sw-update-icon svg{width:20px;height:20px}
+.sw-update-text{flex:1;min-width:0;line-height:1.3}
+.sw-update-text strong{display:block;font-size:.9375rem}
+.sw-update-text small{display:block;font-size:.8125rem;color:#536176}
+.sw-update button{flex:0 0 auto;min-height:40px;padding:8px 18px;border:0;border-radius:999px;background:#041e42;color:#fff;font:inherit;font-size:.875rem;font-weight:600;cursor:pointer}
+@keyframes sw-up{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.sw-update{animation:none}}
+@media(min-width:821px){.sw-update{bottom:24px}}
+
+/* v117: o aviso de versão nova fica acima da tela de entrar e da orientação */
+.sw-update{z-index:2000}
