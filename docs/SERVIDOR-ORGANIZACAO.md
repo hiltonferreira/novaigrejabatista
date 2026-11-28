@@ -65,7 +65,11 @@ Faz o dump do banco do app pelo PHP (o PHP do servidor não chama o `mysqldump`)
 
 Conferir: `tail -5 ~/nib-manutencao/backups/backup-diario.log` (cada linha começa com `OK` ou `FALHA`).
 
-Restaurar o banco (só com combinação prévia com Hilton): `gzip -dc backups/banco/diario/app-AAAAMMDD.sql.gz | mysql <banco>`.
+Fotos de perfil e capas das pílulas (a maior parte do banco quando houver 1.500 pessoas, uns 60 MB) vão em `fotos-AAAAMMDD.sql.gz` só aos domingos, no dia 1º e quando ainda não houver nenhum (ou com `--fotos`); ficam as 4 últimas semanas + o dia 1º de cada mês por 6 meses. O resto do banco vai todo dia em `app-AAAAMMDD.sql.gz`.
+
+Restaurar o banco (só com combinação prévia com Hilton): primeiro `gzip -dc backups/banco/diario/app-AAAAMMDD.sql.gz | mysql <banco>`, depois o `fotos-*.sql.gz` mais recente do mesmo jeito.
+
+Estimativa com 1.500 pessoas (28/11/2026): banco ~100 MB após um ano (fotos ~60 MB, check-ins ~25 MB/ano); backup diário < 10 MB; total de backups abaixo de 1 GB. Plano atual: 19,5 GB de disco.
 
 ## Publicar o app (fluxo atualizado)
 

@@ -7,7 +7,8 @@
 //      ~/nib-manutencao/backups/banco/diario/app-AAAAMMDD.sql.gz (feito pelo PHP, porque o PHP do servidor não chama o mysqldump).
 //   2. Cópia dos dados das inscrições (~/nib-inscricoes-privado, arquivos JSON) em
 //      ~/nib-manutencao/backups/inscricoes/diario/inscricoes-AAAAMMDD.tar.gz
-//   3. Guarda os 14 dias mais recentes e, além deles, o do dia 1º de cada mês por 6 meses. Apaga só os mais antigos que isso.
+//   3. Guarda os 14 dias mais recentes (fotos: as 4 últimas semanas) e, além deles, o do dia 1º de cada mês por 6 meses.
+//      Apaga só os mais antigos que isso. As fotos de perfil e capas vão em fotos-AAAAMMDD.sql.gz, uma vez por semana.
 //   4. Limpa sessões vencidas, links de nova senha velhos e contadores de tentativa antigos do app.
 //   5. Escreve uma linha por dia em ~/nib-manutencao/backups/backup-diario.log.
 //
@@ -33,7 +34,35 @@ $falhou = false;
 function registrar(string $log, string $linha): void { echo $linha . "\n"; @file_put_contents($log, date('Y-m-d H:i:s') . ' ' . $linha . "\n", FILE_APPEND); }
 foreach ([$dirBanco, $dirInsc] as $d) if (!is_dir($d) && !mkdir($d, 0700, true)) { registrar($log, "ERRO não criei $d"); exit(1); }
 
-// 1. Banco do app
+// 1. Banco do app. As tabelas de imagens (fotos de perfil, capas das pílulas) quase não mudam e são a maior parte
+// do banco: vão num arquivo à parte (fotos-AAAAMMDD.sql.gz) só aos domingos, no dia 1º ou quando ainda não houver
+// nenhum. Restaurar: primeiro o app-AAAAMMDD.sql.gz do dia, depois o fotos-*.sql.gz mais recente.
+const NIB_TABELAS_IMAGENS = ['nib_pessoa_fotos', 'nib_pilula_capas'];
+function nib_dump(PDO $db, string $destino, callable $incluir, string $titulo): array {
+  $tmp = "$destino.parcial";
+  $gz = gzopen($tmp, 'wb9'); if (!$gz) throw new RuntimeException('não abri o arquivo do dump');
+  try {
+    gzwrite($gz, "-- $titulo NIB, " . date('c') . "\nSET NAMES utf8mb4;\nSET FOREIGN_KEY_CHECKS=0;\n");
+    $tabelas = 0; $linhas = 0;
+    foreach ($db->query("SHOW FULL TABLES WHERE Table_type = 'BASE TABLE'")->fetchAll(PDO::FETCH_NUM) as $t) {
+      $t = $t[0]; if (!$incluir($t)) continue;
+      $tabelas++; $q = '`' . str_replace('`', '``', $t) . '`';
+      $cr = $db->query("SHOW CREATE TABLE $q")->fetch(PDO::FETCH_NUM);
+      gzwrite($gz, "\nDROP TABLE IF EXISTS $q;\n" . $cr[1] . ";\n");
+      // Colunas binárias vão em hexadecimal, para voltarem iguais na restauração.
+      $bin = array_map(fn($col) => (bool)preg_match('/blob|binary/i', (string)$col['Type']), $db->query("SHOW COLUMNS FROM $q")->fetchAll(PDO::FETCH_ASSOC));
+      foreach ($db->query("SELECT * FROM $q", PDO::FETCH_NUM) as $l) {
+        $v = []; foreach ($l as $k => $x) $v[] = $x === null ? 'NULL' : (!empty($bin[$k]) ? ($x === '' ? "''" : '0x' . bin2hex((string)$x)) : $db->quote((string)$x));
+        gzwrite($gz, "INSERT INTO $q VALUES (" . implode(',', $v) . ");\n"); $linhas++;
+      }
+    }
+    gzwrite($gz, "SET FOREIGN_KEY_CHECKS=1;\n-- Dump completed\n");
+  } finally { gzclose($gz); }
+  $fim = ''; $h = gzopen($tmp, 'rb'); while (!gzeof($h)) { $fim = substr($fim . gzread($h, 65536), -200); } gzclose($h);
+  if (strpos($fim, '-- Dump completed') === false) { @unlink($tmp); throw new RuntimeException('o dump não terminou'); }
+  rename($tmp, $destino); chmod($destino, 0600);
+  return [$tabelas, $linhas, intdiv(filesize($destino), 1024)];
+}
 try {
   if (!defined('NIB_APP_RUNTIME')) define('NIB_APP_RUNTIME', true);
   $config = getenv('NIB_APP_CONFIG') ?: "$home/nib-app-privado/config.php";
@@ -41,28 +70,15 @@ try {
   $c = require $config;
   $db = new PDO('mysql:host=' . $c['db_host'] . ';dbname=' . $c['db_name'] . ';charset=utf8mb4', $c['db_user'], $c['db_pass'], [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
   $db->exec('SET NAMES utf8mb4'); $db->exec('START TRANSACTION WITH CONSISTENT SNAPSHOT');
-  $destino = "$dirBanco/app-$hoje.sql.gz"; $tmp = "$destino.parcial";
-  $gz = gzopen($tmp, 'wb9'); if (!$gz) throw new RuntimeException('não abri o arquivo do dump');
-  gzwrite($gz, '-- Dump diário NIB, ' . date('c') . "\nSET NAMES utf8mb4;\nSET FOREIGN_KEY_CHECKS=0;\n");
-  $tabelas = 0; $linhas = 0;
-  foreach ($db->query("SHOW FULL TABLES WHERE Table_type = 'BASE TABLE'")->fetchAll(PDO::FETCH_NUM) as $t) {
-    $t = $t[0]; $tabelas++; $q = '`' . str_replace('`', '``', $t) . '`';
-    $cr = $db->query("SHOW CREATE TABLE $q")->fetch(PDO::FETCH_NUM);
-    gzwrite($gz, "\nDROP TABLE IF EXISTS $q;\n" . $cr[1] . ";\n");
-    // Colunas binárias (fotos de perfil, capas das pílulas) vão em hexadecimal, para voltarem iguais na restauração.
-    $bin = array_map(fn($col) => (bool)preg_match('/blob|binary/i', (string)$col['Type']), $db->query("SHOW COLUMNS FROM $q")->fetchAll(PDO::FETCH_ASSOC));
-    foreach ($db->query("SELECT * FROM $q", PDO::FETCH_NUM) as $l) {
-      $v = []; foreach ($l as $k => $x) $v[] = $x === null ? 'NULL' : (!empty($bin[$k]) ? ($x === '' ? "''" : '0x' . bin2hex((string)$x)) : $db->quote((string)$x));
-      gzwrite($gz, "INSERT INTO $q VALUES (" . implode(',', $v) . ");\n"); $linhas++;
-    }
+  [$t1, $l1, $k1] = nib_dump($db, "$dirBanco/app-$hoje.sql.gz", fn($t) => !in_array($t, NIB_TABELAS_IMAGENS, true), 'Dump diário (sem imagens)');
+  $resumo[] = sprintf('banco OK %d tabelas %d linhas %d KB', $t1, $l1, $k1);
+  $temFotos = (bool)glob("$dirBanco/fotos-*.sql.gz");
+  if (!$temFotos || date('w') === '0' || date('d') === '01' || in_array('--fotos', $argv ?? [], true)) {
+    [$t2, $l2, $k2] = nib_dump($db, "$dirBanco/fotos-$hoje.sql.gz", fn($t) => in_array($t, NIB_TABELAS_IMAGENS, true), 'Dump semanal das imagens');
+    $resumo[] = sprintf('fotos OK %d imagens %d KB', $l2, $k2);
   }
-  gzwrite($gz, "SET FOREIGN_KEY_CHECKS=1;\n-- Dump completed\n"); gzclose($gz); $db->exec('COMMIT');
-  $fim = ''; $h = gzopen($tmp, 'rb'); while (!gzeof($h)) { $fim = substr($fim . gzread($h, 65536), -200); } gzclose($h);
-  if (strpos($fim, '-- Dump completed') === false) throw new RuntimeException('o dump não terminou');
-  rename($tmp, $destino); chmod($destino, 0600);
-  $resumo[] = sprintf('banco OK %d tabelas %d linhas %d KB', $tabelas, $linhas, intdiv(filesize($destino), 1024));
+  $db->exec('COMMIT');
 } catch (Throwable $e) {
-  if (isset($tmp) && is_file($tmp)) @unlink($tmp);
   $resumo[] = 'banco ERRO ' . $e->getMessage(); $falhou = true;
 }
 
@@ -85,13 +101,13 @@ try {
 
 // 3. Retenção: 14 dias mais recentes + dia 1º de cada mês por 6 meses
 $apagados = 0;
-foreach ([[$dirBanco, '/^app-(\d{8})\.sql\.gz$/'], [$dirInsc, '/^inscricoes-(\d{8})\.tar\.gz$/']] as [$dir, $re]) {
+foreach ([[$dirBanco, '/^app-(\d{8})\.sql\.gz$/', 14], [$dirBanco, '/^fotos-(\d{8})\.sql\.gz$/', 4], [$dirInsc, '/^inscricoes-(\d{8})\.tar\.gz$/', 14]] as [$dir, $re, $fica]) {
   $arqs = [];
   foreach (scandir($dir) ?: [] as $f) if (preg_match($re, $f, $m)) $arqs[$m[1]] = "$dir/$f";
   krsort($arqs); $i = 0; $seisMeses = date('Ymd', strtotime('-6 months'));
   foreach ($arqs as $dia => $f) {
     $i++;
-    if ($i <= 14) continue;
+    if ($i <= $fica) continue;
     if (substr((string)$dia, 6, 2) === '01' && (string)$dia >= $seisMeses) continue;
     if (@unlink($f)) $apagados++;
   }
